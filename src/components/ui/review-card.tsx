@@ -83,7 +83,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
             <img
               src={review.images[0]}
               alt="Review image"
-              className="block aspect-5/4 object-cover rounded"
+              className="block aspect-video object-cover rounded"
             />
           ) : (
             <div className="flex gap-2">

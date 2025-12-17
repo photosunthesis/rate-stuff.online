@@ -1,20 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&family=Inter:ital,wght@0,300;0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;1,8..60,400;1,8..60,700&family=Roboto:ital,wght@0,300;0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;700&display=swap");
 @import "tailwindcss";
 
 body {
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Cactus Classical Serif", serif !important;
+  font-family: "Source Serif 4", "Georgia", "Times New Roman", serif;
 }
 
 code {
-  font-family: "IBM Plex Mono", Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: "IBM Plex Mono", "Courier New", "Courier", monospace;
 }
