@@ -20,7 +20,7 @@ export function MainFeed({ reviews, isAuthenticated }: MainFeedProps) {
       {!isAuthenticated && (
         <div className="border-t border-neutral-800 px-4 py-8 text-center">
           <div className="mb-4">
-            <p className="text-neutral-400">
+            <p className="text-neutral-400 text-sm">
               To see more reviews, create an account or sign in.
             </p>
           </div>
