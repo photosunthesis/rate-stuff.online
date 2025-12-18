@@ -62,6 +62,7 @@ export const inviteCodes = sqliteTable(
 		createdBy: text("created_by")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
+		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
 		usedBy: text("used_by").references(() => users.id, {
 			onDelete: "set null",
 		}),
@@ -91,7 +92,5 @@ export const passwordResetTokens = sqliteTable(
 			.notNull()
 			.default(sql`CURRENT_TIMESTAMP`),
 	},
-	(table) => [
-		index("password_reset_user_id_idx").on(table.userId),
-	],
+	(table) => [index("password_reset_user_id_idx").on(table.userId)],
 );

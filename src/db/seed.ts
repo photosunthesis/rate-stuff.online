@@ -39,10 +39,11 @@ async function seed() {
 		for (let i = 0; i < 10; i++) {
 			const code = generateInviteCode();
 			const codeId = crypto.randomUUID();
+			const role = i < 2 ? "moderator" : "user";
 			sqlStatements.push(
-				`INSERT INTO invite_codes (id, code, created_by, created_at) VALUES (${escapeSqlString(codeId)}, ${escapeSqlString(code)}, ${escapeSqlString(adminId)}, ${now});`,
+				`INSERT INTO invite_codes (id, code, created_by, role, created_at) VALUES (${escapeSqlString(codeId)}, ${escapeSqlString(code)}, ${escapeSqlString(adminId)}, ${escapeSqlString(role)}, ${now});`,
 			);
-			console.log(`   Generated code: ${code}`);
+			console.log(`   Generated code: ${code} (${role})`);
 		}
 
 		const sqlContent = sqlStatements.join("\n");
@@ -64,6 +65,7 @@ async function seed() {
 			console.error(
 				"You can try running it manually: pnpm wrangler d1 execute rate-stuff-online --local --file seed.sql",
 			);
+			console.error(execError);
 			process.exit(1);
 		} finally {
 			// Optional: remove file

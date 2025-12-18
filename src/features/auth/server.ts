@@ -61,6 +61,7 @@ export const registerFn = createServerFn({ method: "POST" })
 					email: data.email,
 					password: hashedPassword,
 					name: data.displayName,
+					role: inviteCode.role,
 				})
 				.returning();
 
