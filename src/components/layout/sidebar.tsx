@@ -7,7 +7,7 @@ interface SidebarProps {
 
 export function Sidebar({ isAuthenticated = false }: SidebarProps) {
 	return (
-		<aside className="w-64 border-r border-neutral-800 px-4 py-6 hidden lg:block sticky top-0 h-screen">
+		<aside className="w-64 px-4 py-6 hidden lg:block sticky top-0 h-screen">
 			{/* Logo/Branding */}
 			<div className="flex flex-col gap-2 mb-4">
 				<AppLogo size={50} />

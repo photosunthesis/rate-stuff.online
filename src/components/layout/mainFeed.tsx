@@ -9,7 +9,7 @@ interface MainFeedProps {
 
 export function MainFeed({ reviews, isAuthenticated }: MainFeedProps) {
 	return (
-		<main className="border-r border-neutral-800 w-full max-w-2xl">
+		<main className="border-x border-neutral-800 w-full max-w-2xl">
 			{/* Feed */}
 			<div className="divide-y divide-neutral-800">
 				{reviews.map((review) => (
