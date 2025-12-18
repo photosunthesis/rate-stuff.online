@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1a4fe7f1-fa8f-4ea9-9073-cfa743533939",
+  "id": "d1c6ee31-e2fa-49e0-8fae-c581b6af3a8a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "invite_codes": {
@@ -61,13 +61,6 @@
       "indexes": {
         "invite_codes_code_unique": {
           "name": "invite_codes_code_unique",
-          "columns": [
-            "code"
-          ],
-          "isUnique": true
-        },
-        "code_idx": {
-          "name": "code_idx",
           "columns": [
             "code"
           ],
@@ -168,19 +161,12 @@
           ],
           "isUnique": true
         },
-        "user_id_idx": {
-          "name": "user_id_idx",
+        "password_reset_user_id_idx": {
+          "name": "password_reset_user_id_idx",
           "columns": [
             "user_id"
           ],
           "isUnique": false
-        },
-        "token_idx": {
-          "name": "token_idx",
-          "columns": [
-            "token"
-          ],
-          "isUnique": true
         }
       },
       "foreignKeys": {
@@ -236,8 +222,8 @@
         }
       },
       "indexes": {
-        "user_id_idx": {
-          "name": "user_id_idx",
+        "sessions_user_id_idx": {
+          "name": "sessions_user_id_idx",
           "columns": [
             "user_id"
           ],

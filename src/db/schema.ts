@@ -76,7 +76,6 @@ export const inviteCodes = sqliteTable(
 			.default(sql`CURRENT_TIMESTAMP`),
 	},
 	(table) => [
-		uniqueIndex("code_idx").on(table.code),
 		index("created_by_idx").on(table.createdBy),
 		index("used_by_idx").on(table.usedBy),
 	],
@@ -100,6 +99,5 @@ export const passwordResetTokens = sqliteTable(
 	},
 	(table) => [
 		index("password_reset_user_id_idx").on(table.userId),
-		uniqueIndex("token_idx").on(table.token),
 	],
 );

@@ -11,7 +11,6 @@ CREATE TABLE `invite_codes` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `invite_codes_code_unique` ON `invite_codes` (`code`);--> statement-breakpoint
-CREATE UNIQUE INDEX `code_idx` ON `invite_codes` (`code`);--> statement-breakpoint
 CREATE INDEX `created_by_idx` ON `invite_codes` (`created_by`);--> statement-breakpoint
 CREATE INDEX `used_by_idx` ON `invite_codes` (`used_by`);--> statement-breakpoint
 CREATE TABLE `password_reset_tokens` (
@@ -24,8 +23,7 @@ CREATE TABLE `password_reset_tokens` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `password_reset_tokens_token_unique` ON `password_reset_tokens` (`token`);--> statement-breakpoint
-CREATE INDEX `user_id_idx` ON `password_reset_tokens` (`user_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `token_idx` ON `password_reset_tokens` (`token`);--> statement-breakpoint
+CREATE INDEX `password_reset_user_id_idx` ON `password_reset_tokens` (`user_id`);--> statement-breakpoint
 CREATE TABLE `sessions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
@@ -34,7 +32,7 @@ CREATE TABLE `sessions` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `user_id_idx` ON `sessions` (`user_id`);--> statement-breakpoint
+CREATE INDEX `sessions_user_id_idx` ON `sessions` (`user_id`);--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`email` text NOT NULL,
