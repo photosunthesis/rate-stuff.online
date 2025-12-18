@@ -73,7 +73,7 @@ function RouteComponent() {
 					</div>
 					<h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
 					<p className="text-neutral-400">
-						Curious discoveries and secret scores await.
+						The universe is peer-reviewed. Jump back in.
 					</p>
 				</div>
 

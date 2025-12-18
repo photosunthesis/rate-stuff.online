@@ -23,21 +23,21 @@ export function RightSidebar({
 	isAuthenticated?: boolean;
 }) {
 	return (
-		<aside className="w-80 px-6 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
+		<aside className="w-80 px-4 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recent Things */}
+						{/* Recent Reviewed */}
 						<section>
-							<h2 className="text-md font-bold text-white mb-2 px-1">
-								Recent Things
-							</h2>
+							<p className="text-md font-bold text-white mb-2 px-1">
+								Recently Reviewed
+							</p>
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
 								{recentThings.map((thing, i) => (
 									<Link
 										key={thing.id}
 										to="/"
-										className={`block px-4 py-3 hover:bg-neutral-800/50 transition-colors ${
+										className={`block px-4 py-2 hover:bg-neutral-800/50 transition-colors ${
 											i !== recentThings.length - 1
 												? "border-b border-neutral-800/50"
 												: ""
@@ -46,7 +46,7 @@ export function RightSidebar({
 										<p className="text-sm font-medium text-white">
 											{thing.name}
 										</p>
-										<p className="text-xs text-neutral-500 mt-0.5">
+										<p className="text-[11px] text-neutral-500">
 											{thing.category}
 										</p>
 									</Link>
@@ -56,15 +56,15 @@ export function RightSidebar({
 
 						{/* Recent Tags */}
 						<section>
-							<h2 className="text-md font-bold text-white mb-2 px-1">
+							<p className="text-md font-bold text-white mb-2 px-1">
 								Popular Tags
-							</h2>
-							<div className="flex flex-wrap gap-2 px-1">
+							</p>
+							<div className="flex flex-wrap gap-1.5 px-1">
 								{recentTags.map((tag) => (
 									<Link
 										key={tag.name}
 										to="/"
-										className="px-3 py-1.5 bg-neutral-800/50 hover:bg-neutral-700/50 border border-neutral-800 text-neutral-300 hover:text-white rounded-full text-xs font-medium transition-all"
+										className="px-2.5 py-1 bg-neutral-800/50 hover:bg-neutral-700/50 border border-neutral-800 text-neutral-300 hover:text-white rounded-full text-sm font-medium transition-all"
 									>
 										#{tag.name}
 									</Link>
