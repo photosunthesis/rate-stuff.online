@@ -54,7 +54,7 @@ export function NotFound() {
 		<div className="flex items-center justify-center min-h-screen bg-neutral-950">
 			<div className="text-center px-4">
 				<div className="flex items-center justify-center gap-2 mb-4">
-					<h1 className="text-5xl text-white font-bold">404</h1>
+					<h1 className="text-5xl text-white font-semibold">404</h1>
 					<AppLogo size={40} />
 				</div>
 				<p className="text-neutral-500 text-sm w-64 mx-auto leading-[1.6]">

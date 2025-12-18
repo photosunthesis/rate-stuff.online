@@ -29,7 +29,7 @@ export function RightSidebar({
 					<>
 						{/* Recent Reviewed */}
 						<section>
-							<p className="text-md font-bold text-white mb-2 px-1">
+							<p className="text-md font-semibold text-white mb-2 px-1">
 								Recently Reviewed
 							</p>
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
@@ -56,7 +56,7 @@ export function RightSidebar({
 
 						{/* Recent Tags */}
 						<section>
-							<p className="text-md font-bold text-white mb-2 px-1">
+							<p className="text-md font-semibold text-white mb-2 px-1">
 								Popular Tags
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">

@@ -71,7 +71,9 @@ function RouteComponent() {
 					<div className="flex justify-start mb-2">
 						<AppLogo size={40} />
 					</div>
-					<h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
+					<h1 className="text-2xl font-semibold text-white mb-2">
+						Welcome back
+					</h1>
 					<p className="text-neutral-400">
 						The universe is peer-reviewed. Jump back in.
 					</p>

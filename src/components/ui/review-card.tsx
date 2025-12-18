@@ -35,7 +35,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 						className="w-8 h-8 rounded-full shrink-0 object-cover"
 					/>
 				) : (
-					<div className="w-8 h-8 rounded-full bg-emerald-600 shrink-0 flex items-center justify-center text-xs font-bold text-white">
+					<div className="w-8 h-8 rounded-full bg-emerald-600 shrink-0 flex items-center justify-center text-xs font-semibold text-white">
 						{getInitials(review.userDisplayName)}
 					</div>
 				)}
@@ -43,7 +43,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 					<div className="flex items-center gap-1 flex-wrap text-sm">
 						<a
 							href={`/u/${review.userId}`}
-							className="font-bold text-white hover:underline"
+							className="font-semibold text-white hover:underline"
 						>
 							{review.userDisplayName}
 						</a>
