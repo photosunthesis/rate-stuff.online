@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "../ui/app-logo";
 
@@ -5,15 +6,33 @@ interface SidebarProps {
 	isAuthenticated?: boolean;
 }
 
+const headers = [
+	"Rate whole universe.",
+	"Score everything, regret nothing.",
+	"Judge reality, 1–10.",
+	"Grade the cosmic soup.",
+	"Everything gets a score.",
+	"Rate the invisible bits.",
+	"Your opinion, now numbered.",
+	"The world, out of ten.",
+];
+
 export function Sidebar({ isAuthenticated = false }: SidebarProps) {
+	const [header] = useState(
+		() => headers[Math.floor(Math.random() * headers.length)],
+	);
+
 	return (
 		<aside className="w-64 px-4 py-6 hidden lg:block sticky top-0 h-screen">
 			{/* Logo/Branding */}
 			<div className="flex flex-col gap-2 mb-4">
-				<AppLogo size={50} />
-				<span className="text-sm text-neutral-400">
-					Rate stuff—concrete or abstract—on a scale of 1 to 10.
-				</span>
+				<AppLogo size={40} />
+				<h1
+					className="text-2xl font-semibold text-white"
+					suppressHydrationWarning
+				>
+					{header}
+				</h1>
 			</div>
 
 			{/* Navigation or Auth Buttons */}
