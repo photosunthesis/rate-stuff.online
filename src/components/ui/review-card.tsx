@@ -63,7 +63,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 			</div>
 
 			{/* Rating and Title */}
-			<h3 className="text-lg md:text-xl font-bold text-white mb-2 ml-11">
+			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
 				{getRatingEmoji(review.rating)} {review.rating}/10 - {review.title}
 			</h3>
 

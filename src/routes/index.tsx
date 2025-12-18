@@ -9,7 +9,8 @@ export const Route = createFileRoute("/")({
 	head: () => ({
 		meta: [
 			{
-				title: "Rate Stuff Online - Community Ratings",
+				title:
+					"Rate Stuff Online - Rate stuff—concrete or abstract—on a scale of 1 to 10",
 			},
 			{
 				name: "description",
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/")({
 			{
 				name: "og:title",
 				property: "og:title",
-				content: "Rate Stuff Online - Community Ratings",
+				content:
+					"Rate Stuff Online - Rate stuff—concrete or abstract—on a scale of 1 to 10",
 			},
 			{
 				name: "og:description",
