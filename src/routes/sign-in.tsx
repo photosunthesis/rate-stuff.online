@@ -77,11 +77,13 @@ function RouteComponent() {
 					</p>
 				</div>
 
-				{isError && errorMessage && (
-					<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-lg text-red-200 text-sm">
-						{errorMessage}
-					</div>
-				)}
+				{isError &&
+					errorMessage &&
+					Object.keys(validationErrors).length === 0 && (
+						<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-xl text-red-200 text-sm">
+							{errorMessage}
+						</div>
+					)}
 
 				<form onSubmit={handleSubmit} className="space-y-4" noValidate>
 					<div>
@@ -102,7 +104,7 @@ function RouteComponent() {
 								validationErrors.identifier
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.identifier
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -143,7 +145,7 @@ function RouteComponent() {
 								validationErrors.password
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.password
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -169,7 +171,7 @@ function RouteComponent() {
 					<button
 						type="submit"
 						disabled={isPending}
-						className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+						className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950 cursor-pointer"
 					>
 						{isPending ? "Signing In..." : "Sign In"}
 					</button>

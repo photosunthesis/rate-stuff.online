@@ -12,7 +12,16 @@ export interface SessionPayload extends Record<string, unknown> {
 }
 
 function getEncryptionKey(): Uint8Array {
-	const secret = process.env.SESSION_SECRET;
+	const globalObj = globalThis as unknown as {
+		env?: { SESSION_SECRET?: string };
+		SESSION_SECRET?: string;
+	};
+
+	const secret =
+		process.env.SESSION_SECRET ||
+		globalObj.env?.SESSION_SECRET ||
+		globalObj.SESSION_SECRET;
+
 	if (!secret || secret.length < 32) {
 		throw new Error(
 			"SESSION_SECRET environment variable is not set or too short. Must be at least 32 characters.",
@@ -34,7 +43,7 @@ export async function comparePasswords(
 
 export async function createToken(payload: SessionPayload): Promise<string> {
 	const key = getEncryptionKey();
-	const expiresIn = "7d"; // 7 day session
+	const expiresIn = "7d";
 
 	return await new SignJWT(payload)
 		.setProtectedHeader({ alg: "HS256" })
@@ -61,10 +70,10 @@ export async function setSessionCookie(payload: SessionPayload): Promise<void> {
 	const cookieOptions = [
 		`session=${encodeURIComponent(token)}`,
 		"Path=/",
-		"HttpOnly", // XSS protection
-		isProduction ? "Secure" : "", // HTTPS only in production
-		"SameSite=Lax", // CSRF protection
-		"Max-Age=604800", // 7 days
+		"HttpOnly",
+		isProduction ? "Secure" : "",
+		"SameSite=Lax",
+		"Max-Age=604800",
 	]
 		.filter(Boolean)
 		.join("; ");
@@ -72,9 +81,6 @@ export async function setSessionCookie(payload: SessionPayload): Promise<void> {
 	setResponseHeader("Set-Cookie", cookieOptions);
 }
 
-/**
- * Clear the session cookie
- */
 export function clearSessionCookie(): void {
 	setResponseHeader(
 		"Set-Cookie",
@@ -82,22 +88,26 @@ export function clearSessionCookie(): void {
 	);
 }
 
-/**
- * Get the current session from request headers
- * Extracts, decrypts, and validates the JWT token
- */
 export async function getSession(): Promise<SessionPayload | null> {
 	try {
 		const cookieHeader = getRequest().headers.get("cookie");
 		if (!cookieHeader) return null;
 
-		const match = cookieHeader.match(/session=([^;]+)/);
-		if (!match?.[1]) return null;
+		const cookies = cookieHeader.split(";").reduce(
+			(acc, cookie) => {
+				const [name, ...rest] = cookie.trim().split("=");
+				acc[name] = rest.join("=");
+				return acc;
+			},
+			{} as Record<string, string>,
+		);
 
-		const token = decodeURIComponent(match[1]);
-		return await verifyToken(token);
+		const token = cookies.session;
+		if (!token) return null;
+
+		const decodedToken = decodeURIComponent(token);
+		return await verifyToken(decodedToken);
 	} catch {
-		// Silently fail on invalid token
 		return null;
 	}
 }

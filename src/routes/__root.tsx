@@ -41,7 +41,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				name: "theme-color",
-				content: "#111827", // Tailwind bg-neutral-900
+				content: "#0a0a0a", // Tailwind bg-neutral-950
 			},
 			{
 				name: "apple-mobile-web-app-capable",

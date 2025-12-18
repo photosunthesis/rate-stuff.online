@@ -91,7 +91,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 						<img
 							src={review.images[0]}
 							alt="Review"
-							className="block aspect-video object-cover rounded"
+							className="block aspect-video object-cover rounded-xl"
 						/>
 					) : (
 						<div className="flex gap-2">
@@ -100,7 +100,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 									<img
 										src={image}
 										alt="Review"
-										className="w-full h-full object-cover rounded"
+										className="w-full h-full object-cover rounded-xl"
 									/>
 								</div>
 							))}
@@ -116,7 +116,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 						<a
 							key={tag}
 							href={`#${tag}`}
-							className="text-neutral-500 hover:text-white transition-colors text-sm"
+							className="px-2.5 py-1 bg-neutral-800/50 hover:bg-neutral-700/50 border border-neutral-800 text-neutral-300 hover:text-white rounded-full text-xs font-medium transition-all"
 						>
 							#{tag}
 						</a>

@@ -91,13 +91,13 @@ function RouteComponent() {
 						Join the community
 					</h1>
 					<p className="text-neutral-400">
-						Step inside, rate, discover and delight in the unexpected.
+						Your account. Your ratings. One to ten. Start here.
 					</p>
 				</div>
 
 				{/* Global Error */}
 				{isError && errorMessage && (
-					<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-lg text-red-200 text-sm">
+					<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-xl text-red-200 text-sm">
 						{errorMessage}
 					</div>
 				)}
@@ -118,12 +118,12 @@ function RouteComponent() {
 							name="inviteCode"
 							value={formData.inviteCode}
 							onChange={handleChange}
-							placeholder="Enter your invite code"
+							placeholder="e.g., NUS420"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.inviteCode
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.inviteCode
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -145,8 +145,8 @@ function RouteComponent() {
 							</p>
 						)}
 						<p className="text-neutral-500 text-xs mt-2">
-							We're keeping this invite-only while we build it out. Thank you
-							for your interest!
+							We're invite-only for now while we build this platform out. Thank
+							you for your interest!
 						</p>
 					</div>
 
@@ -164,12 +164,12 @@ function RouteComponent() {
 							name="username"
 							value={formData.username}
 							onChange={handleChange}
-							placeholder="Choose a unique username"
+							placeholder="coolusername123"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.username
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.username
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -206,12 +206,12 @@ function RouteComponent() {
 							name="displayName"
 							value={formData.displayName}
 							onChange={handleChange}
-							placeholder="Your display name"
+							placeholder="Your Pretty Name"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.displayName
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.displayName
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -251,7 +251,7 @@ function RouteComponent() {
 							placeholder="your@email.com"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.email ? "border-red-400" : "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.email
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -286,12 +286,12 @@ function RouteComponent() {
 							name="password"
 							value={formData.password}
 							onChange={handleChange}
-							placeholder="At least 8 characters"
+							placeholder="Secret password"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.password
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.password
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -328,12 +328,12 @@ function RouteComponent() {
 							name="confirmPassword"
 							value={formData.confirmPassword}
 							onChange={handleChange}
-							placeholder="Confirm your password"
+							placeholder="Confirm password"
 							className={`w-full px-4 py-2 bg-neutral-900 border ${
 								validationErrors.confirmPassword
 									? "border-red-400"
 									: "border-neutral-800"
-							} rounded-lg text-white placeholder-neutral-500 focus:outline-none ${
+							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 								validationErrors.confirmPassword
 									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
@@ -360,7 +360,7 @@ function RouteComponent() {
 					<button
 						type="submit"
 						disabled={isPending}
-						className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+						className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
 					>
 						{isPending ? "Creating Account..." : "Create Account"}
 					</button>

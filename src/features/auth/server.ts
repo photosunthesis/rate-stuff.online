@@ -41,14 +41,6 @@ export const registerFn = createServerFn({ method: "POST" })
 				};
 			}
 
-			if (inviteCode.expiresAt && new Date() > new Date(inviteCode.expiresAt)) {
-				return {
-					success: false,
-					error: "Invite code expired",
-					errors: { inviteCode: "This invite code has expired" },
-				};
-			}
-
 			const existingEmail = await db.query.users.findFirst({
 				where: eq(users.email, data.email),
 			});
@@ -185,7 +177,8 @@ export const loginFn = createServerFn({ method: "POST" })
 					success: false,
 					error: "Invalid credentials",
 					errors: {
-						identifier: "No account found with that email or username",
+						identifier: "Invalid credentials",
+						password: "Invalid credentials",
 					},
 				};
 			}
@@ -199,7 +192,10 @@ export const loginFn = createServerFn({ method: "POST" })
 				return {
 					success: false,
 					error: "Invalid credentials",
-					errors: { password: "Incorrect password" },
+					errors: {
+						identifier: "Invalid credentials",
+						password: "Invalid credentials",
+					},
 				};
 			}
 

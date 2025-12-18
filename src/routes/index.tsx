@@ -1,11 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
-import { Sidebar } from "~/components/layout/sidebar";
+import { LeftSidebar } from "~/components/layout/left-sidebar";
+import { RightSidebar } from "~/components/layout/right-sidebar";
 import { mockReviews } from "~/data/mock-reviews";
-import { useIsAuthenticatedQuery } from "~/features/auth/queries";
+import { useIsAuthenticated, isAuthenticatedFn } from "~/features/auth/queries";
 
 export const Route = createFileRoute("/")({
 	component: App,
+	loader: async ({ context }) => {
+		await context.queryClient.fetchQuery({
+			queryKey: ["isAuthenticated"],
+			queryFn: () => isAuthenticatedFn(),
+		});
+	},
 	head: () => ({
 		meta: [
 			{
@@ -37,22 +44,18 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { data: isAuthenticated = false } = useIsAuthenticatedQuery();
-
-	const displayedReviews = isAuthenticated
-		? mockReviews
-		: mockReviews.slice(0, 12);
+	const { isAuthenticated } = useIsAuthenticated();
 
 	return (
-		<div className="min-h-screen bg-neutral-900 flex font-sans justify-center">
-			{/* Sidebar */}
-			<Sidebar isAuthenticated={isAuthenticated} />
+		<div className="min-h-screen bg-neutral-950 flex font-sans justify-center">
+			{/* Left Sidebar */}
+			<LeftSidebar />
 
 			{/* Main Feed */}
-			<MainFeed reviews={displayedReviews} isAuthenticated={isAuthenticated} />
+			<MainFeed reviews={mockReviews} />
 
-			{/* Empty spacer to center content */}
-			<div className="w-64 hidden lg:block" />
+			{/* Right Sidebar */}
+			<RightSidebar isAuthenticated={isAuthenticated} />
 		</div>
 	);
 }
