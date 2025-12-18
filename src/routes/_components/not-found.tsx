@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { AppLogo } from "~/components/ui/app-logo";
+import { AppLogo } from "./app-logo";
 import { useEffect } from "react";
 
 export function NotFound() {

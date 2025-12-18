@@ -12,15 +12,13 @@ const config = defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      router: {
+        routeFileIgnorePattern: '(_components|_layout)',
+      },
+    }),
     viteReact(),
   ],
-  build: {
-    sourcemap: true,
-  },
-  server: {
-    sourcemap: true,
-  },
 })
 
 export default config

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import AppLogo from "../ui/app-logo";
+import AppLogo from "../_components/app-logo";
 
 const headers = [
 	"Rate the whole universe.",

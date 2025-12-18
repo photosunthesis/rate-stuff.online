@@ -90,8 +90,8 @@ export function useCurrentUserQuery() {
 			const user = await getCurrentUser();
 			return user;
 		},
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+		staleTime: 1000 * 60 * 30, // 30 minutes
+		gcTime: 1000 * 60 * 60, // 1 hour (formerly cacheTime)
 	});
 }
 
@@ -101,8 +101,8 @@ export function useIsAuthenticatedQuery() {
 	return useQuery({
 		queryKey: ["isAuthenticated"],
 		queryFn: () => isAuthenticated(),
-		staleTime: 1000 * 30, // 30 seconds
-		gcTime: 1000 * 60, // 1 minute
+		staleTime: 1000 * 60 * 5, // 5 minutes
+		gcTime: 1000 * 60 * 10, // 10 minutes
 	});
 }
 

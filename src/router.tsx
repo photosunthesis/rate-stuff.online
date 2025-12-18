@@ -4,7 +4,7 @@ import * as TanstackQuery from "~/integrations/tanstack-query/root-provider";
 
 // Import the generated route tree
 import { routeTree } from "~/routeTree.gen";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/routes/_components/not-found";
 
 // Create a new router instance
 export const getRouter = () => {

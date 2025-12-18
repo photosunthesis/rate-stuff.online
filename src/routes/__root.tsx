@@ -5,7 +5,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "./_components/not-found";
 
 interface MyRouterContext {
 	queryClient: QueryClient;

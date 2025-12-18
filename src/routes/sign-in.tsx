@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import AppLogo from "~/components/ui/app-logo";
+import AppLogo from "./_components/app-logo";
 import { useState, useId, useEffect } from "react";
 import { useLogin } from "~/features/auth/hooks";
 import type { LoginInput } from "~/features/auth/types";
