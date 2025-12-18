@@ -1,8 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ZodError } from "zod";
 import { useServerFn } from "@tanstack/react-start";
-import { registerFn, getCurrentUserFn, loginFn } from "./server";
-import { isAuthenticatedFn } from "./server";
+import {
+	registerFn,
+	getCurrentUserFn,
+	loginFn,
+	isAuthenticatedFn,
+} from "./server";
 import type { RegisterInput, LoginInput, AuthResponse } from "./types";
 
 export function useRegisterMutation() {
@@ -10,17 +14,14 @@ export function useRegisterMutation() {
 
 	return useMutation({
 		mutationFn: async (data: RegisterInput): Promise<AuthResponse> => {
-			// Try to call the server fn and always return an AuthResponse
 			try {
 				const result = await registerMutationFn({ data });
 				return result;
 			} catch (error) {
-				// If ZodError was thrown, normalize into AuthResponse.errors
 				if (error instanceof ZodError) {
 					const validationErrors: Record<string, string> = {};
 					for (const issue of error.issues) {
-						const key =
-							issue.path && issue.path.length ? String(issue.path[0]) : "form";
+						const key = issue.path?.length ? String(issue.path[0]) : "form";
 						if (!validationErrors[key]) validationErrors[key] = issue.message;
 					}
 
@@ -31,17 +32,13 @@ export function useRegisterMutation() {
 					};
 				}
 
-				// Some runtimes stringify zod issues into error.message as JSON array
 				if (error instanceof Error) {
 					try {
 						const parsed = JSON.parse(error.message);
 						if (Array.isArray(parsed)) {
 							const validationErrors: Record<string, string> = {};
 							for (const issue of parsed) {
-								const key =
-									issue.path && issue.path.length
-										? String(issue.path[0])
-										: "form";
+								const key = issue.path?.length ? String(issue.path[0]) : "form";
 								if (!validationErrors[key])
 									validationErrors[key] = issue.message;
 							}
@@ -66,12 +63,12 @@ export function useRegisterMutation() {
 }
 
 export function useCurrentUserQuery() {
-	const getCurrentUserFn_client = useServerFn(getCurrentUserFn);
+	const getCurrentUser = useServerFn(getCurrentUserFn);
 
 	return useQuery({
 		queryKey: ["currentUser"],
 		queryFn: async () => {
-			const user = await getCurrentUserFn_client();
+			const user = await getCurrentUser();
 			return user;
 		},
 		staleTime: 1000 * 60 * 5, // 5 minutes
@@ -80,15 +77,14 @@ export function useCurrentUserQuery() {
 }
 
 export function useIsAuthenticatedQuery() {
-	const isAuthenticatedFn_client = useServerFn(isAuthenticatedFn);
+	const isAuthenticated = useServerFn(isAuthenticatedFn);
 
 	return useQuery({
 		queryKey: ["isAuthenticated"],
 		queryFn: async () => {
-			const value = await isAuthenticatedFn_client();
+			const value = await isAuthenticated();
 			return value;
 		},
-		// Keep this fairly short — auth status can change but we want snappy updates
 		staleTime: 1000 * 30, // 30 seconds
 		gcTime: 1000 * 60, // 1 minute
 	});
@@ -128,8 +124,7 @@ export function useLoginMutation() {
 				if (error instanceof ZodError) {
 					const validationErrors: Record<string, string> = {};
 					for (const issue of error.issues) {
-						const key =
-							issue.path && issue.path.length ? String(issue.path[0]) : "form";
+						const key = issue.path?.length ? String(issue.path[0]) : "form";
 						if (!validationErrors[key]) validationErrors[key] = issue.message;
 					}
 
@@ -146,10 +141,7 @@ export function useLoginMutation() {
 						if (Array.isArray(parsed)) {
 							const validationErrors: Record<string, string> = {};
 							for (const issue of parsed) {
-								const key =
-									issue.path && issue.path.length
-										? String(issue.path[0])
-										: "form";
+								const key = issue.path?.length ? String(issue.path[0]) : "form";
 								if (!validationErrors[key])
 									validationErrors[key] = issue.message;
 							}

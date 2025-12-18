@@ -10,12 +10,14 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import TanStackQueryDevtools from "~/integrations/tanstack-query/devtools";
 import appCss from "~/styles.css?url";
+import { NotFound } from "~/components/ui/notFound";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	notFoundComponent: NotFound,
 	head: () => ({
 		meta: [
 			{

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/mainFeed";
 import { Sidebar } from "~/components/layout/sidebar";
 import { mockReviews } from "~/data/mock-reviews";
-import { useIsAuthenticated } from "~/features/auth/queries";
+import { useIsAuthenticatedQuery } from "~/features/auth/queries";
 
 export const Route = createFileRoute("/")({
 	component: App,
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { isLoading: isAuthenticated } = useIsAuthenticated();
+	const { data: isAuthenticated = false } = useIsAuthenticatedQuery();
 
 	const displayedReviews = isAuthenticated
 		? mockReviews

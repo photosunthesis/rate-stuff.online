@@ -9,18 +9,18 @@ import {
 import { db } from "~/db/index";
 import { users, inviteCodes } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import { useAppSession } from "~/utils/session";
-import { hash, compare } from "bcryptjs";
-
-async function hashPassword(password: string): Promise<string> {
-	return await hash(password, 12);
-}
+import {
+	hashPassword,
+	comparePasswords,
+	setSessionCookie,
+	getSession,
+	clearSessionCookie,
+} from "~/lib/auth";
+import { isRateLimited, recordAttempt, clearAttempts } from "~/lib/rateLimit";
 
 export const registerFn = createServerFn({ method: "POST" })
 	.inputValidator((data: unknown) => registerSchema.parse(data))
 	.handler(async ({ data }): Promise<AuthResponse> => {
-		const session = await useAppSession();
-
 		try {
 			const inviteCode = await db.query.inviteCodes.findFirst({
 				where: eq(inviteCodes.code, data.inviteCode),
@@ -85,8 +85,9 @@ export const registerFn = createServerFn({ method: "POST" })
 				.set({ usedBy: newUser[0].id, usedAt: new Date() })
 				.where(eq(inviteCodes.id, inviteCode.id));
 
-			await session.update({
+			await setSessionCookie({
 				userId: newUser[0].id,
+				email: newUser[0].email,
 			});
 
 			const { password: _, ...userWithoutPassword } = newUser[0];
@@ -129,10 +130,9 @@ export const registerFn = createServerFn({ method: "POST" })
 
 export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<User | null> => {
-		const session = await useAppSession();
-
 		try {
-			const userId = session.data.userId;
+			const sessionData = await getSession();
+			const userId = sessionData?.userId;
 
 			if (!userId) {
 				return null;
@@ -160,13 +160,11 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-// Fast auth-only check that avoids a DB lookup — only checks session existence
 export const isAuthenticatedFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<boolean> => {
-		const session = await useAppSession();
 		try {
-			const userId = session.data.userId;
-			return Boolean(userId);
+			const sessionData = await getSession();
+			return Boolean(sessionData?.userId);
 		} catch (error) {
 			console.error("isAuthenticated check error:", error);
 			return false;
@@ -177,9 +175,22 @@ export const isAuthenticatedFn = createServerFn({ method: "GET" }).handler(
 export const loginFn = createServerFn({ method: "POST" })
 	.inputValidator((data: unknown) => loginSchema.parse(data))
 	.handler(async ({ data }): Promise<AuthResponse> => {
-		const session = await useAppSession();
-
 		try {
+			// Check if account is locked due to too many failed attempts
+			const loginKey = `login-attempt:${data.identifier}`;
+			const isLimited = await isRateLimited(loginKey);
+			if (isLimited) {
+				return {
+					success: false,
+					error:
+						"Account temporarily locked due to too many failed login attempts. Please try again in 15 minutes.",
+					errors: {
+						identifier:
+							"Too many failed attempts. Account locked for 15 minutes.",
+					},
+				};
+			}
+
 			// Try to find by email first, then by name (username)
 			let user = await db.query.users.findFirst({
 				where: eq(users.email, data.identifier),
@@ -192,6 +203,11 @@ export const loginFn = createServerFn({ method: "POST" })
 			}
 
 			if (!user) {
+				try {
+					await recordAttempt(loginKey);
+				} catch {
+					// Error recording attempt
+				}
 				return {
 					success: false,
 					error: "Invalid credentials",
@@ -201,9 +217,17 @@ export const loginFn = createServerFn({ method: "POST" })
 				};
 			}
 
-			const passwordMatches = await compare(data.password, user.password || "");
+			const passwordMatches = await comparePasswords(
+				data.password,
+				user.password || "",
+			);
 
 			if (!passwordMatches) {
+				try {
+					await recordAttempt(loginKey);
+				} catch {
+					// Error recording attempt
+				}
 				return {
 					success: false,
 					error: "Invalid credentials",
@@ -211,8 +235,15 @@ export const loginFn = createServerFn({ method: "POST" })
 				};
 			}
 
-			await session.update({
+			try {
+				await clearAttempts(loginKey);
+			} catch {
+				// Error clearing attempts
+			}
+
+			await setSessionCookie({
 				userId: user.id,
+				email: user.email,
 			});
 
 			const { password: _, ...userWithoutPassword } = user;
@@ -251,3 +282,15 @@ export const loginFn = createServerFn({ method: "POST" })
 			};
 		}
 	});
+
+export const logoutFn = createServerFn({ method: "POST" }).handler(
+	async (): Promise<{ success: boolean }> => {
+		try {
+			clearSessionCookie();
+			return { success: true };
+		} catch (error) {
+			console.error("Logout error:", error);
+			return { success: false };
+		}
+	},
+);

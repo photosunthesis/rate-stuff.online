@@ -17,7 +17,6 @@ export function useRegister(): UseRegisterReturn {
 		{},
 	);
 
-	// If the mutation.error contains a JSON-stringified Zod issues array, parse it
 	useEffect(() => {
 		const err = mutation.error;
 		if (err instanceof Error) {
@@ -28,28 +27,22 @@ export function useRegister(): UseRegisterReturn {
 					if (Array.isArray(parsed)) {
 						const map: ValidationErrors = {};
 						for (const issue of parsed) {
-							const key =
-								issue.path && issue.path.length
-									? String(issue.path[0])
-									: "form";
+							const key = issue.path?.length ? String(issue.path[0]) : "form";
 							if (!map[key]) map[key] = issue.message;
 						}
 						setValidationErrors(map);
 					}
-				} catch {
-					// ignore parse errors
-				}
+				} catch {}
 			}
 		}
 	}, [mutation.error]);
 
 	const register = async (data: RegisterInput) => {
 		setValidationErrors({});
-		let result;
+		let result: { success?: boolean; errors?: ValidationErrors } | undefined;
 		try {
 			result = await mutation.mutateAsync(data);
-		} catch (error) {
-			// mutateAsync should return AuthResponse; in case of unexpected throw, set a generic error
+		} catch {
 			setValidationErrors({});
 			return;
 		}
@@ -66,11 +59,14 @@ export function useRegister(): UseRegisterReturn {
 		isPending: mutation.isPending,
 		isError:
 			mutation.isError ||
-			(!!mutation.error && Object.keys(validationErrors).length === 0),
+			(!!mutation.error && Object.keys(validationErrors).length === 0) ||
+			Object.keys(validationErrors).length > 0,
 		errorMessage:
 			mutation.error instanceof Error ? mutation.error.message : null,
 		validationErrors,
-		reset: mutation.reset,
+		reset: () => {
+			mutation.reset();
+		},
 	};
 }
 
@@ -99,27 +95,22 @@ export function useLogin(): UseLoginReturn {
 					if (Array.isArray(parsed)) {
 						const map: ValidationErrors = {};
 						for (const issue of parsed) {
-							const key =
-								issue.path && issue.path.length
-									? String(issue.path[0])
-									: "form";
+							const key = issue.path?.length ? String(issue.path[0]) : "form";
 							if (!map[key]) map[key] = issue.message;
 						}
 						setValidationErrors(map);
 					}
-				} catch {
-					// ignore parse errors
-				}
+				} catch {}
 			}
 		}
 	}, [mutation.error]);
 
 	const login = async (data: LoginInput) => {
 		setValidationErrors({});
-		let result;
+		let result: { success?: boolean; errors?: ValidationErrors } | undefined;
 		try {
 			result = await mutation.mutateAsync(data);
-		} catch (error) {
+		} catch {
 			setValidationErrors({});
 			return;
 		}
@@ -136,10 +127,13 @@ export function useLogin(): UseLoginReturn {
 		isPending: mutation.isPending,
 		isError:
 			mutation.isError ||
-			(!!mutation.error && Object.keys(validationErrors).length === 0),
+			(!!mutation.error && Object.keys(validationErrors).length === 0) ||
+			Object.keys(validationErrors).length > 0,
 		errorMessage:
 			mutation.error instanceof Error ? mutation.error.message : null,
 		validationErrors,
-		reset: mutation.reset,
+		reset: () => {
+			mutation.reset();
+		},
 	};
 }
