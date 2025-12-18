@@ -11,7 +11,9 @@ export function MainFeed({ reviews }: MainFeedProps) {
 	const { isAuthenticated } = useIsAuthenticated();
 
 	return (
-		<main className="border-x border-neutral-800 w-full max-w-2xl">
+		<main
+			className={`border-x border-neutral-800 w-full max-w-2xl ${isAuthenticated ? "pb-16 lg:pb-0" : ""}`}
+		>
 			<div className="divide-y divide-neutral-800">
 				{reviews.map((review) => (
 					<ReviewCard key={review.id} review={review} />

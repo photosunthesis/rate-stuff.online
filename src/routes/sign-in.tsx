@@ -67,8 +67,8 @@ function RouteComponent() {
 	return (
 		<div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4">
 			<div className="w-full max-w-md">
-				<div className="text-center mb-8 mt-8 md:mt-0">
-					<div className="flex justify-center mb-2">
+				<div className="text-left mb-8 mt-8 md:mt-0">
+					<div className="flex justify-start mb-2">
 						<AppLogo size={40} />
 					</div>
 					<h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
@@ -177,7 +177,7 @@ function RouteComponent() {
 					</button>
 				</form>
 
-				<div className="mt-6 mb-8 md:mb-4 text-center">
+				<div className="mt-6 mb-8 md:mb-4 text-left">
 					<p className="text-neutral-400 text-sm">
 						New here?{" "}
 						<Link

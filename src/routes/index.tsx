@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
+import { MobileHeader } from "~/components/layout/mobile-header";
 import { mockReviews } from "~/data/mock-reviews";
 import { useIsAuthenticated, isAuthenticatedFn } from "~/features/auth/queries";
 
@@ -47,15 +48,20 @@ function App() {
 	const { isAuthenticated } = useIsAuthenticated();
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex font-sans justify-center">
-			{/* Left Sidebar */}
-			<LeftSidebar />
+		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
+			{/* Mobile Header */}
+			<MobileHeader isAuthenticated={isAuthenticated} />
 
-			{/* Main Feed */}
-			<MainFeed reviews={mockReviews} />
+			<div className="flex flex-1 justify-center">
+				{/* Left Sidebar */}
+				<LeftSidebar />
 
-			{/* Right Sidebar */}
-			<RightSidebar isAuthenticated={isAuthenticated} />
+				{/* Main Feed */}
+				<MainFeed reviews={mockReviews} />
+
+				{/* Right Sidebar */}
+				<RightSidebar isAuthenticated={isAuthenticated} />
+			</div>
 		</div>
 	);
 }

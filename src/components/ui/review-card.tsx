@@ -27,7 +27,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 	return (
 		<div className="border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer">
 			{/* Header */}
-			<div className="flex items-center gap-3 mb-1">
+			<div className="flex items-center gap-3 mb-2">
 				{review.avatarUrl ? (
 					<img
 						src={review.avatarUrl}

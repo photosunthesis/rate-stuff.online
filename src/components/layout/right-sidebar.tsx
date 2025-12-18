@@ -24,12 +24,12 @@ export function RightSidebar({
 }) {
 	return (
 		<aside className="w-80 px-6 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
-			<div className="space-y-8">
+			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
 						{/* Recent Things */}
 						<section>
-							<h2 className="text-lg font-bold text-white mb-4 px-1">
+							<h2 className="text-md font-bold text-white mb-2 px-1">
 								Recent Things
 							</h2>
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
@@ -56,7 +56,7 @@ export function RightSidebar({
 
 						{/* Recent Tags */}
 						<section>
-							<h2 className="text-lg font-bold text-white mb-4 px-1">
+							<h2 className="text-md font-bold text-white mb-2 px-1">
 								Popular Tags
 							</h2>
 							<div className="flex flex-wrap gap-2 px-1">
