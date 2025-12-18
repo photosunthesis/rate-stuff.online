@@ -10,7 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import TanStackQueryDevtools from "~/integrations/tanstack-query/devtools";
 import appCss from "~/styles.css?url";
-import { NotFound } from "~/components/ui/notFound";
+import { NotFound } from "~/components/ui/not-found";
 
 interface MyRouterContext {
 	queryClient: QueryClient;

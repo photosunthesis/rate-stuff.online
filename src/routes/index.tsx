@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MainFeed } from "~/components/layout/mainFeed";
+import { MainFeed } from "~/components/layout/main-feed";
 import { Sidebar } from "~/components/layout/sidebar";
 import { mockReviews } from "~/data/mock-reviews";
 import { useIsAuthenticatedQuery } from "~/features/auth/queries";

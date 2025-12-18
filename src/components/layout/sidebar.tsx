@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import AppLogo from "../ui/appLogo";
+import AppLogo from "../ui/app-logo";
 
 interface SidebarProps {
 	isAuthenticated?: boolean;

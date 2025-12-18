@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useId, useEffect } from "react";
-import AppLogo from "~/components/ui/appLogo";
+import AppLogo from "~/components/ui/app-logo";
 import { useRegister } from "~/features/auth/hooks";
 import type { RegisterInput } from "~/features/auth/types";
 

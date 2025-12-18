@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { Review } from "~/data/mock-reviews";
-import { ReviewCard } from "~/components/ui/reviewCard";
+import { ReviewCard } from "~/components/ui/review-card";
 
 interface MainFeedProps {
 	reviews: Review[];
