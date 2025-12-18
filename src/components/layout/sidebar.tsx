@@ -10,10 +10,7 @@ export function Sidebar({ isAuthenticated = false }: SidebarProps) {
 		<aside className="w-64 border-r border-neutral-800 px-4 py-6 hidden lg:block sticky top-0 h-screen">
 			{/* Logo/Branding */}
 			<div className="flex flex-col gap-2 mb-4">
-				<h1 className="flex items-center gap-2 text-xl font-black text-white">
-					Rate Stuff Online
-					<AppLogo />
-				</h1>
+				<AppLogo size={50} />
 				<span className="text-sm text-neutral-400">
 					Rate stuff—concrete or abstract—on a scale of 1 to 10.
 				</span>
