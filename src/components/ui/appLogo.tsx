@@ -1,23 +1,19 @@
 import logoUrl from "~/assets/logo.svg";
+import logoWhiteUrl from "~/assets/logo-white.svg";
 
 interface AppLogoProps {
-	className?: string;
-	/** CSS pixels or any valid SVG dimension (number or string). Sets both width and height when provided. */
+	isWhite?: boolean;
 	size?: number | string;
 }
 
-export const AppLogo = ({ className = "", size }: AppLogoProps) => {
+export const AppLogo = ({ isWhite = false, size }: AppLogoProps) => {
 	const sizeProps = size ? { width: size, height: size } : {};
-	const classes = [!size && "w-6 h-6", "text-emerald-400", className]
-		.filter(Boolean)
-		.join(" ");
 
 	return (
 		<img
-			src={logoUrl}
+			src={isWhite ? logoWhiteUrl : logoUrl}
 			alt="Rate Stuff Online logo"
 			{...sizeProps}
-			className={classes}
 		/>
 	);
 };

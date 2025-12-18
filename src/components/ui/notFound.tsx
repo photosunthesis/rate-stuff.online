@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export function NotFound() {
 	useEffect(() => {
-		document.title = "Error 404";
+		document.title = "(ó﹏ò｡)";
 
 		let metaDescription = document.querySelector(
 			'meta[name="description"]',
@@ -36,7 +36,7 @@ export function NotFound() {
 			ogTitle.setAttribute("property", "og:title");
 			document.head.appendChild(ogTitle);
 		}
-		ogTitle.content = "404 - Page Not Found";
+		ogTitle.content = "Error 404 - Page Not Found";
 
 		// Set og:description
 		let ogDescription = document.querySelector(
@@ -54,19 +54,21 @@ export function NotFound() {
 		<div className="flex items-center justify-center min-h-screen bg-neutral-900">
 			<div className="text-center px-4">
 				<div className="flex items-center justify-center gap-2 mb-4">
-					<h1 className="text-3xl text-white font-bold">(ó﹏ò｡)</h1>
+					<h1 className="text-5xl text-white font-bold">404</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-sm">We searched everywhere.</p>
-				<p className="text-neutral-500 mb-4 text-sm">
-					This page is either invalid or just doesn't exist.
+				<p className="text-neutral-500 text-sm w-64 mx-auto leading-[1.6]">
+					We searched everywhere. This page is either invalid or just doesn't
+					exist.
 				</p>
-				<Link
-					to="/"
-					className="inline-block text-sm px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors rounded-lg"
-				>
-					Go to Home
-				</Link>
+				<div className="mt-2">
+					<Link
+						to="/"
+						className="text-emerald-400 hover:text-emerald-300 hover:underline font-semibold transition-colors text-sm"
+					>
+						Go to homepage
+					</Link>
+				</div>
 			</div>
 		</div>
 	);
