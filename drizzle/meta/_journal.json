@@ -8,6 +8,13 @@
       "when": 1766040019975,
       "tag": "0000_typical_clea",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766055916179,
+      "tag": "0001_marvelous_pride",
+      "breakpoints": true
     }
   ]
 }

@@ -7,7 +7,6 @@ import {
 	index,
 } from "drizzle-orm/sqlite-core";
 
-// User roles
 export const ROLES = {
 	USER: "user",
 	MODERATOR: "moderator",
@@ -16,7 +15,6 @@ export const ROLES = {
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
-// Users table
 export const users = sqliteTable(
 	"users",
 	{
@@ -37,7 +35,6 @@ export const users = sqliteTable(
 	(table) => [uniqueIndex("email_idx").on(table.email)],
 );
 
-// Sessions table (for secure HTTP-only sessions)
 export const sessions = sqliteTable(
 	"sessions",
 	{
@@ -55,7 +52,6 @@ export const sessions = sqliteTable(
 	(table) => [index("sessions_user_id_idx").on(table.userId)],
 );
 
-// Invite codes table
 export const inviteCodes = sqliteTable(
 	"invite_codes",
 	{
@@ -70,7 +66,6 @@ export const inviteCodes = sqliteTable(
 			onDelete: "set null",
 		}),
 		usedAt: integer("used_at", { mode: "timestamp" }),
-		expiresAt: integer("expires_at", { mode: "timestamp" }),
 		createdAt: integer("created_at", { mode: "timestamp" })
 			.notNull()
 			.default(sql`CURRENT_TIMESTAMP`),
@@ -81,7 +76,6 @@ export const inviteCodes = sqliteTable(
 	],
 );
 
-// Password reset tokens table
 export const passwordResetTokens = sqliteTable(
 	"password_reset_tokens",
 	{
