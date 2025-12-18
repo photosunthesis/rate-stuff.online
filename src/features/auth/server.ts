@@ -16,10 +16,9 @@ import {
 	getSession,
 	clearSessionCookie,
 } from "~/lib/auth";
-import { isRateLimited, recordAttempt, clearAttempts } from "~/lib/rateLimit";
 
 export const registerFn = createServerFn({ method: "POST" })
-	.inputValidator((data: unknown) => registerSchema.parse(data))
+	.inputValidator(registerSchema)
 	.handler(async ({ data }): Promise<AuthResponse> => {
 		try {
 			const inviteCode = await db.query.inviteCodes.findFirst({
@@ -101,9 +100,6 @@ export const registerFn = createServerFn({ method: "POST" })
 				},
 			};
 		} catch (error) {
-			console.error("Registration error:", error);
-
-			// If Zod validation fails, build a per-field errors map
 			if (error instanceof ZodError) {
 				const validationErrors: Record<string, string> = {};
 				for (const issue of error.issues) {
@@ -153,9 +149,8 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 				displayName: userWithoutPassword.name || "",
 				username: userWithoutPassword.name || "",
 			} as User;
-		} catch (error) {
-			console.error("Get current user error:", error);
-			return null;
+		} catch {
+			return null; // On error, return null
 		}
 	},
 );
@@ -165,33 +160,16 @@ export const isAuthenticatedFn = createServerFn({ method: "GET" }).handler(
 		try {
 			const sessionData = await getSession();
 			return Boolean(sessionData?.userId);
-		} catch (error) {
-			console.error("isAuthenticated check error:", error);
-			return false;
+		} catch {
+			return false; // On error, assume not authenticated
 		}
 	},
 );
 
 export const loginFn = createServerFn({ method: "POST" })
-	.inputValidator((data: unknown) => loginSchema.parse(data))
+	.inputValidator(loginSchema)
 	.handler(async ({ data }): Promise<AuthResponse> => {
 		try {
-			// Check if account is locked due to too many failed attempts
-			const loginKey = `login-attempt:${data.identifier}`;
-			const isLimited = await isRateLimited(loginKey);
-			if (isLimited) {
-				return {
-					success: false,
-					error:
-						"Account temporarily locked due to too many failed login attempts. Please try again in 15 minutes.",
-					errors: {
-						identifier:
-							"Too many failed attempts. Account locked for 15 minutes.",
-					},
-				};
-			}
-
-			// Try to find by email first, then by name (username)
 			let user = await db.query.users.findFirst({
 				where: eq(users.email, data.identifier),
 			});
@@ -203,11 +181,6 @@ export const loginFn = createServerFn({ method: "POST" })
 			}
 
 			if (!user) {
-				try {
-					await recordAttempt(loginKey);
-				} catch {
-					// Error recording attempt
-				}
 				return {
 					success: false,
 					error: "Invalid credentials",
@@ -223,22 +196,11 @@ export const loginFn = createServerFn({ method: "POST" })
 			);
 
 			if (!passwordMatches) {
-				try {
-					await recordAttempt(loginKey);
-				} catch {
-					// Error recording attempt
-				}
 				return {
 					success: false,
 					error: "Invalid credentials",
 					errors: { password: "Incorrect password" },
 				};
-			}
-
-			try {
-				await clearAttempts(loginKey);
-			} catch {
-				// Error clearing attempts
 			}
 
 			await setSessionCookie({
@@ -257,8 +219,6 @@ export const loginFn = createServerFn({ method: "POST" })
 				},
 			};
 		} catch (error) {
-			console.error("Login error:", error);
-
 			if (error instanceof ZodError) {
 				const validationErrors: Record<string, string> = {};
 				for (const issue of error.issues) {
@@ -288,8 +248,7 @@ export const logoutFn = createServerFn({ method: "POST" }).handler(
 		try {
 			clearSessionCookie();
 			return { success: true };
-		} catch (error) {
-			console.error("Logout error:", error);
+		} catch {
 			return { success: false };
 		}
 	},

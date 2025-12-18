@@ -15,6 +15,12 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  build: {
+    sourcemap: true,
+  },
+  server: {
+    sourcemap: true,
+  },
 })
 
 export default config

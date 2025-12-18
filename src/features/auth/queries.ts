@@ -9,54 +9,59 @@ import {
 } from "./server";
 import type { RegisterInput, LoginInput, AuthResponse } from "./types";
 
+function handleAuthError(error: unknown): AuthResponse {
+	if (error instanceof ZodError) {
+		const validationErrors: Record<string, string> = {};
+		for (const issue of error.issues) {
+			const key = issue.path?.length ? String(issue.path[0]) : "form";
+			if (!validationErrors[key]) validationErrors[key] = issue.message;
+		}
+		return {
+			success: false,
+			error: "Validation failed",
+			errors: validationErrors,
+		};
+	}
+
+	if (error instanceof Error) {
+		try {
+			const parsed = JSON.parse(error.message);
+			if (Array.isArray(parsed)) {
+				const validationErrors: Record<string, string> = {};
+				for (const issue of parsed) {
+					const key = issue.path?.length ? String(issue.path[0]) : "form";
+					if (!validationErrors[key]) validationErrors[key] = issue.message;
+				}
+				return {
+					success: false,
+					error: "Validation failed",
+					errors: validationErrors,
+				};
+			}
+		} catch {
+			// ignore parse errors
+		}
+		return {
+			success: false,
+			error: error.message,
+		};
+	}
+
+	return {
+		success: false,
+		error: String(error),
+	};
+}
+
 export function useRegisterMutation() {
 	const registerMutationFn = useServerFn(registerFn);
 
 	return useMutation({
 		mutationFn: async (data: RegisterInput): Promise<AuthResponse> => {
 			try {
-				const result = await registerMutationFn({ data });
-				return result;
+				return await registerMutationFn({ data });
 			} catch (error) {
-				if (error instanceof ZodError) {
-					const validationErrors: Record<string, string> = {};
-					for (const issue of error.issues) {
-						const key = issue.path?.length ? String(issue.path[0]) : "form";
-						if (!validationErrors[key]) validationErrors[key] = issue.message;
-					}
-
-					return {
-						success: false,
-						error: "Validation failed",
-						errors: validationErrors,
-					};
-				}
-
-				if (error instanceof Error) {
-					try {
-						const parsed = JSON.parse(error.message);
-						if (Array.isArray(parsed)) {
-							const validationErrors: Record<string, string> = {};
-							for (const issue of parsed) {
-								const key = issue.path?.length ? String(issue.path[0]) : "form";
-								if (!validationErrors[key])
-									validationErrors[key] = issue.message;
-							}
-							return {
-								success: false,
-								error: "Validation failed",
-								errors: validationErrors,
-							};
-						}
-					} catch {
-						// ignore parse errors
-					}
-				}
-
-				return {
-					success: false,
-					error: error instanceof Error ? error.message : String(error),
-				};
+				return handleAuthError(error);
 			}
 		},
 	});
@@ -118,48 +123,9 @@ export function useLoginMutation() {
 	return useMutation({
 		mutationFn: async (data: LoginInput): Promise<AuthResponse> => {
 			try {
-				const result = await loginMutationFn({ data });
-				return result;
+				return await loginMutationFn({ data });
 			} catch (error) {
-				if (error instanceof ZodError) {
-					const validationErrors: Record<string, string> = {};
-					for (const issue of error.issues) {
-						const key = issue.path?.length ? String(issue.path[0]) : "form";
-						if (!validationErrors[key]) validationErrors[key] = issue.message;
-					}
-
-					return {
-						success: false,
-						error: "Validation failed",
-						errors: validationErrors,
-					};
-				}
-
-				if (error instanceof Error) {
-					try {
-						const parsed = JSON.parse(error.message);
-						if (Array.isArray(parsed)) {
-							const validationErrors: Record<string, string> = {};
-							for (const issue of parsed) {
-								const key = issue.path?.length ? String(issue.path[0]) : "form";
-								if (!validationErrors[key])
-									validationErrors[key] = issue.message;
-							}
-							return {
-								success: false,
-								error: "Validation failed",
-								errors: validationErrors,
-							};
-						}
-					} catch {
-						// ignore
-					}
-				}
-
-				return {
-					success: false,
-					error: error instanceof Error ? error.message : String(error),
-				};
+				return handleAuthError(error);
 			}
 		},
 	});

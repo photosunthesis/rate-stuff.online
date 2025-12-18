@@ -48,8 +48,8 @@ function RouteComponent() {
 		setHasSubmitted(true);
 		try {
 			await login(formData);
-		} catch (error) {
-			console.error("Login error:", error);
+		} catch {
+			// ignore
 		}
 	};
 

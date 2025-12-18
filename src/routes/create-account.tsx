@@ -63,8 +63,8 @@ function RouteComponent() {
 		setHasSubmitted(true);
 		try {
 			await register(formData);
-		} catch (error) {
-			console.error("Registration error:", error);
+		} catch {
+			// ignore
 		}
 	};
 

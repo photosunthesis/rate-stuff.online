@@ -19,22 +19,21 @@ export function useRegister(): UseRegisterReturn {
 
 	useEffect(() => {
 		const err = mutation.error;
-		if (err instanceof Error) {
-			const msg = err.message?.trim();
-			if (msg && (msg.startsWith("[") || msg.startsWith("{"))) {
-				try {
-					const parsed = JSON.parse(msg);
-					if (Array.isArray(parsed)) {
-						const map: ValidationErrors = {};
-						for (const issue of parsed) {
-							const key = issue.path?.length ? String(issue.path[0]) : "form";
-							if (!map[key]) map[key] = issue.message;
-						}
-						setValidationErrors(map);
-					}
-				} catch {}
+		if (!(err instanceof Error)) return;
+		const msg = err.message?.trim();
+		if (!msg || (!msg.startsWith("[") && !msg.startsWith("{"))) return;
+
+		try {
+			const parsed = JSON.parse(msg);
+			if (Array.isArray(parsed)) {
+				const map: ValidationErrors = {};
+				for (const issue of parsed) {
+					const key = issue.path?.length ? String(issue.path[0]) : "form";
+					if (!map[key]) map[key] = issue.message;
+				}
+				setValidationErrors(map);
 			}
-		}
+		} catch {}
 	}, [mutation.error]);
 
 	const register = async (data: RegisterInput) => {
@@ -84,30 +83,33 @@ export function useLogin(): UseLoginReturn {
 	const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
 		{},
 	);
+	const [responseError, setResponseError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const err = mutation.error;
-		if (err instanceof Error) {
-			const msg = err.message?.trim();
-			if (msg && (msg.startsWith("[") || msg.startsWith("{"))) {
-				try {
-					const parsed = JSON.parse(msg);
-					if (Array.isArray(parsed)) {
-						const map: ValidationErrors = {};
-						for (const issue of parsed) {
-							const key = issue.path?.length ? String(issue.path[0]) : "form";
-							if (!map[key]) map[key] = issue.message;
-						}
-						setValidationErrors(map);
-					}
-				} catch {}
+		if (!(err instanceof Error)) return;
+		const msg = err.message?.trim();
+		if (!msg || (!msg.startsWith("[") && !msg.startsWith("{"))) return;
+
+		try {
+			const parsed = JSON.parse(msg);
+			if (Array.isArray(parsed)) {
+				const map: ValidationErrors = {};
+				for (const issue of parsed) {
+					const key = issue.path?.length ? String(issue.path[0]) : "form";
+					if (!map[key]) map[key] = issue.message;
+				}
+				setValidationErrors(map);
 			}
-		}
+		} catch {}
 	}, [mutation.error]);
 
 	const login = async (data: LoginInput) => {
 		setValidationErrors({});
-		let result: { success?: boolean; errors?: ValidationErrors } | undefined;
+		setResponseError(null);
+		let result:
+			| { success?: boolean; error?: string; errors?: ValidationErrors }
+			| undefined;
 		try {
 			result = await mutation.mutateAsync(data);
 		} catch {
@@ -116,6 +118,9 @@ export function useLogin(): UseLoginReturn {
 		}
 
 		if (!result?.success) {
+			if (result.error) {
+				setResponseError(result.error);
+			}
 			if (result.errors && Object.keys(result.errors).length > 0) {
 				setValidationErrors(result.errors as ValidationErrors);
 			}
@@ -128,9 +133,11 @@ export function useLogin(): UseLoginReturn {
 		isError:
 			mutation.isError ||
 			(!!mutation.error && Object.keys(validationErrors).length === 0) ||
-			Object.keys(validationErrors).length > 0,
+			Object.keys(validationErrors).length > 0 ||
+			!!responseError,
 		errorMessage:
-			mutation.error instanceof Error ? mutation.error.message : null,
+			responseError ||
+			(mutation.error instanceof Error ? mutation.error.message : null),
 		validationErrors,
 		reset: () => {
 			mutation.reset();

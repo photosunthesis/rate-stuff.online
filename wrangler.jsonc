@@ -13,11 +13,5 @@
 			"database_id": "92543cbe-96e9-4c4e-805c-18923983c5dc",
 			"migrations_dir": "drizzle"
 		}
-	],
-	"kv_namespaces": [
-		{
-			"binding": "RATE_LIMITS",
-			"id": "86d1ec4f476e4105bd8bc6fd3545b6e4"
-		}
 	]
 }
