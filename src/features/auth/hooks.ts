@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
 import { useRegisterMutation, useLoginMutation } from "./queries";
-import type { RegisterInput, LoginInput, ValidationErrors } from "./types";
-
-export interface UseRegisterReturn {
-	register: (data: RegisterInput) => Promise<void>;
-	isPending: boolean;
-	isError: boolean;
-	errorMessage: string | null;
-	validationErrors: ValidationErrors;
-	reset: () => void;
-}
+import type {
+	RegisterInput,
+	LoginInput,
+	ValidationErrors,
+	UseRegisterReturn,
+} from "./types";
 
 export function useRegister(): UseRegisterReturn {
 	const mutation = useRegisterMutation();

@@ -8,8 +8,6 @@ import {
 	isAuthenticatedFn,
 	logoutFn,
 } from "./server";
-
-export { registerFn, getCurrentUserFn, loginFn, isAuthenticatedFn, logoutFn };
 import type { RegisterInput, LoginInput, AuthResponse } from "./types";
 
 function handleAuthError(error: unknown): AuthResponse {

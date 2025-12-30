@@ -51,17 +51,10 @@ export interface User {
 	updatedAt: Date;
 }
 
-/**
- * Represents validation errors for individual fields
- */
 export interface ValidationErrors {
 	[field: string]: string;
 }
 
-/**
- * Auth response from server
- * Always returns either success or failure with appropriate error details
- */
 export interface AuthResponse {
 	success: boolean;
 	user?: User;
@@ -69,10 +62,6 @@ export interface AuthResponse {
 	errors?: ValidationErrors; // Field-level errors
 }
 
-/**
- * Custom error class for auth operations
- * Safely wraps AuthResponse errors
- */
 export class AuthError extends Error {
 	constructor(
 		message: string,
@@ -89,4 +78,13 @@ export class AuthError extends Error {
 			response.errors || {},
 		);
 	}
+}
+
+export interface UseRegisterReturn {
+	register: (data: RegisterInput) => Promise<void>;
+	isPending: boolean;
+	isError: boolean;
+	errorMessage: string | null;
+	validationErrors: ValidationErrors;
+	reset: () => void;
 }
