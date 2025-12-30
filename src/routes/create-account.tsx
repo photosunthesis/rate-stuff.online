@@ -3,6 +3,8 @@ import { useState, useId, useEffect } from "react";
 import AppLogo from "./_components/app-logo";
 import { useRegister } from "~/features/auth/hooks";
 import type { RegisterInput } from "~/features/auth/types";
+import { registerBaseSchema } from "~/features/auth/types";
+import { useForm } from "@tanstack/react-form";
 
 export const Route = createFileRoute("/create-account")({
 	component: RouteComponent,
@@ -40,33 +42,22 @@ function RouteComponent() {
 		useRegister();
 	const idPrefix = useId();
 
-	const [formData, setFormData] = useState<RegisterInput>({
-		inviteCode: "",
-		username: "",
-		displayName: "",
-		email: "",
-		password: "",
-		confirmPassword: "",
-	});
 	const [hasSubmitted, setHasSubmitted] = useState(false);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		setHasSubmitted(true);
-		try {
-			await register(formData);
-		} catch {
-			// ignore
-		}
-	};
+	const form = useForm({
+		defaultValues: {
+			inviteCode: "",
+			username: "",
+			displayName: "",
+			email: "",
+			password: "",
+			confirmPassword: "",
+		} as RegisterInput,
+		onSubmit: async ({ value }) => {
+			setHasSubmitted(true);
+			await register(value);
+		},
+	});
 
 	useEffect(() => {
 		if (
@@ -96,274 +87,435 @@ function RouteComponent() {
 				</div>
 
 				{/* Global Error */}
-				{isError && errorMessage && (
-					<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-xl text-red-200 text-sm">
-						{errorMessage}
-					</div>
-				)}
+				{isError &&
+					errorMessage &&
+					Object.keys(validationErrors).length === 0 && (
+						<div className="mb-4 p-3 bg-red-950 border border-red-900 rounded-xl text-red-200 text-sm">
+							{errorMessage}
+						</div>
+					)}
 
 				{/* Form */}
-				<form onSubmit={handleSubmit} className="space-y-4" noValidate>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						form.handleSubmit();
+					}}
+					className="space-y-4"
+					noValidate
+				>
 					{/* Invite Code */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-inviteCode`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Invite Code
-						</label>
-						<input
-							type="text"
-							id={`${idPrefix}-inviteCode`}
-							name="inviteCode"
-							value={formData.inviteCode}
-							onChange={handleChange}
-							placeholder="e.g., NUS420"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.inviteCode
-									? "border-red-400"
-									: "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.inviteCode
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.inviteCode}
-							aria-describedby={
-								validationErrors.inviteCode
-									? `${idPrefix}-inviteCode-error`
-									: undefined
-							}
-							required
-						/>
-						{validationErrors.inviteCode && (
-							<p
-								id={`${idPrefix}-inviteCode-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.inviteCode}
-							</p>
+					<form.Field
+						name="inviteCode"
+						validators={{
+							onChange: ({ value }) => {
+								const result =
+									registerBaseSchema.shape.inviteCode.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Invite Code
+								</label>
+								<input
+									type="text"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="e.g., NUS420"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.inviteCode
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.inviteCode
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.inviteCode
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 ||
+										validationErrors.inviteCode
+											? `${idPrefix}-inviteCode-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.inviteCode) && (
+									<p
+										id={`${idPrefix}-inviteCode-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.inviteCode}
+									</p>
+								)}
+								<p className="text-neutral-500 text-xs mt-2">
+									We're invite-only for now while we build this platform out.
+									Thank you for your interest!
+								</p>
+							</div>
 						)}
-						<p className="text-neutral-500 text-xs mt-2">
-							We're invite-only for now while we build this platform out. Thank
-							you for your interest!
-						</p>
-					</div>
+					</form.Field>
 
 					{/* Username */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-username`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Username
-						</label>
-						<input
-							type="text"
-							id={`${idPrefix}-username`}
-							name="username"
-							value={formData.username}
-							onChange={handleChange}
-							placeholder="coolusername123"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.username
-									? "border-red-400"
-									: "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.username
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.username}
-							aria-describedby={
-								validationErrors.username
-									? `${idPrefix}-username-error`
-									: undefined
-							}
-							required
-						/>
-						{validationErrors.username && (
-							<p
-								id={`${idPrefix}-username-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.username}
-							</p>
+					<form.Field
+						name="username"
+						validators={{
+							onChange: ({ value }) => {
+								const result =
+									registerBaseSchema.shape.username.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Username
+								</label>
+								<input
+									type="text"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="coolusername123"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.username
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.username
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.username
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 ||
+										validationErrors.username
+											? `${idPrefix}-username-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.username) && (
+									<p
+										id={`${idPrefix}-username-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.username}
+									</p>
+								)}
+							</div>
 						)}
-					</div>
+					</form.Field>
 
 					{/* Display Name */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-displayName`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Display Name
-						</label>
-						<input
-							type="text"
-							id={`${idPrefix}-displayName`}
-							name="displayName"
-							value={formData.displayName}
-							onChange={handleChange}
-							placeholder="Your Pretty Name"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.displayName
-									? "border-red-400"
-									: "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.displayName
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.displayName}
-							aria-describedby={
-								validationErrors.displayName
-									? `${idPrefix}-displayName-error`
-									: undefined
-							}
-							required
-						/>
-						{validationErrors.displayName && (
-							<p
-								id={`${idPrefix}-displayName-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.displayName}
-							</p>
+					<form.Field
+						name="displayName"
+						validators={{
+							onChange: ({ value }) => {
+								const result =
+									registerBaseSchema.shape.displayName.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Display Name
+								</label>
+								<input
+									type="text"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="Your Pretty Name"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.displayName
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.displayName
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.displayName
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 ||
+										validationErrors.displayName
+											? `${idPrefix}-displayName-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.displayName) && (
+									<p
+										id={`${idPrefix}-displayName-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.displayName}
+									</p>
+								)}
+							</div>
 						)}
-					</div>
+					</form.Field>
 
 					{/* Email */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-email`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Email
-						</label>
-						<input
-							type="email"
-							id={`${idPrefix}-email`}
-							name="email"
-							value={formData.email}
-							onChange={handleChange}
-							placeholder="your@email.com"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.email ? "border-red-400" : "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.email
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.email}
-							aria-describedby={
-								validationErrors.email ? `${idPrefix}-email-error` : undefined
-							}
-							required
-						/>
-						{validationErrors.email && (
-							<p
-								id={`${idPrefix}-email-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.email}
-							</p>
+					<form.Field
+						name="email"
+						validators={{
+							onChange: ({ value }) => {
+								const result = registerBaseSchema.shape.email.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Email
+								</label>
+								<input
+									type="email"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="your@email.com"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 || validationErrors.email
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 || validationErrors.email
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.email
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 || validationErrors.email
+											? `${idPrefix}-email-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.email) && (
+									<p
+										id={`${idPrefix}-email-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.email}
+									</p>
+								)}
+							</div>
 						)}
-					</div>
+					</form.Field>
 
 					{/* Password */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-password`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Password
-						</label>
-						<input
-							type="password"
-							id={`${idPrefix}-password`}
-							name="password"
-							value={formData.password}
-							onChange={handleChange}
-							placeholder="Secret password"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.password
-									? "border-red-400"
-									: "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.password
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.password}
-							aria-describedby={
-								validationErrors.password
-									? `${idPrefix}-password-error`
-									: undefined
-							}
-							required
-						/>
-						{validationErrors.password && (
-							<p
-								id={`${idPrefix}-password-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.password}
-							</p>
+					<form.Field
+						name="password"
+						validators={{
+							onChange: ({ value }) => {
+								const result =
+									registerBaseSchema.shape.password.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Password
+								</label>
+								<input
+									type="password"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="Secret password"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.password
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.password
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.password
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 ||
+										validationErrors.password
+											? `${idPrefix}-password-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.password) && (
+									<p
+										id={`${idPrefix}-password-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.password}
+									</p>
+								)}
+							</div>
 						)}
-					</div>
+					</form.Field>
 
 					{/* Confirm Password */}
-					<div>
-						<label
-							htmlFor={`${idPrefix}-confirmPassword`}
-							className="block text-sm font-medium text-neutral-300 mb-2"
-						>
-							Confirm Password
-						</label>
-						<input
-							type="password"
-							id={`${idPrefix}-confirmPassword`}
-							name="confirmPassword"
-							value={formData.confirmPassword}
-							onChange={handleChange}
-							placeholder="Confirm password"
-							className={`w-full px-4 py-2 bg-neutral-900 border ${
-								validationErrors.confirmPassword
-									? "border-red-400"
-									: "border-neutral-800"
-							} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
-								validationErrors.confirmPassword
-									? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
-									: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
-							} transition-colors`}
-							aria-invalid={!!validationErrors.confirmPassword}
-							aria-describedby={
-								validationErrors.confirmPassword
-									? `${idPrefix}-confirmPassword-error`
-									: undefined
-							}
-							required
-						/>
-						{validationErrors.confirmPassword && (
-							<p
-								id={`${idPrefix}-confirmPassword-error`}
-								className="text-red-400 text-sm mt-2"
-							>
-								{validationErrors.confirmPassword}
-							</p>
+					<form.Field
+						name="confirmPassword"
+						validators={{
+							onChange: ({ value, fieldApi }) => {
+								if (value !== fieldApi.form.getFieldValue("password")) {
+									return "Passwords do not match";
+								}
+								return undefined;
+							},
+						}}
+					>
+						{(field) => (
+							<div>
+								<label
+									htmlFor={field.name}
+									className="block text-sm font-medium text-neutral-300 mb-2"
+								>
+									Confirm Password
+								</label>
+								<input
+									type="password"
+									id={field.name}
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="Confirm password"
+									className={`w-full px-4 py-2 bg-neutral-900 border ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.confirmPassword
+											? "border-red-400"
+											: "border-neutral-800"
+									} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+										field.state.meta.errors.length > 0 ||
+										validationErrors.confirmPassword
+											? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
+											: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+									} transition-colors`}
+									aria-invalid={
+										field.state.meta.errors.length > 0 ||
+										!!validationErrors.confirmPassword
+									}
+									aria-describedby={
+										field.state.meta.errors.length > 0 ||
+										validationErrors.confirmPassword
+											? `${idPrefix}-confirmPassword-error`
+											: undefined
+									}
+									required
+								/>
+								{(field.state.meta.errors.length > 0 ||
+									validationErrors.confirmPassword) && (
+									<p
+										id={`${idPrefix}-confirmPassword-error`}
+										className="text-red-400 text-sm mt-2"
+									>
+										{field.state.meta.errors[0]?.toString() ||
+											validationErrors.confirmPassword}
+									</p>
+								)}
+							</div>
 						)}
-					</div>
+					</form.Field>
 
 					{/* Submit Button */}
-					<button
-						type="submit"
-						disabled={isPending}
-						className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950"
+					<form.Subscribe
+						selector={(state) => [state.canSubmit, state.isSubmitting]}
 					>
-						{isPending ? "Creating Account..." : "Create Account"}
-					</button>
+						{([canSubmit, isSubmitting]) => (
+							<button
+								type="submit"
+								disabled={!canSubmit || isPending || isSubmitting}
+								className="w-full mt-6 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-neutral-950 cursor-pointer"
+							>
+								{isPending || isSubmitting
+									? "Creating Account..."
+									: "Create Account"}
+							</button>
+						)}
+					</form.Subscribe>
 				</form>
 
 				{/* Footer */}
