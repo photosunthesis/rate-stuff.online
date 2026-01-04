@@ -1,18 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MainFeed } from "./_layout/main-feed";
-import { LeftSidebar } from "./_layout/left-sidebar";
-import { RightSidebar } from "./_layout/right-sidebar";
-import { MobileHeader } from "./_layout/mobile-header";
+import { MainFeed } from "~/components/layout/main-feed";
+import { LeftSidebar } from "~/components/layout/left-sidebar";
+import { RightSidebar } from "~/components/layout/right-sidebar";
+import { MobileHeader } from "~/components/layout/mobile-header";
 import { mockReviews } from "~/data/mock-reviews";
-import { useIsAuthenticated, isAuthenticatedFn } from "~/features/auth/queries";
+import {
+	useIsAuthenticated,
+	isAuthenticatedQueryOptions,
+} from "~/features/auth/queries";
 
 export const Route = createFileRoute("/")({
 	component: App,
 	loader: async ({ context }) => {
-		await context.queryClient.fetchQuery({
-			queryKey: ["isAuthenticated"],
-			queryFn: () => isAuthenticatedFn(),
-		});
+		await context.queryClient.ensureQueryData(isAuthenticatedQueryOptions());
 	},
 	head: () => ({
 		meta: [

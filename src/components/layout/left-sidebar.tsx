@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import AppLogo from "../_components/app-logo";
+import AppLogo from "~/components/app-logo";
 import { useIsAuthenticated, useLogoutMutation } from "~/features/auth/queries";
 import { Home, Star, Bell, Settings, LogOut } from "lucide-react";
 

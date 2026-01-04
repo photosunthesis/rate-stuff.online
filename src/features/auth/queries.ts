@@ -1,5 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ZodError } from "zod";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	queryOptions,
+} from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
 	registerFn,
@@ -7,73 +11,29 @@ import {
 	loginFn,
 	isAuthenticatedFn,
 	logoutFn,
-} from "./server";
-import type { RegisterInput, LoginInput, AuthResponse } from "./types";
+} from "./api";
+import type { RegisterInput, LoginInput } from "./types";
 
-function handleAuthError(error: unknown): AuthResponse {
-	if (error instanceof ZodError) {
-		const validationErrors: Record<string, string> = {};
-		for (const issue of error.issues) {
-			const key = issue.path?.length ? String(issue.path[0]) : "form";
-			if (!validationErrors[key]) validationErrors[key] = issue.message;
-		}
-		return {
-			success: false,
-			error: "Validation failed",
-			errors: validationErrors,
-		};
-	}
-
-	if (error instanceof Error) {
-		try {
-			const parsed = JSON.parse(error.message);
-			if (Array.isArray(parsed)) {
-				const validationErrors: Record<string, string> = {};
-				for (const issue of parsed) {
-					const key = issue.path?.length ? String(issue.path[0]) : "form";
-					if (!validationErrors[key]) validationErrors[key] = issue.message;
-				}
-				return {
-					success: false,
-					error: "Validation failed",
-					errors: validationErrors,
-				};
-			}
-		} catch {
-			// ignore parse errors
-		}
-		return {
-			success: false,
-			error: error.message,
-		};
-	}
-
-	return {
-		success: false,
-		error: String(error),
-	};
-}
+export const isAuthenticatedQueryOptions = () =>
+	queryOptions({
+		queryKey: ["isAuthenticated"],
+		queryFn: () => isAuthenticatedFn(),
+		staleTime: 1000 * 60 * 5,
+		gcTime: 1000 * 60 * 10,
+	});
 
 export function useRegisterMutation() {
 	const registerMutationFn = useServerFn(registerFn);
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: RegisterInput): Promise<AuthResponse> => {
-			try {
-				return await registerMutationFn({ data });
-			} catch (error) {
-				return handleAuthError(error);
-			}
-		},
-		onSuccess: async (data) => {
+		mutationFn: (data: RegisterInput) => registerMutationFn({ data }),
+		onSuccess: (data) => {
 			if (data.success && data.user) {
 				queryClient.setQueryData(["isAuthenticated"], true);
 				queryClient.setQueryData(["currentUser"], data.user);
-				await Promise.all([
-					queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] }),
-					queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
-				]);
+				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
+				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 			}
 		},
 	});
@@ -94,14 +54,7 @@ export function useCurrentUserQuery() {
 }
 
 export function useIsAuthenticatedQuery() {
-	const isAuthenticated = useServerFn(isAuthenticatedFn);
-
-	return useQuery({
-		queryKey: ["isAuthenticated"],
-		queryFn: () => isAuthenticated(),
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		gcTime: 1000 * 60 * 10, // 10 minutes
-	});
+	return useQuery(isAuthenticatedQueryOptions());
 }
 
 export function useIsAuthenticated() {
@@ -131,21 +84,13 @@ export function useLoginMutation() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (data: LoginInput): Promise<AuthResponse> => {
-			try {
-				return await loginMutationFn({ data });
-			} catch (error) {
-				return handleAuthError(error);
-			}
-		},
-		onSuccess: async (data) => {
+		mutationFn: (data: LoginInput) => loginMutationFn({ data }),
+		onSuccess: (data) => {
 			if (data.success && data.user) {
 				queryClient.setQueryData(["isAuthenticated"], true);
 				queryClient.setQueryData(["currentUser"], data.user);
-				await Promise.all([
-					queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] }),
-					queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
-				]);
+				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
+				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 			}
 		},
 	});
@@ -156,17 +101,13 @@ export function useLogoutMutation() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async () => {
-			return await logoutMutationFn();
-		},
-		onSuccess: async (data) => {
+		mutationFn: () => logoutMutationFn(),
+		onSuccess: (data) => {
 			if (data.success) {
 				queryClient.setQueryData(["isAuthenticated"], false);
 				queryClient.setQueryData(["currentUser"], null);
-				await Promise.all([
-					queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] }),
-					queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
-				]);
+				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
+				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 			}
 		},
 	});

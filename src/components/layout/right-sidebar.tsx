@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Footer } from "./footer";
+import { Footer } from "~/components/layout/footer";
 
 const recentThings = [
 	{ id: "1", name: "The Moon", category: "Space" },

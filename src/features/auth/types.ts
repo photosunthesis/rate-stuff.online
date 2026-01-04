@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const registerBaseSchema = z.object({
+const registerBaseSchema = z.object({
 	inviteCode: z.string().min(1, "Invite code is required"),
 	username: z
 		.string()
@@ -32,59 +32,26 @@ export const registerSchema = registerBaseSchema.refine(
 	},
 );
 
-export type RegisterInput = z.infer<typeof registerSchema>;
-
 export const loginSchema = z.object({
 	identifier: z.string().min(1, "Email or username is required"),
 	password: z.string().min(1, "Password is required"),
 });
 
+export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 
-export interface User {
+export type User = {
 	id: string;
 	email: string;
-	username?: string;
-	displayName?: string;
+	username: string;
+	displayName: string;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
-}
+};
 
-export interface ValidationErrors {
-	[field: string]: string;
-}
+export type ValidationErrors = Record<string, string>;
 
-export interface AuthResponse {
-	success: boolean;
-	user?: User;
-	error?: string; // Global error message
-	errors?: ValidationErrors; // Field-level errors
-}
-
-export class AuthError extends Error {
-	constructor(
-		message: string,
-		public validationErrors: ValidationErrors = {},
-		public statusCode: number = 400,
-	) {
-		super(message);
-		this.name = "AuthError";
-	}
-
-	static fromResponse(response: AuthResponse): AuthError {
-		return new AuthError(
-			response.error || "Authentication failed",
-			response.errors || {},
-		);
-	}
-}
-
-export interface UseRegisterReturn {
-	register: (data: RegisterInput) => Promise<void>;
-	isPending: boolean;
-	isError: boolean;
-	errorMessage: string | null;
-	validationErrors: ValidationErrors;
-	reset: () => void;
-}
+export type AuthResponse =
+	| { success: true; user: User }
+	| { success: false; error?: string; errors?: ValidationErrors };
