@@ -11,7 +11,7 @@ import { authenticateUser, createUser, getUserById } from "./service";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
-} from "~/lib/middleware/rate-limit";
+} from "~/middlewares/rate-limit";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
