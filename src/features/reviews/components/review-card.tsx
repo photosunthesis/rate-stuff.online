@@ -1,5 +1,5 @@
-import type { Review } from "~/data/mock-reviews";
-import { getRatingEmoji, getTimeAgo } from "~/data/mock-reviews";
+import type { Review } from "~/features/reviews/mock-reviews";
+import { getRatingEmoji, getTimeAgo } from "~/features/reviews/mock-reviews";
 import { useState } from "react";
 
 interface ReviewCardProps {
