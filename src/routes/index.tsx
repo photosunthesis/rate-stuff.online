@@ -3,7 +3,7 @@ import { MainFeed } from "~/components/layout/main-feed";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
 import { MobileHeader } from "~/components/layout/mobile-header";
-import { mockReviews } from "~/data/mock-reviews";
+import { mockReviews } from "~/features/reviews/mock-reviews";
 import {
 	useIsAuthenticated,
 	isAuthenticatedQueryOptions,

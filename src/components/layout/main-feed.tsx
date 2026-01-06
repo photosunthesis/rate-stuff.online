@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { Review } from "~/data/mock-reviews";
+import type { Review } from "~/features/reviews/mock-reviews";
 import { ReviewCard } from "~/features/reviews/components/review-card";
 import { useIsAuthenticated } from "~/features/auth/queries";
 

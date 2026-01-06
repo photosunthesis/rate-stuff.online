@@ -88,7 +88,7 @@ export function LeftSidebar() {
 		<>
 			<aside className="w-64 px-4 py-6 hidden lg:flex flex-col sticky top-0 h-screen">
 				<div className="flex flex-col gap-2 mb-4">
-					<AppLogo size={40} />
+					<AppLogo size={30} />
 					{!isAuthenticated && (
 						<h1
 							className="text-xl font-semibold text-white"
