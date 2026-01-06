@@ -35,4 +35,12 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"editor.formatOnSave": true,
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.patterns": {
+		"package.json": "pnpm-lock.yaml,pnpm-workspace.yaml,.npmrc,.yarnrc",
+		"tsconfig.json": "tsconfig.*.json",
+		"vite.config.ts": "vite.config.*.ts",
+		"biome.json": ".biomeignore",
+		"wrangler.jsonc": "worker-configuration.d.ts",
+	}
 }
