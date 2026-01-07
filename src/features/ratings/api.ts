@@ -154,12 +154,12 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 
 			const serializedRatings = ratings.map((rating) => ({
 				...rating,
-				createdAt: new Date(`${rating.createdAt}Z`).toISOString(),
-				updatedAt: new Date(`${rating.updatedAt}Z`).toISOString(),
+				createdAt: rating.createdAt,
+				updatedAt: rating.updatedAt,
 				stuff: {
 					...rating.stuff,
-					createdAt: new Date(`${rating.stuff.createdAt}Z`).toISOString(),
-					updatedAt: new Date(`${rating.stuff.updatedAt}Z`).toISOString(),
+					createdAt: rating.stuff.createdAt,
+					updatedAt: rating.stuff.updatedAt,
 				},
 			}));
 
@@ -195,12 +195,12 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 
 			const serializedRatings = ratings.map((rating) => ({
 				...rating,
-				createdAt: new Date(`${rating.createdAt}Z`).toISOString(),
-				updatedAt: new Date(`${rating.updatedAt}Z`).toISOString(),
+				createdAt: rating.createdAt,
+				updatedAt: rating.updatedAt,
 				stuff: {
 					...rating.stuff,
-					createdAt: new Date(`${rating.stuff.createdAt}Z`).toISOString(),
-					updatedAt: new Date(`${rating.stuff.updatedAt}Z`).toISOString(),
+					createdAt: rating.stuff.createdAt,
+					updatedAt: rating.stuff.updatedAt,
 				},
 			}));
 

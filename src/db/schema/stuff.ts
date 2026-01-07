@@ -1,4 +1,4 @@
-import { sql, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
 
@@ -7,8 +7,12 @@ export const stuff = sqliteTable("stuff", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
-	createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-	updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+	createdAt: text("created_at")
+		.notNull()
+		.$defaultFn(() => new Date().toISOString()),
+	updatedAt: text("updated_at")
+		.notNull()
+		.$defaultFn(() => new Date().toISOString()),
 	deletedAt: text("deleted_at"),
 });
 

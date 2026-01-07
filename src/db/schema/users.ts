@@ -1,4 +1,4 @@
-import { sql, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
 
@@ -20,8 +20,12 @@ export const users = sqliteTable(
 		password: text("password").notNull(),
 		name: text("name"),
 		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
-		createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-		updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+		createdAt: text("created_at")
+			.notNull()
+			.$defaultFn(() => new Date().toISOString()),
+		updatedAt: text("updated_at")
+			.notNull()
+			.$defaultFn(() => new Date().toISOString()),
 	},
 	(table) => [uniqueIndex("email_idx").on(table.email)],
 );

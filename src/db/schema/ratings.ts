@@ -1,4 +1,4 @@
-import { sql, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { sqliteTable, text, real } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 import { stuff } from "./stuff";
@@ -18,8 +18,12 @@ export const ratings = sqliteTable("ratings", {
 	score: real("score").notNull(),
 	content: text("content").notNull(),
 	images: text("images"),
-	createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-	updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+	createdAt: text("created_at")
+		.notNull()
+		.$defaultFn(() => new Date().toISOString()),
+	updatedAt: text("updated_at")
+		.notNull()
+		.$defaultFn(() => new Date().toISOString()),
 	deletedAt: text("deleted_at"),
 });
 
