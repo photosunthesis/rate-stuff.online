@@ -5,13 +5,13 @@ import { useIsAuthenticated, useLogoutMutation } from "~/features/auth/queries";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
 
 const headers = [
-	"Rate the whole universe.",
+	"Rate literally anything.",
 	"Score everything, regret nothing.",
 	"Rate reality, one to ten.",
-	"Grade the cosmic soup.",
 	"Everything gets a score.",
-	"Your opinion, now numbered.",
 	"The world, out of ten.",
+	"Rate the whole universe.",
+	"Your opinion, now numbered.",
 ];
 
 export function LeftSidebar() {

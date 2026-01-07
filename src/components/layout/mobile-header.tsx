@@ -3,13 +3,13 @@ import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/app-logo";
 
 const headers = [
-	"Rate the whole universe.",
+	"Rate literally anything.",
 	"Score everything, regret nothing.",
 	"Rate reality, one to ten.",
-	"Grade the cosmic soup.",
 	"Everything gets a score.",
-	"Your opinion, now numbered.",
 	"The world, out of ten.",
+	"Rate the whole universe.",
+	"Your opinion, now numbered.",
 ];
 
 interface MobileHeaderProps {
