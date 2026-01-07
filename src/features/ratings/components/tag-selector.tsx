@@ -75,7 +75,7 @@ export function TagSelector({
 				</span>
 			</div>
 
-			<div className="flex flex-wrap gap-2 mb-2">
+			<div className="flex flex-wrap gap-2 mb-3">
 				{selectedTags.map((tag) => (
 					<span
 						key={tag}
