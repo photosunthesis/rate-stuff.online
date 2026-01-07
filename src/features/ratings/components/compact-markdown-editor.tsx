@@ -72,7 +72,7 @@ export function CompactMarkdownEditor({
 		editorProps: {
 			attributes: {
 				class:
-					"w-full px-4 py-3 bg-neutral-900 text-sm text-white focus:outline-none prose prose-invert prose-sm max-w-none min-h-[150px] [&_.tiptap.ProseMirror]:min-h-[150px] [&_.tiptap.ProseMirror]:outline-none resize-y",
+					"w-full px-4 py-3 bg-neutral-900 text-md text-white focus:outline-none prose prose-invert prose-sm max-w-none min-h-[150px] [&_.tiptap.ProseMirror]:min-h-[150px] [&_.tiptap.ProseMirror]:outline-none resize-y",
 			},
 		},
 		onUpdate: ({ editor }) => {

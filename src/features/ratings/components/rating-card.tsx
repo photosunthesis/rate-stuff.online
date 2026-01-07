@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 function getRatingEmoji(rating: number): string {
 	const roundedRating = Math.round(rating);
@@ -179,8 +181,18 @@ export function RatingCard({ rating }: RatingCardProps) {
 					<>
 						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
 							<ReactMarkdown
+								remarkPlugins={[remarkGfm]}
+								rehypePlugins={[rehypeRaw]}
 								components={{
 									p: ({ children }) => <span>{children}</span>,
+									em: ({ children }) => <em className="italic">{children}</em>,
+									strong: ({ children }) => (
+										<strong className="font-bold">{children}</strong>
+									),
+									del: ({ children }) => (
+										<del className="line-through">{children}</del>
+									),
+									u: ({ children }) => <u className="underline">{children}</u>,
 									a: ({ href, children }) => (
 										<a
 											href={href}
