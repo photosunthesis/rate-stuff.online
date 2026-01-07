@@ -77,8 +77,6 @@ export async function getFeedRatings(limit = 10, cursor?: string) {
 		},
 	});
 
-	console.log("Fetched feed ratings:", results);
-
 	return results;
 }
 
