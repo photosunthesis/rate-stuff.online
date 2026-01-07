@@ -47,9 +47,14 @@ export function CompactMarkdownEditor({
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
-				heading: {
-					levels: [1, 2, 3],
-				},
+				blockquote: false,
+				bulletList: false,
+				codeBlock: false,
+				code: false,
+				heading: false,
+				horizontalRule: false,
+				listItem: false,
+				orderedList: false,
 			}),
 			Link.configure({
 				openOnClick: false,

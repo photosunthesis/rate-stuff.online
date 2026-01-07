@@ -84,6 +84,40 @@ interface RatingCardProps {
 	rating: RatingWithRelations;
 }
 
+interface MarkdownContentProps {
+	content: string;
+}
+
+function MarkdownContent({ content }: MarkdownContentProps) {
+	return (
+		<ReactMarkdown
+			remarkPlugins={[remarkGfm]}
+			rehypePlugins={[rehypeRaw]}
+			components={{
+				p: ({ children }) => <span>{children}</span>,
+				em: ({ children }) => <em className="italic">{children}</em>,
+				strong: ({ children }) => (
+					<strong className="font-bold">{children}</strong>
+				),
+				del: ({ children }) => <del className="line-through">{children}</del>,
+				u: ({ children }) => <u className="underline">{children}</u>,
+				a: ({ href, children }) => (
+					<a
+						href={href}
+						className="text-emerald-400 underline hover:text-emerald-300"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{children}
+					</a>
+				),
+			}}
+		>
+			{content}
+		</ReactMarkdown>
+	);
+}
+
 export function RatingCard({ rating }: RatingCardProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
@@ -166,9 +200,11 @@ export function RatingCard({ rating }: RatingCardProps) {
 			<div className="ml-11 mb-3">
 				{shouldTruncate && !isExpanded ? (
 					<>
-						<p className="text-slate-200 text-sm leading-normal whitespace-pre-wrap wrap-break-word inline">
-							{plainText.slice(0, maxContentLength)}...
-						</p>
+						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
+							<MarkdownContent
+								content={`${plainText.slice(0, maxContentLength)}...`}
+							/>
+						</div>
 						<button
 							type="button"
 							onClick={() => setIsExpanded(true)}
@@ -180,33 +216,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 				) : (
 					<>
 						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
-							<ReactMarkdown
-								remarkPlugins={[remarkGfm]}
-								rehypePlugins={[rehypeRaw]}
-								components={{
-									p: ({ children }) => <span>{children}</span>,
-									em: ({ children }) => <em className="italic">{children}</em>,
-									strong: ({ children }) => (
-										<strong className="font-bold">{children}</strong>
-									),
-									del: ({ children }) => (
-										<del className="line-through">{children}</del>
-									),
-									u: ({ children }) => <u className="underline">{children}</u>,
-									a: ({ href, children }) => (
-										<a
-											href={href}
-											className="text-emerald-400 underline hover:text-emerald-300"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{children}
-										</a>
-									),
-								}}
-							>
-								{rating.content}
-							</ReactMarkdown>
+							<MarkdownContent content={rating.content} />
 						</div>
 						{shouldTruncate && (
 							<button
