@@ -29,7 +29,6 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 		if (isOpen) setIsClosing(false);
 	}, [isOpen]);
 
-	// Handle Escape key
 	useEffect(() => {
 		if (!isOpen) return;
 
@@ -45,7 +44,6 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 		};
 	}, [isOpen, handleClose]);
 
-	// Prevent body scroll when modal is open
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden";
@@ -55,15 +53,8 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 		}
 	}, [isOpen]);
 
-	const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-		// Only close if clicking directly on the backdrop, not the modal
-		// Also prevent closing if the event is from a file input or other interactive elements
-		if (
-			e.target === e.currentTarget &&
-			!(e.target as HTMLElement).closest("input[type='file']")
-		) {
-			handleClose();
-		}
+	const handleBackdropClick = () => {
+		handleClose();
 	};
 
 	const handleFormSuccess = () => {
@@ -99,7 +90,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			{/* Modal Container */}
 			<div
 				role="document"
-				className={`relative w-full max-h-[90vh] md:max-w-2xl md:max-h-[85vh] md:rounded-2xl bg-neutral-900 border border-neutral-800 rounded-t-3xl shadow-2xl z-10 overflow-hidden flex flex-col ${
+				className={`relative w-full h-screen md:h-auto md:max-w-2xl md:max-h-[85vh] md:rounded-2xl bg-neutral-900 md:border md:border-neutral-800 shadow-2xl z-10 overflow-hidden flex flex-col ${
 					isClosing
 						? "animate-zoom-out animate-fade-out"
 						: "animate-zoom-in animate-fade-in"
