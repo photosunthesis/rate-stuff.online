@@ -34,6 +34,7 @@ export function CreateRatingForm({
 	} | null>(null);
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const [selectedImages, setSelectedImages] = useState<File[]>([]);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const scrollableRef = useRef<HTMLDivElement>(null);
 
 	const form = useForm({
@@ -43,24 +44,32 @@ export function CreateRatingForm({
 			content: "",
 		},
 		onSubmit: async ({ value }) => {
-			const inputData = {
-				title: value.title,
-				score: Number(value.score),
-				content: value.content,
-				tags: selectedTags,
-				stuffId: selectedStuff?.id,
-				stuffName: selectedStuff?.id ? undefined : selectedStuff?.name,
-				images: selectedImages,
-			};
+			if (isSubmitting || isPending) return;
 
-			await onSubmit(inputData);
+			setIsSubmitting(true);
 
-			if (!error) {
-				form.reset();
-				setSelectedStuff(null);
-				setSelectedTags([]);
-				setSelectedImages([]);
-				onSuccess?.();
+			try {
+				const inputData = {
+					title: value.title,
+					score: Number(value.score),
+					content: value.content,
+					tags: selectedTags,
+					stuffId: selectedStuff?.id,
+					stuffName: selectedStuff?.id ? undefined : selectedStuff?.name,
+					images: selectedImages,
+				};
+
+				await onSubmit(inputData);
+
+				if (!error) {
+					form.reset();
+					setSelectedStuff(null);
+					setSelectedTags([]);
+					setSelectedImages([]);
+					onSuccess?.();
+				}
+			} finally {
+				setIsSubmitting(false);
 			}
 		},
 	});
@@ -223,10 +232,8 @@ export function CreateRatingForm({
 
 			{/* Sticky Button Section */}
 			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
-				<form.Subscribe
-					selector={(state) => [state.canSubmit, state.isSubmitting]}
-				>
-					{([canSubmit, isSubmitting]) => (
+				<form.Subscribe selector={(state) => [state.canSubmit]}>
+					{([canSubmit]) => (
 						<div className="flex justify-end gap-3">
 							<Button
 								type="button"
