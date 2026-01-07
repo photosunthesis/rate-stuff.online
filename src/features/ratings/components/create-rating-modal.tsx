@@ -1,6 +1,5 @@
 import { useEffect, useId, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
 import { CreateRatingForm } from "./create-rating-form";
 import { useCreateRating } from "../hooks";
 
@@ -100,7 +99,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			{/* Modal Container */}
 			<div
 				role="document"
-				className={`relative w-full max-h-[90vh] md:max-w-2xl md:max-h-[85vh] md:rounded-2xl bg-neutral-900 border border-neutral-800 rounded-t-3xl shadow-2xl z-10 overflow-y-auto md:overflow-visible flex flex-col ${
+				className={`relative w-full max-h-[90vh] md:max-w-2xl md:max-h-[85vh] md:rounded-2xl bg-neutral-900 border border-neutral-800 rounded-t-3xl shadow-2xl z-10 overflow-hidden flex flex-col ${
 					isClosing
 						? "animate-zoom-out animate-fade-out"
 						: "animate-zoom-in animate-fade-in"
@@ -113,29 +112,14 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 				}}
 			>
 				{/* Modal Content */}
-				<div className="relative px-6 pt-12 pb-6 md:pb-8 overflow-y-auto">
-					<button
-						type="button"
-						onClick={handleClose}
-						className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors shrink-0"
-						aria-label="Close modal"
-					>
-						<X className="w-5 h-5" />
-					</button>
-					<div className="mb-4">
-						<h2
-							id={`modal-title-${modalId}`}
-							className="text-2xl font-bold text-white"
-						>
-							Create Rating
-						</h2>
-					</div>
+				<div className="relative flex-1 flex flex-col min-h-0">
 					<CreateRatingForm
 						onSubmit={createRating}
 						isPending={isPending}
 						error={error}
 						validationErrors={validationErrors}
 						onSuccess={handleFormSuccess}
+						onCancel={handleClose}
 					/>
 				</div>
 			</div>
