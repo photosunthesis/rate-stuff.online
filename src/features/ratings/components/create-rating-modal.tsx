@@ -122,7 +122,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 					>
 						<X className="w-5 h-5" />
 					</button>
-					<div className="mb-6">
+					<div className="mb-4">
 						<h2
 							id={`modal-title-${modalId}`}
 							className="text-2xl font-bold text-white"

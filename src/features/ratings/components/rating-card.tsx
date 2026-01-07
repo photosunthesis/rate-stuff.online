@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { User } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 function getRatingEmoji(rating: number): string {
 	const roundedRating = Math.round(rating);
@@ -85,10 +86,8 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
 
-	// Create a plain text version for truncation check
-	const tempDiv = document.createElement("div");
-	tempDiv.innerHTML = rating.content;
-	const plainText = tempDiv.textContent || tempDiv.innerText || "";
+	// Use the markdown content directly for truncation check
+	const plainText = rating.content;
 
 	const shouldTruncate = plainText.length > maxContentLength;
 
@@ -178,10 +177,25 @@ export function RatingCard({ rating }: RatingCardProps) {
 					</>
 				) : (
 					<>
-						<div
-							className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline"
-							dangerouslySetInnerHTML={{ __html: rating.content }}
-						/>
+						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
+							<ReactMarkdown
+								components={{
+									p: ({ children }) => <span>{children}</span>,
+									a: ({ href, children }) => (
+										<a
+											href={href}
+											className="text-emerald-400 underline hover:text-emerald-300"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{children}
+										</a>
+									),
+								}}
+							>
+								{rating.content}
+							</ReactMarkdown>
+						</div>
 						{shouldTruncate && (
 							<button
 								type="button"
@@ -227,7 +241,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 						<a
 							key={tag}
 							href={`#${tag}`}
-							className="px-2.5 py-1 bg-neutral-800/50 hover:bg-neutral-700/50 border border-neutral-800 text-neutral-300 hover:text-white rounded-full text-xs font-medium transition-all"
+							className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-xs font-medium transition-all"
 						>
 							#{tag}
 						</a>

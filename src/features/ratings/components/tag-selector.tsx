@@ -75,17 +75,17 @@ export function TagSelector({
 				</span>
 			</div>
 
-			<div className="flex flex-wrap gap-2 mb-3">
+			<div className="flex flex-wrap gap-2 mb-2">
 				{selectedTags.map((tag) => (
 					<span
 						key={tag}
-						className="inline-flex items-center px-2.5 py-1 bg-neutral-800/50 border border-neutral-800 text-neutral-300 rounded-full text-sm font-medium"
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/50 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-colors rounded-md"
 					>
 						#{tag}
 						<button
 							type="button"
 							onClick={() => handleRemoveTag(tag)}
-							className="ml-1.5 p-0.5 hover:bg-neutral-700/50 rounded-full transition-colors"
+							className="ml-1 p-0.5 hover:bg-neutral-700/50 rounded-full transition-colors"
 						>
 							<X size={12} />
 							<span className="sr-only">Remove {tag}</span>

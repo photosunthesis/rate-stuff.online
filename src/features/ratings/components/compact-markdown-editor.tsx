@@ -1,16 +1,26 @@
 import { useId, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
 import Underline from "@tiptap/extension-underline";
+import { Markdown } from "tiptap-markdown";
 import {
 	Bold,
 	Italic,
 	Strikethrough,
 	Underline as UnderlineIcon,
 } from "lucide-react";
+
+interface EditorWithMarkdown extends Editor {
+	storage: Editor["storage"] & {
+		markdown: {
+			getMarkdown: () => string;
+		};
+	};
+}
 
 interface CompactMarkdownEditorProps {
 	label?: string;
@@ -50,6 +60,7 @@ export function CompactMarkdownEditor({
 				},
 			}),
 			Underline,
+			Markdown,
 			Placeholder.configure({
 				placeholder,
 			}),
@@ -65,14 +76,18 @@ export function CompactMarkdownEditor({
 			},
 		},
 		onUpdate: ({ editor }) => {
-			const html = editor.getHTML();
-			onChange?.(html);
+			const markdown = (
+				editor as EditorWithMarkdown
+			).storage.markdown.getMarkdown();
+			onChange?.(markdown);
 		},
 	});
 
-	// Update editor content when value changes externally
 	useEffect(() => {
-		if (editor && value !== editor.getHTML()) {
+		if (
+			editor &&
+			value !== (editor as EditorWithMarkdown).storage.markdown.getMarkdown()
+		) {
 			editor.commands.setContent(value);
 		}
 	}, [editor, value]);

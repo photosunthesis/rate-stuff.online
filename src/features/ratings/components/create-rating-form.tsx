@@ -64,9 +64,24 @@ export function CreateRatingForm({
 
 	const hasGlobalError = error && Object.keys(validationErrors).length === 0;
 
+	const getErrorMessage = (err: Error | null | undefined): string => {
+		if (!err) return "";
+		try {
+			const parsed = JSON.parse(err.message);
+			// Handle array of errors
+			if (Array.isArray(parsed)) {
+				return parsed[0]?.message || err.message;
+			}
+			// Handle object with message property
+			return parsed.message || err.message;
+		} catch {
+			return err.message;
+		}
+	};
+
 	return (
 		<>
-			{hasGlobalError && <FormError message={error.message} />}
+			{hasGlobalError && <FormError message={getErrorMessage(error)} />}
 
 			<form
 				onSubmit={(e) => {
