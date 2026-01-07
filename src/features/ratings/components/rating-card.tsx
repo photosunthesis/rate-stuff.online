@@ -1,0 +1,239 @@
+import { useState } from "react";
+import { User } from "lucide-react";
+
+function getRatingEmoji(rating: number): string {
+	const roundedRating = Math.round(rating);
+
+	if (roundedRating >= 10) return "🤩";
+	if (roundedRating >= 9) return "😍";
+	if (roundedRating >= 8) return "😄";
+	if (roundedRating >= 7) return "😊";
+	if (roundedRating >= 6) return "🙂";
+	if (roundedRating >= 5) return "😑";
+	if (roundedRating >= 4) return "😐";
+	if (roundedRating >= 3) return "😕";
+	if (roundedRating >= 2) return "😞";
+	return "😭";
+}
+
+function getTimeAgo(date: Date | string | number): string {
+	const now = new Date();
+
+	// Convert to Date object if needed
+	let dateObj: Date;
+	if (date instanceof Date) {
+		dateObj = date;
+	} else if (typeof date === "string" || typeof date === "number") {
+		dateObj = new Date(date);
+	} else {
+		return "Invalid Date";
+	}
+
+	// Check if date is valid
+	if (!dateObj || Number.isNaN(dateObj.getTime())) {
+		return "Invalid Date";
+	}
+
+	const seconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
+
+	if (seconds < 60) return "now";
+	const minutes = Math.floor(seconds / 60);
+	if (minutes < 60) return `${minutes}m`;
+	const hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours}h`;
+	const days = Math.floor(hours / 24);
+	if (days < 7) return `${days}d`;
+	const weeks = Math.floor(days / 7);
+	if (weeks < 4) return `${weeks}w`;
+
+	// If different year, show month and year
+	if (dateObj.getFullYear() !== now.getFullYear()) {
+		return dateObj.toLocaleDateString("en-US", {
+			month: "short",
+			year: "numeric",
+		});
+	}
+
+	return dateObj.toLocaleDateString();
+}
+
+interface RatingWithRelations {
+	id: string;
+	userId: string;
+	stuffId: string;
+	title: string;
+	score: number;
+	content: string;
+	images: string | null;
+	tags: string | null | string[] | { tag: { name: string } }[];
+	createdAt: string;
+	user: {
+		id: string;
+		name: string | null;
+	};
+	stuff: {
+		id: string;
+		name: string;
+	};
+}
+
+interface RatingCardProps {
+	rating: RatingWithRelations;
+}
+
+export function RatingCard({ rating }: RatingCardProps) {
+	const [isExpanded, setIsExpanded] = useState(false);
+	const maxContentLength = 256;
+
+	// Create a plain text version for truncation check
+	const tempDiv = document.createElement("div");
+	tempDiv.innerHTML = rating.content;
+	const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+	const shouldTruncate = plainText.length > maxContentLength;
+
+	const userName = rating.user.name || "User";
+
+	let parsedImages: string[] = [];
+	if (typeof rating.images === "string") {
+		try {
+			parsedImages = JSON.parse(rating.images);
+		} catch {
+			parsedImages = [];
+		}
+	} else if (Array.isArray(rating.images)) {
+		parsedImages = rating.images;
+	}
+
+	let parsedTags: string[] = [];
+	if (typeof rating.tags === "string") {
+		try {
+			parsedTags = JSON.parse(rating.tags);
+		} catch {
+			parsedTags = [];
+		}
+	} else if (Array.isArray(rating.tags)) {
+		if (
+			rating.tags.length > 0 &&
+			typeof rating.tags[0] === "object" &&
+			"tag" in rating.tags[0]
+		) {
+			parsedTags = (rating.tags as { tag: { name: string } }[]).map(
+				(t) => t.tag.name,
+			);
+		} else {
+			parsedTags = rating.tags as string[];
+		}
+	}
+
+	return (
+		<div className="border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer">
+			{/* Header */}
+			<div className="flex items-center gap-3 mb-2">
+				<div className="w-8 h-8 rounded-full bg-neutral-800 shrink-0 border border-neutral-700 flex items-center justify-center text-neutral-500">
+					<User className="w-4 h-4" />
+				</div>
+				<div className="flex-1 min-w-0">
+					<div className="flex items-center gap-1 flex-wrap text-sm">
+						<a
+							href={`/u/${rating.userId}`}
+							className="font-semibold text-white hover:underline"
+						>
+							{userName}
+						</a>
+						<span className="text-neutral-500">has rated</span>
+						<a
+							href={`/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
+							className="font-semibold text-white hover:underline"
+						>
+							{rating.stuff.name}
+						</a>
+						<span className="text-neutral-500">•</span>
+						<span className="text-neutral-500">
+							{getTimeAgo(rating.createdAt)}
+						</span>
+					</div>
+				</div>
+			</div>
+
+			{/* Rating and Title */}
+			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
+				{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+			</h3>
+
+			{/* Content */}
+			<div className="ml-11 mb-3">
+				{shouldTruncate && !isExpanded ? (
+					<>
+						<p className="text-slate-200 text-sm leading-normal whitespace-pre-wrap wrap-break-word inline">
+							{plainText.slice(0, maxContentLength)}...
+						</p>
+						<button
+							type="button"
+							onClick={() => setIsExpanded(true)}
+							className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+						>
+							See more
+						</button>
+					</>
+				) : (
+					<>
+						<div
+							className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline"
+							dangerouslySetInnerHTML={{ __html: rating.content }}
+						/>
+						{shouldTruncate && (
+							<button
+								type="button"
+								onClick={() => setIsExpanded(false)}
+								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+							>
+								See less
+							</button>
+						)}
+					</>
+				)}
+			</div>
+
+			{/* Images */}
+			{parsedImages && parsedImages.length > 0 && (
+				<div className="ml-11 mb-3">
+					{parsedImages.length === 1 ? (
+						<img
+							src={parsedImages[0]}
+							alt="Rating"
+							className="block aspect-video object-cover rounded-xl"
+						/>
+					) : (
+						<div className="flex gap-2">
+							{parsedImages.map((image) => (
+								<div key={image} className="flex-1 aspect-square">
+									<img
+										src={image}
+										alt="Rating"
+										className="w-full h-full object-cover rounded-xl"
+									/>
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+			)}
+
+			{/* Tags */}
+			{parsedTags && parsedTags.length > 0 && (
+				<div className="flex flex-wrap gap-2 mb-3 ml-11">
+					{parsedTags.map((tag: string) => (
+						<a
+							key={tag}
+							href={`#${tag}`}
+							className="px-2.5 py-1 bg-neutral-800/50 hover:bg-neutral-700/50 border border-neutral-800 text-neutral-300 hover:text-white rounded-full text-xs font-medium transition-all"
+						>
+							#{tag}
+						</a>
+					))}
+				</div>
+			)}
+		</div>
+	);
+}

@@ -22,6 +22,34 @@
       "when": 1766070970939,
       "tag": "0002_tense_dreaming_celestial",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1767680454560,
+      "tag": "0003_closed_fantastic_four",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1767685156609,
+      "tag": "0004_wealthy_ezekiel_stane",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1767698548093,
+      "tag": "0005_goofy_overlord",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1767792310418,
+      "tag": "0006_slimy_the_fury",
+      "breakpoints": true
     }
   ]
 }

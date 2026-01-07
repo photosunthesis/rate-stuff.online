@@ -11,7 +11,14 @@ interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
+export interface RootSearch {
+	redirect?: string;
+}
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	validateSearch: (search: Record<string, unknown>): RootSearch => ({
+		redirect: (search.redirect as string) ?? undefined,
+	}),
 	notFoundComponent: NotFound,
 	head: () => ({
 		meta: [
@@ -28,7 +35,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			},
 			{
 				name: "keywords",
-				content: "ratings, reviews, rate, reviews online, community ratings",
+				content: "ratings, reviews, rate, ratings online, community ratings",
 			},
 			{
 				name: "author",

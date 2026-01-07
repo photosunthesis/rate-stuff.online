@@ -46,6 +46,7 @@ export function MobileHeader({ isAuthenticated }: MobileHeaderProps) {
 					</Link>
 					<Link
 						to="/sign-in"
+						search={{ redirect: undefined }}
 						className="flex-1 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
 					>
 						Sign In

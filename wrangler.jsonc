@@ -1,6 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "rate-stuff-online",
+	"account_id": "9e3c2cc7f964e243adad719edb78462f",
 	"compatibility_date": "2025-09-02",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -8,7 +9,7 @@
 	"main": "@tanstack/react-start/server-entry",
 	"d1_databases": [
 		{
-			"binding": "rate_stuff_online",
+			"binding": "rate_stuff_online_db",
 			"database_name": "rate-stuff-online",
 			"database_id": "92543cbe-96e9-4c4e-805c-18923983c5dc",
 			"migrations_dir": "drizzle"
@@ -30,6 +31,12 @@
 				"limit": 10,
 				"period": 60
 			}
+		}
+	],
+	"r2_buckets": [
+		{
+			"bucket_name": "rate-stuff-online",
+			"binding": "rate_stuff_online_r2"
 		}
 	]
 }

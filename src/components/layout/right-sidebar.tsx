@@ -27,10 +27,10 @@ export function RightSidebar({
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recent Reviewed */}
+						{/* Recent Ratinged */}
 						<section>
 							<p className="text-md font-semibold text-white mb-2 px-1">
-								Recently Reviewed
+								Recently Ratinged
 							</p>
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
 								{recentThings.map((thing, i) => (

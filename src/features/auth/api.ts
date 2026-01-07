@@ -6,7 +6,7 @@ import {
 	type AuthResponse,
 	type User,
 } from "./types";
-import { setSessionCookie, getSession, clearSessionCookie } from "~/lib/auth";
+import { setSessionCookie, getSession, clearSessionCookie } from "~/utils/auth";
 import { authenticateUser, createUser, getUserById } from "./service";
 import {
 	createRateLimitMiddleware,

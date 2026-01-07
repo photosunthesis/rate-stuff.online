@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import AppLogo from "~/components/app-logo";
 import { useIsAuthenticated, useLogoutMutation } from "~/features/auth/queries";
-import { Home, Star, Bell, Settings, LogOut } from "lucide-react";
+import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
 
 const headers = [
 	"Rate the whole universe.",
@@ -109,6 +109,7 @@ export function LeftSidebar() {
 						</Link>
 						<Link
 							to="/sign-in"
+							search={{ redirect: undefined }}
 							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
 						>
 							Sign In
@@ -133,27 +134,27 @@ export function LeftSidebar() {
 									</>
 								)}
 							</Link>
-							<a
-								href="/"
+							<Link
+								to="/"
 								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
-								<Star className="w-5 h-5" fill="none" />
-								<span className="font-medium">Ratings</span>
-							</a>
-							<a
-								href="/"
+								<Compass className="w-5 h-5" fill="none" />
+								<span className="font-medium">Explore</span>
+							</Link>
+							<Link
+								to="/"
 								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
 								<Bell className="w-5 h-5" fill="none" />
 								<span className="font-medium">Activity</span>
-							</a>
-							<a
-								href="/"
+							</Link>
+							<Link
+								to="/"
 								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
 								<Settings className="w-5 h-5" fill="none" />
 								<span className="font-medium">Settings</span>
-							</a>
+							</Link>
 						</nav>
 
 						<div className="mt-auto">
@@ -212,27 +213,27 @@ export function LeftSidebar() {
 							</>
 						)}
 					</Link>
-					<a
-						href="/"
+					<Link
+						to="/"
 						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
 					>
-						<Star className="w-6 h-6" fill="none" />
-						<span className="text-[10px] font-medium">Ratings</span>
-					</a>
-					<a
-						href="/"
+						<Compass className="w-6 h-6" fill="none" />
+						<span className="text-[10px] font-medium">Explore</span>
+					</Link>
+					<Link
+						to="/"
 						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
 					>
 						<Bell className="w-6 h-6" fill="none" />
 						<span className="text-[10px] font-medium">Activity</span>
-					</a>
-					<a
-						href="/"
+					</Link>
+					<Link
+						to="/"
 						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
 					>
 						<Settings className="w-6 h-6" fill="none" />
 						<span className="text-[10px] font-medium">Settings</span>
-					</a>
+					</Link>
 				</nav>
 			)}
 		</>

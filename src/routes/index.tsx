@@ -3,7 +3,7 @@ import { MainFeed } from "~/components/layout/main-feed";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
 import { MobileHeader } from "~/components/layout/mobile-header";
-import { mockReviews } from "~/features/reviews/mock-reviews";
+import { CreateRatingSection } from "~/features/ratings/components/create-rating-section";
 import {
 	useIsAuthenticated,
 	isAuthenticatedQueryOptions,
@@ -56,8 +56,11 @@ function App() {
 				{/* Left Sidebar */}
 				<LeftSidebar />
 
-				{/* Main Feed */}
-				<MainFeed reviews={mockReviews} />
+				{/* Main Content */}
+				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0">
+					<CreateRatingSection />
+					<MainFeed />
+				</main>
 
 				{/* Right Sidebar */}
 				<RightSidebar isAuthenticated={isAuthenticated} />

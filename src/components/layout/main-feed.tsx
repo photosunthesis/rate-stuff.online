@@ -1,30 +1,68 @@
 import { Link } from "@tanstack/react-router";
-import type { Review } from "~/features/reviews/mock-reviews";
-import { ReviewCard } from "~/features/reviews/components/review-card";
+import { RatingCard } from "~/features/ratings/components/rating-card";
 import { useIsAuthenticated } from "~/features/auth/queries";
+import { useFeedRatings } from "~/features/ratings/queries";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
-interface MainFeedProps {
-	reviews: Review[];
-}
-
-export function MainFeed({ reviews }: MainFeedProps) {
+export function MainFeed() {
 	const { isAuthenticated } = useIsAuthenticated();
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		error,
+	} = useFeedRatings(10);
+	const { ref, inView } = useInView();
+
+	useEffect(() => {
+		if (inView && hasNextPage && isAuthenticated) {
+			fetchNextPage();
+		}
+	}, [inView, hasNextPage, isAuthenticated, fetchNextPage]);
+
+	const ratings =
+		data?.pages.flatMap((page) => (page.success ? page.data : [])) || [];
+
+	if (isLoading) {
+		return <div className="p-4 text-center text-neutral-500">Loading...</div>;
+	}
+
+	if (error) {
+		return (
+			<div className="p-4 text-center text-red-500">
+				Error loading ratings: {error.message}
+			</div>
+		);
+	}
 
 	return (
-		<main
-			className={`border-x border-neutral-800 w-full max-w-2xl ${isAuthenticated ? "pb-16 lg:pb-0" : ""}`}
-		>
+		<>
 			<div className="divide-y divide-neutral-800">
-				{reviews.map((review) => (
-					<ReviewCard key={review.id} review={review} />
+				{ratings.map((rating) => (
+					<RatingCard key={rating.id} rating={rating} />
 				))}
 			</div>
 
-			{!isAuthenticated && (
+			{isAuthenticated ? (
+				isFetchingNextPage ? (
+					<div className="p-4 text-center text-neutral-500">
+						Loading more...
+					</div>
+				) : hasNextPage ? (
+					<div ref={ref} className="h-4" />
+				) : (
+					<div className="p-4 text-center text-neutral-500">
+						That's all the ratings as of now.
+					</div>
+				)
+			) : (
 				<div className="border-t border-neutral-800 px-4 py-8 text-center">
 					<div className="mb-4">
 						<p className="text-neutral-400 text-sm">
-							To see more reviews, create an account or sign in.
+							To see more ratings, create an account or sign in.
 						</p>
 					</div>
 
@@ -37,6 +75,7 @@ export function MainFeed({ reviews }: MainFeedProps) {
 						</Link>
 						<Link
 							to="/sign-in"
+							search={{ redirect: undefined }}
 							className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
 						>
 							Sign In
@@ -44,6 +83,6 @@ export function MainFeed({ reviews }: MainFeedProps) {
 					</div>
 				</div>
 			)}
-		</main>
+		</>
 	);
 }

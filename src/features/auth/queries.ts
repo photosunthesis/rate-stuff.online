@@ -22,6 +22,14 @@ export const isAuthenticatedQueryOptions = () =>
 		gcTime: 1000 * 60 * 10,
 	});
 
+export const currentUserQueryOptions = () =>
+	queryOptions({
+		queryKey: ["currentUser"],
+		queryFn: () => getCurrentUserFn(),
+		staleTime: 0,
+		gcTime: 1000 * 60 * 60,
+	});
+
 export function useRegisterMutation() {
 	const registerMutationFn = useServerFn(registerFn);
 	const queryClient = useQueryClient();
@@ -40,17 +48,7 @@ export function useRegisterMutation() {
 }
 
 export function useCurrentUserQuery() {
-	const getCurrentUser = useServerFn(getCurrentUserFn);
-
-	return useQuery({
-		queryKey: ["currentUser"],
-		queryFn: async () => {
-			const user = await getCurrentUser();
-			return user;
-		},
-		staleTime: 1000 * 60 * 30, // 30 minutes
-		gcTime: 1000 * 60 * 60, // 1 hour (formerly cacheTime)
-	});
+	return useQuery(currentUserQueryOptions());
 }
 
 export function useIsAuthenticatedQuery() {
