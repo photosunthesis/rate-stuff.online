@@ -3,7 +3,7 @@ import { MainFeed } from "~/components/layout/main-feed";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
 import { MobileHeader } from "~/components/layout/mobile-header";
-import { CreateRatingSection } from "~/features/ratings/components/create-rating-section";
+import { CreateRatingSection } from "~/features/create-rating/components/create-rating-section";
 import {
 	useIsAuthenticated,
 	isAuthenticatedQueryOptions,

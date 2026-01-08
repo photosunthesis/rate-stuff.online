@@ -3,11 +3,14 @@ import { useState, useRef, useEffect } from "react";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
-import { createRatingSchema, type CreateRatingInput } from "../types";
-import { StuffSelector } from "./stuff-selector";
-import { TagSelector } from "./tag-selector";
-import { CompactMarkdownEditor } from "./compact-markdown-editor";
-import { ImageField } from "./image-field";
+import {
+	createRatingSchema,
+	type CreateRatingInput,
+} from "~/features/create-rating/types";
+import { StuffSelector } from "~/features/create-rating/components/stuff-selector";
+import { TagSelector } from "~/features/create-rating/components/tag-selector";
+import { CompactMarkdownEditor } from "~/features/create-rating/components/compact-markdown-editor";
+import { ImageField } from "~/features/create-rating/components/image-field";
 
 interface CreateRatingFormProps {
 	onSubmit: (
@@ -80,18 +83,15 @@ export function CreateRatingForm({
 		if (!err) return "";
 		try {
 			const parsed = JSON.parse(err.message);
-			// Handle array of errors
 			if (Array.isArray(parsed)) {
 				return parsed[0]?.message || err.message;
 			}
-			// Handle object with message property
 			return parsed.message || err.message;
 		} catch {
 			return err.message;
 		}
 	};
 
-	// Scroll to top when global error appears
 	useEffect(() => {
 		if (hasGlobalError && scrollableRef.current) {
 			scrollableRef.current.scrollTo({ top: 0, behavior: "smooth" });
@@ -108,7 +108,6 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
-			{/* Scrollable Form Content */}
 			<div className="flex-1 overflow-y-auto px-6 py-6" ref={scrollableRef}>
 				{hasGlobalError && (
 					<div className="mb-6">
@@ -230,7 +229,6 @@ export function CreateRatingForm({
 				</div>
 			</div>
 
-			{/* Sticky Button Section */}
 			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
 					{([canSubmit]) => (

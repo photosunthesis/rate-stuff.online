@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus } from "lucide-react";
-import { useStuffSearch } from "../hooks";
-import type { Stuff } from "../types";
+import { useStuffSearch } from "~/features/create-rating/hooks";
 
 interface StuffSelectorProps {
 	value?: { id?: string; name: string };
@@ -31,7 +30,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	const handleSelect = (stuff: Stuff) => {
+	const handleSelect = (stuff: { id?: string; name: string }) => {
 		onChange(stuff);
 		setSearchInput("");
 		setIsOpen(false);
@@ -54,7 +53,8 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 
 	const results = searchResults?.success ? searchResults.data : [];
 	const hasExactMatch = results.some(
-		(item) => item.name.toLowerCase() === searchInput.toLowerCase(),
+		(item: { id: string; name: string }) =>
+			item.name.toLowerCase() === searchInput.toLowerCase(),
 	);
 
 	if (value?.name) {
@@ -140,7 +140,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 						</div>
 					) : (
 						<>
-							{results.map((stuff) => (
+							{results.map((stuff: { id: string; name: string }) => (
 								<button
 									key={stuff.id}
 									type="button"

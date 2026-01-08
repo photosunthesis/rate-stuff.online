@@ -40,9 +40,11 @@ export function useCreateRating() {
 			const imageUrls: string[] = [];
 
 			if (input.images && input.images.length > 0) {
-				const uploadPromises = input.images.map((file) =>
-					uploadMutation.mutateAsync(file),
-				);
+				const uploadPromises: Promise<
+					| { success: true; data: { key: string; url: string } }
+					| { success: false; error: string }
+				>[] = input.images.map((file) => uploadMutation.mutateAsync(file));
+
 				const results = await Promise.all(uploadPromises);
 				const firstError = results.find((r) => !r.success);
 

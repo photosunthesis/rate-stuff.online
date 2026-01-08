@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { RatingCard } from "~/features/ratings/components/rating-card";
+import { RatingCard } from "~/features/display-ratings/components/rating-card";
 import { useIsAuthenticated } from "~/features/session/queries";
-import { useFeedRatings } from "~/features/ratings/queries";
+import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 

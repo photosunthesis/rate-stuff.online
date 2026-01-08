@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus, X } from "lucide-react";
-import { useTagSearch } from "../hooks";
+import { useTagSearch } from "~/features/create-rating/hooks";
 
 interface TagSelectorProps {
 	selectedTags: string[];
@@ -23,10 +23,11 @@ export function TagSelector({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const results = searchResults?.success ? searchResults.data : [];
 	const filteredResults = results.filter(
-		(tag) => !selectedTags.includes(tag.name),
+		(tag: { id: string; name: string }) => !selectedTags.includes(tag.name),
 	);
 	const hasExactMatch = results.some(
-		(item) => item.name.toLowerCase() === searchInput.toLowerCase(),
+		(item: { id: string; name: string }) =>
+			item.name.toLowerCase() === searchInput.toLowerCase(),
 	);
 
 	useEffect(() => {
@@ -146,7 +147,7 @@ export function TagSelector({
 							</div>
 						) : (
 							<>
-								{filteredResults.map((tag) => (
+								{filteredResults.map((tag: { id: string; name: string }) => (
 									<button
 										key={tag.id}
 										type="button"
@@ -158,7 +159,6 @@ export function TagSelector({
 									</button>
 								))}
 
-								{/* Always show option to create proper tag from input if it doesn't strictly exist or even if it does (for quick selection) */}
 								{!hasExactMatch && (
 									<button
 										type="button"
@@ -166,7 +166,7 @@ export function TagSelector({
 										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-400 border-t border-neutral-800"
 									>
 										<Plus size={14} />
-										<span>Create tag "#{searchInput}"</span>
+										<span>Create tag "{searchInput}"</span>
 									</button>
 								)}
 							</>

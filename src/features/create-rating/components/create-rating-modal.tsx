@@ -1,7 +1,8 @@
 import { useEffect, useId, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { CreateRatingForm } from "./create-rating-form";
-import { useCreateRating } from "../hooks";
+import { CreateRatingForm } from "~/features/create-rating/components/create-rating-form";
+import { useCreateRating } from "~/features/create-rating/hooks";
+import { X } from "lucide-react";
 
 interface CreateRatingModalProps {
 	isOpen: boolean;
@@ -80,14 +81,12 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 				}
 			}}
 		>
-			{/* Backdrop */}
 			<div
 				className={`absolute inset-0 bg-neutral-950/70 ${
 					isClosing ? "animate-backdrop-out" : "animate-backdrop-in"
 				}`}
 			/>
 
-			{/* Modal Container */}
 			<div
 				role="document"
 				className={`relative w-full h-screen md:h-auto md:max-w-2xl md:max-h-[85vh] md:rounded-2xl bg-neutral-900 md:border md:border-neutral-800 shadow-2xl z-10 overflow-hidden flex flex-col ${
@@ -102,7 +101,15 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 					e.stopPropagation();
 				}}
 			>
-				{/* Modal Content */}
+				<button
+					type="button"
+					onClick={handleClose}
+					aria-label="Close"
+					className="absolute top-3 right-3 z-20 p-2 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
+				>
+					<X size={18} />
+				</button>
+
 				<div className="relative flex-1 flex flex-col min-h-0">
 					<CreateRatingForm
 						onSubmit={createRating}

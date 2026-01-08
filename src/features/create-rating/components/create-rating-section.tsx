@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useIsAuthenticated } from "~/features/session/queries";
-import { CreateRatingModal } from "./create-rating-modal";
-import { CreateRatingTrigger } from "./create-rating-trigger";
+import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
+import { CreateRatingTrigger } from "~/features/create-rating/components/create-rating-trigger";
 
 export function CreateRatingSection() {
 	const [isOpen, setIsOpen] = useState(false);

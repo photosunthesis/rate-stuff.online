@@ -1,30 +1,5 @@
 import { z } from "zod";
 
-export type Stuff = {
-	id: string;
-	name: string;
-	createdAt: string;
-	updatedAt: string;
-};
-
-export type Tag = {
-	id: string;
-	name: string;
-	createdAt: string;
-};
-
-export type Rating = {
-	id: string;
-	userId: string;
-	stuffId: string;
-	title: string;
-	score: number;
-	content: string;
-	images: string | null;
-	createdAt: string;
-	updatedAt: string;
-};
-
 export const createRatingSchema = z
 	.object({
 		title: z
@@ -57,23 +32,18 @@ export type CreateRatingInput = z.infer<typeof createRatingSchema>;
 export const stuffSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
-
 export const tagSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
 
 export type ValidationErrors = Record<string, string>;
 
-export type RatingResponse =
-	| { success: true; rating: Rating }
-	| { success: false; error: string; errors?: ValidationErrors };
-
 export type StuffSearchResponse =
-	| { success: true; stuff: Stuff[] }
+	| { success: true; stuff: { id: string; name: string }[] }
 	| { success: false; error: string };
 
 export type TagSearchResponse =
-	| { success: true; tags: Tag[] }
+	| { success: true; tags: { id: string; name: string }[] }
 	| { success: false; error: string };
 
 export type ImageUploadResponse =

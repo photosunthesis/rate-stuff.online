@@ -1,8 +1,9 @@
 import { env } from "cloudflare:workers";
 import { db } from "~/db/index";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
-import { eq, and, isNull, like, inArray, desc, lt } from "drizzle-orm";
-import type { CreateRatingInput, Stuff, Tag } from "./types";
+import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
+import type { CreateRatingInput } from "./types";
+import type { Stuff, Tag } from "~/features/display-ratings/types";
 import { uploadFile } from "~/utils/media-storage";
 
 type Result<T> =
@@ -10,79 +11,23 @@ type Result<T> =
 	| { success: false; error: string; fieldErrors?: Record<string, string> };
 
 export async function searchStuff(query: string, limit = 10) {
+	const q = query.toLowerCase();
 	return db.query.stuff.findMany({
-		where: and(like(stuff.name, `%${query}%`), isNull(stuff.deletedAt)),
+		where: and(
+			like(sql`LOWER(${stuff.name})`, `%${q}%`),
+			isNull(stuff.deletedAt),
+		),
 		limit,
 		orderBy: desc(stuff.createdAt),
 	});
 }
 
 export async function searchTags(query: string, limit = 10) {
+	const q = query.toLowerCase();
 	return db.query.tags.findMany({
-		where: like(tags.name, `%${query}%`),
+		where: like(sql`LOWER(${tags.name})`, `%${q}%`),
 		limit,
 	});
-}
-
-export async function getUserRatings(
-	userId: string,
-	limit = 10,
-	cursor?: string,
-) {
-	return db.query.ratings.findMany({
-		where: and(
-			eq(ratings.userId, userId),
-			isNull(ratings.deletedAt),
-			cursor ? lt(ratings.createdAt, cursor) : undefined,
-		),
-		limit,
-		orderBy: desc(ratings.createdAt),
-		with: {
-			stuff: true,
-			user: {
-				columns: {
-					id: true,
-					name: true,
-					username: true,
-					avatarUrl: true,
-				},
-			},
-			tags: {
-				with: {
-					tag: true,
-				},
-			},
-		},
-	});
-}
-
-export async function getFeedRatings(limit = 10, cursor?: string) {
-	const results = await db.query.ratings.findMany({
-		where: and(
-			isNull(ratings.deletedAt),
-			cursor ? lt(ratings.createdAt, cursor) : undefined,
-		),
-		limit,
-		orderBy: desc(ratings.createdAt),
-		with: {
-			stuff: true,
-			user: {
-				columns: {
-					id: true,
-					name: true,
-					username: true,
-					avatarUrl: true,
-				},
-			},
-			tags: {
-				with: {
-					tag: true,
-				},
-			},
-		},
-	});
-
-	return results;
 }
 
 export async function getOrCreateStuff(name: string): Promise<Result<Stuff>> {

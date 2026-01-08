@@ -103,14 +103,14 @@ export function CompactMarkdownEditor({
 		<div>
 			<style>
 				{`
-					.tiptap p.is-editor-empty:first-child::before {
-						color: rgb(115 115 115);
-						content: attr(data-placeholder);
-						float: left;
-						height: 0;
-						pointer-events: none;
-					}
-				`}
+                    .tiptap p.is-editor-empty:first-child::before {
+                        color: rgb(115 115 115);
+                        content: attr(data-placeholder);
+                        float: left;
+                        height: 0;
+                        pointer-events: none;
+                    }
+                `}
 			</style>
 			<label
 				htmlFor={inputId}
