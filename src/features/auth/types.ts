@@ -10,10 +10,7 @@ const registerBaseSchema = z.object({
 			/^[a-zA-Z0-9_-]+$/,
 			"Username can only contain letters, numbers, underscores, and hyphens",
 		),
-	displayName: z
-		.string()
-		.min(1, "Display name is required")
-		.max(50, "Display name must be at most 50 characters"),
+
 	email: z.email("Invalid email address"),
 	password: z
 		.string()
@@ -44,13 +41,41 @@ export type User = {
 	id: string;
 	email: string;
 	username: string;
-	displayName: string;
+	displayName: string | null;
+	// R2 object key for the avatar (e.g. "avatars/user-123-1612345678.webp")
+	avatarKey?: string | null;
+	// Derived: a ready-to-use URL to fetch the image from our API
+	avatarUrl?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
 };
 
+export const profileSetupSchema = z.object({
+	displayName: z
+		.string()
+		.max(50, "Display name must be at most 50 characters")
+		.optional()
+		.or(z.literal("")),
+	// Accept either a File (for uploads) or an avatar key string (for existing uploads)
+	avatar: z.instanceof(File).optional(),
+	avatarKey: z.string().optional(),
+});
+
+export type ProfileSetupInput = z.infer<typeof profileSetupSchema>;
+
 export type ValidationErrors = Record<string, string>;
+
+export type ProfileSummary = {
+	displayName: string | null;
+	avatarUrl: string | null;
+} | null;
+
+export type UpdateProfileResponse = {
+	success: boolean;
+	user?: User;
+	error?: string;
+};
 
 export type AuthResponse =
 	| { success: true; user: User }

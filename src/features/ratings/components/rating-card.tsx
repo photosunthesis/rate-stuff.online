@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User } from "lucide-react";
+import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -73,6 +73,9 @@ interface RatingWithRelations {
 	user: {
 		id: string;
 		name: string | null;
+		username?: string;
+		avatarUrl?: string | null;
+		avatarKey?: string | null;
 	};
 	stuff: {
 		id: string;
@@ -127,7 +130,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 
 	const shouldTruncate = plainText.length > maxContentLength;
 
-	const userName = rating.user.name || "User";
+	const userName = rating.user.name || rating.user.username || "User";
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {
@@ -165,13 +168,16 @@ export function RatingCard({ rating }: RatingCardProps) {
 		<div className="border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer">
 			{/* Header */}
 			<div className="flex items-center gap-3 mb-2">
-				<div className="w-8 h-8 rounded-full bg-neutral-800 shrink-0 border border-neutral-700 flex items-center justify-center text-neutral-500">
-					<User className="w-4 h-4" />
-				</div>
+				<Avatar
+					src={rating.user.avatarKey ?? null}
+					alt={userName}
+					size="sm"
+					className="shrink-0"
+				/>
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
 						<a
-							href={`/u/${rating.userId}`}
+							href={`/@${rating.user.username ?? rating.userId}`}
 							className="font-semibold text-white hover:underline"
 						>
 							{userName}

@@ -11,7 +11,9 @@ type Result<T> =
 type UserData = {
 	id: string;
 	email: string;
+	username: string;
 	name: string | null;
+	avatarKey?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
@@ -26,7 +28,7 @@ export async function authenticateUser(
 
 	if (!user) {
 		user = await db.query.users.findFirst({
-			where: eq(users.name, input.identifier),
+			where: eq(users.username, input.identifier),
 		});
 	}
 
@@ -58,7 +60,12 @@ export async function authenticateUser(
 	}
 
 	const { password: _, ...userWithoutPassword } = user;
-	return { success: true, data: userWithoutPassword };
+	const userWithDates = {
+		...userWithoutPassword,
+		createdAt: new Date(userWithoutPassword.createdAt),
+		updatedAt: new Date(userWithoutPassword.updatedAt),
+	};
+	return { success: true, data: userWithDates };
 }
 
 export async function createUser(
@@ -96,14 +103,26 @@ export async function createUser(
 		};
 	}
 
+	const existingUsername = await db.query.users.findFirst({
+		where: eq(users.username, input.username),
+	});
+
+	if (existingUsername) {
+		return {
+			success: false,
+			error: "Username already taken",
+			fieldErrors: { username: "This username is already taken" },
+		};
+	}
+
 	const hashedPassword = await hashPassword(input.password);
 
 	const newUser = await db
 		.insert(users)
 		.values({
 			email: input.email,
+			username: input.username,
 			password: hashedPassword,
-			name: input.displayName,
 			role: inviteCode.role,
 		})
 		.returning();
@@ -121,7 +140,49 @@ export async function createUser(
 		.where(eq(inviteCodes.id, inviteCode.id));
 
 	const { password: _, ...userWithoutPassword } = newUser[0];
-	return { success: true, data: userWithoutPassword };
+	const userWithDates = {
+		...userWithoutPassword,
+		createdAt: new Date(userWithoutPassword.createdAt),
+		updatedAt: new Date(userWithoutPassword.updatedAt),
+	};
+	return { success: true, data: userWithDates };
+}
+
+export async function updateUserProfile(
+	userId: string,
+	updates: { name?: string; avatarKey?: string },
+): Promise<Result<UserData>> {
+	try {
+		const updatedUser = await db
+			.update(users)
+			.set({
+				...updates,
+				updatedAt: new Date().toISOString(),
+			})
+			.where(eq(users.id, userId))
+			.returning();
+
+		if (!updatedUser || updatedUser.length === 0) {
+			return {
+				success: false,
+				error: "Failed to update profile",
+			};
+		}
+
+		const { password: _, ...userWithoutPassword } = updatedUser[0];
+		const userWithDates = {
+			...userWithoutPassword,
+			createdAt: new Date(userWithoutPassword.createdAt),
+			updatedAt: new Date(userWithoutPassword.updatedAt),
+		};
+		return { success: true, data: userWithDates };
+	} catch (error) {
+		console.error("Failed to update profile:", error);
+		return {
+			success: false,
+			error: "Failed to update profile",
+		};
+	}
 }
 
 export async function getUserById(userId: string): Promise<UserData | null> {
@@ -134,5 +195,10 @@ export async function getUserById(userId: string): Promise<UserData | null> {
 	}
 
 	const { password: _, ...userWithoutPassword } = user;
-	return userWithoutPassword;
+	const userWithDates = {
+		...userWithoutPassword,
+		createdAt: new Date(userWithoutPassword.createdAt),
+		updatedAt: new Date(userWithoutPassword.updatedAt),
+	};
+	return userWithDates;
 }

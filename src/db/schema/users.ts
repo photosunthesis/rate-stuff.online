@@ -16,9 +16,11 @@ export const users = sqliteTable(
 		id: text("id")
 			.primaryKey()
 			.$defaultFn(() => crypto.randomUUID()),
+		username: text("username").notNull(),
 		email: text("email").notNull().unique(),
 		password: text("password").notNull(),
 		name: text("name"),
+		avatarKey: text("avatar_key"),
 		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
 		createdAt: text("created_at")
 			.notNull()
@@ -27,7 +29,10 @@ export const users = sqliteTable(
 			.notNull()
 			.$defaultFn(() => new Date().toISOString()),
 	},
-	(table) => [uniqueIndex("email_idx").on(table.email)],
+	(table) => [
+		uniqueIndex("email_idx").on(table.email),
+		uniqueIndex("username_idx").on(table.username),
+	],
 );
 
 export const usersRelations = relations(users, ({ many }) => ({

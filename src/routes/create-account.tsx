@@ -70,14 +70,13 @@ function RouteComponent() {
 	const handleSubmit = async (data: {
 		inviteCode: string;
 		username: string;
-		displayName: string;
 		email: string;
 		password: string;
 		confirmPassword: string;
 	}) => {
 		try {
 			await register(data);
-			navigate({ to: "/" });
+			navigate({ to: "/setup-profile" });
 		} catch {}
 	};
 

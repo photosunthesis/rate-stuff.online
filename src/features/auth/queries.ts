@@ -11,7 +11,10 @@ import {
 	loginFn,
 	isAuthenticatedFn,
 	logoutFn,
+	updateProfileFn,
+	getProfileSummaryFn,
 } from "./api";
+import type { UpdateProfileResponse } from "./types";
 import type { RegisterInput, LoginInput } from "./types";
 
 export const isAuthenticatedQueryOptions = () =>
@@ -65,6 +68,18 @@ export function useIsAuthenticated() {
 	};
 }
 
+export const profileSummaryQueryOptions = () =>
+	queryOptions({
+		queryKey: ["profileSummary"],
+		queryFn: () => getProfileSummaryFn(),
+		staleTime: 1000 * 60 * 1, // 1 minute
+		gcTime: 1000 * 60 * 5,
+	});
+
+export function useProfileSummary() {
+	return useQuery(profileSummaryQueryOptions());
+}
+
 export function useCurrentUser() {
 	const query = useCurrentUserQuery();
 	return {
@@ -88,6 +103,27 @@ export function useLoginMutation() {
 				queryClient.setQueryData(["isAuthenticated"], true);
 				queryClient.setQueryData(["currentUser"], data.user);
 				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
+				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+			}
+		},
+	});
+}
+
+export function useUpdateProfileMutation() {
+	const updateProfileFnRef = useServerFn(updateProfileFn);
+	const queryClient = useQueryClient();
+
+	return useMutation<
+		UpdateProfileResponse,
+		Error,
+		{ displayName?: string; avatarKey?: string }
+	>({
+		mutationFn: async (data) => {
+			return updateProfileFnRef({ data });
+		},
+		onSuccess: (data) => {
+			if (data?.success && data.user) {
+				queryClient.setQueryData(["currentUser"], data.user);
 				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 			}
 		},

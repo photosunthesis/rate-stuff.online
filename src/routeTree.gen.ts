@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SetupProfileRouteImport } from './routes/setup-profile'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiImagesKeyRouteImport } from './routes/api.images.$key'
@@ -17,6 +18,11 @@ import { Route as ApiImagesKeyRouteImport } from './routes/api.images.$key'
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetupProfileRoute = SetupProfileRouteImport.update({
+  id: '/setup-profile',
+  path: '/setup-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateAccountRoute = CreateAccountRouteImport.update({
@@ -38,12 +44,14 @@ const ApiImagesKeyRoute = ApiImagesKeyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
+  '/setup-profile': typeof SetupProfileRoute
   '/sign-in': typeof SignInRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
+  '/setup-profile': typeof SetupProfileRoute
   '/sign-in': typeof SignInRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
 }
@@ -51,20 +59,38 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
+  '/setup-profile': typeof SetupProfileRoute
   '/sign-in': typeof SignInRoute
   '/api/images/$key': typeof ApiImagesKeyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create-account' | '/sign-in' | '/api/images/$key'
+  fullPaths:
+    | '/'
+    | '/create-account'
+    | '/setup-profile'
+    | '/sign-in'
+    | '/api/images/$key'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-account' | '/sign-in' | '/api/images/$key'
-  id: '__root__' | '/' | '/create-account' | '/sign-in' | '/api/images/$key'
+  to:
+    | '/'
+    | '/create-account'
+    | '/setup-profile'
+    | '/sign-in'
+    | '/api/images/$key'
+  id:
+    | '__root__'
+    | '/'
+    | '/create-account'
+    | '/setup-profile'
+    | '/sign-in'
+    | '/api/images/$key'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateAccountRoute: typeof CreateAccountRoute
+  SetupProfileRoute: typeof SetupProfileRoute
   SignInRoute: typeof SignInRoute
   ApiImagesKeyRoute: typeof ApiImagesKeyRoute
 }
@@ -76,6 +102,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setup-profile': {
+      id: '/setup-profile'
+      path: '/setup-profile'
+      fullPath: '/setup-profile'
+      preLoaderRoute: typeof SetupProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-account': {
@@ -105,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateAccountRoute: CreateAccountRoute,
+  SetupProfileRoute: SetupProfileRoute,
   SignInRoute: SignInRoute,
   ApiImagesKeyRoute: ApiImagesKeyRoute,
 }

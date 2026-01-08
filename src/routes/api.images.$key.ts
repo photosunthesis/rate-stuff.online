@@ -18,7 +18,8 @@ export const Route = createFileRoute("/api/images/$key")({
 					const headers = new Headers();
 					object.writeHttpMetadata(headers);
 					headers.set("etag", object.httpEtag);
-					headers.set("Cache-Control", "public, max-age=31536000"); // max age = 1 year
+					headers.set("Cache-Control", "public, max-age=31536000, immutable"); // max age = 1 year
+					headers.set("Access-Control-Allow-Origin", "*");
 
 					if (!("body" in object)) {
 						return new Response(null, {

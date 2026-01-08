@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { db } from "~/db/index";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, lt } from "drizzle-orm";
@@ -185,7 +186,7 @@ export async function uploadImage(
 	const key = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
 
 	try {
-		await uploadFile(key, file);
+		await uploadFile(env, key, file);
 		const url = getFileUrl(key);
 
 		return { success: true, data: { key, url } };

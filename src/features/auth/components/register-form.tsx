@@ -21,7 +21,6 @@ export function RegisterForm({
 		defaultValues: {
 			inviteCode: "",
 			username: "",
-			displayName: "",
 			email: "",
 			password: "",
 			confirmPassword: "",
@@ -102,34 +101,6 @@ export function RegisterForm({
 							error={
 								field.state.meta.errors[0]?.toString() ||
 								validationErrors.username
-							}
-							required
-						/>
-					)}
-				</form.Field>
-
-				<form.Field
-					name="displayName"
-					validators={{
-						onChange: ({ value }) => {
-							const result = registerSchema.shape.displayName.safeParse(value);
-							return result.success
-								? undefined
-								: result.error.issues[0].message;
-						},
-					}}
-				>
-					{(field) => (
-						<TextField
-							label="Display Name"
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-							placeholder="Your Pretty Name"
-							error={
-								field.state.meta.errors[0]?.toString() ||
-								validationErrors.displayName
 							}
 							required
 						/>

@@ -1,6 +1,5 @@
-import { env } from "cloudflare:workers";
-
 export async function uploadFile(
+	env: Env,
 	key: string,
 	file: File | Blob | string,
 	options?: { type?: string },
