@@ -262,7 +262,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 						<a
 							key={tag}
 							href={`#${tag}`}
-							className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-xs font-medium transition-all"
+							className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-all"
 						>
 							#{tag}
 						</a>
