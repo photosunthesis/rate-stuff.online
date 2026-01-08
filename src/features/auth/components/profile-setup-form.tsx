@@ -33,6 +33,7 @@ export function ProfileSetupForm({
 	const [fileError, setFileError] = useState<string | null>(null);
 	const [displayNameValue, setDisplayNameValue] = useState<string>("");
 	const [hasValues, setHasValues] = useState<boolean>(false);
+	const [avatarRemoved, setAvatarRemoved] = useState<boolean>(false);
 	const previewRef = useRef<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,6 +47,7 @@ export function ProfileSetupForm({
 		setAvatarFile(null);
 		setAvatarPreview(null);
 		setFileError(null);
+		setAvatarRemoved(true);
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	}
 
@@ -61,7 +63,12 @@ export function ProfileSetupForm({
 		} as ProfileSetupInput,
 		onSubmit: async ({ value }) => {
 			if (!hasValues) return;
-			await onSubmit({ ...value, avatar: avatarFile ?? undefined });
+			const payload: ProfileSetupInput = {
+				...value,
+				avatar: avatarFile ?? undefined,
+			};
+			if (avatarRemoved && !avatarFile) payload.avatarUrl = "";
+			await onSubmit(payload);
 		},
 	});
 
@@ -136,6 +143,7 @@ export function ProfileSetupForm({
 								if (!file) {
 									setAvatarFile(null);
 									setAvatarPreview(null);
+									setAvatarRemoved(false);
 									return;
 								}
 

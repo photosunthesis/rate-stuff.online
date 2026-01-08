@@ -15,7 +15,7 @@ import {
 	getUserById,
 	updateUserProfile,
 } from "./service";
-import { uploadFile, getFileUrl } from "~/utils/media-storage";
+import { uploadFile, deleteFileByUrl } from "~/utils/media-storage";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
@@ -37,7 +37,7 @@ function mapUserData(userData: {
 	email: string;
 	username: string;
 	name: string | null;
-	avatarKey?: string | null;
+	avatarUrl?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
@@ -46,7 +46,7 @@ function mapUserData(userData: {
 		id: userData.id,
 		username: userData.username,
 		displayName: userData.name || null,
-		avatarUrl: userData.avatarKey ? getFileUrl(userData.avatarKey) : null,
+		avatarUrl: userData.avatarUrl ?? null,
 	};
 }
 
@@ -152,14 +152,27 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 					return { success: false, error: "Not authenticated" };
 				}
 
-				const updates: { name?: string; avatarKey?: string } = {};
+				const updates: { name?: string; avatarUrl?: string } = {};
+
+				const existingUser = await getUserById(userId);
 
 				if (data.displayName && data.displayName.trim() !== "") {
 					updates.name = data.displayName;
 				}
 
-				if (data.avatarKey) {
-					updates.avatarKey = data.avatarKey;
+				if (data.avatarUrl === "") {
+					if (existingUser?.avatarUrl) {
+						await deleteFileByUrl(env, existingUser.avatarUrl);
+					}
+					updates.avatarUrl = undefined;
+				} else if (data.avatarUrl) {
+					if (
+						existingUser?.avatarUrl &&
+						existingUser.avatarUrl !== data.avatarUrl
+					) {
+						await deleteFileByUrl(env, existingUser.avatarUrl);
+					}
+					updates.avatarUrl = data.avatarUrl;
 				}
 
 				if (data.avatar) {
@@ -178,10 +191,16 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 							? "webp"
 							: origExt;
 					const avatarKey = `avatars/${userId}-${Date.now()}.${extension}`;
-					await uploadFile(env, avatarKey, data.avatar, {
+					const uploadedUrl = await uploadFile(env, avatarKey, data.avatar, {
 						type: data.avatar.type,
 					});
-					updates.avatarKey = avatarKey;
+					if (
+						existingUser?.avatarUrl &&
+						existingUser.avatarUrl !== uploadedUrl
+					) {
+						await deleteFileByUrl(env, existingUser.avatarUrl);
+					}
+					updates.avatarUrl = uploadedUrl;
 				}
 
 				const result = await updateUserProfile(userId, updates);
@@ -242,9 +261,7 @@ export const getProfileSummaryFn = createServerFn({ method: "GET" }).handler(
 
 			return {
 				displayName: userData.name || null,
-				avatarUrl: userData.avatarKey
-					? `/api/images/${userData.avatarKey}`
-					: null,
+				avatarUrl: userData.avatarUrl ?? null,
 			};
 		} catch {
 			return null;

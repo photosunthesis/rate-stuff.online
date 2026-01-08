@@ -42,7 +42,6 @@ export type User = {
 	email: string;
 	username: string;
 	displayName: string | null;
-	avatarKey?: string | null;
 	avatarUrl?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
@@ -62,9 +61,8 @@ export const profileSetupSchema = z.object({
 		.max(50, "Display name must be at most 50 characters")
 		.optional()
 		.or(z.literal("")),
-	// Accept either a File (for uploads) or an avatar key string (for existing uploads)
 	avatar: z.instanceof(File).optional(),
-	avatarKey: z.string().optional(),
+	avatarUrl: z.string().optional().or(z.literal("")),
 });
 
 export type ProfileSetupInput = z.infer<typeof profileSetupSchema>;

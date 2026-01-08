@@ -3,7 +3,6 @@ import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { getFileUrl } from "~/utils/media-storage";
 
 function getRatingEmoji(rating: number): string {
 	const roundedRating = Math.round(rating);
@@ -72,7 +71,7 @@ interface RatingWithRelations {
 		id: string;
 		name: string | null;
 		username?: string;
-		avatarKey?: string | null;
+		avatarUrl?: string | null;
 	};
 	stuff: {
 		id: string;
@@ -124,9 +123,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
 	const userName = rating.user.name || rating.user.username || "User";
-	const avatarUrl = rating.user.avatarKey
-		? getFileUrl(rating.user.avatarKey)
-		: null;
+	const avatarUrl = rating.user.avatarUrl ?? null;
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {

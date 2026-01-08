@@ -44,7 +44,7 @@ export async function getUserRatings(
 					id: true,
 					name: true,
 					username: true,
-					avatarKey: true,
+					avatarUrl: true,
 				},
 			},
 			tags: {
@@ -71,7 +71,7 @@ export async function getFeedRatings(limit = 10, cursor?: string) {
 					id: true,
 					name: true,
 					username: true,
-					avatarKey: true,
+					avatarUrl: true,
 				},
 			},
 			tags: {
@@ -185,11 +185,10 @@ export async function uploadImage(
 	file: File,
 	userId: string,
 ): Promise<Result<{ key: string; url: string }>> {
-	const key = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
+	const key = `${userId}/${crypto.randomUUID()}`;
 
 	try {
-		await uploadFile(env, key, file);
-		const url = `/api/images/${key}`;
+		const url = await uploadFile(env, key, file);
 
 		return { success: true, data: { key, url } };
 	} catch {

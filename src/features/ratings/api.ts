@@ -10,7 +10,6 @@ import {
 	searchTags,
 	uploadImage,
 } from "./service";
-import { getFileUrl } from "~/utils/media-storage";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
@@ -158,9 +157,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 				updatedAt: rating.updatedAt,
 				user: {
 					...rating.user,
-					avatarUrl: rating.user?.avatarKey
-						? getFileUrl(rating.user.avatarKey)
-						: null,
+					avatarUrl: rating.user?.avatarUrl ?? null,
 				},
 				stuff: {
 					...rating.stuff,
@@ -205,9 +202,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 				updatedAt: rating.updatedAt,
 				user: {
 					...rating.user,
-					avatarUrl: rating.user?.avatarKey
-						? getFileUrl(rating.user.avatarKey)
-						: null,
+					avatarUrl: rating.user?.avatarUrl ?? null,
 				},
 				stuff: {
 					...rating.stuff,

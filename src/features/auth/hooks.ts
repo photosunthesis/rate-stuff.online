@@ -101,7 +101,6 @@ export function useUpdateProfile() {
 			setLocalError(null);
 			setLocalValidationErrors({});
 
-			let avatarKey: string | undefined;
 			let uploadedUrl: string | undefined;
 
 			const previousUser = queryClient.getQueryData<PublicUser | null>([
@@ -117,7 +116,6 @@ export function useUpdateProfile() {
 					setLocalError(err);
 					throw err;
 				}
-				avatarKey = uploadResult.data.key;
 				uploadedUrl = uploadResult.data.url;
 
 				if (uploadedUrl) {
@@ -127,18 +125,18 @@ export function useUpdateProfile() {
 				}
 			}
 
-			const payload: { displayName?: string; avatarKey?: string } = {};
+			const payload: { displayName?: string; avatarUrl?: string } = {};
 			if (data.displayName) payload.displayName = data.displayName;
-			if (avatarKey) payload.avatarKey = avatarKey;
+			if (uploadedUrl) payload.avatarUrl = uploadedUrl;
+			else if (data.avatarUrl !== undefined)
+				payload.avatarUrl = data.avatarUrl ?? undefined;
 
 			try {
 				const result = await mutation.mutateAsync(payload);
 				if (!result.success) {
-					// rollback optimistic avatarUrl if present
 					if (previousUser) {
 						queryClient.setQueryData(["currentUser"], previousUser);
 					}
-					// Normalize validation errors and throw an error with message
 					const validationErrors = parseValidationErrors(result);
 					setLocalValidationErrors(validationErrors);
 					const errMessage =

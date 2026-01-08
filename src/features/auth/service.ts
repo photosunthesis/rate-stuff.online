@@ -13,7 +13,7 @@ type UserData = {
 	email: string;
 	username: string;
 	name: string | null;
-	avatarKey?: string | null;
+	avatarUrl?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
@@ -150,7 +150,7 @@ export async function createUser(
 
 export async function updateUserProfile(
 	userId: string,
-	updates: { name?: string; avatarKey?: string },
+	updates: { name?: string; avatarUrl?: string | null },
 ): Promise<Result<UserData>> {
 	try {
 		const updatedUser = await db

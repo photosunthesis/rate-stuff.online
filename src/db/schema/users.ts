@@ -20,7 +20,7 @@ export const users = sqliteTable(
 		email: text("email").notNull().unique(),
 		password: text("password").notNull(),
 		name: text("name"),
-		avatarKey: text("avatar_key"),
+		avatarUrl: text("avatar_url"),
 		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
 		createdAt: text("created_at")
 			.notNull()

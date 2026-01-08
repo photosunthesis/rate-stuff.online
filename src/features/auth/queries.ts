@@ -116,7 +116,7 @@ export function useUpdateProfileMutation() {
 	return useMutation<
 		UpdateProfileResponse,
 		Error,
-		{ displayName?: string; avatarKey?: string }
+		{ displayName?: string; avatarUrl?: string }
 	>({
 		mutationFn: async (data) => {
 			return updateProfileFnRef({ data });

@@ -27,7 +27,7 @@ export function ImageField({
 		const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 		const compressionOptions = {
 			maxSizeMB: 1,
-			maxWidthOrHeight: 1920,
+			maxWidthOrHeight: 640,
 			useWebWorker: true,
 			fileType: "image/webp" as const,
 		};
