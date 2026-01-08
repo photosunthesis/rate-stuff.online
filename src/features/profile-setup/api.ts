@@ -105,21 +105,3 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 			};
 		}
 	});
-
-export const getProfileSummaryFn = createServerFn({ method: "GET" }).handler(
-	async () => {
-		try {
-			const session = await getSession();
-			const userId = session?.userId;
-			if (!userId) return null;
-			const userData = await getUserById(userId);
-			if (!userData) return null;
-			return {
-				displayName: userData.displayName || null,
-				avatarUrl: userData.avatarUrl ?? null,
-			};
-		} catch {
-			return null;
-		}
-	},
-);

@@ -32,27 +32,6 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-export const getProfileSummaryFn = createServerFn({ method: "GET" }).handler(
-	async (): Promise<{
-		displayName: string | null;
-		avatarUrl: string | null;
-	} | null> => {
-		try {
-			const session = await getSessionUtil();
-			const userId = session?.userId;
-			if (!userId) return null;
-			const userData = await getUserByIdService(userId);
-			if (!userData) return null;
-			return {
-				displayName: userData.displayName || null,
-				avatarUrl: userData.avatarUrl ?? null,
-			};
-		} catch {
-			return null;
-		}
-	},
-);
-
 export const isAuthenticatedFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<boolean> => {
 		try {

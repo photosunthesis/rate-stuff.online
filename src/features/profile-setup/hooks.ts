@@ -1,8 +1,6 @@
-import {
-	useUpdateProfileMutation,
-	useProfileSummary,
-} from "~/features/profile-setup/queries";
-import { useUploadImageMutation } from "~/features/ratings/queries";
+import { useUpdateProfileMutation } from "~/features/profile-setup/queries";
+import { useCurrentUser } from "../session/queries";
+import { useUploadImageMutation } from "~/features/create-rating/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { ProfileSetupInput } from "~/features/profile-setup/types";
@@ -50,7 +48,7 @@ export function useProfileSetup() {
 	const [localValidationErrors, setLocalValidationErrors] = useState<
 		Record<string, string>
 	>({});
-	const profileSummary = useProfileSummary();
+	const { user } = useCurrentUser();
 
 	return {
 		updateProfile: async (data: ProfileSetupInput) => {
@@ -127,6 +125,6 @@ export function useProfileSetup() {
 			setLocalError(null);
 			setLocalValidationErrors({});
 		},
-		profileSummary,
+		user,
 	};
 }

@@ -3,8 +3,8 @@ import { isAuthenticatedQueryOptions } from "~/features/session/queries";
 import { ProfileSetupForm } from "~/features/profile-setup/components/ProfileSetupForm";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { useProfileSetup } from "~/features/profile-setup/hooks";
-import { profileSummaryQueryOptions } from "~/features/profile-setup/queries";
 import type { ProfileSetupInput } from "~/features/profile-setup/types";
+import { currentUserQueryOptions } from "~/features/session/queries";
 
 export const Route = createFileRoute("/setup-profile")({
 	beforeLoad: async ({ context }) => {
@@ -12,8 +12,7 @@ export const Route = createFileRoute("/setup-profile")({
 			isAuthenticatedQueryOptions(),
 		);
 
-		// Prefetch profile summary so the form can hydrate immediately
-		await context.queryClient.ensureQueryData(profileSummaryQueryOptions());
+		await context.queryClient.ensureQueryData(currentUserQueryOptions());
 
 		if (!isAuthenticated) {
 			throw redirect({
@@ -38,7 +37,7 @@ function RouteComponent() {
 		isPending,
 		error,
 		validationErrors,
-		profileSummary,
+		user,
 	} = useProfileSetup();
 
 	const handleSubmit = async (data: ProfileSetupInput) => {
@@ -59,8 +58,8 @@ function RouteComponent() {
 				isPending={isPending}
 				error={error}
 				validationErrors={validationErrors}
-				initialDisplayName={profileSummary.data?.displayName}
-				initialAvatarUrl={profileSummary.data?.avatarUrl}
+				initialDisplayName={user?.displayName}
+				initialAvatarUrl={user?.avatarUrl}
 			/>
 		</AuthLayout>
 	);
