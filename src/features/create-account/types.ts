@@ -10,8 +10,7 @@ const registerBaseSchema = z.object({
 			/^[a-zA-Z0-9_-]+$/,
 			"Username can only contain letters, numbers, underscores, and hyphens",
 		),
-
-	email: z.email("Invalid email address"),
+	email: z.string().email("Invalid email address"),
 	password: z
 		.string()
 		.min(8, "Password must be at least 8 characters")
@@ -29,24 +28,7 @@ export const registerSchema = registerBaseSchema.refine(
 	},
 );
 
-export const loginSchema = z.object({
-	identifier: z.string().min(1, "Email or username is required"),
-	password: z.string().min(1, "Password is required"),
-});
-
 export type RegisterInput = z.infer<typeof registerSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-
-export type User = {
-	id: string;
-	email: string;
-	username: string;
-	displayName: string | null;
-	avatarUrl?: string | null;
-	role: "user" | "moderator" | "admin";
-	createdAt: Date;
-	updatedAt: Date;
-};
 
 export type PublicUser = {
 	id: string;
@@ -55,31 +37,6 @@ export type PublicUser = {
 	avatarUrl?: string | null;
 };
 
-export const profileSetupSchema = z.object({
-	displayName: z
-		.string()
-		.max(50, "Display name must be at most 50 characters")
-		.optional()
-		.or(z.literal("")),
-	avatar: z.instanceof(File).optional(),
-	avatarUrl: z.string().optional().or(z.literal("")),
-});
-
-export type ProfileSetupInput = z.infer<typeof profileSetupSchema>;
-
-export type ValidationErrors = Record<string, string>;
-
-export type ProfileSummary = {
-	displayName: string | null;
-	avatarUrl: string | null;
-} | null;
-
-export type UpdateProfileResponse = {
-	success: boolean;
-	user?: PublicUser;
-	error?: string;
-};
-
 export type AuthResponse =
 	| { success: true; user: PublicUser }
-	| { success: false; error?: string; errors?: ValidationErrors };
+	| { success: false; error?: string; errors?: Record<string, string> };

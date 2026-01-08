@@ -7,7 +7,7 @@ import { CreateRatingSection } from "~/features/ratings/components/create-rating
 import {
 	useIsAuthenticated,
 	isAuthenticatedQueryOptions,
-} from "~/features/auth/queries";
+} from "~/features/session/queries";
 
 export const Route = createFileRoute("/")({
 	component: App,

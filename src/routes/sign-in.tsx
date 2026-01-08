@@ -4,13 +4,13 @@ import {
 	useNavigate,
 	useSearch,
 } from "@tanstack/react-router";
-import { useLogin } from "~/features/auth/hooks";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { LoginForm } from "~/features/auth/components/login-form";
+import { useSignIn } from "~/features/sign-in/hooks";
+import { AuthLayout } from "~/components/layout/auth-layout";
+import { LoginForm } from "~/features/sign-in/components/LoginForm";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,
-} from "~/features/auth/queries";
+} from "~/features/session/queries";
 
 export const Route = createFileRoute("/sign-in")({
 	beforeLoad: async ({ context }) => {
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/sign-in")({
 function RouteComponent() {
 	const navigate = useNavigate();
 	const search = useSearch({ from: "/sign-in" });
-	const { login, isPending, error, validationErrors } = useLogin();
+	const { signIn, isPending, error, validationErrors } = useSignIn();
 	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
 	const handleSubmit = async (data: {
@@ -69,7 +69,7 @@ function RouteComponent() {
 		password: string;
 	}) => {
 		try {
-			await login(data);
+			await signIn(data);
 			const redirectTo = search.redirect || "/";
 			navigate({ to: redirectTo });
 		} catch {}

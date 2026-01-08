@@ -1,23 +1,17 @@
 import {
-	useRegisterMutation,
-	useLoginMutation,
 	useUpdateProfileMutation,
-} from "./queries";
+	useProfileSummary,
+} from "~/features/profile-setup/queries";
 import { useUploadImageMutation } from "~/features/ratings/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import type { PublicUser } from "./types";
-import type {
-	RegisterInput,
-	LoginInput,
-	ProfileSetupInput,
-	ValidationErrors,
-} from "./types";
+import type { ProfileSetupInput } from "~/features/profile-setup/types";
+import type { PublicUser } from "~/features/profile-setup/types";
 
-function parseValidationErrors(obj: unknown): ValidationErrors {
+function parseValidationErrors(obj: unknown) {
 	if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
 	const source = obj as Record<string, unknown>;
-	const tryExtract = (candidate: unknown): ValidationErrors | undefined => {
+	const tryExtract = (candidate: unknown) => {
 		if (
 			candidate &&
 			typeof candidate === "object" &&
@@ -25,7 +19,7 @@ function parseValidationErrors(obj: unknown): ValidationErrors {
 		) {
 			const c = candidate as Record<string, unknown>;
 			if (Object.values(c).every((v) => typeof v === "string"))
-				return c as ValidationErrors;
+				return c as Record<string, string>;
 		}
 		return undefined;
 	};
@@ -36,7 +30,7 @@ function parseValidationErrors(obj: unknown): ValidationErrors {
 	return {};
 }
 
-function extractErrorMessage(obj: unknown): string | undefined {
+function extractErrorMessage(obj: unknown) {
 	if (!obj || typeof obj !== "object" || Array.isArray(obj)) return undefined;
 	const o = obj as Record<string, unknown>;
 	if (typeof o.error === "string") return o.error;
@@ -48,56 +42,18 @@ function extractErrorMessage(obj: unknown): string | undefined {
 	return undefined;
 }
 
-export function useRegister() {
-	const mutation = useRegisterMutation();
-
-	return {
-		register: async (data: RegisterInput) => {
-			const result = await mutation.mutateAsync(data);
-			if (!result.success) {
-				throw new Error(result.error || "Registration failed");
-			}
-		},
-		isPending: mutation.isPending,
-		isError: mutation.isError,
-		error: mutation.error,
-		validationErrors:
-			(mutation.data && !mutation.data.success ? mutation.data.errors : {}) ||
-			{},
-		reset: mutation.reset,
-	};
-}
-
-export function useLogin() {
-	const mutation = useLoginMutation();
-
-	return {
-		login: async (data: LoginInput) => {
-			const result = await mutation.mutateAsync(data);
-			if (!result.success) {
-				throw new Error(result.error || "Login failed");
-			}
-		},
-		isPending: mutation.isPending,
-		isError: mutation.isError,
-		error: mutation.error,
-		validationErrors:
-			(mutation.data && !mutation.data.success ? mutation.data.errors : {}) ||
-			{},
-		reset: mutation.reset,
-	};
-}
-
-export function useUpdateProfile() {
+export function useProfileSetup() {
 	const mutation = useUpdateProfileMutation();
 	const uploadMutation = useUploadImageMutation();
 	const queryClient = useQueryClient();
 	const [localError, setLocalError] = useState<Error | null>(null);
-	const [localValidationErrors, setLocalValidationErrors] =
-		useState<ValidationErrors>({});
+	const [localValidationErrors, setLocalValidationErrors] = useState<
+		Record<string, string>
+	>({});
+	const profileSummary = useProfileSummary();
 
 	return {
-		update: async (data: ProfileSetupInput) => {
+		updateProfile: async (data: ProfileSetupInput) => {
 			setLocalError(null);
 			setLocalValidationErrors({});
 
@@ -161,17 +117,16 @@ export function useUpdateProfile() {
 			(mutation.error as Error) ||
 			(uploadMutation.error as Error) ||
 			null,
-		// Normalize validation errors from mutation response in a type-safe way
 		validationErrors:
 			(mutation.data && !mutation.data.success
 				? parseValidationErrors(mutation.data)
 				: localValidationErrors) || {},
-
 		reset: () => {
 			mutation.reset();
 			uploadMutation.reset();
 			setLocalError(null);
 			setLocalValidationErrors({});
 		},
+		profileSummary,
 	};
 }

@@ -1,13 +1,10 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { isAuthenticatedQueryOptions } from "~/features/auth/queries";
-import { ProfileSetupForm } from "~/features/auth/components/profile-setup-form";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { useUpdateProfile } from "~/features/auth/hooks";
-import {
-	useProfileSummary,
-	profileSummaryQueryOptions,
-} from "~/features/auth/queries";
-import type { ProfileSetupInput } from "~/features/auth/types";
+import { isAuthenticatedQueryOptions } from "~/features/session/queries";
+import { ProfileSetupForm } from "~/features/profile-setup/components/ProfileSetupForm";
+import { AuthLayout } from "~/components/layout/auth-layout";
+import { useProfileSetup } from "~/features/profile-setup/hooks";
+import { profileSummaryQueryOptions } from "~/features/profile-setup/queries";
+import type { ProfileSetupInput } from "~/features/profile-setup/types";
 
 export const Route = createFileRoute("/setup-profile")({
 	beforeLoad: async ({ context }) => {
@@ -36,8 +33,13 @@ export const Route = createFileRoute("/setup-profile")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { update, isPending, error, validationErrors } = useUpdateProfile();
-	const profileSummary = useProfileSummary();
+	const {
+		updateProfile: update,
+		isPending,
+		error,
+		validationErrors,
+		profileSummary,
+	} = useProfileSetup();
 
 	const handleSubmit = async (data: ProfileSetupInput) => {
 		try {

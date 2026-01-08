@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Avatar } from "~/components/ui/avatar";
-import { useCurrentUser } from "~/features/auth/queries";
+import { useCurrentUser } from "~/features/session/queries";
 
 interface CreateRatingTriggerProps {
 	onTrigger: () => void;

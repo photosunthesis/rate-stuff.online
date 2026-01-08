@@ -1,7 +1,10 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import AppLogo from "~/components/app-logo";
-import { useIsAuthenticated, useLogoutMutation } from "~/features/auth/queries";
+import {
+	useIsAuthenticated,
+	useLogoutMutation,
+} from "~/features/session/queries";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
 
 const headers = [

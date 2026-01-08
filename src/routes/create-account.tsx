@@ -1,11 +1,11 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { useRegister } from "~/features/auth/hooks";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { RegisterForm } from "~/features/auth/components/register-form";
+import { useCreateAccount } from "~/features/create-account/hooks";
+import { AuthLayout } from "~/components/layout/auth-layout";
+import { RegisterForm } from "~/features/create-account/components/RegisterForm";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,
-} from "~/features/auth/queries";
+} from "~/features/session/queries";
 
 export const Route = createFileRoute("/create-account")({
 	beforeLoad: async ({ context }) => {
@@ -64,7 +64,8 @@ export const Route = createFileRoute("/create-account")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { register, isPending, error, validationErrors } = useRegister();
+	const { createAccount, isPending, error, validationErrors } =
+		useCreateAccount();
 	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
 	const handleSubmit = async (data: {
@@ -75,7 +76,7 @@ function RouteComponent() {
 		confirmPassword: string;
 	}) => {
 		try {
-			await register(data);
+			await createAccount(data);
 			navigate({ to: "/setup-profile" });
 		} catch {}
 	};

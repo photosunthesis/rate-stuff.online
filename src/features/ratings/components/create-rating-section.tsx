@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useIsAuthenticated } from "~/features/auth/queries";
+import { useIsAuthenticated } from "~/features/session/queries";
 import { CreateRatingModal } from "./create-rating-modal";
 import { CreateRatingTrigger } from "./create-rating-trigger";
 
