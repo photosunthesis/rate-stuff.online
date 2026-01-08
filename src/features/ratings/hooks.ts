@@ -37,7 +37,7 @@ export function useCreateRating() {
 
 	return {
 		createRating: async (input: CreateRatingHookInput) => {
-			const imageKeys: string[] = [];
+			const imageUrls: string[] = [];
 
 			if (input.images && input.images.length > 0) {
 				const uploadPromises = input.images.map((file) =>
@@ -52,14 +52,14 @@ export function useCreateRating() {
 
 				results.forEach((r) => {
 					if (r.success) {
-						imageKeys.push(r.data.key);
+						imageUrls.push(r.data.url);
 					}
 				});
 			}
 
 			const ratingInput: CreateRatingInput = {
 				...input,
-				images: imageKeys,
+				images: imageUrls,
 			};
 
 			const result = await createMutation.mutateAsync(ratingInput);
