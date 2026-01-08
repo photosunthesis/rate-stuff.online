@@ -6,7 +6,7 @@ import {
 	loginSchema,
 	profileSetupSchema,
 	type AuthResponse,
-	type User,
+	type PublicUser,
 } from "./types";
 import { setSessionCookie, getSession, clearSessionCookie } from "~/utils/auth";
 import {
@@ -15,8 +15,7 @@ import {
 	getUserById,
 	updateUserProfile,
 } from "./service";
-import { uploadFile } from "~/utils/media-storage";
-import { getFileUrl } from "~/utils/media-storage";
+import { uploadFile, getFileUrl } from "~/utils/media-storage";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
@@ -42,12 +41,11 @@ function mapUserData(userData: {
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
-}): User {
+}): PublicUser {
 	return {
-		...userData,
+		id: userData.id,
+		username: userData.username,
 		displayName: userData.name || null,
-		avatarKey: userData.avatarKey ?? null,
-		// Provide a ready-to-use URL so the client can render immediately
 		avatarUrl: userData.avatarKey ? getFileUrl(userData.avatarKey) : null,
 	};
 }
@@ -144,7 +142,7 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 		async ({
 			data,
 		}): Promise<
-			| { success: boolean; user?: User; error?: string }
+			| { success: boolean; user?: PublicUser; error?: string }
 			| { success: false; error: string }
 		> => {
 			try {
@@ -158,6 +156,10 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 
 				if (data.displayName && data.displayName.trim() !== "") {
 					updates.name = data.displayName;
+				}
+
+				if (data.avatarKey) {
+					updates.avatarKey = data.avatarKey;
 				}
 
 				if (data.avatar) {
@@ -192,6 +194,7 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 
 				return { success: true, user: mapUserData(result.data) };
 			} catch (error) {
+				console.error("Error in updateProfileFn:", error);
 				return {
 					success: false,
 					error:
@@ -202,7 +205,7 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 	);
 
 export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
-	async (): Promise<User | null> => {
+	async (): Promise<PublicUser | null> => {
 		try {
 			const sessionData = await getSession();
 			const userId = sessionData?.userId;
@@ -224,7 +227,6 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-// Lightweight profile summary endpoint: returns only displayName and avatarUrl (derived from avatarKey)
 export const getProfileSummaryFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<{
 		displayName: string | null;
@@ -240,10 +242,11 @@ export const getProfileSummaryFn = createServerFn({ method: "GET" }).handler(
 
 			return {
 				displayName: userData.name || null,
-				avatarUrl: userData.avatarKey ? getFileUrl(userData.avatarKey) : null,
+				avatarUrl: userData.avatarKey
+					? `/api/images/${userData.avatarKey}`
+					: null,
 			};
-		} catch (err) {
-			console.error("getProfileSummaryFn error:", err);
+		} catch {
 			return null;
 		}
 	},

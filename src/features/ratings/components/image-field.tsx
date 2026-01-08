@@ -26,10 +26,10 @@ export function ImageField({
 
 		const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 		const compressionOptions = {
-			maxSizeMB: 1, // Compress to max 1MB
-			maxWidthOrHeight: 1920, // Max dimension
+			maxSizeMB: 1,
+			maxWidthOrHeight: 1920,
 			useWebWorker: true,
-			fileType: "image/webp" as const, // Convert to WebP for better compression
+			fileType: "image/webp" as const,
 		};
 
 		const compressedFiles: File[] = [];
@@ -40,12 +40,9 @@ export function ImageField({
 			}
 
 			try {
-				// Compress the image
 				const compressed = await imageCompression(file, compressionOptions);
 				compressedFiles.push(compressed);
-			} catch (error) {
-				console.error("Error compressing image:", error);
-				// If compression fails, use original file
+			} catch {
 				if (file.size <= maxSizeInMB * 1024 * 1024) {
 					compressedFiles.push(file);
 				}
@@ -53,7 +50,6 @@ export function ImageField({
 		}
 
 		if (images.length + compressedFiles.length > maxFiles) {
-			// Limit to maxFiles
 			const spacesLeft = maxFiles - images.length;
 			if (spacesLeft > 0) {
 				onChange([...images, ...compressedFiles.slice(0, spacesLeft)]);
@@ -65,7 +61,7 @@ export function ImageField({
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		handleFiles(e.target.files);
-		// Reset value so same file can be selected again if removed
+
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
 

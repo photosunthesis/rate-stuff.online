@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { User } from "lucide-react";
+import { Avatar } from "~/components/ui/avatar";
+import { useCurrentUser } from "~/features/auth/queries";
 
 interface CreateRatingTriggerProps {
 	onTrigger: () => void;
@@ -15,6 +16,7 @@ const prompts = [
 ];
 
 export function CreateRatingTrigger({ onTrigger }: CreateRatingTriggerProps) {
+	const { user } = useCurrentUser();
 	const [prompt, setPrompt] = useState("");
 
 	useEffect(() => {
@@ -23,9 +25,12 @@ export function CreateRatingTrigger({ onTrigger }: CreateRatingTriggerProps) {
 
 	return (
 		<div className="flex gap-4 items-center w-full">
-			<div className="w-10 h-10 rounded-full bg-neutral-800 shrink-0 border border-neutral-700 flex items-center justify-center text-neutral-500">
-				<User className="w-5 h-5" />
-			</div>
+			<Avatar
+				src={user?.avatarUrl ?? null}
+				alt={user?.displayName ?? "User"}
+				size="sm"
+				className="shrink-0"
+			/>
 			<button
 				type="button"
 				onClick={onTrigger}

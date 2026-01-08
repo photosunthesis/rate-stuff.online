@@ -82,18 +82,26 @@ export function ProfileSetupForm({
 	const hasGlobalError =
 		error && Object.keys(validationErrors ?? {}).length === 0;
 
-	const getErrorMessage = (err: Error | null | undefined): string => {
+	const getErrorMessage = (err: unknown): string => {
 		if (!err) return "";
-		try {
-			const parsed = JSON.parse(err.message);
-
-			if (Array.isArray(parsed)) {
-				return parsed[0]?.message || err.message;
+		if (typeof err === "string") return err;
+		if (err instanceof Error) {
+			const message = err.message ?? "";
+			if (!message) return String(err);
+			try {
+				const parsed = JSON.parse(message);
+				if (Array.isArray(parsed)) return parsed[0]?.message ?? message;
+				if (parsed && typeof parsed === "object")
+					return (parsed as { message?: string }).message ?? message;
+				return message;
+			} catch {
+				return message;
 			}
-
-			return parsed.message || err.message;
+		}
+		try {
+			return JSON.stringify(err);
 		} catch {
-			return err.message;
+			return String(err);
 		}
 	};
 
@@ -145,13 +153,12 @@ export function ProfileSetupForm({
 
 								try {
 									setIsCompressing(true);
-									const options = {
-										maxSizeMB: 2,
-										maxWidthOrHeight: 1000,
+									const compressedBlob = await imageCompression(file, {
+										maxSizeMB: 1,
+										maxWidthOrHeight: 640,
 										useWebWorker: true,
 										fileType: "image/webp",
-									};
-									const compressedBlob = await imageCompression(file, options);
+									});
 									const baseName = file.name.replace(/\.[^/.]+$/, "");
 									const compressedFile = new File(
 										[compressedBlob],
@@ -159,20 +166,19 @@ export function ProfileSetupForm({
 										{ type: "image/webp" },
 									);
 
-									if (previewRef.current)
+									if (previewRef.current) {
 										URL.revokeObjectURL(previewRef.current);
+									}
+
 									const url = URL.createObjectURL(compressedFile);
 									previewRef.current = url;
 									setAvatarFile(compressedFile);
 									setAvatarPreview(url);
-								} catch (err) {
-									console.error(
-										"Image compression failed, using original file",
-										err,
-									);
-
-									if (previewRef.current)
+								} catch {
+									if (previewRef.current) {
 										URL.revokeObjectURL(previewRef.current);
+									}
+
 									const url = URL.createObjectURL(file);
 									previewRef.current = url;
 									setAvatarFile(file);

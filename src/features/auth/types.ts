@@ -42,13 +42,18 @@ export type User = {
 	email: string;
 	username: string;
 	displayName: string | null;
-	// R2 object key for the avatar (e.g. "avatars/user-123-1612345678.webp")
 	avatarKey?: string | null;
-	// Derived: a ready-to-use URL to fetch the image from our API
 	avatarUrl?: string | null;
 	role: "user" | "moderator" | "admin";
 	createdAt: Date;
 	updatedAt: Date;
+};
+
+export type PublicUser = {
+	id: string;
+	username: string;
+	displayName: string | null;
+	avatarUrl?: string | null;
 };
 
 export const profileSetupSchema = z.object({
@@ -73,10 +78,10 @@ export type ProfileSummary = {
 
 export type UpdateProfileResponse = {
 	success: boolean;
-	user?: User;
+	user?: PublicUser;
 	error?: string;
 };
 
 export type AuthResponse =
-	| { success: true; user: User }
+	| { success: true; user: PublicUser }
 	| { success: false; error?: string; errors?: ValidationErrors };

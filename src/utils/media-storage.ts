@@ -9,13 +9,16 @@ export async function uploadFile(
 			? { contentType: options.type }
 			: file instanceof File
 				? { contentType: file.type }
-				: undefined,
+				: { contentType: "application/octet-stream" },
 	});
+
 	return key;
 }
 
 export function getFileUrl(key: string): string {
-	// Serve images through our API endpoint which fetches from R2
-	// This works for both dev (wrangler dev) and production
-	return `/api/images/${key}`;
+	// if (import.meta.env.DEV) {
+	// 	return `https://images.rate-stuff.online/${key}`;
+	// }
+
+	return `https://images.rate-stuff.online/${key}`;
 }

@@ -1,5 +1,4 @@
 import { User as UserIcon } from "lucide-react";
-import { getFileUrl } from "~/utils/media-storage";
 
 interface AvatarProps {
 	src: string | null;
@@ -21,13 +20,10 @@ export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
 		lg: "w-8 h-8",
 	} as const;
 
-	// `src` may be either an R2 key (e.g. "avatars/..") or a pre-built URL (e.g. "/api/images/..")
-	const avatarUrl = src ? (src.includes("/") ? src : getFileUrl(src)) : null;
-
-	if (avatarUrl) {
+	if (src) {
 		return (
 			<img
-				src={avatarUrl}
+				src={src}
 				alt={alt}
 				className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
 			/>

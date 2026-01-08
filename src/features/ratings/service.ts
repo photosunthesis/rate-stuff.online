@@ -3,7 +3,7 @@ import { db } from "~/db/index";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, lt } from "drizzle-orm";
 import type { CreateRatingInput, Stuff, Tag } from "./types";
-import { uploadFile, getFileUrl } from "~/utils/media-storage";
+import { uploadFile } from "~/utils/media-storage";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -43,6 +43,8 @@ export async function getUserRatings(
 				columns: {
 					id: true,
 					name: true,
+					username: true,
+					avatarKey: true,
 				},
 			},
 			tags: {
@@ -68,6 +70,8 @@ export async function getFeedRatings(limit = 10, cursor?: string) {
 				columns: {
 					id: true,
 					name: true,
+					username: true,
+					avatarKey: true,
 				},
 			},
 			tags: {
@@ -93,8 +97,7 @@ export async function getOrCreateStuff(name: string): Promise<Result<Stuff>> {
 	try {
 		const [newStuff] = await db.insert(stuff).values({ name }).returning();
 		return { success: true, data: newStuff };
-	} catch (e) {
-		console.error("Failed to create stuff:", e);
+	} catch {
 		return { success: false, error: "Failed to create stuff" };
 	}
 }
@@ -173,8 +176,7 @@ export async function createRating(
 		}
 
 		return { success: true, data: rating };
-	} catch (e) {
-		console.error("Failed to create rating:", e);
+	} catch {
 		return { success: false, error: "Failed to create rating" };
 	}
 }
@@ -187,11 +189,10 @@ export async function uploadImage(
 
 	try {
 		await uploadFile(env, key, file);
-		const url = getFileUrl(key);
+		const url = `/api/images/${key}`;
 
 		return { success: true, data: { key, url } };
-	} catch (e) {
-		console.error("Failed to upload image:", e);
+	} catch {
 		return { success: false, error: "Failed to upload image" };
 	}
 }

@@ -176,8 +176,7 @@ export async function updateUserProfile(
 			updatedAt: new Date(userWithoutPassword.updatedAt),
 		};
 		return { success: true, data: userWithDates };
-	} catch (error) {
-		console.error("Failed to update profile:", error);
+	} catch {
 		return {
 			success: false,
 			error: "Failed to update profile",

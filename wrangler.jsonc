@@ -36,7 +36,8 @@
 	"r2_buckets": [
 		{
 			"bucket_name": "rate-stuff-online",
-			"binding": "rate_stuff_online_r2"
+			"binding": "rate_stuff_online_r2",
+			"remote": true
 		}
 	]
 }

@@ -3,6 +3,7 @@ import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import { getFileUrl } from "~/utils/media-storage";
 
 function getRatingEmoji(rating: number): string {
 	const roundedRating = Math.round(rating);
@@ -22,7 +23,6 @@ function getRatingEmoji(rating: number): string {
 function getTimeAgo(date: Date | string | number): string {
 	const now = new Date();
 
-	// Convert to Date object if needed
 	let dateObj: Date;
 	if (date instanceof Date) {
 		dateObj = date;
@@ -32,7 +32,6 @@ function getTimeAgo(date: Date | string | number): string {
 		return "Invalid Date";
 	}
 
-	// Check if date is valid
 	if (!dateObj || Number.isNaN(dateObj.getTime())) {
 		return "Invalid Date";
 	}
@@ -49,7 +48,6 @@ function getTimeAgo(date: Date | string | number): string {
 	const weeks = Math.floor(days / 7);
 	if (weeks < 4) return `${weeks}w`;
 
-	// If different year, show month and year
 	if (dateObj.getFullYear() !== now.getFullYear()) {
 		return dateObj.toLocaleDateString("en-US", {
 			month: "short",
@@ -74,7 +72,6 @@ interface RatingWithRelations {
 		id: string;
 		name: string | null;
 		username?: string;
-		avatarUrl?: string | null;
 		avatarKey?: string | null;
 	};
 	stuff: {
@@ -124,13 +121,12 @@ function MarkdownContent({ content }: MarkdownContentProps) {
 export function RatingCard({ rating }: RatingCardProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
-
-	// Use the markdown content directly for truncation check
 	const plainText = rating.content;
-
 	const shouldTruncate = plainText.length > maxContentLength;
-
 	const userName = rating.user.name || rating.user.username || "User";
+	const avatarUrl = rating.user.avatarKey
+		? getFileUrl(rating.user.avatarKey)
+		: null;
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {
@@ -169,7 +165,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 			{/* Header */}
 			<div className="flex items-center gap-3 mb-2">
 				<Avatar
-					src={rating.user.avatarKey ?? null}
+					src={avatarUrl ?? null}
 					alt={userName}
 					size="sm"
 					className="shrink-0"
