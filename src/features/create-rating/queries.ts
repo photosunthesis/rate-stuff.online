@@ -52,6 +52,7 @@ export function useUploadImageMutation() {
 
 export function useUpdateRatingImagesMutation() {
 	const updateFn = useServerFn(updateRatingImagesFn);
+	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: async ({
 			ratingId,
@@ -61,6 +62,9 @@ export function useUpdateRatingImagesMutation() {
 			images: string[];
 		}) => {
 			return updateFn({ data: { ratingId, images } });
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ratingKeys.all });
 		},
 	});
 }

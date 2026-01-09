@@ -17,7 +17,7 @@ export const Route = createFileRoute("/set-up-profile")({
 		if (!isAuthenticated) {
 			throw redirect({
 				to: "/sign-in",
-				search: { redirect: "/setup-profile" },
+				search: { redirect: "/set-up-profile" },
 			});
 		}
 	},

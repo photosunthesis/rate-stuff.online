@@ -77,7 +77,7 @@ function RouteComponent() {
 	}) => {
 		try {
 			await createAccount(data);
-			navigate({ to: "/setup-profile" });
+			navigate({ to: "/set-up-profile" });
 		} catch {}
 	};
 
