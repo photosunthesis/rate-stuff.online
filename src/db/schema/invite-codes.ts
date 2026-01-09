@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 import { ROLES, type Role } from "./users";
@@ -17,10 +16,10 @@ export const inviteCodes = sqliteTable(
 		usedBy: text("used_by").references(() => users.id, {
 			onDelete: "set null",
 		}),
-		usedAt: integer("used_at", { mode: "timestamp" }),
-		createdAt: integer("created_at", { mode: "timestamp" })
+		usedAt: integer({ mode: "timestamp_ms" }),
+		createdAt: integer({ mode: "timestamp_ms" })
 			.notNull()
-			.default(sql`CURRENT_TIMESTAMP`),
+			.$defaultFn(() => new Date()),
 	},
 	(table) => [
 		index("created_by_idx").on(table.createdBy),

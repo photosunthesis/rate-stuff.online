@@ -60,10 +60,6 @@ export async function authenticateUser(
 	}
 
 	const { password: _, ...userWithoutPassword } = user;
-	const userWithDates = {
-		...userWithoutPassword,
-		createdAt: new Date(userWithoutPassword.createdAt),
-		updatedAt: new Date(userWithoutPassword.updatedAt),
-	};
-	return { success: true, data: userWithDates };
+
+	return { success: true, data: userWithoutPassword };
 }

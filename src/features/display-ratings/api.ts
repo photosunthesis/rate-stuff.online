@@ -13,9 +13,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data, context }) => {
 		try {
-			const cursor = data.cursor
-				? new Date(data.cursor).toISOString()
-				: undefined;
+			const cursor = data.cursor ? new Date(data.cursor) : undefined;
 
 			const ratings = await getUserRatings(
 				context.userSession.userId,
@@ -66,9 +64,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
-			const cursor = data.cursor
-				? new Date(data.cursor).toISOString()
-				: undefined;
+			const cursor = data.cursor ? new Date(data.cursor) : undefined;
 
 			const ratings = await getFeedRatings(data.limit, cursor);
 

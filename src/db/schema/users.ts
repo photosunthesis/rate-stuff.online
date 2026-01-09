@@ -1,5 +1,10 @@
 import { relations } from "drizzle-orm";
-import { sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+	sqliteTable,
+	text,
+	uniqueIndex,
+	integer,
+} from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
 
 export const ROLES = {
@@ -22,12 +27,12 @@ export const users = sqliteTable(
 		name: text("name"),
 		avatarUrl: text("avatar_url"),
 		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
-		createdAt: text("created_at")
+		createdAt: integer({ mode: "timestamp_ms" })
 			.notNull()
-			.$defaultFn(() => new Date().toISOString()),
-		updatedAt: text("updated_at")
+			.$defaultFn(() => new Date()),
+		updatedAt: integer({ mode: "timestamp_ms" })
 			.notNull()
-			.$defaultFn(() => new Date().toISOString()),
+			.$defaultFn(() => new Date()),
 	},
 	(table) => [
 		uniqueIndex("email_idx").on(table.email),

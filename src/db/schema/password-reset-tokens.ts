@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 
@@ -12,10 +11,10 @@ export const passwordResetTokens = sqliteTable(
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
 		token: text("token").notNull().unique(),
-		expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
-		createdAt: integer("created_at", { mode: "timestamp" })
+		expiresAt: integer({ mode: "timestamp_ms" }),
+		createdAt: integer({ mode: "timestamp_ms" })
 			.notNull()
-			.default(sql`CURRENT_TIMESTAMP`),
+			.$defaultFn(() => new Date()),
 	},
 	(table) => [index("password_reset_user_id_idx").on(table.userId)],
 );

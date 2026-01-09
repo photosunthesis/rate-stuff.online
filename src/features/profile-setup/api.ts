@@ -5,9 +5,10 @@ import {
 	profileSetupSchema,
 	type PublicUser,
 } from "~/features/profile-setup/types";
-import { deleteFileByUrl, uploadFile } from "~/utils/media-storage-utils";
-import { getSession } from "~/utils/auth-utils";
-import { updateUserProfile, getUserById } from "./service";
+import { uploadFile } from "~/utils/media-storage-utils";
+import { updateUserProfile } from "./service";
+import { authMiddleware } from "~/middlewares/auth-middleware";
+import crypto from "node:crypto";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
@@ -35,49 +36,41 @@ function mapUserData(userData: {
 }
 
 export const updateProfileFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware])
 	.inputValidator(profileSetupSchema)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
-			const session = await getSession();
-			const userId = session?.userId;
-			if (!userId) return { success: false, error: "Not authenticated" };
-
+			const userId = context.userSession.userId;
 			const updates: { name?: string; avatarUrl?: string } = {};
-			const existingUser = await getUserById(userId);
 
 			if (data.displayName && data.displayName.trim() !== "")
 				updates.name = data.displayName;
 
 			if (data.avatarUrl === "") {
-				if (existingUser?.avatarUrl)
-					await deleteFileByUrl(env, existingUser.avatarUrl);
 				updates.avatarUrl = undefined;
-			} else if (data.avatarUrl) {
-				if (
-					existingUser?.avatarUrl &&
-					existingUser.avatarUrl !== data.avatarUrl
-				)
-					await deleteFileByUrl(env, existingUser.avatarUrl);
-				updates.avatarUrl = data.avatarUrl;
 			}
 
 			if (data.avatar) {
-				if (!data.avatar.type || !data.avatar.type.startsWith("image/"))
+				if (!data.avatar.type || !data.avatar.type.startsWith("image/")) {
 					throw new Error("Invalid file type. Please upload an image.");
-				const maxSize = 8 * 1024 * 1024;
-				if ((data.avatar as File).size > maxSize)
-					throw new Error("File too large. Maximum size is 8MB.");
+				}
+
+				const maxSize = 2 * 1024 * 1024;
+
+				if ((data.avatar as File).size > maxSize) {
+					throw new Error("File too large. Maximum size is 2MB.");
+				}
+
 				const origExt = data.avatar.name.split(".").pop() || "webp";
 				const extension =
 					data.avatar.type === "image/webp" || origExt.toLowerCase() === "webp"
 						? "webp"
 						: origExt;
-				const avatarKey = `avatars/${userId}-${Date.now()}.${extension}`;
+				const avatarKey = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
 				const uploadedUrl = await uploadFile(env, avatarKey, data.avatar, {
 					type: data.avatar.type,
 				});
-				if (existingUser?.avatarUrl && existingUser.avatarUrl !== uploadedUrl)
-					await deleteFileByUrl(env, existingUser.avatarUrl);
+
 				updates.avatarUrl = uploadedUrl;
 			}
 
@@ -85,19 +78,23 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 				userId,
 				updates as { name?: string; avatarUrl?: string | undefined },
 			);
-			if (!result.success)
+			if (!result.success) {
 				return {
 					success: false,
 					error: result.error || "Failed to update profile",
 				};
+			}
+
 			return { success: true, user: mapUserData(result.data) };
 		} catch (error) {
-			if (error instanceof ZodError)
+			if (error instanceof ZodError) {
 				return {
 					success: false,
 					error: "Validation failed",
 					errors: formatZodError(error),
 				};
+			}
+
 			return {
 				success: false,
 				error:

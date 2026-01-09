@@ -1,5 +1,10 @@
-import { sql, relations } from "drizzle-orm";
-import { sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
+import {
+	sqliteTable,
+	text,
+	primaryKey,
+	integer,
+} from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
 
 export const tags = sqliteTable("tags", {
@@ -7,7 +12,10 @@ export const tags = sqliteTable("tags", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
-	createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+	createdAt: integer({ mode: "timestamp_ms" })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	deletedAt: integer({ mode: "timestamp_ms" }),
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({

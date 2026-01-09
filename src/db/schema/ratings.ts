@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { sqliteTable, text, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, real, integer } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
@@ -18,13 +18,13 @@ export const ratings = sqliteTable("ratings", {
 	score: real("score").notNull(),
 	content: text("content").notNull(),
 	images: text("images"),
-	createdAt: text("created_at")
+	createdAt: integer({ mode: "timestamp_ms" })
 		.notNull()
-		.$defaultFn(() => new Date().toISOString()),
-	updatedAt: text("updated_at")
+		.$defaultFn(() => new Date()),
+	updatedAt: integer({ mode: "timestamp_ms" })
 		.notNull()
-		.$defaultFn(() => new Date().toISOString()),
-	deletedAt: text("deleted_at"),
+		.$defaultFn(() => new Date()),
+	deletedAt: integer({ mode: "timestamp_ms" }),
 });
 
 export const ratingsRelations = relations(ratings, ({ one, many }) => ({

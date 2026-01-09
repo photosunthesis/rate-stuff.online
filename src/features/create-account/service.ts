@@ -83,10 +83,6 @@ export async function createUser(
 		.where(eq(inviteCodes.id, inviteCode.id));
 
 	const { password: _, ...userWithoutPassword } = newUser[0];
-	const userWithDates = {
-		...userWithoutPassword,
-		createdAt: new Date(userWithoutPassword.createdAt),
-		updatedAt: new Date(userWithoutPassword.updatedAt),
-	};
-	return { success: true, data: userWithDates };
+
+	return { success: true, data: userWithoutPassword };
 }

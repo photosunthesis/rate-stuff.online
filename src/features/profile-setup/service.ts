@@ -14,7 +14,7 @@ export async function updateUserProfile(
 	try {
 		const updatedUser = await db
 			.update(users)
-			.set({ ...updates, updatedAt: new Date().toISOString() })
+			.set({ ...updates, updatedAt: new Date() })
 			.where(eq(users.id, userId))
 			.returning();
 
@@ -22,13 +22,15 @@ export async function updateUserProfile(
 			return { success: false, error: "Failed to update profile" };
 		}
 
-		const publicUser: PublicUser = {
-			id: updatedUser[0].id,
-			username: updatedUser[0].username,
-			displayName: updatedUser[0].name,
-			avatarUrl: updatedUser[0].avatarUrl,
+		return {
+			success: true,
+			data: {
+				id: updatedUser[0].id,
+				username: updatedUser[0].username,
+				displayName: updatedUser[0].name,
+				avatarUrl: updatedUser[0].avatarUrl,
+			},
 		};
-		return { success: true, data: publicUser };
 	} catch {
 		return { success: false, error: "Failed to update profile" };
 	}

@@ -5,7 +5,7 @@ import { and, isNull, desc, lt, eq } from "drizzle-orm";
 export async function getUserRatings(
 	userId: string,
 	limit = 10,
-	cursor?: string,
+	cursor?: Date,
 ) {
 	return db.query.ratings.findMany({
 		where: and(
@@ -34,7 +34,7 @@ export async function getUserRatings(
 	});
 }
 
-export async function getFeedRatings(limit = 10, cursor?: string) {
+export async function getFeedRatings(limit = 10, cursor?: Date) {
 	const results = await db.query.ratings.findMany({
 		where: and(
 			isNull(ratings.deletedAt),

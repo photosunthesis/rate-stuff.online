@@ -3,14 +3,14 @@ import { z } from "zod";
 export type Stuff = {
 	id: string;
 	name: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export type Tag = {
 	id: string;
 	name: string;
-	createdAt: string;
+	createdAt: Date;
 };
 
 export type Rating = {
@@ -21,8 +21,8 @@ export type Rating = {
 	score: number;
 	content: string;
 	images: string | null;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export type RatingWithRelations = Rating & {
