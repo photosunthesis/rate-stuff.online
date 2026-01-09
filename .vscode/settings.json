@@ -29,9 +29,6 @@
 	"[css]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
-	"editor.codeActionsOnSave": {
-		"source.organizeImports.biome": "explicit"
-	},
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"editor.formatOnSave": true,
@@ -42,5 +39,13 @@
 		"vite.config.ts": "vite.config.*.ts",
 		"biome.json": ".biomeignore",
 		"wrangler.jsonc": "worker-configuration.d.ts"
+	},
+	"biome.lsp.trace.server": "verbose",
+	"biome.enabled": true,
+	"biome.requireConfiguration": false,
+	"problems.decorations.enabled": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "always",
+		"source.organizeImports.biome": "explicit"
 	}
 }
