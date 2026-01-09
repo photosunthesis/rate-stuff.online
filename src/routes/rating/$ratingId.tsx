@@ -137,9 +137,185 @@ function MarkdownContent({ content }: { content: string }) {
 	);
 }
 
+function RatingHeader({ rating }: { rating: RatingWithRelations }) {
+	const userName = rating.user.name || rating.user.username || "User";
+	return (
+		<div className="flex items-center gap-3">
+			<Avatar
+				src={rating.user.avatarUrl ?? null}
+				alt={userName}
+				size="sm"
+				className="shrink-0"
+			/>
+
+			<div className="flex-1 min-w-0">
+				<div className="flex items-center gap-1 flex-wrap text-sm">
+					<a
+						href={`/@${rating.user.username ?? rating.user.id}`}
+						className="font-semibold text-white hover:underline"
+					>
+						{userName}
+					</a>
+					<span className="text-neutral-500">has rated</span>
+					<a
+						href={`/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
+						className="font-semibold text-white hover:underline"
+					>
+						{rating.stuff.name}
+					</a>
+					<span className="text-neutral-500">•</span>
+					<span className="text-neutral-500">
+						{getTimeAgo(rating.createdAt)}
+					</span>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function BackButton() {
+	return (
+		<button
+			type="button"
+			onClick={() => window.history.back()}
+			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer"
+		>
+			← Back
+		</button>
+	);
+}
+
+function TitleBlock({ rating }: { rating: RatingWithRelations }) {
+	return (
+		<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
+			{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+		</h3>
+	);
+}
+
+function ContentSection({ rating }: { rating: RatingWithRelations }) {
+	let image: string | undefined;
+	if (rating?.images) {
+		if (typeof rating.images === "string") {
+			try {
+				const imgs = JSON.parse(rating.images as string);
+				if (Array.isArray(imgs) && imgs.length > 0) image = imgs[0];
+				else if (typeof imgs === "string") image = imgs;
+			} catch {
+				image = rating.images as string;
+			}
+		} else if (
+			Array.isArray(rating.images) &&
+			(rating.images as string[]).length > 0
+		) {
+			image = (rating.images as string[])[0];
+		}
+	}
+
+	return (
+		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal">
+			<MarkdownContent content={rating.content} />
+			{/* JSON-LD structured data for SEO (rendered server-side) */}
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify({
+						"@context": "https://schema.org",
+						"@type": "Review",
+						author: {
+							"@type": "Person",
+							name: rating.user.name ?? rating.user.username ?? "User",
+							url: `https://rate-stuff.online/@${rating.user.username ?? rating.user.id}`,
+						},
+						datePublished: new Date(rating.createdAt).toISOString(),
+						reviewBody: excerptFromMarkdown(rating.content, 500),
+						name: rating.title,
+						reviewRating: {
+							"@type": "Rating",
+							ratingValue: rating.score,
+							bestRating: 10,
+							worstRating: 1,
+						},
+						itemReviewed: {
+							"@type": "Thing",
+							name: rating.stuff.name,
+							url: `https://rate-stuff.online/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`,
+						},
+						image: image,
+					}),
+				}}
+			/>
+		</div>
+	);
+}
+
+function ImagesGallery({
+	images,
+	onImageClick,
+}: {
+	images: string[];
+	onImageClick: (src: string) => void;
+}) {
+	if (!images || images.length === 0) return null;
+	if (images.length === 1) {
+		return (
+			<div className="ml-11 mb-3">
+				<button
+					type="button"
+					onClick={() => onImageClick(images[0])}
+					className="block w-full"
+				>
+					<img
+						src={images[0]}
+						alt="Rating"
+						className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
+					/>
+				</button>
+			</div>
+		);
+	}
+
+	return (
+		<div className="ml-11 mb-3 flex gap-2">
+			{images.map((src) => (
+				<div key={src} className="flex-1 aspect-square">
+					<button
+						type="button"
+						onClick={() => onImageClick(src)}
+						className="w-full h-full"
+					>
+						<img
+							src={src}
+							alt="Rating"
+							className="w-full h-full object-cover rounded-xl cursor-pointer"
+						/>
+					</button>
+				</div>
+			))}
+		</div>
+	);
+}
+
+function TagsList({ tags }: { tags?: string[] }) {
+	if (!tags || tags.length === 0) return null;
+	return (
+		<div className="flex flex-wrap gap-2 mb-3 ml-11">
+			{tags.map((tag: string) => (
+				<a
+					key={tag}
+					href={`#${tag}`}
+					className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+				>
+					#{tag}
+				</a>
+			))}
+		</div>
+	);
+}
+
 function RouteComponent() {
-	const id = Route.useParams().ratingId;
-	const { data, isLoading, isError } = useRating(id);
+	const ratingId = Route.useParams().ratingId;
+	const { data, isLoading, isError } = useRating(ratingId);
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
 	if (isLoading) return null;
@@ -167,159 +343,32 @@ function RouteComponent() {
 	return (
 		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
 			<MobileHeader isAuthenticated={true} />
-
 			<div className="flex flex-1 justify-center">
 				<LeftSidebar />
 
 				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0">
 					<div className="px-4 py-4">
-						<button
-							type="button"
-							onClick={() => window.history.back()}
-							className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4"
-						>
-							← Back
-						</button>
+						<BackButton />
 
-						<div className="flex items-center gap-3 mb-2">
-							<a
-								href={`/@${ratingTyped.user.username ?? ratingTyped.user.id}`}
-								className="shrink-0"
-							>
-								<Avatar
-									src={ratingTyped.user.avatarUrl ?? null}
-									alt={
-										ratingTyped.user.name ?? ratingTyped.user.username ?? "User"
-									}
-									size="sm"
-								/>
-							</a>
-							<div className="flex-1 min-w-0">
-								<div className="flex items-center gap-1 flex-wrap text-sm">
-									<a
-										href={`/@${ratingTyped.user.username ?? ratingTyped.user.id}`}
-										className="font-semibold text-white hover:underline truncate"
-									>
-										{ratingTyped.user.name ||
-											ratingTyped.user.username ||
-											"User"}
-									</a>
-									<span className="text-neutral-500">has rated</span>
-									<a
-										href={`/stuff/${ratingTyped.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
-										className="font-semibold text-white hover:underline"
-									>
-										{ratingTyped.stuff.name}
-									</a>
-									<span className="text-neutral-500">•</span>
-									<span className="text-neutral-500">
-										{getTimeAgo(ratingTyped.createdAt)}
-									</span>
-								</div>
-							</div>
-						</div>
+						<div className="-mx-4 border-t border-neutral-800 mb-4" />
 
-						<h1 className="text-2xl font-semibold text-white mb-3">
-							{getRatingEmoji(ratingTyped.score)} {ratingTyped.score}/10 —{" "}
-							{ratingTyped.title}
-						</h1>
+						<RatingHeader rating={ratingTyped} />
 
-						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal mb-4">
-							<MarkdownContent content={ratingTyped.content} />
-							{/* JSON-LD structured data for SEO (rendered server-side) */}
-							<script
-								type="application/ld+json"
-								dangerouslySetInnerHTML={{
-									__html: JSON.stringify({
-										"@context": "https://schema.org",
-										"@type": "Review",
-										author: {
-											"@type": "Person",
-											name:
-												ratingTyped.user.name ??
-												ratingTyped.user.username ??
-												"User",
-											url: `https://rate-stuff.online/@${ratingTyped.user.username ?? ratingTyped.user.id}`,
-										},
-										datePublished: new Date(
-											ratingTyped.createdAt,
-										).toISOString(),
-										reviewBody: excerptFromMarkdown(ratingTyped.content, 500),
-										name: ratingTyped.title,
-										reviewRating: {
-											"@type": "Rating",
-											ratingValue: ratingTyped.score,
-											bestRating: 10,
-											worstRating: 1,
-										},
-										itemReviewed: {
-											"@type": "Thing",
-											name: ratingTyped.stuff.name,
-											url: `https://rate-stuff.online/stuff/${ratingTyped.stuff.name.toLowerCase().replace(/\s+/g, "-")}`,
-										},
-										image:
-											parsedImages && parsedImages.length > 0
-												? parsedImages[0]
-												: undefined,
-									}),
-								}}
-							/>
-						</div>
+						<TitleBlock rating={ratingTyped} />
 
-						{parsedImages && parsedImages.length > 0 && (
-							<div className="mb-4">
-								{parsedImages.length === 1 ? (
-									<button
-										type="button"
-										onClick={() => handleImageClick(parsedImages[0])}
-										className="block w-full"
-									>
-										<img
-											src={parsedImages[0]}
-											alt="Rating"
-											className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
-										/>
-									</button>
-								) : (
-									<div className="grid grid-cols-2 gap-2">
-										{parsedImages.map((src) => (
-											<button
-												key={src}
-												type="button"
-												onClick={() => handleImageClick(src)}
-												className="w-full h-full"
-											>
-												<img
-													src={src}
-													alt="Rating"
-													className="w-full h-full object-cover rounded-xl cursor-pointer"
-												/>
-											</button>
-										))}
-									</div>
-								)}
-							</div>
-						)}
+						<ImagesGallery
+							images={parsedImages}
+							onImageClick={handleImageClick}
+						/>
 
-						{ratingTyped.tags && ratingTyped.tags.length > 0 && (
-							<div className="flex flex-wrap gap-2">
-								{ratingTyped.tags.map((tag: string) => (
-									<a
-										key={tag}
-										href={`#${tag}`}
-										className="px-0 py-0 text-emerald-600 hover:text-emerald-500 text-sm font-medium"
-									>
-										#{tag}
-									</a>
-								))}
-							</div>
-						)}
+						<ContentSection rating={ratingTyped} />
+
+						<TagsList tags={ratingTyped.tags} />
 					</div>
 				</main>
 
 				<RightSidebar isAuthenticated={true} />
 			</div>
-
 			<Lightbox
 				src={lightboxSrc}
 				onClose={() => setLightboxSrc(null)}

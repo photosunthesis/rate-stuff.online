@@ -13,7 +13,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SetUpProfileRouteImport } from './routes/set-up-profile'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RatingRatingIdRouteImport } from './routes/rating.$ratingId'
+import { Route as RatingRatingIdRouteImport } from './routes/rating/$ratingId'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
