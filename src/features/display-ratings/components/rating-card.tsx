@@ -51,8 +51,12 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const userName = rating.user.name || rating.user.username || "User";
 	const avatarUrl = rating.user.avatarUrl ?? null;
+	const usernameHandle = rating.user.username ?? rating.user.id;
+	const displayName = rating.user.name;
+	const userName = displayName
+		? `${displayName} (@${usernameHandle})`
+		: `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
 	let parsedImages: string[] = [];
@@ -82,10 +86,10 @@ export function RatingCard({ rating }: RatingCardProps) {
 					<div className="flex items-center gap-1 flex-wrap text-sm">
 						<button
 							type="button"
-							className="font-semibold text-white hover:underline"
+							className="font-medium text-white hover:underline"
 							onClick={(e) => {
 								e.stopPropagation();
-								window.location.href = `/@${rating.user.username ?? rating.userId}`;
+								window.location.href = `/@${usernameHandle}`;
 							}}
 						>
 							{userName}
@@ -93,7 +97,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 						<span className="text-neutral-500">has rated</span>
 						<button
 							type="button"
-							className="font-semibold text-white hover:underline"
+							className="font-medium text-white hover:underline"
 							onClick={(e) => {
 								e.stopPropagation();
 								window.location.href = `/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`;

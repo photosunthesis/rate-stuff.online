@@ -138,7 +138,12 @@ function MarkdownContent({ content }: { content: string }) {
 }
 
 function RatingHeader({ rating }: { rating: RatingWithRelations }) {
-	const userName = rating.user.name || rating.user.username || "User";
+	const usernameHandle = rating.user.username ?? rating.user.id;
+	const displayName = rating.user.name;
+	const userName = displayName
+		? `${displayName} (@${usernameHandle})`
+		: `@${usernameHandle}`;
+
 	return (
 		<div className="flex items-center gap-3">
 			<Avatar
@@ -151,15 +156,15 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-1 flex-wrap text-sm">
 					<a
-						href={`/@${rating.user.username ?? rating.user.id}`}
-						className="font-semibold text-white hover:underline"
+						href={`/@${usernameHandle}`}
+						className="font-medium text-white hover:underline"
 					>
 						{userName}
 					</a>
 					<span className="text-neutral-500">has rated</span>
 					<a
 						href={`/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
-						className="font-semibold text-white hover:underline"
+						className="font-medium text-white hover:underline"
 					>
 						{rating.stuff.name}
 					</a>
