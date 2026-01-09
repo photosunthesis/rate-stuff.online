@@ -17,15 +17,16 @@ export async function updateUserProfile(
 			.set({ ...updates, updatedAt: new Date().toISOString() })
 			.where(eq(users.id, userId))
 			.returning();
+
 		if (!updatedUser || updatedUser.length === 0) {
 			return { success: false, error: "Failed to update profile" };
 		}
-		const { password: _, ...userWithoutPassword } = updatedUser[0];
+
 		const publicUser: PublicUser = {
-			id: userWithoutPassword.id,
-			username: userWithoutPassword.username,
-			displayName: userWithoutPassword.name || null,
-			avatarUrl: userWithoutPassword.avatarUrl ?? null,
+			id: updatedUser[0].id,
+			username: updatedUser[0].username,
+			displayName: updatedUser[0].name,
+			avatarUrl: updatedUser[0].avatarUrl,
 		};
 		return { success: true, data: publicUser };
 	} catch {
@@ -38,13 +39,10 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
 
 	if (!user) return null;
 
-	const { password: _, ...userWithoutPassword } = user;
-	const publicUser: PublicUser = {
-		id: userWithoutPassword.id,
-		username: userWithoutPassword.username,
-		displayName: userWithoutPassword.name || null,
-		avatarUrl: userWithoutPassword.avatarUrl ?? null,
+	return {
+		id: user.id,
+		username: user.username,
+		displayName: user.name,
+		avatarUrl: user.avatarUrl,
 	};
-
-	return publicUser;
 }
