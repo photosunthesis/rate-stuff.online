@@ -7,7 +7,7 @@ export async function getUserRatings(
 	limit = 10,
 	cursor?: Date,
 ) {
-	return db.query.ratings.findMany({
+	const results = await db.query.ratings.findMany({
 		where: and(
 			eq(ratings.userId, userId),
 			isNull(ratings.deletedAt),
@@ -32,6 +32,12 @@ export async function getUserRatings(
 			},
 		},
 	});
+
+	// Normalize tags to simple string[] for client usage ✅
+	return results.map((r) => ({
+		...r,
+		tags: (r.tags ?? []).map((t) => t.tag.name),
+	}));
 }
 
 export async function getFeedRatings(limit = 10, cursor?: Date) {
@@ -60,5 +66,9 @@ export async function getFeedRatings(limit = 10, cursor?: Date) {
 		},
 	});
 
-	return results;
+	// Normalize tags to simple string[] for client usage ✅
+	return results.map((r) => ({
+		...r,
+		tags: (r.tags ?? []).map((t) => t.tag.name),
+	}));
 }

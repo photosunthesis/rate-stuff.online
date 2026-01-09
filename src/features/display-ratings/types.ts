@@ -26,7 +26,7 @@ export type Rating = {
 };
 
 export type RatingWithRelations = Rating & {
-	tags: string | null | string[] | { tag: { name: string } }[];
+	tags: string[];
 	user: {
 		id: string;
 		name: string | null;

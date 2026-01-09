@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { RatingWithRelations } from "../types";
 import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -55,28 +56,6 @@ function getTimeAgo(date: Date | string | number): string {
 	}
 
 	return dateObj.toLocaleDateString();
-}
-
-interface RatingWithRelations {
-	id: string;
-	userId: string;
-	stuffId: string;
-	title: string;
-	score: number;
-	content: string;
-	images: string | null;
-	tags: string | null | string[] | { tag: { name: string } }[];
-	createdAt: string;
-	user: {
-		id: string;
-		name: string | null;
-		username?: string;
-		avatarUrl?: string | null;
-	};
-	stuff: {
-		id: string;
-		name: string;
-	};
 }
 
 interface RatingCardProps {
@@ -136,26 +115,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 		parsedImages = rating.images;
 	}
 
-	let parsedTags: string[] = [];
-	if (typeof rating.tags === "string") {
-		try {
-			parsedTags = JSON.parse(rating.tags);
-		} catch {
-			parsedTags = [];
-		}
-	} else if (Array.isArray(rating.tags)) {
-		if (
-			rating.tags.length > 0 &&
-			typeof rating.tags[0] === "object" &&
-			"tag" in rating.tags[0]
-		) {
-			parsedTags = (rating.tags as { tag: { name: string } }[]).map(
-				(t) => t.tag.name,
-			);
-		} else {
-			parsedTags = rating.tags as string[];
-		}
-	}
+	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
 		<div className="border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer">
