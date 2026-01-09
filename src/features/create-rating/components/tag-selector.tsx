@@ -80,7 +80,7 @@ export function TagSelector({
 				{selectedTags.map((tag) => (
 					<span
 						key={tag}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/50 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-colors rounded-md"
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/50 text-emerald-600 hover:text-emerald-500 text-sm font-medium transition-colors rounded-md"
 					>
 						#{tag}
 						<button
@@ -154,7 +154,7 @@ export function TagSelector({
 										onClick={() => handleAddTag(tag.name)}
 										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center justify-between"
 									>
-										<span className="text-white">#{tag.name}</span>
+										<span className="text-emerald-600">#{tag.name}</span>
 										<span className="text-xs text-neutral-500">Add</span>
 									</button>
 								))}

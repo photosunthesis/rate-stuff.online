@@ -72,3 +72,32 @@ export async function getFeedRatings(limit = 10, cursor?: Date) {
 		tags: (r.tags ?? []).map((t) => t.tag.name),
 	}));
 }
+
+export async function getRatingById(id: string) {
+	const result = await db.query.ratings.findFirst({
+		where: eq(ratings.id, id),
+		with: {
+			stuff: true,
+			user: {
+				columns: {
+					id: true,
+					name: true,
+					username: true,
+					avatarUrl: true,
+				},
+			},
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
+		},
+	});
+
+	if (!result) return null;
+
+	return {
+		...result,
+		tags: (result.tags ?? []).map((t) => t.tag.name),
+	};
+}

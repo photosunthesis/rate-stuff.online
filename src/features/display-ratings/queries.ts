@@ -1,10 +1,15 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useQuery,
+	queryOptions,
+} from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
 	getUserRatingsFn,
 	getFeedRatingsFn,
 	getPublicFeedRatingsFn,
 } from "./api";
+import { getRatingByIdFn } from "./api";
 import type { RatingWithRelations } from "./types";
 
 // Normalized page result used by the hooks (wrapped shape only)
@@ -42,6 +47,25 @@ export function useUserRatings(limit: number = 10) {
 
 		initialPageParam: undefined as string | undefined,
 	});
+}
+
+export const ratingQueryOptions = (id: string | undefined) =>
+	queryOptions({
+		queryKey: ["rating", id],
+		queryFn: async () => {
+			if (!id) return null;
+			return (await getRatingByIdFn({ data: { id } })) as {
+				success: boolean;
+				data: RatingWithRelations | null;
+				error?: string;
+			};
+		},
+		staleTime: 0,
+		gcTime: 1000 * 60 * 10,
+	});
+
+export function useRating(id?: string) {
+	return useQuery(ratingQueryOptions(id));
 }
 
 export function useFeedRatings(

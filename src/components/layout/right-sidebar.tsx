@@ -64,7 +64,7 @@ export function RightSidebar({
 									<Link
 										key={tag.name}
 										to="/"
-										className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-all"
+										className="px-0 py-0 text-emerald-600 hover:text-emerald-500 text-sm font-medium transition-all"
 									>
 										#{tag.name}
 									</Link>

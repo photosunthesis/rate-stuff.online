@@ -1,62 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../types";
 import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
-function getRatingEmoji(rating: number): string {
-	const roundedRating = Math.round(rating);
-
-	if (roundedRating >= 10) return "🤩";
-	if (roundedRating >= 9) return "😍";
-	if (roundedRating >= 8) return "😄";
-	if (roundedRating >= 7) return "😊";
-	if (roundedRating >= 6) return "🙂";
-	if (roundedRating >= 5) return "😑";
-	if (roundedRating >= 4) return "😐";
-	if (roundedRating >= 3) return "😕";
-	if (roundedRating >= 2) return "😞";
-	return "😭";
-}
-
-function getTimeAgo(date: Date | string | number): string {
-	const now = new Date();
-
-	let dateObj: Date;
-	if (date instanceof Date) {
-		dateObj = date;
-	} else if (typeof date === "string" || typeof date === "number") {
-		dateObj = new Date(date);
-	} else {
-		return "Invalid Date";
-	}
-
-	if (!dateObj || Number.isNaN(dateObj.getTime())) {
-		return "Invalid Date";
-	}
-
-	const seconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
-
-	if (seconds < 60) return "now";
-	const minutes = Math.floor(seconds / 60);
-	if (minutes < 60) return `${minutes}m`;
-	const hours = Math.floor(minutes / 60);
-	if (hours < 24) return `${hours}h`;
-	const days = Math.floor(hours / 24);
-	if (days < 7) return `${days}d`;
-	const weeks = Math.floor(days / 7);
-	if (weeks < 4) return `${weeks}w`;
-
-	if (dateObj.getFullYear() !== now.getFullYear()) {
-		return dateObj.toLocaleDateString("en-US", {
-			month: "short",
-			year: "numeric",
-		});
-	}
-
-	return dateObj.toLocaleDateString();
-}
+import { getRatingEmoji, getTimeAgo } from "~/utils/rating-utils";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -103,6 +53,8 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const shouldTruncate = plainText.length > maxContentLength;
 	const userName = rating.user.name || rating.user.username || "User";
 	const avatarUrl = rating.user.avatarUrl ?? null;
+	const timeAgo = getTimeAgo(rating.createdAt);
+	const navigate = useNavigate();
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {
@@ -118,7 +70,14 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
-		<div className="border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer">
+		<a
+			href={`/rating/${rating.id}`}
+			onClick={(e) => {
+				e.preventDefault();
+				navigate({ to: "/rating/$ratingId", params: { ratingId: rating.id } });
+			}}
+			className="block border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer"
+		>
 			{/* Header */}
 			<div className="flex items-center gap-3 mb-2">
 				<Avatar
@@ -129,23 +88,29 @@ export function RatingCard({ rating }: RatingCardProps) {
 				/>
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<a
-							href={`/@${rating.user.username ?? rating.userId}`}
+						<button
+							type="button"
 							className="font-semibold text-white hover:underline"
+							onClick={(e) => {
+								e.stopPropagation();
+								window.location.href = `/@${rating.user.username ?? rating.userId}`;
+							}}
 						>
 							{userName}
-						</a>
+						</button>
 						<span className="text-neutral-500">has rated</span>
-						<a
-							href={`/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
+						<button
+							type="button"
 							className="font-semibold text-white hover:underline"
+							onClick={(e) => {
+								e.stopPropagation();
+								window.location.href = `/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`;
+							}}
 						>
 							{rating.stuff.name}
-						</a>
+						</button>
 						<span className="text-neutral-500">•</span>
-						<span className="text-neutral-500">
-							{getTimeAgo(rating.createdAt)}
-						</span>
+						<span className="text-neutral-500">{timeAgo}</span>
 					</div>
 				</div>
 			</div>
@@ -222,13 +187,13 @@ export function RatingCard({ rating }: RatingCardProps) {
 						<a
 							key={tag}
 							href={`#${tag}`}
-							className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-all"
+							className="px-0 py-0 text-emerald-600 hover:text-emerald-500 text-sm font-medium transition-all"
 						>
 							#{tag}
 						</a>
 					))}
 				</div>
 			)}
-		</div>
+		</a>
 	);
 }
