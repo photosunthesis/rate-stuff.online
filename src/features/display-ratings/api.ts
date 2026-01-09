@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSession } from "~/utils/auth";
+import { getSession } from "~/utils/auth-utils";
 import { getUserRatings, getFeedRatings } from "./service";
 import { z } from "zod";
 

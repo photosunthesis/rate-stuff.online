@@ -1,7 +1,7 @@
 import { db } from "~/db/index";
 import { users, inviteCodes } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import { hashPassword } from "~/utils/auth";
+import { hashPassword } from "~/utils/auth-utils";
 import type { RegisterInput } from "~/features/create-account/types";
 
 type Result<T> =

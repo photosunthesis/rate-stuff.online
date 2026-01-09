@@ -5,8 +5,8 @@ import {
 	profileSetupSchema,
 	type PublicUser,
 } from "~/features/profile-setup/types";
-import { deleteFileByUrl, uploadFile } from "~/utils/media-storage";
-import { getSession } from "~/utils/auth";
+import { deleteFileByUrl, uploadFile } from "~/utils/media-storage-utils";
+import { getSession } from "~/utils/auth-utils";
 import { updateUserProfile, getUserById } from "./service";
 
 function formatZodError(error: ZodError): Record<string, string> {

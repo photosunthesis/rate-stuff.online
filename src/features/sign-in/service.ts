@@ -1,7 +1,7 @@
 import { db } from "~/db/index";
 import { users } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import { comparePasswords } from "~/utils/auth";
+import { comparePasswords } from "~/utils/auth-utils";
 import type { LoginInput } from "~/features/sign-in/types";
 
 type Result<T> =

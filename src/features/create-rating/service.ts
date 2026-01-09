@@ -4,7 +4,7 @@ import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import type { Stuff, Tag } from "~/features/display-ratings/types";
-import { uploadFile } from "~/utils/media-storage";
+import { uploadFile } from "~/utils/media-storage-utils";
 
 type Result<T> =
 	| { success: true; data: T }

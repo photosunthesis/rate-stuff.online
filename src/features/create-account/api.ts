@@ -6,12 +6,12 @@ import {
 	type PublicUser,
 	type RegisterInput,
 } from "~/features/create-account/types";
-import { setSessionCookie } from "~/utils/auth";
+import { setSessionCookie } from "~/utils/auth-utils";
 import { createUser } from "./service";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
-} from "~/middlewares/rate-limit";
+} from "~/middlewares/rate-limit-middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};

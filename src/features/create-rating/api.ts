@@ -1,11 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
-import { getSession } from "~/utils/auth";
+import { getSession } from "~/utils/auth-utils";
 import {
 	createRatingSchema,
 	imageUploadSchema,
 } from "~/features/display-ratings/types";
 import { createRating, uploadImage, searchStuff, searchTags } from "./service";
+import {
+	createRateLimitMiddleware,
+	rateLimitKeys,
+} from "~/middlewares/rate-limit-middleware";
+import { authMiddleware } from "~/middlewares/auth-middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
@@ -16,7 +21,14 @@ function formatZodError(error: ZodError): Record<string, string> {
 	return fieldErrors;
 }
 
+const rateLimitMiddleware = createRateLimitMiddleware({
+	binding: "GENERAL_RATE_LIMITER",
+	keyFn: rateLimitKeys.bySession,
+	errorMessage: "Too many requests. Please try again after a short while.",
+});
+
 export const searchStuffFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -31,6 +43,7 @@ export const searchStuffFn = createServerFn({ method: "GET" })
 	});
 
 export const searchTagsFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -45,6 +58,7 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 	});
 
 export const createRatingFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator(createRatingSchema)
 	.handler(async ({ data }) => {
 		try {
@@ -77,6 +91,7 @@ export const createRatingFn = createServerFn({ method: "POST" })
 	});
 
 export const uploadImageFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator((data: unknown) => {
 		if (!(data instanceof FormData))
 			throw new Error("Invalid input: expected FormData");
