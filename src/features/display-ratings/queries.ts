@@ -67,6 +67,7 @@ export const ratingQueryOptions = (id: string | undefined) =>
 export function useRating(id?: string) {
 	return useQuery(ratingQueryOptions(id));
 }
+import { getRecentTagsFn, getRecentStuffFn } from "./api";
 
 export function useFeedRatings(
 	limit: number = 10,
@@ -92,5 +93,41 @@ export function useFeedRatings(
 		},
 
 		initialPageParam: undefined as string | undefined,
+	});
+}
+
+export function useRecentTags() {
+	const fn = useServerFn(getRecentTagsFn);
+
+	return useQuery({
+		queryKey: ["recent", "tags"],
+		queryFn: async () => {
+			const res = (await fn()) as {
+				success: boolean;
+				data?: { name: string; count: number }[];
+				error?: string;
+			};
+			if (!res.success) throw new Error(res.error ?? "Failed to load tags");
+			return res.data ?? [];
+		},
+		staleTime: 1000 * 60 * 5,
+	});
+}
+
+export function useRecentStuff() {
+	const fn = useServerFn(getRecentStuffFn);
+
+	return useQuery({
+		queryKey: ["recent", "stuff"],
+		queryFn: async () => {
+			const res = (await fn()) as {
+				success: boolean;
+				data?: { id: string; name: string; count: number }[];
+				error?: string;
+			};
+			if (!res.success) throw new Error(res.error ?? "Failed to load stuff");
+			return res.data ?? [];
+		},
+		staleTime: 1000 * 60 * 5,
 	});
 }

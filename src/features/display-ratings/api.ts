@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getUserRatings, getFeedRatings, getRatingById } from "./service";
+import { getRecentTags, getRecentStuff } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
 
@@ -103,6 +104,37 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 				success: false,
 				error:
 					error instanceof Error ? error.message : "Failed to fetch rating",
+			};
+		}
+	});
+
+export const getRecentTagsFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.handler(async () => {
+		try {
+			const tags = await getRecentTags(10);
+			return { success: true, data: tags };
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch tags",
+			};
+		}
+	});
+
+export const getRecentStuffFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.handler(async () => {
+		try {
+			const stuff = await getRecentStuff(5);
+			return { success: true, data: stuff };
+		} catch (error) {
+			return {
+				success: false,
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to fetch recent stuff",
 			};
 		}
 	});

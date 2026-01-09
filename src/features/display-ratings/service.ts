@@ -1,6 +1,6 @@
 import { db } from "~/db/index";
 import { ratings } from "~/db/schema";
-import { and, isNull, desc, lt, eq } from "drizzle-orm";
+import { and, isNull, desc, lt, eq, gte } from "drizzle-orm";
 
 export async function getUserRatings(
 	userId: string,
@@ -100,4 +100,67 @@ export async function getRatingById(id: string) {
 		...result,
 		tags: (result.tags ?? []).map((t) => t.tag.name),
 	};
+}
+
+export async function getRecentTags(limit = 10) {
+	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+	const results = await db.query.ratings.findMany({
+		where: and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)),
+		with: {
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
+		},
+	});
+
+	// Count occurrences of each tag in the last week
+	const counts: Record<string, number> = {};
+
+	for (const r of results) {
+		for (const t of r.tags ?? []) {
+			const name = t.tag.name;
+			counts[name] = (counts[name] ?? 0) + 1;
+		}
+	}
+
+	const items = Object.entries(counts)
+		.map(([name, count]) => ({ name, count }))
+		.sort((a, b) => b.count - a.count)
+		.slice(0, limit);
+
+	return items;
+}
+
+export async function getRecentStuff(limit = 5) {
+	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+	const results = await db.query.ratings.findMany({
+		where: and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)),
+		with: {
+			stuff: true,
+		},
+	});
+
+	// Count ratings per stuff in the last week
+	const counts: Record<string, { id: string; name: string; count: number }> =
+		{};
+
+	for (const r of results) {
+		if (!r.stuff) continue;
+		const id = r.stuff.id;
+		if (!counts[id]) {
+			counts[id] = { id, name: r.stuff.name, count: 0 };
+		}
+		counts[id].count += 1;
+	}
+
+	const items = Object.values(counts)
+		.sort((a, b) => b.count - a.count)
+		.slice(0, limit)
+		.map((s) => ({ id: s.id, name: s.name, count: s.count }));
+
+	return items;
 }
