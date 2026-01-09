@@ -9,6 +9,7 @@ import { useServerFn } from "@tanstack/react-start";
 import {
 	createRatingFn,
 	uploadImageFn,
+	updateRatingImagesFn,
 	searchStuffFn,
 	searchTagsFn,
 } from "./api";
@@ -34,10 +35,32 @@ export function useCreateRatingMutation() {
 export function useUploadImageMutation() {
 	const uploadImageMutationFn = useServerFn(uploadImageFn);
 	return useMutation({
-		mutationFn: async (file: File) => {
+		mutationFn: async ({
+			file,
+			ratingId,
+		}: {
+			file: File;
+			ratingId: string;
+		}) => {
 			const formData = new FormData();
 			formData.append("file", file);
+			formData.append("ratingId", ratingId);
 			return uploadImageMutationFn({ data: formData });
+		},
+	});
+}
+
+export function useUpdateRatingImagesMutation() {
+	const updateFn = useServerFn(updateRatingImagesFn);
+	return useMutation({
+		mutationFn: async ({
+			ratingId,
+			images,
+		}: {
+			ratingId: string;
+			images: string[];
+		}) => {
+			return updateFn({ data: { ratingId, images } });
 		},
 	});
 }

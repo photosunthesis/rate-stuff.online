@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { useCreateRatingMutation, useUploadImageMutation } from "./queries";
+import {
+	useCreateRatingMutation,
+	useUploadImageMutation,
+	useUpdateRatingImagesMutation,
+} from "./queries";
 import { useStuffSearchQuery, useTagSearchQuery } from "./queries";
 import type { CreateRatingInput } from "./types";
 
@@ -34,16 +38,31 @@ type CreateRatingHookInput = Omit<CreateRatingInput, "images"> & {
 export function useCreateRating() {
 	const createMutation = useCreateRatingMutation();
 	const uploadMutation = useUploadImageMutation();
+	const updateImagesMutation = useUpdateRatingImagesMutation();
 
 	return {
 		createRating: async (input: CreateRatingHookInput) => {
+			// Create rating first (images set empty), then upload files using the rating id,
+			// then persist the uploaded image URLs back to the rating.
+			const ratingInput: CreateRatingInput = {
+				...input,
+				images: [],
+			};
+
+			const result = await createMutation.mutateAsync(ratingInput);
+
+			if (!result.success || !result.data) {
+				throw new Error(result.error || "Failed to create rating");
+			}
+
+			const ratingId = result.data.id;
+
 			const imageUrls: string[] = [];
 
 			if (input.images && input.images.length > 0) {
-				const uploadPromises: Promise<
-					| { success: true; data: { key: string; url: string } }
-					| { success: false; error: string }
-				>[] = input.images.map((file) => uploadMutation.mutateAsync(file));
+				const uploadPromises = input.images.map((file) =>
+					uploadMutation.mutateAsync({ file, ratingId }),
+				);
 
 				const results = await Promise.all(uploadPromises);
 				const firstError = results.find((r) => !r.success);
@@ -53,21 +72,20 @@ export function useCreateRating() {
 				}
 
 				results.forEach((r) => {
-					if (r.success) {
-						imageUrls.push(r.data.url);
-					}
+					if (r.success) imageUrls.push(r.data.url);
 				});
 			}
 
-			const ratingInput: CreateRatingInput = {
-				...input,
-				images: imageUrls,
-			};
-
-			const result = await createMutation.mutateAsync(ratingInput);
-
-			if (!result.success) {
-				throw new Error(result.error || "Failed to create rating");
+			if (imageUrls.length > 0) {
+				const updateResult = await updateImagesMutation.mutateAsync({
+					ratingId,
+					images: imageUrls,
+				});
+				if (!updateResult.success) {
+					throw new Error(
+						updateResult.error || "Failed to update rating images",
+					);
+				}
 			}
 		},
 		isPending: createMutation.isPending || uploadMutation.isPending,

@@ -92,13 +92,3 @@ export type TagSearchResponse =
 export type ImageUploadResponse =
 	| { success: true; key: string; url: string }
 	| { success: false; error: string };
-
-export const imageUploadSchema = z.object({
-	file: z
-		.instanceof(File, { message: "File is required" })
-		.refine(
-			(file) => file.size <= 5 * 1024 * 1024,
-			"File size must be less than 5MB",
-		)
-		.refine((file) => file.type.startsWith("image/"), "File must be an image"),
-});

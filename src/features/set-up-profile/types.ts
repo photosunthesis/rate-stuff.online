@@ -6,11 +6,14 @@ export const profileSetupSchema = z.object({
 		.max(50, "Display name must be at most 50 characters")
 		.optional()
 		.or(z.literal("")),
-	avatar: z.instanceof(File).optional(),
 	avatarUrl: z.string().optional().or(z.literal("")),
 });
 
-export type ProfileSetupInput = z.infer<typeof profileSetupSchema>;
+export type ProfileSetupSchemaInput = z.infer<typeof profileSetupSchema>;
+
+// Client-side input includes an optional File for the avatar; the server
+// receives only the fields validated by `profileSetupSchema` (displayName, avatarUrl).
+export type ProfileSetupInput = ProfileSetupSchemaInput & { avatar?: File };
 
 export type PublicUser = {
 	id: string;

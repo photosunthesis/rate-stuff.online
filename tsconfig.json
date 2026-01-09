@@ -2,7 +2,7 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".ai/some scripts/seed.ts"
+    ".ai/scripts/seed.ts"
   ],
   "compilerOptions": {
     "target": "ES2022",

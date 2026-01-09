@@ -1,7 +1,10 @@
 import { db } from "~/db/index";
 import { users } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import type { PublicUser } from "~/features/profile-setup/types";
+import type { PublicUser } from "~/features/set-up-profile/types";
+import { env } from "cloudflare:workers";
+import { uploadFile } from "~/utils/media-storage-utils";
+import crypto from "node:crypto";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -47,4 +50,24 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
 		displayName: user.name,
 		avatarUrl: user.avatarUrl,
 	};
+}
+
+export async function uploadProfileImage(
+	file: File,
+	userId: string,
+): Promise<Result<{ key: string; url: string }>> {
+	const origExt = file.name?.split(".").pop() ?? "webp";
+	const extension =
+		file.type === "image/webp" || origExt.toLowerCase() === "webp"
+			? "webp"
+			: origExt;
+	const key = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
+
+	try {
+		const url = await uploadFile(env, key, file);
+
+		return { success: true, data: { key, url } };
+	} catch {
+		return { success: false, error: "Failed to upload image" };
+	}
 }

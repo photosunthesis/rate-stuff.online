@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as SetupProfileRouteImport } from './routes/setup-profile'
+import { Route as SetUpProfileRouteImport } from './routes/set-up-profile'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -19,9 +19,9 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SetupProfileRoute = SetupProfileRouteImport.update({
-  id: '/setup-profile',
-  path: '/setup-profile',
+const SetUpProfileRoute = SetUpProfileRouteImport.update({
+  id: '/set-up-profile',
+  path: '/set-up-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateAccountRoute = CreateAccountRouteImport.update({
@@ -38,34 +38,34 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
-  '/setup-profile': typeof SetupProfileRoute
+  '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
-  '/setup-profile': typeof SetupProfileRoute
+  '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
-  '/setup-profile': typeof SetupProfileRoute
+  '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create-account' | '/setup-profile' | '/sign-in'
+  fullPaths: '/' | '/create-account' | '/set-up-profile' | '/sign-in'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-account' | '/setup-profile' | '/sign-in'
-  id: '__root__' | '/' | '/create-account' | '/setup-profile' | '/sign-in'
+  to: '/' | '/create-account' | '/set-up-profile' | '/sign-in'
+  id: '__root__' | '/' | '/create-account' | '/set-up-profile' | '/sign-in'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateAccountRoute: typeof CreateAccountRoute
-  SetupProfileRoute: typeof SetupProfileRoute
+  SetUpProfileRoute: typeof SetUpProfileRoute
   SignInRoute: typeof SignInRoute
 }
 
@@ -78,11 +78,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/setup-profile': {
-      id: '/setup-profile'
-      path: '/setup-profile'
-      fullPath: '/setup-profile'
-      preLoaderRoute: typeof SetupProfileRouteImport
+    '/set-up-profile': {
+      id: '/set-up-profile'
+      path: '/set-up-profile'
+      fullPath: '/set-up-profile'
+      preLoaderRoute: typeof SetUpProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create-account': {
@@ -105,7 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateAccountRoute: CreateAccountRoute,
-  SetupProfileRoute: SetupProfileRoute,
+  SetUpProfileRoute: SetUpProfileRoute,
   SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,10 +1,10 @@
-import { useUpdateProfileMutation } from "~/features/profile-setup/queries";
+import { useUpdateProfileMutation } from "./queries";
 import { useCurrentUser } from "../session/queries";
-import { useUploadImageMutation } from "~/features/create-rating/queries";
+import { useUploadAvatarMutation } from "./queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import type { ProfileSetupInput } from "~/features/profile-setup/types";
-import type { PublicUser } from "~/features/profile-setup/types";
+import type { ProfileSetupInput } from "./types";
+import type { PublicUser } from "./types";
 
 function parseValidationErrors(obj: unknown) {
 	if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
@@ -40,9 +40,9 @@ function extractErrorMessage(obj: unknown) {
 	return undefined;
 }
 
-export function useProfileSetup() {
+export function useSetUpProfile() {
 	const mutation = useUpdateProfileMutation();
-	const uploadMutation = useUploadImageMutation();
+	const uploadMutation = useUploadAvatarMutation();
 	const queryClient = useQueryClient();
 	const [localError, setLocalError] = useState<Error | null>(null);
 	const [localValidationErrors, setLocalValidationErrors] = useState<
@@ -108,20 +108,15 @@ export function useProfileSetup() {
 				throw err;
 			}
 		},
-		isPending: mutation.isPending || uploadMutation.isPending,
-		isError: mutation.isError || uploadMutation.isError || Boolean(localError),
-		error:
-			localError ||
-			(mutation.error as Error) ||
-			(uploadMutation.error as Error) ||
-			null,
+		isPending: mutation.isPending,
+		isError: mutation.isError || Boolean(localError),
+		error: localError || (mutation.error as Error) || null,
 		validationErrors:
 			(mutation.data && !mutation.data.success
 				? parseValidationErrors(mutation.data)
 				: localValidationErrors) || {},
 		reset: () => {
 			mutation.reset();
-			uploadMutation.reset();
 			setLocalError(null);
 			setLocalValidationErrors({});
 		},

@@ -5,6 +5,7 @@ import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import type { Stuff, Tag } from "~/features/display-ratings/types";
 import { uploadFile } from "~/utils/media-storage-utils";
+import crypto from "node:crypto";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -128,9 +129,14 @@ export async function createRating(
 
 export async function uploadImage(
 	file: File,
-	userId: string,
+	ratingId: string,
 ): Promise<Result<{ key: string; url: string }>> {
-	const key = `${userId}/${crypto.randomUUID()}`;
+	const origExt = file.name?.split(".").pop() ?? "webp";
+	const extension =
+		file.type === "image/webp" || origExt.toLowerCase() === "webp"
+			? "webp"
+			: origExt;
+	const key = `ratings/${ratingId}/${crypto.randomUUID()}.${extension}`;
 
 	try {
 		const url = await uploadFile(env, key, file);
@@ -138,5 +144,21 @@ export async function uploadImage(
 		return { success: true, data: { key, url } };
 	} catch {
 		return { success: false, error: "Failed to upload image" };
+	}
+}
+
+export async function updateRatingImages(
+	ratingId: string,
+	images: string[],
+): Promise<Result<null>> {
+	try {
+		await db
+			.update(ratings)
+			.set({ images: JSON.stringify(images), updatedAt: new Date() })
+			.where(eq(ratings.id, ratingId));
+
+		return { success: true, data: null };
+	} catch {
+		return { success: false, error: "Failed to update rating images" };
 	}
 }

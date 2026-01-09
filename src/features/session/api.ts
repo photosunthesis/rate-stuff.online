@@ -3,14 +3,15 @@ import {
 	getSession as getSessionUtil,
 	clearSessionCookie,
 } from "~/utils/auth-utils";
-import { getUserById as getUserByIdService } from "~/features/profile-setup/service";
-import type { PublicUser } from "~/features/profile-setup/types";
+import { getUserById as getUserByIdService } from "~/features/set-up-profile/service";
+import type { PublicUser } from "~/features/set-up-profile/types";
+import { authMiddleware } from "~/middlewares/auth-middleware";
 
-export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
-	async (): Promise<PublicUser | null> => {
+export const getCurrentUserFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
+	.handler(async ({ context }): Promise<PublicUser | null> => {
 		try {
-			const sessionData = await getSessionUtil();
-			const userId = sessionData?.userId;
+			const userId = context.userSession.userId;
 
 			if (!userId) return null;
 
@@ -18,8 +19,7 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 		} catch {
 			return null;
 		}
-	},
-);
+	});
 
 export const isAuthenticatedFn = createServerFn({ method: "GET" }).handler(
 	async (): Promise<boolean> => {

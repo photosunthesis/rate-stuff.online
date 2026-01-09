@@ -1,10 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
+import { createRatingSchema } from "~/features/display-ratings/types";
 import {
-	createRatingSchema,
-	imageUploadSchema,
-} from "~/features/display-ratings/types";
-import { createRating, uploadImage, searchStuff, searchTags } from "./service";
+	createRating,
+	uploadImage,
+	searchStuff,
+	searchTags,
+	updateRatingImages,
+} from "./service";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
@@ -87,15 +90,30 @@ export const createRatingFn = createServerFn({ method: "POST" })
 
 export const uploadImageFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, rateLimitMiddleware])
-	.inputValidator((data: unknown) => {
-		if (!(data instanceof FormData))
-			throw new Error("Invalid input: expected FormData");
-		const file = data.get("file");
-		return imageUploadSchema.parse({ file });
-	})
-	.handler(async ({ data, context }) => {
+	.inputValidator(
+		z.preprocess(
+			(val) => {
+				if (!(val instanceof FormData)) return val;
+				return {
+					file: val.get("file"),
+					ratingId: val.get("ratingId"),
+				};
+			},
+			z.object({
+				file: z
+					.instanceof(File)
+					.refine(
+						(f) => f.size <= 5 * 1024 * 1024,
+						"File size must be less than 5MB",
+					)
+					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
+				ratingId: z.string().min(1, "ratingId is required"),
+			}),
+		),
+	)
+	.handler(async ({ data }) => {
 		try {
-			const result = await uploadImage(data.file, context.userSession.userId);
+			const result = await uploadImage(data.file, data.ratingId);
 			return result;
 		} catch (error) {
 			if (error instanceof ZodError)
@@ -107,6 +125,26 @@ export const uploadImageFn = createServerFn({ method: "POST" })
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : "Upload failed",
+			};
+		}
+	});
+
+export const updateRatingImagesFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(
+		z.object({
+			ratingId: z.string().min(1),
+			images: z.array(z.string()),
+		}),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const result = await updateRatingImages(data.ratingId, data.images);
+			return result;
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Update failed",
 			};
 		}
 	});

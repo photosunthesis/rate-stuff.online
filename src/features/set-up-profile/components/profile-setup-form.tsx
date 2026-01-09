@@ -116,10 +116,10 @@ export function ProfileSetupForm({
 		<>
 			{hasGlobalError && <FormError message={getErrorMessage(error)} />}
 			<form
-				onSubmit={(e) => {
+				onSubmit={async (e) => {
 					e.preventDefault();
 					e.stopPropagation();
-					form.handleSubmit();
+					await form.handleSubmit();
 				}}
 				className="space-y-6 w-full"
 				noValidate

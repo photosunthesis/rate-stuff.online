@@ -1,12 +1,12 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { isAuthenticatedQueryOptions } from "~/features/session/queries";
-import { ProfileSetupForm } from "~/features/profile-setup/components/profile-setup-form";
+import { ProfileSetupForm } from "~/features/set-up-profile/components/profile-setup-form";
 import { AuthLayout } from "~/components/layout/auth-layout";
-import { useProfileSetup } from "~/features/profile-setup/hooks";
-import type { ProfileSetupInput } from "~/features/profile-setup/types";
+import { useSetUpProfile } from "~/features/set-up-profile/hooks";
+import type { ProfileSetupInput } from "~/features/set-up-profile/types";
 import { currentUserQueryOptions } from "~/features/session/queries";
 
-export const Route = createFileRoute("/setup-profile")({
+export const Route = createFileRoute("/set-up-profile")({
 	beforeLoad: async ({ context }) => {
 		const isAuthenticated = await context.queryClient.ensureQueryData(
 			isAuthenticatedQueryOptions(),
@@ -38,13 +38,17 @@ function RouteComponent() {
 		error,
 		validationErrors,
 		user,
-	} = useProfileSetup();
+	} = useSetUpProfile();
 
 	const handleSubmit = async (data: ProfileSetupInput) => {
 		try {
-			await update(data);
-			navigate({ to: "/" });
-		} catch {}
+			const result = await update(data);
+			if (result && (result as { success?: boolean }).success) {
+				navigate({ to: "/" });
+			}
+		} catch {
+			// no navigation; error will be shown in the form via props
+		}
 	};
 
 	return (

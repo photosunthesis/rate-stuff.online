@@ -1,14 +1,12 @@
-import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import {
 	profileSetupSchema,
 	type PublicUser,
-} from "~/features/profile-setup/types";
-import { uploadFile } from "~/utils/media-storage-utils";
+} from "~/features/set-up-profile/types";
+import { uploadProfileImage } from "./service";
 import { updateUserProfile } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
-import crypto from "node:crypto";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
@@ -50,35 +48,19 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 				updates.avatarUrl = undefined;
 			}
 
-			if (data.avatar) {
-				if (!data.avatar.type || !data.avatar.type.startsWith("image/")) {
-					throw new Error("Invalid file type. Please upload an image.");
-				}
-
-				const maxSize = 2 * 1024 * 1024;
-
-				if ((data.avatar as File).size > maxSize) {
-					throw new Error("File too large. Maximum size is 2MB.");
-				}
-
-				const origExt = data.avatar.name.split(".").pop() || "webp";
-				const extension =
-					data.avatar.type === "image/webp" || origExt.toLowerCase() === "webp"
-						? "webp"
-						: origExt;
-				const avatarKey = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
-				const uploadedUrl = await uploadFile(env, avatarKey, data.avatar, {
-					type: data.avatar.type,
-				});
-
-				updates.avatarUrl = uploadedUrl;
+			if (typeof data.avatarUrl === "string" && data.avatarUrl.trim() !== "") {
+				updates.avatarUrl = data.avatarUrl;
 			}
+
+			console.log("Updating user profile with:", updates);
 
 			const result = await updateUserProfile(
 				userId,
 				updates as { name?: string; avatarUrl?: string | undefined },
 			);
 			if (!result.success) {
+				console.error("Failed to update profile:", result.error);
+
 				return {
 					success: false,
 					error: result.error || "Failed to update profile",
@@ -87,6 +69,8 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 
 			return { success: true, user: mapUserData(result.data) };
 		} catch (error) {
+			console.error("Error in updateProfileFn:", error);
+
 			if (error instanceof ZodError) {
 				return {
 					success: false,
@@ -99,6 +83,46 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 				success: false,
 				error:
 					error instanceof Error ? error.message : "Failed to update profile",
+			};
+		}
+	});
+
+export const uploadAvatarFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware])
+	.inputValidator(
+		z.preprocess(
+			(val) => {
+				if (!(val instanceof FormData)) return val;
+				return { file: val.get("file") };
+			},
+			z.object({
+				file: z
+					.instanceof(File)
+					.refine(
+						(f) => f.size <= 5 * 1024 * 1024,
+						"File size must be less than 5MB",
+					)
+					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
+			}),
+		),
+	)
+	.handler(async ({ data, context }) => {
+		try {
+			const result = await uploadProfileImage(
+				data.file,
+				context.userSession.userId,
+			);
+			return result;
+		} catch (error) {
+			if (error instanceof ZodError)
+				return {
+					success: false,
+					error: "Validation failed",
+					errors: formatZodError(error),
+				};
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Upload failed",
 			};
 		}
 	});

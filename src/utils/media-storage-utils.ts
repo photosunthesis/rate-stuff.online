@@ -1,4 +1,4 @@
-const imagesBucketUrl = "https://images.rate-stuff.online/";
+const imagesBucketUrl = "https://images.rate-stuff.online";
 
 export async function uploadFile(
 	env: Env,
@@ -14,26 +14,9 @@ export async function uploadFile(
 				: { contentType: "application/octet-stream" },
 	});
 
-	return `${imagesBucketUrl}${key}`;
-}
-export async function deleteFile(env: Env, key: string) {
-	await env.rate_stuff_online_r2.delete(key);
+	return `${imagesBucketUrl}/${key}`;
 }
 
-export async function deleteFileByUrl(env: Env, url: string) {
-	let key: string | undefined;
-	if (url.startsWith(imagesBucketUrl)) {
-		key = url.slice(imagesBucketUrl.length);
-	} else {
-		try {
-			const u = new URL(url);
-			key = u.pathname.replace(/^\/+/, "");
-		} catch {
-			key = undefined;
-		}
-	}
-	if (key) await deleteFile(env, key);
-}
 export function getFileUrl(key: string): string {
-	return `${imagesBucketUrl}${key}`;
+	return `${imagesBucketUrl}/${key}`;
 }
