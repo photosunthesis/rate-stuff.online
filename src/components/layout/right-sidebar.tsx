@@ -46,9 +46,6 @@ export function RightSidebar({
 										<p className="text-sm font-medium text-white">
 											{thing.name}
 										</p>
-										<p className="text-[11px] text-neutral-500">
-											{thing.category}
-										</p>
 									</Link>
 								))}
 							</div>
@@ -64,7 +61,7 @@ export function RightSidebar({
 									<Link
 										key={tag.name}
 										to="/"
-										className="px-0 py-0 text-neutral-500 hover:text-neutral-400 text-sm font-medium transition-all"
+										className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 									>
 										#{tag.name}
 									</Link>

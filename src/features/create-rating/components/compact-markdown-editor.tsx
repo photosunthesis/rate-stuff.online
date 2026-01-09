@@ -61,7 +61,7 @@ export function CompactMarkdownEditor({
 				autolink: true,
 				defaultProtocol: "https",
 				HTMLAttributes: {
-					class: "text-emerald-400 underline hover:text-emerald-300",
+					class: "text-emerald-600 underline hover:text-emerald-500",
 				},
 			}),
 			Underline,

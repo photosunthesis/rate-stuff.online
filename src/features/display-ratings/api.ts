@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getUserRatings, getFeedRatings } from "./service";
+import { getUserRatings, getFeedRatings, getRatingById } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
 
@@ -79,6 +79,30 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : "Failed to fetch feed",
+			};
+		}
+	});
+
+export const getRatingByIdFn = createServerFn({ method: "GET" })
+	.inputValidator(
+		z.object({
+			id: z.string(),
+		}),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const rating = await getRatingById(data.id);
+
+			if (!rating) {
+				return { success: false, error: "Not found" };
+			}
+
+			return { success: true, data: rating };
+		} catch (error) {
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch rating",
 			};
 		}
 	});

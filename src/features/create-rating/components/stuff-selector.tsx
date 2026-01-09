@@ -70,7 +70,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					className={`p-4 bg-emerald-500/10 border ${error ? "border-red-400" : "border-emerald-500/50"} rounded-xl flex items-center justify-between`}
 				>
 					<div>
-						<div className="font-medium text-emerald-400">{value.name}</div>
+						<div className="font-medium text-emerald-600">{value.name}</div>
 						<div className="text-xs text-emerald-500/70">
 							{value.id ? "Existing Item" : "New Item"}
 						</div>
@@ -78,7 +78,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					<button
 						type="button"
 						onClick={handleClear}
-						className="px-3 py-1.5 text-sm font-medium text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+						className="px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-lg transition-colors"
 					>
 						Change
 					</button>
@@ -147,7 +147,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 									onClick={() => handleSelect(stuff)}
 									className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center justify-between group"
 								>
-									<span className="text-white group-hover:text-emerald-400 transition-colors">
+									<span className="text-white group-hover:text-emerald-600 transition-colors">
 										{stuff.name}
 									</span>
 									<span className="text-xs text-neutral-500">Select</span>
@@ -158,7 +158,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 								<button
 									type="button"
 									onClick={handleCreateNew}
-									className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-400 border-t border-neutral-800"
+									className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-600 border-t border-neutral-800"
 								>
 									<Plus size={16} />
 									<span>Create "{searchInput}"</span>

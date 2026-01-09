@@ -64,7 +64,7 @@ export function NotFound() {
 				<div className="mt-2">
 					<Link
 						to="/"
-						className="text-emerald-400 hover:text-emerald-300 hover:underline font-semibold transition-colors text-sm"
+						className="text-emerald-600 hover:text-emerald-500 hover:underline font-semibold transition-colors text-sm"
 					>
 						Go to homepage
 					</Link>
