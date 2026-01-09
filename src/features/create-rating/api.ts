@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
-import { getSession } from "~/utils/auth-utils";
 import {
 	createRatingSchema,
 	imageUploadSchema,
@@ -60,13 +59,9 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 export const createRatingFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator(createRatingSchema)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
-			const session = await getSession();
-			if (!session || !session.userId)
-				return { success: false, error: "Unauthorized" };
-
-			const result = await createRating(session.userId, data);
+			const result = await createRating(context.userSession.userId, data);
 			if (!result.success)
 				return {
 					success: false,
@@ -98,13 +93,9 @@ export const uploadImageFn = createServerFn({ method: "POST" })
 		const file = data.get("file");
 		return imageUploadSchema.parse({ file });
 	})
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
-			const session = await getSession();
-			if (!session || !session.userId)
-				return { success: false, error: "Unauthorized" };
-
-			const result = await uploadImage(data.file, session.userId);
+			const result = await uploadImage(data.file, context.userSession.userId);
 			return result;
 		} catch (error) {
 			if (error instanceof ZodError)

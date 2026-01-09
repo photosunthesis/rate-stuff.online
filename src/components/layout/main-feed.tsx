@@ -14,7 +14,7 @@ export function MainFeed() {
 		isFetchingNextPage,
 		isLoading,
 		error,
-	} = useFeedRatings(10);
+	} = useFeedRatings(10, isAuthenticated);
 	const { ref, inView } = useInView();
 
 	useEffect(() => {

@@ -25,6 +25,20 @@ export type Rating = {
 	updatedAt: string;
 };
 
+export type RatingWithRelations = Rating & {
+	tags: string | null | string[] | { tag: { name: string } }[];
+	user: {
+		id: string;
+		name: string | null;
+		username?: string;
+		avatarUrl?: string | null;
+	};
+	stuff: {
+		id: string;
+		name: string;
+	};
+};
+
 export const createRatingSchema = z
 	.object({
 		title: z

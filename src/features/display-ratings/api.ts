@@ -1,49 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSession } from "~/utils/auth-utils";
 import { getUserRatings, getFeedRatings } from "./service";
+import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
 
 export const getUserRatingsFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
 			cursor: z.string().optional(),
 		}),
 	)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
-			const session = await getSession();
-			if (!session || !session.userId) {
-				return { success: false, error: "Unauthorized" };
-			}
-
 			const cursor = data.cursor
 				? new Date(data.cursor).toISOString()
 				: undefined;
-			const ratings = await getUserRatings(session.userId, data.limit, cursor);
+
+			const ratings = await getUserRatings(
+				context.userSession.userId,
+				data.limit,
+				cursor,
+			);
 
 			let nextCursor: string | undefined;
+
 			if (ratings.length === data.limit) {
 				const lastCreatedAt = ratings[ratings.length - 1].createdAt;
 				nextCursor = new Date(lastCreatedAt).toISOString();
 			}
 
-			const serializedRatings = ratings.map((rating) => ({
-				...rating,
-				createdAt: rating.createdAt,
-				updatedAt: rating.updatedAt,
-				user: {
-					...rating.user,
-					avatarUrl: rating.user?.avatarUrl ?? null,
-				},
-				stuff: {
-					...rating.stuff,
-					createdAt: rating.stuff.createdAt,
-					updatedAt: rating.stuff.updatedAt,
-				},
-			}));
-
-			return { success: true, data: serializedRatings, nextCursor };
+			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
 			return {
 				success: false,
@@ -53,7 +40,24 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 		}
 	});
 
+export const getPublicFeedRatingsFn = createServerFn({ method: "GET" }).handler(
+	async () => {
+		try {
+			const ratings = await getFeedRatings(12);
+
+			// Always return the wrapped shape
+			return { success: true, data: ratings, nextCursor: undefined };
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch feed",
+			};
+		}
+	},
+);
+
 export const getFeedRatingsFn = createServerFn({ method: "GET" })
+	.middleware([authMiddleware])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
@@ -65,6 +69,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 			const cursor = data.cursor
 				? new Date(data.cursor).toISOString()
 				: undefined;
+
 			const ratings = await getFeedRatings(data.limit, cursor);
 
 			let nextCursor: string | undefined;
@@ -73,22 +78,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 				nextCursor = new Date(lastCreatedAt).toISOString();
 			}
 
-			const serializedRatings = ratings.map((rating) => ({
-				...rating,
-				createdAt: rating.createdAt,
-				updatedAt: rating.updatedAt,
-				user: {
-					...rating.user,
-					avatarUrl: rating.user?.avatarUrl ?? null,
-				},
-				stuff: {
-					...rating.stuff,
-					createdAt: rating.stuff.createdAt,
-					updatedAt: rating.stuff.updatedAt,
-				},
-			}));
-
-			return { success: true, data: serializedRatings, nextCursor };
+			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
 			return {
 				success: false,
