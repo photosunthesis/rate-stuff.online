@@ -46,9 +46,6 @@ export function RightSidebar({
 										<p className="text-sm font-medium text-white">
 											{thing.name}
 										</p>
-										<p className="text-[11px] text-neutral-500">
-											{thing.category}
-										</p>
 									</Link>
 								))}
 							</div>
