@@ -201,7 +201,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 					<>
 						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
 							<MarkdownContent
-								content={`${plainText.slice(0, maxContentLength)}...`}
+								content={`${plainText.replace(/\\+/g, "").replace(/\s+/g, " ").trim().slice(0, maxContentLength)}...`}
 							/>
 						</div>
 						<button
