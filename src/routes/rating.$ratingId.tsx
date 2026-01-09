@@ -277,7 +277,7 @@ function RouteComponent() {
 										<img
 											src={parsedImages[0]}
 											alt="Rating"
-											className="block aspect-video object-cover rounded-xl w-full"
+											className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
 										/>
 									</button>
 								) : (
@@ -292,7 +292,7 @@ function RouteComponent() {
 												<img
 													src={src}
 													alt="Rating"
-													className="w-full h-full object-cover rounded-xl"
+													className="w-full h-full object-cover rounded-xl cursor-pointer"
 												/>
 											</button>
 										))}
