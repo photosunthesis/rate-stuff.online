@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { useSignIn } from "~/features/sign-in/hooks";
 import { AuthLayout } from "~/components/layout/auth-layout";
-import { LoginForm } from "~/features/sign-in/components/LoginForm";
+import { LoginForm } from "~/features/sign-in/components/login-form";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,

@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { isAuthenticatedQueryOptions } from "~/features/session/queries";
-import { ProfileSetupForm } from "~/features/profile-setup/components/ProfileSetupForm";
+import { ProfileSetupForm } from "~/features/profile-setup/components/profile-setup-form";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { useProfileSetup } from "~/features/profile-setup/hooks";
 import type { ProfileSetupInput } from "~/features/profile-setup/types";

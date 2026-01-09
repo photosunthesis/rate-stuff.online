@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useCreateAccount } from "~/features/create-account/hooks";
 import { AuthLayout } from "~/components/layout/auth-layout";
-import { RegisterForm } from "~/features/create-account/components/RegisterForm";
+import { RegisterForm } from "~/features/create-account/components/register-form";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,

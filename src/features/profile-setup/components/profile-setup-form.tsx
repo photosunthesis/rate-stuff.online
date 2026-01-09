@@ -5,7 +5,7 @@ import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { User as UserIcon, Camera, X } from "lucide-react";
-import type { ProfileSetupInput } from "../../auth/types";
+import type { ProfileSetupInput } from "../types";
 
 interface Props {
 	onSubmit: (data: ProfileSetupInput) => Promise<void>;
