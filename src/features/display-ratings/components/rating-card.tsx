@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../types";
 import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
@@ -54,7 +54,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const userName = rating.user.name || rating.user.username || "User";
 	const avatarUrl = rating.user.avatarUrl ?? null;
 	const timeAgo = getTimeAgo(rating.createdAt);
-	const navigate = useNavigate();
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {
@@ -70,16 +69,9 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
-		<a
-			href={`/rating/${rating.id}`}
-			onClick={(e) => {
-				e.preventDefault();
-				navigate({ to: "/rating/$ratingId", params: { ratingId: rating.id } });
-			}}
-			className="block border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-		>
+		<div className="block border-b border-neutral-800 px-4 py-3 hover:bg-neutral-800/50 transition-colors">
 			{/* Header */}
-			<div className="flex items-center gap-3 mb-2">
+			<div className="flex items-center gap-3">
 				<Avatar
 					src={avatarUrl ?? null}
 					alt={userName}
@@ -117,8 +109,39 @@ export function RatingCard({ rating }: RatingCardProps) {
 
 			{/* Rating and Title */}
 			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
-				{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+				<Link
+					to="/rating/$ratingId"
+					params={{ ratingId: rating.id }}
+					className="hover:underline"
+				>
+					{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+				</Link>
 			</h3>
+
+			{/* Images */}
+			{parsedImages && parsedImages.length > 0 && (
+				<div className="ml-11 mb-3">
+					{parsedImages.length === 1 ? (
+						<img
+							src={parsedImages[0]}
+							alt="Rating"
+							className="block aspect-video object-cover rounded-xl"
+						/>
+					) : (
+						<div className="flex gap-2">
+							{parsedImages.map((image) => (
+								<div key={image} className="flex-1 aspect-square">
+									<img
+										src={image}
+										alt="Rating"
+										className="w-full h-full object-cover rounded-xl"
+									/>
+								</div>
+							))}
+						</div>
+					)}
+				</div>
+			)}
 
 			{/* Content */}
 			<div className="ml-11 mb-3">
@@ -155,31 +178,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 				)}
 			</div>
 
-			{/* Images */}
-			{parsedImages && parsedImages.length > 0 && (
-				<div className="ml-11 mb-3">
-					{parsedImages.length === 1 ? (
-						<img
-							src={parsedImages[0]}
-							alt="Rating"
-							className="block aspect-video object-cover rounded-xl"
-						/>
-					) : (
-						<div className="flex gap-2">
-							{parsedImages.map((image) => (
-								<div key={image} className="flex-1 aspect-square">
-									<img
-										src={image}
-										alt="Rating"
-										className="w-full h-full object-cover rounded-xl"
-									/>
-								</div>
-							))}
-						</div>
-					)}
-				</div>
-			)}
-
 			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
 				<div className="flex flex-wrap gap-2 mb-3 ml-11">
@@ -187,13 +185,13 @@ export function RatingCard({ rating }: RatingCardProps) {
 						<a
 							key={tag}
 							href={`#${tag}`}
-							className="px-0 py-0 text-emerald-600 hover:text-emerald-500 text-sm font-medium transition-all"
+							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 						>
 							#{tag}
 						</a>
 					))}
 				</div>
 			)}
-		</a>
+		</div>
 	);
 }
