@@ -10,7 +10,7 @@ import {
 	usePublicUser,
 } from "~/features/set-up-profile/queries";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
-import { RatingCard } from "~/features/display-ratings/components/rating-card";
+import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
 import { getTimeAgo } from "~/utils/datetime-utils";
 
@@ -143,7 +143,7 @@ function UserRatingsList({
 		<>
 			<div className="-mx-4 divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
-					<RatingCard key={rating.id} rating={rating} hideAvatar noIndent />
+					<UserRatingCard key={rating.id} rating={rating} noIndent />
 				))}
 			</div>
 

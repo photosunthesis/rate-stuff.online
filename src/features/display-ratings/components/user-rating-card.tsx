@@ -1,24 +1,22 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../types";
-import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
 import { getTimeAgo } from "~/utils/datetime-utils";
 
-interface RatingCardProps {
+interface UserRatingCardProps {
 	rating: RatingWithRelations;
-	hideAvatar?: boolean;
 	noIndent?: boolean;
 }
 
-interface MarkdownContentProps {
+function MarkdownContent({
+	content,
+	inlineParagraphs,
+}: {
 	content: string;
 	inlineParagraphs?: boolean;
-}
-
-function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
+}) {
 	const safe = content.replace(/<[^>]*>/g, "");
 
 	return (
@@ -51,16 +49,12 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	);
 }
 
-export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
+export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const avatarUrl = rating.user.avatarUrl ?? null;
-	const usernameHandle = rating.user.username;
-	const displayName = rating.user.name;
-	const displayText = displayName ? displayName : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
 	let parsedImages: string[] = [];
@@ -79,7 +73,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block px-3 py-1 cursor-pointer"
+			className="block px-5 py-3 cursor-pointer hover:bg-neutral-800/50 transition-colors"
 			role="link"
 			tabIndex={0}
 			onClick={() =>
@@ -97,44 +91,24 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 				}
 			}}
 		>
-			{/* Header */}
-			<div className="flex items-center gap-3">
-				{!hideAvatar && (
-					<Avatar
-						src={avatarUrl ?? null}
-						alt={displayText}
-						size="sm"
-						className="shrink-0"
-					/>
-				)}
-				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<Link
-							to="/user/$username"
-							params={{ username: usernameHandle }}
-							className="font-medium text-white hover:underline"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{displayText}
-						</Link>
-						<span className="text-neutral-500">has rated</span>
-						<Link
-							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff.slug }}
-							className="font-medium text-white hover:underline"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{rating.stuff.name}
-						</Link>
-						<span className="text-neutral-500">•</span>
-						<span className="text-neutral-500">{timeAgo}</span>
-					</div>
-				</div>
+			{/* Compact header for user page (no avatar, no user link) */}
+			<div className="flex items-center gap-1 text-sm text-neutral-500 mb-2">
+				<span className="text-neutral-400">A rating of</span>
+				<Link
+					to="/stuff/$stuffSlug"
+					params={{ stuffSlug: rating.stuff.slug }}
+					className="text-white hover:underline font-semibold"
+					onClick={(e) => e.stopPropagation()}
+				>
+					{rating.stuff.name}
+				</Link>
+				<span>•</span>
+				<span>{timeAgo}</span>
 			</div>
 
 			{/* Rating and Title */}
 			<h3
-				className={`text-lg md:text-xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
+				className={`text-lg md:text-xl font-semibold text-white mb-3 ${noIndent ? "" : "ml-11"}`}
 			>
 				<Link
 					to="/rating/$ratingSlug"
@@ -233,7 +207,6 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 					)}
 				</div>
 			)}
-
 			{/* Content */}
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 				{shouldTruncate && !isExpanded ? (
