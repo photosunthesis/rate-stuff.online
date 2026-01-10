@@ -1,25 +1,26 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
 	return (
 		<footer className="px-1 pt-4">
 			<div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-neutral-500">
-				<a href="/" className="hover:underline">
+				<Link to="/terms" className="hover:underline">
 					Terms & Conditions
-				</a>
-				<a href="/" className="hover:underline">
+				</Link>
+				<Link to="/privacy" className="hover:underline">
 					Privacy Policy
-				</a>
+				</Link>
 				<span>
-					Built by{" "}
 					<a
-						href="https://sun-envidiado.com"
+						href="https://github.com/photosunthesis/rate-stuff.online"
 						target="_blank"
 						rel="noopener noreferrer"
 						className="hover:underline"
 					>
-						Sun Envidiado
+						GitHub
 					</a>
 				</span>
-				<span>© 2025 Rate Stuff Online</span>
+				<span>{`© 2025-${new Date().getFullYear()} Rate Stuff Online`}</span>
 			</div>
 		</footer>
 	);
