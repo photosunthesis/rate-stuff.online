@@ -109,7 +109,10 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
-			<div className="flex-1 overflow-y-auto px-6 py-6" ref={scrollableRef}>
+			<div
+				className="flex-1 overflow-y-auto px-6 pt-14 pb-6 md:pt-6"
+				ref={scrollableRef}
+			>
 				{hasGlobalError && (
 					<div className="mb-6">
 						<FormError message={getErrorMessage(error)} />
