@@ -54,9 +54,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const avatarUrl = rating.user.avatarUrl ?? null;
 	const usernameHandle = rating.user.username ?? rating.user.id;
 	const displayName = rating.user.name;
-	const userName = displayName
-		? `${displayName} (@${usernameHandle})`
-		: `@${usernameHandle}`;
+	const displayText = displayName ? displayName : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
 	let parsedImages: string[] = [];
@@ -78,7 +76,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 			<div className="flex items-center gap-3">
 				<Avatar
 					src={avatarUrl ?? null}
-					alt={userName}
+					alt={displayText}
 					size="sm"
 					className="shrink-0"
 				/>
@@ -92,7 +90,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 								window.location.href = `/@${usernameHandle}`;
 							}}
 						>
-							{userName}
+							{displayText}
 						</button>
 						<span className="text-neutral-500">has rated</span>
 						<button
