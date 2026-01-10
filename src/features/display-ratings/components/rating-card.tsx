@@ -13,16 +13,18 @@ interface RatingCardProps {
 
 interface MarkdownContentProps {
 	content: string;
+	inlineParagraphs?: boolean;
 }
 
-function MarkdownContent({ content }: MarkdownContentProps) {
+function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	const safe = content.replace(/<[^>]*>/g, "");
 
 	return (
 		<ReactMarkdown
 			remarkPlugins={[remarkGfm]}
 			components={{
-				p: ({ children }) => <span>{children}</span>,
+				p: ({ children }) =>
+					inlineParagraphs ? <span>{children}</span> : <p>{children}</p>,
 				em: ({ children }) => <em className="italic">{children}</em>,
 				strong: ({ children }) => (
 					<strong className="font-bold">{children}</strong>
@@ -211,12 +213,11 @@ export function RatingCard({ rating }: RatingCardProps) {
 			{/* Content */}
 			<div className="ml-11 mb-3">
 				{shouldTruncate && !isExpanded ? (
-					<>
-						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
-							<MarkdownContent
-								content={`${plainText.replace(/\\+/g, "").replace(/\s+/g, " ").trim().slice(0, maxContentLength)}...`}
-							/>
-						</div>
+					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
+						<MarkdownContent
+							content={`${plainText.replace(/\\+/g, "").replace(/\s+/g, " ").trim().slice(0, maxContentLength)}...`}
+							inlineParagraphs={true}
+						/>
 						<button
 							type="button"
 							onClick={() => setIsExpanded(true)}
@@ -224,22 +225,20 @@ export function RatingCard({ rating }: RatingCardProps) {
 						>
 							See more
 						</button>
-					</>
+					</div>
 				) : (
-					<>
-						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal inline">
-							<MarkdownContent content={rating.content} />
-						</div>
+					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
+						<MarkdownContent content={rating.content} />
 						{shouldTruncate && (
 							<button
 								type="button"
 								onClick={() => setIsExpanded(false)}
-								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer"
 							>
 								See less
 							</button>
 						)}
-					</>
+					</div>
 				)}
 			</div>
 

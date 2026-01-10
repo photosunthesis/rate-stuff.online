@@ -117,7 +117,7 @@ export async function createRating(
 				.replace(/^-|-$/g, "");
 		}
 
-		const MAX_SLUG_LENGTH = 64;
+		const MAX_SLUG_LENGTH = 128;
 		const SUFFIX = `-${crypto.randomBytes(3).toString("hex")}`; // 7 chars including '-'
 		const rawBase = slugify(input.title || "rating");
 		const baseMax = Math.max(1, MAX_SLUG_LENGTH - SUFFIX.length);

@@ -7,6 +7,14 @@ import {
 import { useStuffSearchQuery, useTagSearchQuery } from "./queries";
 import type { CreateRatingInput } from "./types";
 
+function normalizeParagraphBreaks(md: string) {
+	if (!md) return "";
+	let s = md.replace(/\r\n/g, "\n");
+	s = s.replace(/\n{3,}/g, "\n\n");
+	s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
+	return s;
+}
+
 export function useDebounce<T>(value: T, delay: number = 300): T {
 	const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -42,10 +50,9 @@ export function useCreateRating() {
 
 	return {
 		createRating: async (input: CreateRatingHookInput) => {
-			// Create rating first (images set empty), then upload files using the rating id,
-			// then persist the uploaded image URLs back to the rating.
 			const ratingInput: CreateRatingInput = {
 				...input,
+				content: normalizeParagraphBreaks(input.content),
 				images: [],
 			};
 

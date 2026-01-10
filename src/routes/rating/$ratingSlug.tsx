@@ -106,7 +106,7 @@ function MarkdownContent({ content }: { content: string }) {
 		<ReactMarkdown
 			remarkPlugins={[remarkGfm]}
 			components={{
-				p: ({ children }) => <span>{children}</span>,
+				p: ({ children }) => <p>{children}</p>,
 				em: ({ children }) => <em className="italic">{children}</em>,
 				strong: ({ children }) => (
 					<strong className="font-bold">{children}</strong>
@@ -209,7 +209,7 @@ function ContentSection({ rating }: { rating: RatingWithRelations }) {
 	}
 
 	return (
-		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal">
+		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal">
 			<MarkdownContent content={rating.content} />
 			<script
 				type="application/ld+json"

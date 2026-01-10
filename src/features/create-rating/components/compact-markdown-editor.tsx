@@ -84,9 +84,20 @@ export function CompactMarkdownEditor({
 			const markdown = (
 				editor as EditorWithMarkdown
 			).storage.markdown.getMarkdown();
-			onChange?.(markdown);
+			onChange?.(normalizeParagraphBreaks(markdown));
 		},
 	});
+
+	function normalizeParagraphBreaks(md: string) {
+		if (!md) return md;
+		// Normalize CRLF to LF
+		let s = md.replace(/\r\n/g, "\n");
+		// Collapse 3+ newlines into 2
+		s = s.replace(/\n{3,}/g, "\n\n");
+		// Convert single newlines between non-empty lines into paragraph breaks
+		s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
+		return s;
+	}
 
 	useEffect(() => {
 		if (
