@@ -52,15 +52,11 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 				updates.avatarUrl = data.avatarUrl;
 			}
 
-			console.log("Updating user profile with:", updates);
-
 			const result = await updateUserProfile(
 				userId,
 				updates as { name?: string; avatarUrl?: string | undefined },
 			);
 			if (!result.success) {
-				console.error("Failed to update profile:", result.error);
-
 				return {
 					success: false,
 					error: result.error || "Failed to update profile",
@@ -69,8 +65,6 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 
 			return { success: true, user: mapUserData(result.data) };
 		} catch (error) {
-			console.error("Error in updateProfileFn:", error);
-
 			if (error instanceof ZodError) {
 				return {
 					success: false,
