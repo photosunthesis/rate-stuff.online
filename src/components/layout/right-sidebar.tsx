@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
 import {
@@ -28,38 +29,51 @@ export function RightSidebar({
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recent Reviewed */}
+						{/* Recently Rated */}
 						<section>
-							<p className="text-md font-semibold text-white mb-2 px-1">
-								Recently Reviewed
-							</p>
+							<div className="flex items-center justify-between mb-2 px-1">
+								<p className="text-md font-semibold text-white">
+									Recently Rated
+								</p>
+							</div>
+
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
 								{loadingStuff
 									? skeletonStuffKeys.map((sKey, i) => (
 											<div
 												key={sKey}
-												className={`block px-4 py-2 ${
+												className={`flex items-center gap-3 px-4 py-3 ${
 													i !== skeletonStuffKeys.length - 1
 														? "border-b border-neutral-800/50"
 														: ""
 												}`}
 											>
-												<div className="h-4 bg-neutral-800 rounded w-3/4" />
+												<div className="w-9 h-9 bg-neutral-800 rounded-md" />
+												<div className="flex-1 min-w-0">
+													<div className="h-3 bg-neutral-800 rounded w-3/4 mb-2" />
+													<div className="h-2 bg-neutral-800 rounded w-1/2" />
+												</div>
 											</div>
 										))
 									: (recentStuff ?? []).map((thing, i) => (
 											<Link
 												key={thing.id}
 												to="/"
-												className={`block px-4 py-2 hover:bg-neutral-800/50 transition-colors ${
+												className={`flex items-center gap-3 px-4 py-3 hover:bg-neutral-800/40 transition-colors ${
 													i !== (recentStuff ?? []).length - 1
 														? "border-b border-neutral-800/50"
 														: ""
 												}`}
 											>
-												<p className="text-sm font-medium text-white">
-													{thing.name}
-												</p>
+												<div className="flex-1 min-w-0">
+													<p className="text-sm font-medium text-white truncate">
+														{thing.name}
+													</p>
+												</div>
+
+												<div className="text-neutral-500">
+													<ChevronRight className="w-4 h-4" />
+												</div>
 											</Link>
 										))}
 							</div>
