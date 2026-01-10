@@ -20,6 +20,8 @@ export type PublicUser = {
 	username: string;
 	displayName: string | null;
 	avatarUrl?: string | null;
+	createdAt?: string | null;
+	ratingsCount?: string;
 };
 
 export type UpdateProfileResponse = {

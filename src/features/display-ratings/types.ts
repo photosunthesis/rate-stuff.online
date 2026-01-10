@@ -31,7 +31,7 @@ export type RatingWithRelations = Rating & {
 	user: {
 		id: string;
 		name: string | null;
-		username?: string;
+		username: string;
 		avatarUrl?: string | null;
 	};
 	stuff: {

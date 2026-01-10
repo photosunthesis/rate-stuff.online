@@ -120,3 +120,19 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 			};
 		}
 	});
+
+export const getUserByUsernameFn = createServerFn({ method: "GET" })
+	.inputValidator(z.object({ username: z.string() }))
+	.handler(async ({ data }) => {
+		try {
+			const { getUserByUsername } = await import("./service");
+			const user = await getUserByUsername(data.username);
+			if (!user) return { success: false, error: "Not found" };
+			return { success: true, data: user };
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch user",
+			};
+		}
+	});

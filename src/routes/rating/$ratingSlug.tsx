@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { MobileHeader } from "~/components/layout/mobile-header";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
@@ -13,7 +13,6 @@ import {
 } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
-import { Link } from "@tanstack/react-router";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime-utils";
 
@@ -134,7 +133,7 @@ function MarkdownContent({ content }: { content: string }) {
 }
 
 function RatingHeader({ rating }: { rating: RatingWithRelations }) {
-	const usernameHandle = rating.user.username ?? rating.user.id;
+	const usernameHandle = rating.user.username;
 	const displayName = rating.user.name;
 	const displayText = displayName ? displayName : `@${usernameHandle}`;
 
@@ -149,12 +148,13 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-1 flex-wrap text-sm">
-					<a
-						href={`/@${usernameHandle}`}
+					<Link
+						to="/user/$username"
+						params={{ username: usernameHandle }}
 						className="font-medium text-white hover:underline"
 					>
 						{displayText}
-					</a>
+					</Link>
 					<span className="text-neutral-500">has rated</span>
 					<Link
 						to="/stuff/$stuffSlug"

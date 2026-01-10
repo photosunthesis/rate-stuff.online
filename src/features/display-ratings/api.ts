@@ -121,12 +121,78 @@ export const getRatingBySlugFn = createServerFn({ method: "GET" })
 		}
 	});
 
+export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
+	.inputValidator(
+		z.object({
+			username: z.string(),
+			limit: z.number().optional(),
+			cursor: z.string().optional(),
+		}),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const { getUserByUsername } = await import(
+				"~/features/set-up-profile/service"
+			);
+			const { getUserRatings } = await import("./service");
+			const { getSession } = await import("~/utils/auth-utils");
+
+			const user = await getUserByUsername(data.username);
+			if (!user) return { success: false, error: "Not found" };
+
+			const session = await getSession();
+			const requestedLimit = data.limit ?? 10;
+			const limit = session ? requestedLimit : Math.min(requestedLimit, 10);
+
+			const cursor = parseCursor(data.cursor);
+
+			const ratings = await getUserRatings(user.id, limit, cursor);
+
+			let nextCursor: string | undefined;
+			if (ratings.length === limit) {
+				const last = ratings[ratings.length - 1];
+				nextCursor = makeCursor(last.createdAt, last.id);
+			}
+
+			return { success: true, data: ratings, nextCursor };
+		} catch (error) {
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch ratings",
+			};
+		}
+	});
+
+export const getUserRatingsCountFn = createServerFn({ method: "GET" })
+	.inputValidator(z.object({ username: z.string() }))
+	.handler(async ({ data }) => {
+		try {
+			const { getUserByUsername } = await import(
+				"~/features/set-up-profile/service"
+			);
+			const { getUserRatingsCount } = await import("./service");
+
+			const user = await getUserByUsername(data.username);
+			if (!user) return { success: false, error: "Not found" };
+
+			const count = await getUserRatingsCount(user.id);
+			return { success: true, data: { count } };
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch count",
+			};
+		}
+	});
+
 export const getRatingByIdFn = createServerFn({ method: "GET" })
 	.inputValidator(
 		z.object({
 			id: z.string(),
 		}),
 	)
+
 	.handler(async ({ data }) => {
 		try {
 			const { getRatingById } = await import("./service");

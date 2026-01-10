@@ -15,6 +15,7 @@ import { Route as SetUpProfileRouteImport } from './routes/set-up-profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserUsernameRouteImport } from './routes/user/$username'
 import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
 import { Route as RatingRatingSlugRouteImport } from './routes/rating/$ratingSlug'
 
@@ -48,6 +49,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UserUsernameRoute = UserUsernameRouteImport.update({
+  id: '/user/$username',
+  path: '/user/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StuffStuffSlugRoute = StuffStuffSlugRouteImport.update({
   id: '/stuff/$stuffSlug',
   path: '/stuff/$stuffSlug',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
+  '/user/$username': typeof UserUsernameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
+  '/user/$username': typeof UserUsernameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
+  '/user/$username': typeof UserUsernameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
+    | '/user/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
+    | '/user/$username'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
+    | '/user/$username'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   RatingRatingSlugRoute: typeof RatingRatingSlugRoute
   StuffStuffSlugRoute: typeof StuffStuffSlugRoute
+  UserUsernameRoute: typeof UserUsernameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/user/$username': {
+      id: '/user/$username'
+      path: '/user/$username'
+      fullPath: '/user/$username'
+      preLoaderRoute: typeof UserUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stuff/$stuffSlug': {
       id: '/stuff/$stuffSlug'
       path: '/stuff/$stuffSlug'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   RatingRatingSlugRoute: RatingRatingSlugRoute,
   StuffStuffSlugRoute: StuffStuffSlugRoute,
+  UserUsernameRoute: UserUsernameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

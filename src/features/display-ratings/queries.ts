@@ -8,6 +8,8 @@ import {
 	getUserRatingsFn,
 	getFeedRatingsFn,
 	getPublicFeedRatingsFn,
+	getRatingsByUsernameFn,
+	getUserRatingsCountFn,
 } from "./api";
 import { getRatingBySlugFn } from "./api";
 import type { RatingWithRelations } from "./types";
@@ -24,6 +26,7 @@ export const ratingKeys = {
 	all: ["ratings"] as const,
 	feed: () => [...ratingKeys.all, "feed"] as const,
 	mine: () => [...ratingKeys.all, "mine"] as const,
+	user: (username: string) => [...ratingKeys.all, "user", username] as const,
 };
 
 export function useUserRatings(limit: number = 10) {
@@ -92,6 +95,70 @@ export function useFeedRatings(
 		},
 
 		initialPageParam: undefined as string | undefined,
+	});
+}
+
+export function usePublicUserRatings(
+	username: string | undefined,
+	limit: number = 10,
+	isAuthenticated: boolean = true,
+) {
+	const getRatings = useServerFn(getRatingsByUsernameFn);
+	const effectiveLimit = isAuthenticated ? limit : Math.min(limit, 10);
+	const key = username
+		? [...ratingKeys.user(username), isAuthenticated ? "auth" : "public"]
+		: [
+				...ratingKeys.all,
+				"user",
+				undefined,
+				isAuthenticated ? "auth" : "public",
+			];
+
+	return useInfiniteQuery({
+		queryKey: key,
+		queryFn: async ({ pageParam }: { pageParam?: string }) => {
+			return (await getRatings({
+				data: {
+					username: username ?? "",
+					limit: effectiveLimit,
+					cursor: pageParam,
+				},
+			})) as PageResult;
+		},
+		getNextPageParam: (lastPage: PageResult) => {
+			if (!lastPage) return undefined;
+			if (lastPage.success === false) return undefined;
+			// Disable pagination for unauthenticated users (only first page)
+			if (!isAuthenticated) return undefined;
+			return lastPage.nextCursor;
+		},
+
+		initialPageParam: undefined as string | undefined,
+	});
+}
+
+export function useUserRatingsCount(
+	username: string | undefined,
+	enabled = true,
+) {
+	const getCount = useServerFn(getUserRatingsCountFn);
+
+	return useQuery({
+		queryKey: username
+			? [...ratingKeys.user(username), "count"]
+			: ["ratings", "user", undefined, "count"],
+		queryFn: async () => {
+			if (!username) return { count: 0 };
+			const res = (await getCount({ data: { username } })) as {
+				success: boolean;
+				data?: { count: number } | null;
+				error?: string;
+			};
+			if (!res.success) throw new Error(res.error ?? "Failed to load count");
+			return res.data ?? { count: 0 };
+		},
+		enabled,
+		staleTime: 1000 * 60 * 5,
 	});
 }
 

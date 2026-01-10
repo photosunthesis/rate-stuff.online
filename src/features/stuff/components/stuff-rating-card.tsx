@@ -56,7 +56,7 @@ export function StuffRatingCard({ rating }: Props) {
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
 	const avatarUrl = rating.user.avatarUrl ?? null;
-	const usernameHandle = rating.user.username ?? rating.user.id;
+	const usernameHandle = rating.user.username;
 	const displayName = rating.user.name;
 	const displayText = displayName ? displayName : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
@@ -104,16 +104,14 @@ export function StuffRatingCard({ rating }: Props) {
 				/>
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<button
-							type="button"
+						<Link
+							to="/user/$username"
+							params={{ username: usernameHandle }}
 							className="font-medium text-white hover:underline"
-							onClick={(e) => {
-								e.stopPropagation();
-								window.location.href = `/@${usernameHandle}`;
-							}}
+							onClick={(e) => e.stopPropagation()}
 						>
 							{displayText}
-						</button>
+						</Link>
 						<span className="text-neutral-500">•</span>
 						<span className="text-neutral-500">{timeAgo}</span>
 					</div>

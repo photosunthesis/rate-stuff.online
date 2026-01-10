@@ -163,7 +163,12 @@ export async function getRecentStuff(limit = 5) {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 	const rows = await db
-		.select({ id: stuff.id, name: stuff.name, count: sql`COUNT(*)`, slug: stuff.slug })
+		.select({
+			id: stuff.id,
+			name: stuff.name,
+			count: sql`COUNT(*)`,
+			slug: stuff.slug,
+		})
 		.from(ratings)
 		.leftJoin(stuff, eq(stuff.id, ratings.stuffId))
 		.where(and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)))
@@ -177,4 +182,15 @@ export async function getRecentStuff(limit = 5) {
 		name: r.name,
 		count: Number(r.count),
 	}));
+}
+
+export async function getUserRatingsCount(userId: string) {
+	const row = await db
+		.select({ count: sql`COUNT(*)` })
+		.from(ratings)
+		.where(and(eq(ratings.userId, userId), isNull(ratings.deletedAt)));
+
+	// drizzle returns an array for select; ensure we return a number
+	if (!row || row.length === 0) return 0;
+	return Number(row[0].count);
 }

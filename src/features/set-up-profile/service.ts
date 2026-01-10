@@ -1,10 +1,11 @@
 import { db } from "~/db/index";
-import { users } from "~/db/schema";
-import { eq } from "drizzle-orm";
+import { users, ratings } from "~/db/schema";
+import { eq, and, isNull, sql } from "drizzle-orm";
 import type { PublicUser } from "~/features/set-up-profile/types";
 import { env } from "cloudflare:workers";
 import { uploadFile } from "~/utils/media-storage-utils";
 import crypto from "node:crypto";
+import { numberWithCommas } from "~/utils/number-utils";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -32,6 +33,7 @@ export async function updateUserProfile(
 				username: updatedUser[0].username,
 				displayName: updatedUser[0].name,
 				avatarUrl: updatedUser[0].avatarUrl,
+
 			},
 		};
 	} catch {
@@ -49,6 +51,33 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
 		username: user.username,
 		displayName: user.name,
 		avatarUrl: user.avatarUrl,
+	};
+}
+
+export async function getUserByUsername(
+	username: string,
+): Promise<(PublicUser & { createdAt?: string | null }) | null> {
+	const user = await db.query.users.findFirst({
+		where: eq(users.username, username),
+	});
+
+	if (!user) return null;
+
+	// Count user's non-deleted ratings
+	const rows = await db
+		.select({ count: sql`COUNT(*)` })
+		.from(ratings)
+		.where(and(eq(ratings.userId, user.id), isNull(ratings.deletedAt)));
+
+	const ratingsCount = rows && rows.length > 0 ? Number(rows[0].count) : 0;
+
+	return {
+		id: user.id,
+		username: user.username,
+		displayName: user.name,
+		avatarUrl: user.avatarUrl,
+		createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : null,
+		ratingsCount: numberWithCommas(ratingsCount),
 	};
 }
 

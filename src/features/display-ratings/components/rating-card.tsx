@@ -9,6 +9,8 @@ import { getTimeAgo } from "~/utils/datetime-utils";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
+	hideAvatar?: boolean;
+	noIndent?: boolean;
 }
 
 interface MarkdownContentProps {
@@ -49,14 +51,14 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	);
 }
 
-export function RatingCard({ rating }: RatingCardProps) {
+export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
 	const avatarUrl = rating.user.avatarUrl ?? null;
-	const usernameHandle = rating.user.username ?? rating.user.id;
+	const usernameHandle = rating.user.username;
 	const displayName = rating.user.name;
 	const displayText = displayName ? displayName : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
@@ -97,24 +99,24 @@ export function RatingCard({ rating }: RatingCardProps) {
 		>
 			{/* Header */}
 			<div className="flex items-center gap-3">
-				<Avatar
-					src={avatarUrl ?? null}
-					alt={displayText}
-					size="sm"
-					className="shrink-0"
-				/>
+				{!hideAvatar && (
+					<Avatar
+						src={avatarUrl ?? null}
+						alt={displayText}
+						size="sm"
+						className="shrink-0"
+					/>
+				)}
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<button
-							type="button"
+						<Link
+							to="/user/$username"
+							params={{ username: usernameHandle }}
 							className="font-medium text-white hover:underline"
-							onClick={(e) => {
-								e.stopPropagation();
-								window.location.href = `/@${usernameHandle}`;
-							}}
+							onClick={(e) => e.stopPropagation()}
 						>
 							{displayText}
-						</button>
+						</Link>
 						<span className="text-neutral-500">has rated</span>
 						<Link
 							to="/stuff/$stuffSlug"
@@ -131,7 +133,9 @@ export function RatingCard({ rating }: RatingCardProps) {
 			</div>
 
 			{/* Rating and Title */}
-			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
+			<h3
+				className={`text-lg md:text-xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
+			>
 				<Link
 					to="/rating/$ratingSlug"
 					params={{ ratingSlug: rating.slug }}
@@ -144,7 +148,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 
 			{/* Images */}
 			{parsedImages && parsedImages.length > 0 && (
-				<div className="ml-11 mb-3">
+				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 					{parsedImages.length === 1 ? (
 						<img
 							src={parsedImages[0]}
@@ -231,7 +235,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 			)}
 
 			{/* Content */}
-			<div className="ml-11 mb-3">
+			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 				{shouldTruncate && !isExpanded ? (
 					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
 						<MarkdownContent
@@ -270,7 +274,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 
 			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
-				<div className="flex flex-wrap gap-2 mb-3 ml-11">
+				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) => (
 						<a
 							key={tag}
