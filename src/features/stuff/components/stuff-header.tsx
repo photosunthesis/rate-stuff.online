@@ -10,11 +10,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	return (
 		<div className="mb-4">
 			{/* Gallery: 1-4 images using same layout as RatingCard */}
-			{images.length === 0 ? (
-				<div className="w-full aspect-video bg-neutral-900 rounded-xl flex items-center justify-center text-neutral-500 mb-4">
-					<span className="text-xl">No cover image</span>
-				</div>
-			) : images.length === 1 ? (
+			{images.length === 0 ? null : images.length === 1 ? (
 				<div className="mb-4">
 					<button
 						type="button"

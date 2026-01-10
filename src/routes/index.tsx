@@ -61,7 +61,7 @@ function App() {
 				<LeftSidebar />
 
 				{/* Main Content */}
-				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
+				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
 					<CreateRatingSection />
 					<MainFeed tag={tag} />
 				</main>

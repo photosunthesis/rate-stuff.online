@@ -187,7 +187,7 @@ function RouteComponent() {
 			<div className="flex flex-1 justify-center">
 				<LeftSidebar />
 
-				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
+				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
 					<div className="px-4 py-4">
 						<div className="flex items-center gap-4 mb-4">
 							<div>
