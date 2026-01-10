@@ -5,7 +5,6 @@ import { RightSidebar } from "~/components/layout/right-sidebar";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
 import {
 	useRating,
 	ratingQueryOptions,
@@ -108,10 +107,11 @@ export const Route = createFileRoute("/rating/$ratingId")({
 });
 
 function MarkdownContent({ content }: { content: string }) {
+	const safe = content.replace(/<[^>]*>/g, "");
+
 	return (
 		<ReactMarkdown
 			remarkPlugins={[remarkGfm]}
-			rehypePlugins={[rehypeRaw]}
 			components={{
 				p: ({ children }) => <span>{children}</span>,
 				em: ({ children }) => <em className="italic">{children}</em>,
@@ -132,7 +132,7 @@ function MarkdownContent({ content }: { content: string }) {
 				),
 			}}
 		>
-			{content}
+			{safe}
 		</ReactMarkdown>
 	);
 }

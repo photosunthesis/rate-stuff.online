@@ -4,7 +4,6 @@ import type { RatingWithRelations } from "../types";
 import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
 
 import { getRatingEmoji, getTimeAgo } from "~/utils/rating-utils";
 
@@ -17,10 +16,11 @@ interface MarkdownContentProps {
 }
 
 function MarkdownContent({ content }: MarkdownContentProps) {
+	const safe = content.replace(/<[^>]*>/g, "");
+
 	return (
 		<ReactMarkdown
 			remarkPlugins={[remarkGfm]}
-			rehypePlugins={[rehypeRaw]}
 			components={{
 				p: ({ children }) => <span>{children}</span>,
 				em: ({ children }) => <em className="italic">{children}</em>,
@@ -41,7 +41,7 @@ function MarkdownContent({ content }: MarkdownContentProps) {
 				),
 			}}
 		>
-			{content}
+			{safe}
 		</ReactMarkdown>
 	);
 }
