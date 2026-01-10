@@ -1,4 +1,10 @@
-import { useEffect, useId, useCallback, useState } from "react";
+import {
+	useEffect,
+	useId,
+	useCallback,
+	useState,
+	type MouseEvent,
+} from "react";
 import { createPortal } from "react-dom";
 import { CreateRatingForm } from "~/features/create-rating/components/create-rating-form";
 import { useCreateRating } from "~/features/create-rating/hooks";
@@ -16,15 +22,27 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 	const { createRating, isPending, error, validationErrors, reset } =
 		useCreateRating();
 
-	const handleClose = useCallback(() => {
-		if (isClosing) return;
-		setIsClosing(true);
-		setTimeout(() => {
-			onClose();
-			setIsClosing(false);
-			reset();
-		}, EXIT_ANIMATION_MS);
-	}, [onClose, isClosing, reset]);
+	const handleClose = useCallback(
+		(opts?: { immediate?: boolean }) => {
+			const immediate = opts?.immediate ?? false;
+			if (isClosing && !immediate) return;
+
+			if (immediate) {
+				onClose();
+				setIsClosing(false);
+				reset();
+				return;
+			}
+
+			setIsClosing(true);
+			setTimeout(() => {
+				onClose();
+				setIsClosing(false);
+				reset();
+			}, EXIT_ANIMATION_MS);
+		},
+		[onClose, isClosing, reset],
+	);
 
 	useEffect(() => {
 		if (isOpen) setIsClosing(false);
@@ -54,12 +72,14 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 		}
 	}, [isOpen]);
 
-	const handleBackdropClick = () => {
-		handleClose();
+	const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
+		if (e.target === e.currentTarget) {
+			handleClose();
+		}
 	};
 
 	const handleFormSuccess = () => {
-		handleClose();
+		handleClose({ immediate: true });
 	};
 
 	if (!isOpen) {
@@ -74,7 +94,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			className={`fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 ${
 				isClosing ? "animate-fade-out" : "animate-fade-in"
 			}`}
-			onClick={handleBackdropClick}
+			onMouseDown={handleBackdropClick}
 			onKeyDown={(e) => {
 				if (e.key === "Escape") {
 					handleClose();
@@ -103,7 +123,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			>
 				<button
 					type="button"
-					onClick={handleClose}
+					onClick={() => handleClose()}
 					aria-label="Close"
 					className="absolute top-3 right-3 z-20 p-2 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
 				>

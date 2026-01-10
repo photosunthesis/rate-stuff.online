@@ -24,6 +24,8 @@ export function useCreateRatingMutation() {
 		onSuccess: (data) => {
 			if (data && (data as { success?: boolean }).success) {
 				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
+				queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] });
+				queryClient.invalidateQueries({ queryKey: ["recent", "tags"] });
 			}
 		},
 		onError: () => {
