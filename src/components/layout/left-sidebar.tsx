@@ -199,7 +199,7 @@ export function LeftSidebar() {
 			</aside>
 
 			{isAuthenticated && (
-				<nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between items-center z-50">
+				<nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
 					<Link
 						to="/"
 						activeOptions={{ exact: true }}

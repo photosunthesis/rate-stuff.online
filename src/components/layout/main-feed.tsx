@@ -110,8 +110,8 @@ export function MainFeed({ tag }: { tag?: string }) {
 				) : hasNextPage ? (
 					<div ref={ref} className="h-4" />
 				) : (
-					<div className="p-4 text-center text-neutral-500">
-						That's all the ratings as of now.
+					<div className="p-4 pb-12 text-center text-neutral-500">
+						All caught up! ＼(￣▽￣)／
 					</div>
 				)
 			) : (
