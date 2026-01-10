@@ -55,11 +55,14 @@ export const createRatingSchema = z
 			.max(5000, "Content must be at most 5000 characters"),
 		tags: z
 			.array(z.string())
-			.max(10, "You can select at most 10 tags")
+			.max(5, "You can select at most 5 tags")
 			.default([]),
 		stuffId: z.string().optional(),
 		stuffName: z.string().optional(),
-		images: z.array(z.string()).default([]),
+		images: z
+			.array(z.string())
+			.max(4, "You can upload at most 4 images")
+			.default([]),
 	})
 	.refine((data) => data.stuffId || data.stuffName, {
 		message: "You must select or create something to rate",

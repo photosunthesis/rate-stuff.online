@@ -216,6 +216,7 @@ export function CreateRatingForm({
 							selectedTags={selectedTags}
 							onChange={setSelectedTags}
 							error={validationErrors.tags}
+							maxTags={5}
 						/>
 					</div>
 
@@ -224,6 +225,7 @@ export function CreateRatingForm({
 							images={selectedImages}
 							onChange={setSelectedImages}
 							error={validationErrors.images}
+							maxFiles={4}
 						/>
 					</div>
 				</div>
