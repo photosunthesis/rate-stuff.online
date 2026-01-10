@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { MobileHeader } from "~/components/layout/mobile-header";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
+import { NotFound } from "~/components/not-found";
 import { useState } from "react";
 import { useIsAuthenticated } from "~/features/session/queries";
 import ReactMarkdown from "react-markdown";
@@ -421,11 +422,10 @@ function RouteComponent() {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
 	if (isLoading) return null;
-	if (isError || !data || !data.success)
-		return <div className="min-h-screen">Rating not found</div>;
+	if (isError || !data || !data.success) return <NotFound />;
 
 	const rating = data.data;
-	if (!rating) return <div className="min-h-screen">Rating not found</div>;
+	if (!rating) return <NotFound />;
 
 	const ratingTyped = rating as RatingWithRelations;
 

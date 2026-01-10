@@ -18,7 +18,15 @@ export const stuffQueryOptions = (slug?: string) =>
 				data?: StuffWithAggregates | null;
 				error?: string;
 			};
-			if (!res.success) throw new Error(res.error ?? "Failed to load stuff");
+			// Treat explicit "not found" server responses as a null result so
+			// the route can render a friendly NotFound page instead of throwing.
+			if (!res.success) {
+				const err = res.error ?? "Failed to load stuff";
+				if (err.toLowerCase().includes("not found")) {
+					return null;
+				}
+				throw new Error(err);
+			}
 			return res.data ?? null;
 		},
 		staleTime: 0,

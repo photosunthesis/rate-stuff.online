@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { MobileHeader } from "~/components/layout/mobile-header";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
+import { NotFound } from "~/components/not-found";
 import { StuffHeader } from "~/features/stuff/components/stuff-header";
 import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
 import { useStuff } from "~/features/stuff/hooks";
@@ -84,20 +85,8 @@ function RouteComponent() {
 		);
 	}
 
-	if (error) {
-		return (
-			<div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
-				Failed to load stuff. Please try again.
-			</div>
-		);
-	}
-
-	if (!data) {
-		return (
-			<div className="text-center py-12">
-				<p className="text-neutral-500">Stuff not found.</p>
-			</div>
-		);
+	if (error || !data) {
+		return <NotFound />;
 	}
 
 	const stuff = data;
