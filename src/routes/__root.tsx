@@ -2,10 +2,12 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
 import { NotFound } from "~/components/not-found";
+import UmamiAnalytics from "@danielgtmn/umami-react";
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -94,8 +96,17 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 
-	shellComponent: RootDocument,
+	shellComponent: RootComponent,
 });
+
+function RootComponent() {
+	return (
+		<RootDocument>
+			<UmamiAnalytics debug={import.meta.env.DEV} lazyLoad={true} />
+			<Outlet />
+		</RootDocument>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (

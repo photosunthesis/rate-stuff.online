@@ -74,9 +74,9 @@ export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
 					type="button"
 					aria-label="Close"
 					onClick={handleClose}
-					className="absolute top-3 right-3 z-20 p-2 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
+					className="absolute top-3 right-3 z-50 p-3 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm"
 				>
-					<X size={28} />
+					<X size={24} />
 				</button>
 
 				<img
