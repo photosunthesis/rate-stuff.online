@@ -114,6 +114,35 @@ export async function getRatingById(id: string) {
 	};
 }
 
+export async function getRatingBySlug(slug: string) {
+	const result = await db.query.ratings.findFirst({
+		where: eq(ratings.slug, slug),
+		with: {
+			stuff: true,
+			user: {
+				columns: {
+					id: true,
+					name: true,
+					username: true,
+					avatarUrl: true,
+				},
+			},
+			tags: {
+				with: {
+					tag: true,
+				},
+			},
+		},
+	});
+
+	if (!result) return null;
+
+	return {
+		...result,
+		tags: (result.tags ?? []).map((t) => t.tag.name),
+	};
+}
+
 export async function getRecentTags(limit = 10) {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 

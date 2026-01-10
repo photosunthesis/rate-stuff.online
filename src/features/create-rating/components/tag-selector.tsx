@@ -76,25 +76,6 @@ export function TagSelector({
 				</span>
 			</div>
 
-			<div className="flex flex-wrap gap-2 mb-3">
-				{selectedTags.map((tag) => (
-					<span
-						key={tag}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-					>
-						#{tag}
-						<button
-							type="button"
-							onClick={() => handleRemoveTag(tag)}
-							className="ml-1 p-0.5 hover:bg-neutral-700/50 rounded-full transition-colors"
-						>
-							<X size={12} />
-							<span className="sr-only">Remove {tag}</span>
-						</button>
-					</span>
-				))}
-			</div>
-
 			<div className="relative">
 				<div
 					className={`flex items-center gap-2 px-3 py-2 bg-neutral-900 border ${
@@ -138,6 +119,25 @@ export function TagSelector({
 					/>
 				</div>
 				{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
+
+				<div className="flex flex-wrap gap-2 mt-2">
+					{selectedTags.map((tag) => (
+						<span
+							key={tag}
+							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+						>
+							#{tag}
+							<button
+								type="button"
+								onClick={() => handleRemoveTag(tag)}
+								className="ml-1 p-0.5 hover:bg-neutral-700/50 rounded-full transition-colors"
+							>
+								<X size={12} />
+								<span className="sr-only">Remove {tag}</span>
+							</button>
+						</span>
+					))}
+				</div>
 
 				{isOpen && searchInput && selectedTags.length < maxTags && (
 					<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">

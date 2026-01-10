@@ -9,10 +9,10 @@ import {
 	getFeedRatingsFn,
 	getPublicFeedRatingsFn,
 } from "./api";
-import { getRatingByIdFn } from "./api";
+import { getRatingBySlugFn } from "./api";
 import type { RatingWithRelations } from "./types";
+import { getRecentTagsFn, getRecentStuffFn } from "./api";
 
-// Normalized page result used by the hooks (wrapped shape only)
 type PageResult = {
 	success: boolean;
 	data: RatingWithRelations[];
@@ -49,12 +49,12 @@ export function useUserRatings(limit: number = 10) {
 	});
 }
 
-export const ratingQueryOptions = (id: string | undefined) =>
+export const ratingQueryOptions = (slug: string | undefined) =>
 	queryOptions({
-		queryKey: ["rating", id],
+		queryKey: ["rating", slug],
 		queryFn: async () => {
-			if (!id) return null;
-			return (await getRatingByIdFn({ data: { id } })) as {
+			if (!slug) return null;
+			return (await getRatingBySlugFn({ data: { slug } })) as {
 				success: boolean;
 				data: RatingWithRelations | null;
 				error?: string;
@@ -64,10 +64,9 @@ export const ratingQueryOptions = (id: string | undefined) =>
 		gcTime: 1000 * 60 * 10,
 	});
 
-export function useRating(id?: string) {
-	return useQuery(ratingQueryOptions(id));
+export function useRating(slug?: string) {
+	return useQuery(ratingQueryOptions(slug));
 }
-import { getRecentTagsFn, getRecentStuffFn } from "./api";
 
 export function useFeedRatings(
 	limit: number = 10,

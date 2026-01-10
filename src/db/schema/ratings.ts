@@ -25,6 +25,7 @@ export const ratings = sqliteTable(
 		title: text("title").notNull(),
 		score: real("score").notNull(),
 		content: text("content").notNull(),
+		slug: text("slug").notNull().unique(),
 		images: text("images"),
 		createdAt: integer({ mode: "timestamp_ms" })
 			.notNull()

@@ -17,6 +17,7 @@ export type Rating = {
 	id: string;
 	userId: string;
 	stuffId: string;
+	slug: string;
 	title: string;
 	score: number;
 	content: string;

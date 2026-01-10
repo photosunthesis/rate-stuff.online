@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getUserRatings, getFeedRatings, getRatingById } from "./service";
+import { getUserRatings, getFeedRatings, getRatingBySlug } from "./service";
 import { getRecentTags, getRecentStuff } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
@@ -97,6 +97,30 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 		}
 	});
 
+export const getRatingBySlugFn = createServerFn({ method: "GET" })
+	.inputValidator(
+		z.object({
+			slug: z.string(),
+		}),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const rating = await getRatingBySlug(data.slug);
+
+			if (!rating) {
+				return { success: false, error: "Not found" };
+			}
+
+			return { success: true, data: rating };
+		} catch (error) {
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch rating",
+			};
+		}
+	});
+
 export const getRatingByIdFn = createServerFn({ method: "GET" })
 	.inputValidator(
 		z.object({
@@ -105,12 +129,10 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
+			const { getRatingById } = await import("./service");
 			const rating = await getRatingById(data.id);
 
-			if (!rating) {
-				return { success: false, error: "Not found" };
-			}
-
+			if (!rating) return { success: false, error: "Not found" };
 			return { success: true, data: rating };
 		} catch (error) {
 			return {

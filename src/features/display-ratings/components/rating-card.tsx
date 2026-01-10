@@ -112,8 +112,8 @@ export function RatingCard({ rating }: RatingCardProps) {
 			{/* Rating and Title */}
 			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
 				<Link
-					to="/rating/$ratingId"
-					params={{ ratingId: rating.id }}
+					to="/rating/$ratingSlug"
+					params={{ ratingSlug: rating.slug }}
 					className="hover:underline"
 				>
 					{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}

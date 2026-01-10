@@ -17,13 +17,9 @@ import { getRatingEmoji, getTimeAgo } from "~/utils/rating-utils";
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
 	const text = md
-		// remove image markdown
 		.replace(/!\[.*?\]\(.*?\)/g, "")
-		// convert links to text
 		.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-		// remove remaining markdown chars
 		.replace(/[#>*_`~-]/g, "")
-		// strip HTML tags if present
 		.replace(/<[^>]*>/g, "")
 		.replace(/\s+/g, " ")
 		.trim();
@@ -31,19 +27,19 @@ function excerptFromMarkdown(md: string, max = 160) {
 	return text.length > max ? `${text.slice(0, max - 1).trim()}…` : text;
 }
 
-export const Route = createFileRoute("/rating/$ratingId")({
+export const Route = createFileRoute("/rating/$ratingSlug")({
 	beforeLoad: async ({ params, context }) => {
-		const ratingId = params.ratingId;
-		if (!ratingId) {
+		const ratingSlug = params.ratingSlug;
+		if (!ratingSlug) {
 			throw redirect({ to: "/" });
 		}
 
-		await context.queryClient.ensureQueryData(ratingQueryOptions(ratingId));
+		await context.queryClient.ensureQueryData(ratingQueryOptions(ratingSlug));
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
 		const cached = match.context.queryClient.getQueryData(
-			ratingQueryOptions(params.ratingId).queryKey,
+			ratingQueryOptions(params.ratingSlug).queryKey,
 		);
 
 		const rating = cached?.success ? cached.data : null;
@@ -54,7 +50,6 @@ export const Route = createFileRoute("/rating/$ratingId")({
 			? excerptFromMarkdown(rating.content, 160)
 			: "View a community rating on Rate Stuff Online.";
 
-		// extract the first image if present (handles stringified arrays or single-string URLs)
 		let image: string | undefined;
 		if (rating?.images) {
 			if (typeof rating.images === "string") {
@@ -63,11 +58,9 @@ export const Route = createFileRoute("/rating/$ratingId")({
 					if (Array.isArray(imgs) && imgs.length > 0) image = imgs[0];
 					else if (typeof imgs === "string") image = imgs;
 				} catch {
-					// not JSON — treat as single URL string
 					image = rating.images;
 				}
 			} else {
-				// fallback for unexpected runtime types (be defensive)
 				const maybeArray = rating.images as unknown;
 				if (Array.isArray(maybeArray) && maybeArray.length > 0) {
 					image = (maybeArray as string[])[0];
@@ -101,7 +94,7 @@ export const Route = createFileRoute("/rating/$ratingId")({
 
 		return {
 			meta: metas,
-			links: [{ rel: "canonical", href: `/rating/${params.ratingId}` }],
+			links: [{ rel: "canonical", href: `/rating/${params.ratingSlug}` }],
 		};
 	},
 });
@@ -218,7 +211,6 @@ function ContentSection({ rating }: { rating: RatingWithRelations }) {
 	return (
 		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:m-0 [&_p]:leading-normal">
 			<MarkdownContent content={rating.content} />
-			{/* JSON-LD structured data for SEO (rendered server-side) */}
 			<script
 				type="application/ld+json"
 				dangerouslySetInnerHTML={{
@@ -292,16 +284,16 @@ function ImagesGallery({
 								let cornerClass = "rounded-xl";
 								switch (idx) {
 									case 0:
-										cornerClass = "rounded-xl rounded-br-sm"; // top-left
+										cornerClass = "rounded-xl rounded-br-sm";
 										break;
 									case 1:
-										cornerClass = "rounded-xl rounded-bl-sm"; // top-right
+										cornerClass = "rounded-xl rounded-bl-sm";
 										break;
 									case 2:
-										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left
+										cornerClass = "rounded-xl rounded-tr-sm";
 										break;
 									case 3:
-										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right
+										cornerClass = "rounded-xl rounded-tl-sm";
 										break;
 								}
 								return (
@@ -335,7 +327,6 @@ function ImagesGallery({
 						/>
 					</button>
 				</div>
-
 				<div className="h-full overflow-hidden">
 					<button
 						type="button"
@@ -349,7 +340,6 @@ function ImagesGallery({
 						/>
 					</button>
 				</div>
-
 				<div className="h-full overflow-hidden">
 					<button
 						type="button"
@@ -367,23 +357,22 @@ function ImagesGallery({
 		);
 	}
 
-	// 4 or more
 	return (
 		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
 			{images.slice(0, 4).map((src, idx) => {
 				let cornerClass = "rounded-xl";
 				switch (idx) {
 					case 0:
-						cornerClass = "rounded-xl rounded-br-sm"; // top-left
+						cornerClass = "rounded-xl rounded-br-sm";
 						break;
 					case 1:
-						cornerClass = "rounded-xl rounded-bl-sm"; // top-right
+						cornerClass = "rounded-xl rounded-bl-sm";
 						break;
 					case 2:
-						cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left
+						cornerClass = "rounded-xl rounded-tr-sm";
 						break;
 					case 3:
-						cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right
+						cornerClass = "rounded-xl rounded-tl-sm";
 						break;
 				}
 				return (
@@ -423,8 +412,8 @@ function TagsList({ tags }: { tags?: string[] }) {
 }
 
 function RouteComponent() {
-	const ratingId = Route.useParams().ratingId;
-	const { data, isLoading, isError } = useRating(ratingId);
+	const ratingSlug = Route.useParams().ratingSlug;
+	const { data, isLoading, isError } = useRating(ratingSlug);
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
 	if (isLoading) return null;

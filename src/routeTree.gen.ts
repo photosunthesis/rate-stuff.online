@@ -13,7 +13,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as SetUpProfileRouteImport } from './routes/set-up-profile'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RatingRatingIdRouteImport } from './routes/rating/$ratingId'
+import { Route as RatingRatingSlugRouteImport } from './routes/rating/$ratingSlug'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -35,9 +35,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RatingRatingIdRoute = RatingRatingIdRouteImport.update({
-  id: '/rating/$ratingId',
-  path: '/rating/$ratingId',
+const RatingRatingSlugRoute = RatingRatingSlugRouteImport.update({
+  id: '/rating/$ratingSlug',
+  path: '/rating/$ratingSlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -46,14 +46,14 @@ export interface FileRoutesByFullPath {
   '/create-account': typeof CreateAccountRoute
   '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
+  '/rating/$ratingSlug': typeof RatingRatingSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-account': typeof CreateAccountRoute
   '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
+  '/rating/$ratingSlug': typeof RatingRatingSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,7 +61,7 @@ export interface FileRoutesById {
   '/create-account': typeof CreateAccountRoute
   '/set-up-profile': typeof SetUpProfileRoute
   '/sign-in': typeof SignInRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
+  '/rating/$ratingSlug': typeof RatingRatingSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -70,21 +70,21 @@ export interface FileRouteTypes {
     | '/create-account'
     | '/set-up-profile'
     | '/sign-in'
-    | '/rating/$ratingId'
+    | '/rating/$ratingSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/create-account'
     | '/set-up-profile'
     | '/sign-in'
-    | '/rating/$ratingId'
+    | '/rating/$ratingSlug'
   id:
     | '__root__'
     | '/'
     | '/create-account'
     | '/set-up-profile'
     | '/sign-in'
-    | '/rating/$ratingId'
+    | '/rating/$ratingSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,7 +92,7 @@ export interface RootRouteChildren {
   CreateAccountRoute: typeof CreateAccountRoute
   SetUpProfileRoute: typeof SetUpProfileRoute
   SignInRoute: typeof SignInRoute
-  RatingRatingIdRoute: typeof RatingRatingIdRoute
+  RatingRatingSlugRoute: typeof RatingRatingSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,11 +125,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rating/$ratingId': {
-      id: '/rating/$ratingId'
-      path: '/rating/$ratingId'
-      fullPath: '/rating/$ratingId'
-      preLoaderRoute: typeof RatingRatingIdRouteImport
+    '/rating/$ratingSlug': {
+      id: '/rating/$ratingSlug'
+      path: '/rating/$ratingSlug'
+      fullPath: '/rating/$ratingSlug'
+      preLoaderRoute: typeof RatingRatingSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -140,7 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   CreateAccountRoute: CreateAccountRoute,
   SetUpProfileRoute: SetUpProfileRoute,
   SignInRoute: SignInRoute,
-  RatingRatingIdRoute: RatingRatingIdRoute,
+  RatingRatingSlugRoute: RatingRatingSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
