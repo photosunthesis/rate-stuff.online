@@ -14,6 +14,7 @@ export const getRouter = () => {
 		context: { ...rqContext },
 		defaultPreload: "intent",
 		defaultNotFoundComponent: NotFound,
+		scrollRestoration: true,
 		Wrap: (props: { children: React.ReactNode }) => {
 			return (
 				<TanstackQuery.Provider {...rqContext}>
