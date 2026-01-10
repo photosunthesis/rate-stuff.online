@@ -5,7 +5,7 @@ import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import type { Stuff, Tag } from "~/features/display-ratings/types";
 import { uploadFile } from "~/utils/media-storage-utils";
-import crypto from "node:crypto";
+import { generateSlug } from "~/utils/slug-utils";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -107,22 +107,7 @@ export async function createRating(
 	try {
 		const tagObjects = await createTags(input.tags);
 
-		function slugify(s: string) {
-			return s
-				.toLowerCase()
-				.trim()
-				.replace(/[^a-z0-9\s-]/g, "")
-				.replace(/\s+/g, "-")
-				.replace(/-+/g, "-")
-				.replace(/^-|-$/g, "");
-		}
-
-		const MAX_SLUG_LENGTH = 128;
-		const SUFFIX = `-${crypto.randomBytes(3).toString("hex")}`; // 7 chars including '-'
-		const rawBase = slugify(input.title || "rating");
-		const baseMax = Math.max(1, MAX_SLUG_LENGTH - SUFFIX.length);
-		const base = rawBase.slice(0, baseMax);
-		const slug = `${base}${SUFFIX}`;
+		const slug = generateSlug(input.title);
 
 		const [rating] = await db
 			.insert(ratings)
