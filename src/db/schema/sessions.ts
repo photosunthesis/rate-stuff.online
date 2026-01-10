@@ -10,8 +10,8 @@ export const sessions = sqliteTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		expiresAt: integer({ mode: "timestamp_ms" }).notNull(),
-		createdAt: integer({ mode: "timestamp_ms" })
+		expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
 	},

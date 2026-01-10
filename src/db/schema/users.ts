@@ -27,10 +27,10 @@ export const users = sqliteTable(
 		name: text("name"),
 		avatarUrl: text("avatar_url"),
 		role: text("role").notNull().default(ROLES.USER).$type<Role>(),
-		createdAt: integer({ mode: "timestamp_ms" })
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
-		updatedAt: integer({ mode: "timestamp_ms" })
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
 	},

@@ -16,8 +16,8 @@ export const inviteCodes = sqliteTable(
 		usedBy: text("used_by").references(() => users.id, {
 			onDelete: "set null",
 		}),
-		usedAt: integer({ mode: "timestamp_ms" }),
-		createdAt: integer({ mode: "timestamp_ms" })
+		usedAt: integer("used_at", { mode: "timestamp_ms" }),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
 	},

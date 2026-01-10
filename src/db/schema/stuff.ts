@@ -7,13 +7,13 @@ export const stuff = sqliteTable("stuff", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
-	createdAt: integer({ mode: "timestamp_ms" })
+	createdAt: integer("created_at", { mode: "timestamp_ms" })
 		.notNull()
 		.$defaultFn(() => new Date()),
-	updatedAt: integer({ mode: "timestamp_ms" })
+	updatedAt: integer("updated_at", { mode: "timestamp_ms" })
 		.notNull()
 		.$defaultFn(() => new Date()),
-	deletedAt: integer({ mode: "timestamp_ms" }),
+	deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
 });
 
 export const stuffRelations = relations(stuff, ({ many }) => ({

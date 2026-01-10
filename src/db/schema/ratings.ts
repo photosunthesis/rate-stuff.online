@@ -27,13 +27,13 @@ export const ratings = sqliteTable(
 		content: text("content").notNull(),
 		slug: text("slug").notNull().unique(),
 		images: text("images"),
-		createdAt: integer({ mode: "timestamp_ms" })
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
-		updatedAt: integer({ mode: "timestamp_ms" })
+		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
 			.notNull()
 			.$defaultFn(() => new Date()),
-		deletedAt: integer({ mode: "timestamp_ms" }),
+		deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
 	},
 	(table) => [
 		index("ratings_created_at_idx").on(table.createdAt),
