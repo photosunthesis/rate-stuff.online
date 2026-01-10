@@ -129,17 +129,80 @@ export function RatingCard({ rating }: RatingCardProps) {
 							alt="Rating"
 							className="block aspect-video object-cover rounded-xl"
 						/>
-					) : (
+					) : parsedImages.length === 2 ? (
 						<div className="flex gap-2">
-							{parsedImages.map((image) => (
-								<div key={image} className="flex-1 aspect-square">
+							{parsedImages.map((image, idx) => (
+								<div
+									key={image}
+									className="flex-1 aspect-square overflow-hidden"
+								>
 									<img
 										src={image}
 										alt="Rating"
-										className="w-full h-full object-cover rounded-xl"
+										className={
+											idx === 0
+												? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
+												: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm"
+										}
 									/>
 								</div>
 							))}
+						</div>
+					) : parsedImages.length === 3 ? (
+						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+							{/* Left: large image spanning both rows */}
+							<div className="row-span-2 h-full overflow-hidden">
+								<img
+									src={parsedImages[0]}
+									alt="Rating"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
+								/>
+							</div>
+							{/* Right: two stacked images (equal height, center-cropped) */}
+							<div className="h-full overflow-hidden">
+								<img
+									src={parsedImages[1]}
+									alt="Rating"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
+								/>
+							</div>
+							<div className="h-full overflow-hidden">
+								<img
+									src={parsedImages[2]}
+									alt="Rating"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
+								/>
+							</div>
+						</div>
+					) : (
+						/* 4 or more: show a 2x2 grid using first 4 images */
+						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+							{parsedImages.slice(0, 4).map((image, idx) => {
+								let cornerClass = "rounded-xl";
+								switch (idx) {
+									case 0:
+										cornerClass = "rounded-xl rounded-br-sm"; // top-left: inner bottom-right small
+										break;
+									case 1:
+										cornerClass = "rounded-xl rounded-bl-sm"; // top-right: inner bottom-left small
+										break;
+									case 2:
+										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left: inner top-right small
+										break;
+									case 3:
+										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right: inner top-left small
+										break;
+								}
+								return (
+									<div key={image} className="w-full h-full overflow-hidden">
+										<img
+											src={image}
+											alt="Rating"
+											className={`w-full h-full object-cover object-center ${cornerClass}`}
+										/>
+									</div>
+								);
+							})}
 						</div>
 					)}
 				</div>

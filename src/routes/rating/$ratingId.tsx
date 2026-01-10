@@ -278,11 +278,117 @@ function ImagesGallery({
 		);
 	}
 
-	return (
-		<div className="ml-11 mb-3 flex gap-2">
-			{images.map((src) => (
-				<div key={src} className="flex-1 aspect-square">
+	if (images.length === 2) {
+		return (
+			<div className="ml-11 mb-3 flex gap-2">
+				{images.map((src, idx) => (
+					<div key={src} className="flex-1 aspect-square overflow-hidden">
+						<button
+							type="button"
+							onClick={() => onImageClick(src)}
+							className="w-full h-full"
+						>
+							{(() => {
+								let cornerClass = "rounded-xl";
+								switch (idx) {
+									case 0:
+										cornerClass = "rounded-xl rounded-br-sm"; // top-left
+										break;
+									case 1:
+										cornerClass = "rounded-xl rounded-bl-sm"; // top-right
+										break;
+									case 2:
+										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left
+										break;
+									case 3:
+										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right
+										break;
+								}
+								return (
+									<img
+										src={src}
+										alt="Rating"
+										className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
+									/>
+								);
+							})()}
+						</button>
+					</div>
+				))}
+			</div>
+		);
+	}
+
+	if (images.length === 3) {
+		return (
+			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+				<div className="row-span-2 h-full overflow-hidden">
 					<button
+						type="button"
+						onClick={() => onImageClick(images[0])}
+						className="w-full h-full"
+					>
+						<img
+							src={images[0]}
+							alt="Rating"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+						/>
+					</button>
+				</div>
+
+				<div className="h-full overflow-hidden">
+					<button
+						type="button"
+						onClick={() => onImageClick(images[1])}
+						className="w-full h-full"
+					>
+						<img
+							src={images[1]}
+							alt="Rating"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+						/>
+					</button>
+				</div>
+
+				<div className="h-full overflow-hidden">
+					<button
+						type="button"
+						onClick={() => onImageClick(images[2])}
+						className="w-full h-full"
+					>
+						<img
+							src={images[2]}
+							alt="Rating"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+						/>
+					</button>
+				</div>
+			</div>
+		);
+	}
+
+	// 4 or more
+	return (
+		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+			{images.slice(0, 4).map((src, idx) => {
+				let cornerClass = "rounded-xl";
+				switch (idx) {
+					case 0:
+						cornerClass = "rounded-xl rounded-br-sm"; // top-left
+						break;
+					case 1:
+						cornerClass = "rounded-xl rounded-bl-sm"; // top-right
+						break;
+					case 2:
+						cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left
+						break;
+					case 3:
+						cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right
+						break;
+				}
+				return (
+					<button
+						key={src}
 						type="button"
 						onClick={() => onImageClick(src)}
 						className="w-full h-full"
@@ -290,11 +396,11 @@ function ImagesGallery({
 						<img
 							src={src}
 							alt="Rating"
-							className="w-full h-full object-cover rounded-xl cursor-pointer"
+							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
 						/>
 					</button>
-				</div>
-			))}
+				);
+			})}
 		</div>
 	);
 }
