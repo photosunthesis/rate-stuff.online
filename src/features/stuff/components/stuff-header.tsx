@@ -134,7 +134,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						{stuff.name}
 					</h1>
 					<div className="flex items-center gap-4 text-sm text-neutral-400">
-						<div className="hidden sm:block text-neutral-500">
+						<div className="text-neutral-500">
 							{stuff.ratingCount}{" "}
 							{stuff.ratingCount === 1 ? "rating" : "ratings"}
 						</div>
@@ -145,7 +145,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						<span className="align-baseline">
 							{Number(stuff.averageRating).toFixed(1)}
 						</span>
-						<span className="text-md md:text-base text-neutral-400 ml-1">
+						<span className="text-sm md:text-md text-neutral-400 ml-1">
 							/ 10
 						</span>
 					</div>
