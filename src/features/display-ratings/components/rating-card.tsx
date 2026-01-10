@@ -73,7 +73,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
-		<div className="block px-4 py-3">
+		<div className="block px-4 py-2">
 			{/* Header */}
 			<div className="flex items-center gap-3">
 				<Avatar
