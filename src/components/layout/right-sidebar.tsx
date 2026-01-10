@@ -101,6 +101,7 @@ export function RightSidebar({
 											<Link
 												key={tag.name}
 												to="/"
+												search={{ tag: tag.name }}
 												className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 											>
 												#{tag.name}

@@ -24,7 +24,10 @@ type PageResult = {
 
 export const ratingKeys = {
 	all: ["ratings"] as const,
-	feed: () => [...ratingKeys.all, "feed"] as const,
+	feed: (tag?: string) =>
+		tag
+			? ([...ratingKeys.all, "feed", "tag", tag] as const)
+			: ([...ratingKeys.all, "feed", "all"] as const),
 	mine: () => [...ratingKeys.all, "mine"] as const,
 	user: (username: string) => [...ratingKeys.all, "user", username] as const,
 };
@@ -74,23 +77,27 @@ export function useRating(slug?: string) {
 export function useFeedRatings(
 	limit: number = 10,
 	isAuthenticated: boolean = true,
+	tag?: string,
 ) {
 	const serverFn = isAuthenticated ? getFeedRatingsFn : getPublicFeedRatingsFn;
 	const getFeedRatings = useServerFn(serverFn);
 
 	return useInfiniteQuery({
-		queryKey: ratingKeys.feed(),
+		queryKey: ratingKeys.feed(tag),
 		queryFn: async ({ pageParam }: { pageParam?: string }) => {
 			return (await getFeedRatings({
 				data: {
 					limit,
 					cursor: pageParam,
+					tag,
 				},
 			})) as PageResult;
 		},
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
 			if (lastPage.success === false) return undefined;
+			// Disable pagination for unauthenticated users (only first page)
+			if (!isAuthenticated) return undefined;
 			return lastPage.nextCursor;
 		},
 

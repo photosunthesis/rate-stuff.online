@@ -4,7 +4,7 @@ import {
 	profileSetupSchema,
 	type PublicUser,
 } from "~/features/set-up-profile/types";
-import { uploadProfileImage } from "./service";
+import { getUserByUsername, uploadProfileImage } from "./service";
 import { updateUserProfile } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 
@@ -125,7 +125,6 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 	.inputValidator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
-			const { getUserByUsername } = await import("./service");
 			const user = await getUserByUsername(data.username);
 			if (!user) return { success: false, error: "Not found" };
 			return { success: true, data: user };

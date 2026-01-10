@@ -1,8 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getUserRatings, getFeedRatings, getRatingBySlug } from "./service";
+import {
+	getUserRatings,
+	getFeedRatings,
+	getRatingBySlug,
+	getUserRatingsCount,
+	getRatingById,
+} from "./service";
 import { getRecentTags, getRecentStuff } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
+import { getUserByUsername } from "../set-up-profile/service";
+import { getSession } from "~/utils/auth-utils";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -52,10 +60,11 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 		}
 	});
 
-export const getPublicFeedRatingsFn = createServerFn({ method: "GET" }).handler(
-	async () => {
+export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
+	.inputValidator(z.object({ tag: z.string().optional() }))
+	.handler(async ({ data }) => {
 		try {
-			const ratings = await getFeedRatings(12);
+			const ratings = await getFeedRatings(12, undefined, data.tag);
 
 			// Always return the wrapped shape
 			return { success: true, data: ratings, nextCursor: undefined };
@@ -65,8 +74,7 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" }).handler(
 				error: error instanceof Error ? error.message : "Failed to fetch feed",
 			};
 		}
-	},
-);
+	});
 
 export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
@@ -74,13 +82,14 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 		z.object({
 			limit: z.number().default(10),
 			cursor: z.string().optional(),
+			tag: z.string().optional(),
 		}),
 	)
 	.handler(async ({ data }) => {
 		try {
 			const cursor = parseCursor(data.cursor);
 
-			const ratings = await getFeedRatings(data.limit, cursor);
+			const ratings = await getFeedRatings(data.limit, cursor, data.tag);
 
 			let nextCursor: string | undefined;
 			if (ratings.length === data.limit) {
@@ -131,12 +140,6 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
-			const { getUserByUsername } = await import(
-				"~/features/set-up-profile/service"
-			);
-			const { getUserRatings } = await import("./service");
-			const { getSession } = await import("~/utils/auth-utils");
-
 			const user = await getUserByUsername(data.username);
 			if (!user) return { success: false, error: "Not found" };
 
@@ -168,11 +171,6 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 	.inputValidator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
-			const { getUserByUsername } = await import(
-				"~/features/set-up-profile/service"
-			);
-			const { getUserRatingsCount } = await import("./service");
-
 			const user = await getUserByUsername(data.username);
 			if (!user) return { success: false, error: "Not found" };
 
@@ -195,7 +193,6 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 
 	.handler(async ({ data }) => {
 		try {
-			const { getRatingById } = await import("./service");
 			const rating = await getRatingById(data.id);
 
 			if (!rating) return { success: false, error: "Not found" };

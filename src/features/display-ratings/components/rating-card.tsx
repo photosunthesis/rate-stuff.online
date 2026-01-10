@@ -276,14 +276,15 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 			{parsedTags && parsedTags.length > 0 && (
 				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) => (
-						<a
+						<Link
 							key={tag}
-							href={`#${tag}`}
-							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+							to="/"
+							search={{ tag }}
 							onClick={(e) => e.stopPropagation()}
+							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 						>
 							#{tag}
-						</a>
+						</Link>
 					))}
 				</div>
 			)}

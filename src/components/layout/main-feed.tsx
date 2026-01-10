@@ -1,11 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { RatingCard } from "~/features/display-ratings/components/rating-card";
+import { Button } from "~/components/ui/button";
 import { useIsAuthenticated } from "~/features/session/queries";
 import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-export function MainFeed() {
+export function MainFeed({ tag }: { tag?: string }) {
 	const { isAuthenticated } = useIsAuthenticated();
 	const {
 		data,
@@ -14,8 +15,9 @@ export function MainFeed() {
 		isFetchingNextPage,
 		isLoading,
 		error,
-	} = useFeedRatings(10, isAuthenticated);
+	} = useFeedRatings(10, isAuthenticated, tag);
 	const { ref, inView } = useInView();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (inView && hasNextPage && isAuthenticated) {
@@ -40,6 +42,31 @@ export function MainFeed() {
 
 	return (
 		<>
+			{tag && (
+				<div className="px-4 py-4 border-b border-neutral-800">
+					<div className="flex items-center justify-between">
+						<div>
+							<h2 className="text-lg font-semibold text-white">
+								Ratings with the #{tag} tag
+							</h2>
+							<p className="text-sm text-neutral-400">
+								Showing results for #{tag}
+							</p>
+						</div>
+						<Button
+							variant="secondary"
+							className="w-auto! inline-flex px-3 py-1 text-sm"
+							onClick={(e) => {
+								e.stopPropagation();
+								navigate({ to: "/" });
+							}}
+						>
+							Clear
+						</Button>
+					</div>
+				</div>
+			)}
+
 			<div>
 				{ratings.map((rating, idx) => (
 					<div

@@ -1,6 +1,6 @@
 import { db } from "~/db/index";
 import { ratings, ratingsToTags, tags, stuff } from "~/db/schema";
-import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
+import { and, isNull, desc, lt, eq, gte, sql, or, inArray } from "drizzle-orm";
 
 export async function getUserRatings(
 	userId: string,
@@ -49,6 +49,7 @@ export async function getUserRatings(
 export async function getFeedRatings(
 	limit = 10,
 	cursor?: { createdAt: Date; id: string },
+	tag?: string,
 ) {
 	const cursorFilter = cursor
 		? or(
@@ -57,10 +58,50 @@ export async function getFeedRatings(
 			)
 		: undefined;
 
+	if (!tag) {
+		const results = await db.query.ratings.findMany({
+			where: and(isNull(ratings.deletedAt), cursorFilter),
+			limit,
+			orderBy: [desc(ratings.createdAt), desc(ratings.id)],
+			with: {
+				stuff: true,
+				user: {
+					columns: {
+						id: true,
+						name: true,
+						username: true,
+						avatarUrl: true,
+					},
+				},
+				tags: {
+					with: {
+						tag: true,
+					},
+				},
+			},
+		});
+
+		return results.map((r) => ({
+			...r,
+			tags: (r.tags ?? []).map((t) => t.tag.name),
+		}));
+	}
+
+	// When filtering by tag, first select matching rating ids with the correct order and cursor applied
+	const rows = await db
+		.select({ id: ratings.id, createdAt: ratings.createdAt })
+		.from(ratings)
+		.leftJoin(ratingsToTags, eq(ratingsToTags.ratingId, ratings.id))
+		.leftJoin(tags, eq(tags.id, ratingsToTags.tagId))
+		.where(and(isNull(ratings.deletedAt), eq(tags.name, tag), cursorFilter))
+		.orderBy(desc(ratings.createdAt), desc(ratings.id))
+		.limit(limit);
+
+	const ids = rows.map((r) => r.id);
+	if (ids.length === 0) return [];
+
 	const results = await db.query.ratings.findMany({
-		where: and(isNull(ratings.deletedAt), cursorFilter),
-		limit,
-		orderBy: [desc(ratings.createdAt), desc(ratings.id)],
+		where: and(inArray(ratings.id, ids), isNull(ratings.deletedAt)),
 		with: {
 			stuff: true,
 			user: {
@@ -79,7 +120,12 @@ export async function getFeedRatings(
 		},
 	});
 
-	return results.map((r) => ({
+	// Preserve ordering from ids selection
+	const ordered = ids
+		.map((id) => results.find((r) => r.id === id))
+		.filter(Boolean) as typeof results;
+
+	return ordered.map((r) => ({
 		...r,
 		tags: (r.tags ?? []).map((t) => t.tag.name),
 	}));

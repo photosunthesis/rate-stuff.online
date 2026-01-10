@@ -403,13 +403,14 @@ function TagsList({ tags }: { tags?: string[] }) {
 	return (
 		<div className="flex flex-wrap gap-2 mb-3 ml-11">
 			{tags.map((tag: string) => (
-				<a
+				<Link
 					key={tag}
-					href={`#${tag}`}
+					to="/"
+					search={{ tag }}
 					className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 				>
 					#{tag}
-				</a>
+				</Link>
 			))}
 		</div>
 	);
