@@ -104,14 +104,20 @@ export function MainFeed({ tag }: { tag?: string }) {
 
 			{isAuthenticated ? (
 				isFetchingNextPage ? (
-					<div className="p-4 text-center text-neutral-500">
-						Loading more...
+					<div className="-mx-4 border-t border-neutral-800">
+						<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+							Loading more...
+						</div>
 					</div>
 				) : hasNextPage ? (
-					<div ref={ref} className="h-4" />
+					<div className="-mx-4 border-t border-neutral-800">
+						<div ref={ref} className="h-4" />
+					</div>
 				) : (
-					<div className="p-4 pb-12 text-center text-neutral-500">
-						All caught up! ＼(￣▽￣)／
+					<div className="-mx-4 border-t border-neutral-800">
+						<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+							All caught up! ＼(￣▽￣)／
+						</div>
 					</div>
 				)
 			) : (
