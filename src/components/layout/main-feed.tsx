@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { RatingCard } from "~/features/display-ratings/components/rating-card";
 import { Button } from "~/components/ui/button";
 import { useIsAuthenticated } from "~/features/session/queries";
+import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
@@ -29,7 +30,24 @@ export function MainFeed({ tag }: { tag?: string }) {
 		data?.pages.flatMap((page) => (page.success ? page.data : [])) || [];
 
 	if (isLoading) {
-		return <div className="p-4 text-center text-neutral-500">Loading...</div>;
+		return (
+			<div>
+				{[0, 1, 2].map((n, idx) => (
+					<div
+						key={n}
+						className={
+							idx === 0
+								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
+								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+						}
+					>
+						<div className="px-4 py-3">
+							<RatingCardSkeleton variant="rating" />
+						</div>
+					</div>
+				))}
+			</div>
+		);
 	}
 
 	if (error) {

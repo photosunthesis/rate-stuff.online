@@ -2,6 +2,7 @@ import { useStuffRatingsInfinite } from "../hooks";
 import { StuffRatingCard } from "./stuff-rating-card";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 import { getStuffRatingsFn } from "../api";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { useIsAuthenticated } from "~/features/session/queries";
@@ -164,16 +165,7 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 						data-skel-item
 					>
 						<div className="px-4 py-2">
-							<div className="flex items-center gap-3">
-								<div className="w-8 h-8 rounded-full bg-neutral-800" />
-								<div className="flex-1">
-									<div className="h-3 bg-neutral-800 rounded w-48 mb-2" />
-									<div className="h-3 bg-neutral-800 rounded w-32" />
-								</div>
-							</div>
-							<div className="ml-11 mt-3">
-								<div className="h-40 bg-neutral-900 rounded-xl" />
-							</div>
+							<RatingCardSkeleton variant="stuff" />
 						</div>
 					</div>
 				))}

@@ -1,6 +1,7 @@
 import { useUserRatings } from "../queries";
 import { RatingCard } from "./rating-card";
 import { useEffect, useRef } from "react";
+import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 
 const LIMIT = 10;
 
@@ -40,8 +41,19 @@ export function UserRatingsList() {
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+			<div>
+				{[0, 1, 2].map((n, idx) => (
+					<div
+						key={n}
+						className={
+							idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
+						}
+					>
+						<div className="px-4 py-3">
+							<RatingCardSkeleton variant="user" noIndent />
+						</div>
+					</div>
+				))}
 			</div>
 		);
 	}
