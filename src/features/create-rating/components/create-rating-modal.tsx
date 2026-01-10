@@ -79,7 +79,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 	};
 
 	const handleFormSuccess = () => {
-		handleClose({ immediate: true });
+		handleClose();
 	};
 
 	if (!isOpen) {

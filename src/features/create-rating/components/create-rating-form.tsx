@@ -64,13 +64,14 @@ export function CreateRatingForm({
 
 				await onSubmit(inputData);
 
-				if (!error) {
-					form.reset();
-					setSelectedStuff(null);
-					setSelectedTags([]);
-					setSelectedImages([]);
-					onSuccess?.();
-				}
+				// If the submit promise resolves without throwing, treat it as success.
+				form.reset();
+				setSelectedStuff(null);
+				setSelectedTags([]);
+				setSelectedImages([]);
+				onSuccess?.();
+			} catch {
+				// Submission failed; errors are surfaced via props from the hook.
 			} finally {
 				setIsSubmitting(false);
 			}
