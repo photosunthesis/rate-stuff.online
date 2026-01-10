@@ -4,6 +4,7 @@ import {
 	text,
 	primaryKey,
 	integer,
+	index,
 } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
 
@@ -32,7 +33,10 @@ export const ratingsToTags = sqliteTable(
 			.notNull()
 			.references(() => tags.id, { onDelete: "cascade" }),
 	},
-	(t) => [primaryKey({ columns: [t.ratingId, t.tagId] })],
+	(t) => [
+		primaryKey({ columns: [t.ratingId, t.tagId] }),
+		index("ratings_to_tags_tag_idx").on(t.tagId),
+	],
 );
 
 export const ratingsToTagsRelations = relations(ratingsToTags, ({ one }) => ({

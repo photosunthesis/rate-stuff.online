@@ -4,6 +4,19 @@ import { getRecentTags, getRecentStuff } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
 
+function parseCursor(cursor?: string) {
+	if (!cursor) return undefined;
+	const [datePart, id] = cursor.split("|");
+	if (!datePart || !id) return undefined;
+	const createdAt = new Date(datePart);
+	if (Number.isNaN(createdAt.getTime())) return undefined;
+	return { createdAt, id };
+}
+
+function makeCursor(createdAt: Date | string | number, id: string) {
+	return `${new Date(createdAt).toISOString()}|${id}`;
+}
+
 export const getUserRatingsFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware])
 	.inputValidator(
@@ -14,7 +27,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data, context }) => {
 		try {
-			const cursor = data.cursor ? new Date(data.cursor) : undefined;
+			const cursor = parseCursor(data.cursor);
 
 			const ratings = await getUserRatings(
 				context.userSession.userId,
@@ -25,8 +38,8 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 			let nextCursor: string | undefined;
 
 			if (ratings.length === data.limit) {
-				const lastCreatedAt = ratings[ratings.length - 1].createdAt;
-				nextCursor = new Date(lastCreatedAt).toISOString();
+				const last = ratings[ratings.length - 1];
+				nextCursor = makeCursor(last.createdAt, last.id);
 			}
 
 			return { success: true, data: ratings, nextCursor };
@@ -65,14 +78,14 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
-			const cursor = data.cursor ? new Date(data.cursor) : undefined;
+			const cursor = parseCursor(data.cursor);
 
 			const ratings = await getFeedRatings(data.limit, cursor);
 
 			let nextCursor: string | undefined;
 			if (ratings.length === data.limit) {
-				const lastCreatedAt = ratings[ratings.length - 1].createdAt;
-				nextCursor = new Date(lastCreatedAt).toISOString();
+				const last = ratings[ratings.length - 1];
+				nextCursor = makeCursor(last.createdAt, last.id);
 			}
 
 			return { success: true, data: ratings, nextCursor };

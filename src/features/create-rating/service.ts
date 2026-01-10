@@ -12,10 +12,12 @@ type Result<T> =
 	| { success: false; error: string; fieldErrors?: Record<string, string> };
 
 export async function searchStuff(query: string, limit = 10) {
-	const q = query.toLowerCase();
+	const q = query.toLowerCase().trim();
+	if (!q) return [];
+
 	return db.query.stuff.findMany({
 		where: and(
-			like(sql`LOWER(${stuff.name})`, `%${q}%`),
+			like(sql`LOWER(${stuff.name})`, `${q}%`),
 			isNull(stuff.deletedAt),
 		),
 		limit,
@@ -24,9 +26,11 @@ export async function searchStuff(query: string, limit = 10) {
 }
 
 export async function searchTags(query: string, limit = 10) {
-	const q = query.toLowerCase();
+	const q = query.toLowerCase().trim();
+	if (!q) return [];
+
 	return db.query.tags.findMany({
-		where: like(sql`LOWER(${tags.name})`, `%${q}%`),
+		where: like(sql`LOWER(${tags.name})`, `${q}%`),
 		limit,
 	});
 }
@@ -53,22 +57,25 @@ export async function createTags(names: string[]): Promise<Tag[]> {
 
 	const normalizedNames = names.map((n) => n.toLowerCase().trim());
 	const uniqueNames = Array.from(new Set(normalizedNames));
+
 	const existingTags = await db.query.tags.findMany({
 		where: inArray(tags.name, uniqueNames),
 	});
-
 	const existingNames = new Set(existingTags.map((t) => t.name));
 	const newNames = uniqueNames.filter((n) => !existingNames.has(n));
 
-	let newTags: (typeof tags.$inferSelect)[] = [];
 	if (newNames.length > 0) {
-		newTags = await db
+		// Bulk-insert missing tag names and ignore conflicts if they already exist.
+		// If the driver doesn't support `onConflictDoNothing`, this will throw
+		// and surface the error so it can be handled by the caller.
+		await db
 			.insert(tags)
 			.values(newNames.map((name) => ({ name })))
-			.returning();
+			.onConflictDoNothing()
+			.run();
 	}
 
-	return [...existingTags, ...newTags];
+	return db.query.tags.findMany({ where: inArray(tags.name, uniqueNames) });
 }
 
 export async function createRating(

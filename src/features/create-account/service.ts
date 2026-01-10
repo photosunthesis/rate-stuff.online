@@ -1,6 +1,6 @@
 import { db } from "~/db/index";
 import { users, inviteCodes } from "~/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, isNull, and } from "drizzle-orm";
 import { hashPassword } from "~/utils/auth-utils";
 import type { RegisterInput } from "~/features/create-account/types";
 
@@ -42,9 +42,11 @@ export async function createUser(
 		};
 	}
 
-	const existingEmail = await db.query.users.findFirst({
-		where: eq(users.email, input.email),
-	});
+	const [existingEmail, existingUsername] = await Promise.all([
+		db.query.users.findFirst({ where: eq(users.email, input.email) }),
+		db.query.users.findFirst({ where: eq(users.username, input.username) }),
+	]);
+
 	if (existingEmail)
 		return {
 			success: false,
@@ -52,9 +54,6 @@ export async function createUser(
 			fieldErrors: { email: "This email is already registered" },
 		};
 
-	const existingUsername = await db.query.users.findFirst({
-		where: eq(users.username, input.username),
-	});
 	if (existingUsername)
 		return {
 			success: false,
@@ -80,7 +79,7 @@ export async function createUser(
 	await db
 		.update(inviteCodes)
 		.set({ usedBy: newUser[0].id, usedAt: new Date() })
-		.where(eq(inviteCodes.id, inviteCode.id));
+		.where(and(eq(inviteCodes.id, inviteCode.id), isNull(inviteCodes.usedBy)));
 
 	const { password: _, ...userWithoutPassword } = newUser[0];
 

@@ -1,6 +1,6 @@
 import { db } from "~/db/index";
 import { users } from "~/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { comparePasswords } from "~/utils/auth-utils";
 import type { LoginInput } from "~/features/sign-in/types";
 
@@ -22,15 +22,12 @@ type UserData = {
 export async function authenticateUser(
 	input: LoginInput,
 ): Promise<Result<UserData>> {
-	let user = await db.query.users.findFirst({
-		where: eq(users.email, input.identifier),
+	const user = await db.query.users.findFirst({
+		where: or(
+			eq(users.email, input.identifier),
+			eq(users.username, input.identifier),
+		),
 	});
-
-	if (!user) {
-		user = await db.query.users.findFirst({
-			where: eq(users.username, input.identifier),
-		});
-	}
 
 	if (!user) {
 		return {

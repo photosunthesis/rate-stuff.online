@@ -1,20 +1,27 @@
 import { db } from "~/db/index";
-import { ratings } from "~/db/schema";
-import { and, isNull, desc, lt, eq, gte } from "drizzle-orm";
+import { ratings, ratingsToTags, tags, stuff } from "~/db/schema";
+import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
 
 export async function getUserRatings(
 	userId: string,
 	limit = 10,
-	cursor?: Date,
+	cursor?: { createdAt: Date; id: string },
 ) {
+	const cursorFilter = cursor
+		? or(
+				lt(ratings.createdAt, cursor.createdAt),
+				and(eq(ratings.createdAt, cursor.createdAt), lt(ratings.id, cursor.id)),
+			)
+		: undefined;
+
 	const results = await db.query.ratings.findMany({
 		where: and(
 			eq(ratings.userId, userId),
 			isNull(ratings.deletedAt),
-			cursor ? lt(ratings.createdAt, cursor) : undefined,
+			cursorFilter,
 		),
 		limit,
-		orderBy: desc(ratings.createdAt),
+		orderBy: [desc(ratings.createdAt), desc(ratings.id)],
 		with: {
 			stuff: true,
 			user: {
@@ -33,21 +40,27 @@ export async function getUserRatings(
 		},
 	});
 
-	// Normalize tags to simple string[] for client usage ✅
 	return results.map((r) => ({
 		...r,
 		tags: (r.tags ?? []).map((t) => t.tag.name),
 	}));
 }
 
-export async function getFeedRatings(limit = 10, cursor?: Date) {
+export async function getFeedRatings(
+	limit = 10,
+	cursor?: { createdAt: Date; id: string },
+) {
+	const cursorFilter = cursor
+		? or(
+				lt(ratings.createdAt, cursor.createdAt),
+				and(eq(ratings.createdAt, cursor.createdAt), lt(ratings.id, cursor.id)),
+			)
+		: undefined;
+
 	const results = await db.query.ratings.findMany({
-		where: and(
-			isNull(ratings.deletedAt),
-			cursor ? lt(ratings.createdAt, cursor) : undefined,
-		),
+		where: and(isNull(ratings.deletedAt), cursorFilter),
 		limit,
-		orderBy: desc(ratings.createdAt),
+		orderBy: [desc(ratings.createdAt), desc(ratings.id)],
 		with: {
 			stuff: true,
 			user: {
@@ -66,7 +79,6 @@ export async function getFeedRatings(limit = 10, cursor?: Date) {
 		},
 	});
 
-	// Normalize tags to simple string[] for client usage ✅
 	return results.map((r) => ({
 		...r,
 		tags: (r.tags ?? []).map((t) => t.tag.name),
@@ -105,62 +117,34 @@ export async function getRatingById(id: string) {
 export async function getRecentTags(limit = 10) {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-	const results = await db.query.ratings.findMany({
-		where: and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)),
-		with: {
-			tags: {
-				with: {
-					tag: true,
-				},
-			},
-		},
-	});
+	const rows = await db
+		.select({ name: tags.name, count: sql`COUNT(*)` })
+		.from(ratingsToTags)
+		.leftJoin(ratings, eq(ratings.id, ratingsToTags.ratingId))
+		.leftJoin(tags, eq(tags.id, ratingsToTags.tagId))
+		.where(and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)))
+		.groupBy(tags.name)
+		.orderBy(sql`COUNT(*) DESC`)
+		.limit(limit);
 
-	// Count occurrences of each tag in the last week
-	const counts: Record<string, number> = {};
-
-	for (const r of results) {
-		for (const t of r.tags ?? []) {
-			const name = t.tag.name;
-			counts[name] = (counts[name] ?? 0) + 1;
-		}
-	}
-
-	const items = Object.entries(counts)
-		.map(([name, count]) => ({ name, count }))
-		.sort((a, b) => b.count - a.count)
-		.slice(0, limit);
-
-	return items;
+	return rows.map((r) => ({ name: r.name, count: Number(r.count) }));
 }
 
 export async function getRecentStuff(limit = 5) {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-	const results = await db.query.ratings.findMany({
-		where: and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)),
-		with: {
-			stuff: true,
-		},
-	});
+	const rows = await db
+		.select({ id: stuff.id, name: stuff.name, count: sql`COUNT(*)` })
+		.from(ratings)
+		.leftJoin(stuff, eq(stuff.id, ratings.stuffId))
+		.where(and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)))
+		.groupBy(stuff.id, stuff.name)
+		.orderBy(sql`COUNT(*) DESC`)
+		.limit(limit);
 
-	// Count ratings per stuff in the last week
-	const counts: Record<string, { id: string; name: string; count: number }> =
-		{};
-
-	for (const r of results) {
-		if (!r.stuff) continue;
-		const id = r.stuff.id;
-		if (!counts[id]) {
-			counts[id] = { id, name: r.stuff.name, count: 0 };
-		}
-		counts[id].count += 1;
-	}
-
-	const items = Object.values(counts)
-		.sort((a, b) => b.count - a.count)
-		.slice(0, limit)
-		.map((s) => ({ id: s.id, name: s.name, count: s.count }));
-
-	return items;
+	return rows.map((r) => ({
+		id: r.id,
+		name: r.name,
+		count: Number(r.count),
+	}));
 }
