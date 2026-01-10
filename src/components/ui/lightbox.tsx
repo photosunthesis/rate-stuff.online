@@ -76,7 +76,7 @@ export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
 					onClick={handleClose}
 					className="absolute top-3 right-3 z-20 p-2 rounded-md text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
 				>
-					<X size={18} />
+					<X size={28} />
 				</button>
 
 				<img
