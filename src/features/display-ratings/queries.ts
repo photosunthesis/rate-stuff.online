@@ -122,7 +122,7 @@ export function useRecentStuff(enabled: boolean = true) {
 		queryFn: async () => {
 			const res = (await fn()) as {
 				success: boolean;
-				data?: { id: string; name: string; count: number }[];
+				data?: { id: string; name: string; count: number; slug: string }[];
 				error?: string;
 			};
 			if (!res.success) throw new Error(res.error ?? "Failed to load stuff");

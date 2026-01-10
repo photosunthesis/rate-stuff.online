@@ -163,16 +163,17 @@ export async function getRecentStuff(limit = 5) {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 	const rows = await db
-		.select({ id: stuff.id, name: stuff.name, count: sql`COUNT(*)` })
+		.select({ id: stuff.id, name: stuff.name, count: sql`COUNT(*)`, slug: stuff.slug })
 		.from(ratings)
 		.leftJoin(stuff, eq(stuff.id, ratings.stuffId))
 		.where(and(isNull(ratings.deletedAt), gte(ratings.createdAt, weekAgo)))
-		.groupBy(stuff.id, stuff.name)
+		.groupBy(stuff.id, stuff.name, stuff.slug)
 		.orderBy(sql`COUNT(*) DESC`)
 		.limit(limit);
 
 	return rows.map((r) => ({
 		id: r.id,
+		slug: r.slug,
 		name: r.name,
 		count: Number(r.count),
 	}));

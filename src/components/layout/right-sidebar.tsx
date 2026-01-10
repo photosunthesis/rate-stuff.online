@@ -60,7 +60,8 @@ export function RightSidebar({
 									: (recentStuff ?? []).map((thing, i) => (
 											<Link
 												key={thing.id}
-												to="/"
+												to="/stuff/$stuffSlug"
+												params={{ stuffSlug: thing.slug }}
 												className={`flex items-center gap-3 px-4 py-3 hover:bg-neutral-800/40 transition-colors ${
 													i !== (recentStuff ?? []).length - 1
 														? "border-b border-neutral-800/50"
