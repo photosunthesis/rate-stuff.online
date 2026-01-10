@@ -9,13 +9,14 @@ import {
 import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const ratings = sqliteTable(
 	"ratings",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => safeRandomUUID()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),

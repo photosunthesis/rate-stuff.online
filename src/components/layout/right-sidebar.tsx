@@ -6,6 +6,7 @@ import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export function RightSidebar({
 	isAuthenticated = true,
@@ -18,11 +19,11 @@ export function RightSidebar({
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 5 }, () => crypto.randomUUID()),
+		() => Array.from({ length: 5 }, () => safeRandomUUID()),
 		[],
 	);
 	const skeletonTagKeys = useMemo(
-		() => Array.from({ length: 6 }, () => crypto.randomUUID()),
+		() => Array.from({ length: 6 }, () => safeRandomUUID()),
 		[],
 	);
 

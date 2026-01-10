@@ -6,6 +6,7 @@ import type { CreateRatingInput } from "./types";
 import type { Stuff, Tag } from "~/features/display-ratings/types";
 import { uploadFile } from "~/utils/media-storage-utils";
 import { generateSlug } from "~/utils/slug-utils";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -150,7 +151,7 @@ export async function uploadImage(
 		file.type === "image/webp" || origExt.toLowerCase() === "webp"
 			? "webp"
 			: origExt;
-	const key = `ratings/${ratingId}/${crypto.randomUUID()}.${extension}`;
+	const key = `ratings/${ratingId}/${safeRandomUUID()}.${extension}`;
 
 	try {
 		const url = await uploadFile(env, key, file);

@@ -7,11 +7,12 @@ import {
 	index,
 } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const tags = sqliteTable("tags", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+		.$defaultFn(() => safeRandomUUID()),
 	name: text("name").notNull().unique(),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })
 		.notNull()

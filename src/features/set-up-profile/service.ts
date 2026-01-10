@@ -4,8 +4,8 @@ import { eq, and, isNull, sql } from "drizzle-orm";
 import type { PublicUser } from "~/features/set-up-profile/types";
 import { env } from "cloudflare:workers";
 import { uploadFile } from "~/utils/media-storage-utils";
-import crypto from "node:crypto";
 import { numberWithCommas } from "~/utils/number-utils";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 type Result<T> =
 	| { success: true; data: T }
@@ -33,7 +33,6 @@ export async function updateUserProfile(
 				username: updatedUser[0].username,
 				displayName: updatedUser[0].name,
 				avatarUrl: updatedUser[0].avatarUrl,
-
 			},
 		};
 	} catch {
@@ -90,7 +89,7 @@ export async function uploadProfileImage(
 		file.type === "image/webp" || origExt.toLowerCase() === "webp"
 			? "webp"
 			: origExt;
-	const key = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
+	const key = `avatars/${userId}/${safeRandomUUID()}.${extension}`;
 
 	try {
 		const url = await uploadFile(env, key, file);

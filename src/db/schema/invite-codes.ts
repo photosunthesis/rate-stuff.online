@@ -1,13 +1,14 @@
 import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 import { ROLES, type Role } from "./users";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const inviteCodes = sqliteTable(
 	"invite_codes",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => safeRandomUUID()),
 		code: text("code").notNull().unique(),
 		createdBy: text("created_by")
 			.notNull()

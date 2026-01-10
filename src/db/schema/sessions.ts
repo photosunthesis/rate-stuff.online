@@ -1,12 +1,13 @@
 import { sqliteTable, text, index, integer } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const sessions = sqliteTable(
 	"sessions",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => safeRandomUUID()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),

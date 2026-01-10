@@ -1,11 +1,12 @@
 import { relations } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const stuff = sqliteTable("stuff", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+		.$defaultFn(() => safeRandomUUID()),
 	name: text("name").notNull().unique(),
 	slug: text("slug").notNull().unique(),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })

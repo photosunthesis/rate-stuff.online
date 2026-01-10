@@ -1,12 +1,13 @@
 import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const passwordResetTokens = sqliteTable(
 	"password_reset_tokens",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => safeRandomUUID()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),

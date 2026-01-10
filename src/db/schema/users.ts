@@ -6,6 +6,7 @@ import {
 	integer,
 } from "drizzle-orm/sqlite-core";
 import { ratings } from "./ratings";
+import { safeRandomUUID } from "~/utils/uuid-utils";
 
 export const ROLES = {
 	USER: "user",
@@ -20,7 +21,7 @@ export const users = sqliteTable(
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => safeRandomUUID()),
 		username: text("username").notNull(),
 		email: text("email").notNull().unique(),
 		password: text("password").notNull(),
