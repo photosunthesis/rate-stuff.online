@@ -12,8 +12,10 @@ export function RightSidebar({
 }: {
 	isAuthenticated?: boolean;
 }) {
-	const { data: recentStuff, isLoading: loadingStuff } = useRecentStuff();
-	const { data: recentTags, isLoading: loadingTags } = useRecentTags();
+	const { data: recentStuff, isLoading: loadingStuff } =
+		useRecentStuff(isAuthenticated);
+	const { data: recentTags, isLoading: loadingTags } =
+		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
 		() => Array.from({ length: 5 }, () => crypto.randomUUID()),

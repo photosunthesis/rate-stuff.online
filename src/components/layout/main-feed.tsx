@@ -40,9 +40,20 @@ export function MainFeed() {
 
 	return (
 		<>
-			<div className="divide-y divide-neutral-800">
-				{ratings.map((rating) => (
-					<RatingCard key={rating.id} rating={rating} />
+			<div>
+				{ratings.map((rating, idx) => (
+					<div
+						key={rating.id}
+						className={
+							idx === 0
+								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
+								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+						}
+					>
+						<div className="px-4 py-3">
+							<RatingCard key={rating.id} rating={rating} />
+						</div>
+					</div>
 				))}
 			</div>
 
@@ -59,11 +70,9 @@ export function MainFeed() {
 					</div>
 				)
 			) : (
-				<div className="border-t border-neutral-800 px-4 py-8 text-center">
+				<div className="-mx-4 border-t border-neutral-800 px-4 py-8 text-center">
 					<div className="mb-4">
-						<p className="text-neutral-400 text-sm">
-							To see more ratings, create an account or sign in.
-						</p>
+						<p className="text-neutral-400 text-sm">Curious to see more? </p>
 					</div>
 
 					<div className="flex gap-3 justify-center">

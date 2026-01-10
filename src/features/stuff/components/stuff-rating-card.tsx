@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import type { RatingWithRelations } from "../types";
-import { Avatar } from "~/components/ui/avatar";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
+import { Avatar } from "~/components/ui/avatar";
 import { getTimeAgo } from "~/utils/datetime-utils";
 
-interface RatingCardProps {
+interface Props {
 	rating: RatingWithRelations;
 }
 
-interface MarkdownContentProps {
+function MarkdownContent({
+	content,
+	inlineParagraphs = false,
+}: {
 	content: string;
 	inlineParagraphs?: boolean;
-}
-
-function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
+}) {
 	const safe = content.replace(/<[^>]*>/g, "");
 
 	return (
@@ -48,7 +48,7 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	);
 }
 
-export function RatingCard({ rating }: RatingCardProps) {
+export function StuffRatingCard({ rating }: Props) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
@@ -73,11 +73,10 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
-		<div className="block px-4 py-3">
-			{/* Header */}
+		<div className="block">
 			<div className="flex items-center gap-3">
 				<Avatar
-					src={avatarUrl ?? null}
+					src={avatarUrl}
 					alt={displayText}
 					size="sm"
 					className="shrink-0"
@@ -94,21 +93,12 @@ export function RatingCard({ rating }: RatingCardProps) {
 						>
 							{displayText}
 						</button>
-						<span className="text-neutral-500">has rated</span>
-						<Link
-							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff.slug }}
-							className="font-medium text-white hover:underline"
-						>
-							{rating.stuff.name}
-						</Link>
 						<span className="text-neutral-500">•</span>
 						<span className="text-neutral-500">{timeAgo}</span>
 					</div>
 				</div>
 			</div>
 
-			{/* Rating and Title */}
 			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
 				<Link
 					to="/rating/$ratingSlug"
@@ -119,7 +109,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 				</Link>
 			</h3>
 
-			{/* Images */}
 			{parsedImages && parsedImages.length > 0 && (
 				<div className="ml-11 mb-3">
 					{parsedImages.length === 1 ? (
@@ -149,7 +138,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 						</div>
 					) : parsedImages.length === 3 ? (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
-							{/* Left: large image spanning both rows */}
 							<div className="row-span-2 h-full overflow-hidden">
 								<img
 									src={parsedImages[0]}
@@ -157,7 +145,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
 								/>
 							</div>
-							{/* Right: two stacked images (equal height, center-cropped) */}
 							<div className="h-full overflow-hidden">
 								<img
 									src={parsedImages[1]}
@@ -174,22 +161,21 @@ export function RatingCard({ rating }: RatingCardProps) {
 							</div>
 						</div>
 					) : (
-						/* 4 or more: show a 2x2 grid using first 4 images */
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
 							{parsedImages.slice(0, 4).map((image, idx) => {
 								let cornerClass = "rounded-xl";
 								switch (idx) {
 									case 0:
-										cornerClass = "rounded-xl rounded-br-sm"; // top-left: inner bottom-right small
+										cornerClass = "rounded-xl rounded-br-sm";
 										break;
 									case 1:
-										cornerClass = "rounded-xl rounded-bl-sm"; // top-right: inner bottom-left small
+										cornerClass = "rounded-xl rounded-bl-sm";
 										break;
 									case 2:
-										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left: inner top-right small
+										cornerClass = "rounded-xl rounded-tr-sm";
 										break;
 									case 3:
-										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right: inner top-left small
+										cornerClass = "rounded-xl rounded-tl-sm";
 										break;
 								}
 								return (
@@ -207,7 +193,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 				</div>
 			)}
 
-			{/* Content */}
 			<div className="ml-11 mb-3">
 				{shouldTruncate && !isExpanded ? (
 					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
@@ -239,7 +224,6 @@ export function RatingCard({ rating }: RatingCardProps) {
 				)}
 			</div>
 
-			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
 				<div className="flex flex-wrap gap-2 mb-3 ml-11">
 					{parsedTags.map((tag: string) => (

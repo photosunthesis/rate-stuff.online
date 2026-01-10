@@ -37,6 +37,7 @@ export type RatingWithRelations = Rating & {
 	stuff: {
 		id: string;
 		name: string;
+		slug: string;
 	};
 };
 

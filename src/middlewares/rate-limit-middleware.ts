@@ -69,11 +69,6 @@ export const createRateLimitMiddleware = (config: RateLimitConfig) =>
 				throw error;
 			}
 
-			console.error("Rate limiter error (failing open):", {
-				binding: config.binding,
-				error: error instanceof Error ? error.message : String(error),
-			});
-
 			return next();
 		}
 	});

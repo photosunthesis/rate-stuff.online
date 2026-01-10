@@ -7,6 +7,7 @@ export const stuff = sqliteTable("stuff", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
+	slug: text("slug").notNull().unique(),
 	createdAt: integer("created_at", { mode: "timestamp_ms" })
 		.notNull()
 		.$defaultFn(() => new Date()),

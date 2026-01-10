@@ -95,7 +95,7 @@ export function useFeedRatings(
 	});
 }
 
-export function useRecentTags() {
+export function useRecentTags(enabled: boolean = true) {
 	const fn = useServerFn(getRecentTagsFn);
 
 	return useQuery({
@@ -110,10 +110,11 @@ export function useRecentTags() {
 			return res.data ?? [];
 		},
 		staleTime: 1000 * 60 * 5,
+		enabled,
 	});
 }
 
-export function useRecentStuff() {
+export function useRecentStuff(enabled: boolean = true) {
 	const fn = useServerFn(getRecentStuffFn);
 
 	return useQuery({
@@ -128,5 +129,6 @@ export function useRecentStuff() {
 			return res.data ?? [];
 		},
 		staleTime: 1000 * 60 * 5,
+		enabled,
 	});
 }

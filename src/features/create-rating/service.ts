@@ -45,7 +45,11 @@ export async function getOrCreateStuff(name: string): Promise<Result<Stuff>> {
 	}
 
 	try {
-		const [newStuff] = await db.insert(stuff).values({ name }).returning();
+		const [newStuff] = await db
+			.insert(stuff)
+			.values({ name, slug: generateSlug(name) })
+			.returning();
+
 		return { success: true, data: newStuff };
 	} catch {
 		return { success: false, error: "Failed to create stuff" };

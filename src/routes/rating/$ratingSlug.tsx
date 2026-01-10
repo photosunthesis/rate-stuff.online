@@ -3,6 +3,7 @@ import { MobileHeader } from "~/components/layout/mobile-header";
 import { LeftSidebar } from "~/components/layout/left-sidebar";
 import { RightSidebar } from "~/components/layout/right-sidebar";
 import { useState } from "react";
+import { useIsAuthenticated } from "~/features/session/queries";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -11,6 +12,7 @@ import {
 } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
+import { Link } from "@tanstack/react-router";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime-utils";
 
@@ -153,12 +155,13 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 						{displayText}
 					</a>
 					<span className="text-neutral-500">has rated</span>
-					<a
-						href={`/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`}
+					<Link
+						to="/stuff/$stuffSlug"
+						params={{ stuffSlug: rating.stuff.slug }}
 						className="font-medium text-white hover:underline"
 					>
 						{rating.stuff.name}
-					</a>
+					</Link>
 					<span className="text-neutral-500">•</span>
 					<span className="text-neutral-500">
 						{getTimeAgo(rating.createdAt)}
@@ -234,7 +237,7 @@ function ContentSection({ rating }: { rating: RatingWithRelations }) {
 						itemReviewed: {
 							"@type": "Thing",
 							name: rating.stuff.name,
-							url: `https://rate-stuff.online/stuff/${rating.stuff.name.toLowerCase().replace(/\s+/g, "-")}`,
+							url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
 						},
 						image: image,
 					}),
@@ -413,6 +416,7 @@ function TagsList({ tags }: { tags?: string[] }) {
 
 function RouteComponent() {
 	const ratingSlug = Route.useParams().ratingSlug;
+	const { isAuthenticated } = useIsAuthenticated();
 	const { data, isLoading, isError } = useRating(ratingSlug);
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
@@ -440,11 +444,11 @@ function RouteComponent() {
 
 	return (
 		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={true} />
+			<MobileHeader isAuthenticated={isAuthenticated} />
 			<div className="flex flex-1 justify-center">
 				<LeftSidebar />
 
-				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0">
+				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
 					<div className="px-4 py-4">
 						<BackButton />
 
@@ -465,7 +469,7 @@ function RouteComponent() {
 					</div>
 				</main>
 
-				<RightSidebar isAuthenticated={true} />
+				<RightSidebar isAuthenticated={isAuthenticated} />
 			</div>
 			<Lightbox
 				src={lightboxSrc}
