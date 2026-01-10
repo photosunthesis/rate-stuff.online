@@ -12,7 +12,7 @@ import {
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
-import { getRatingEmoji, getTimeAgo } from "~/utils/rating-utils";
+import { getTimeAgo } from "~/utils/datetime-utils";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -184,7 +184,7 @@ function BackButton() {
 function TitleBlock({ rating }: { rating: RatingWithRelations }) {
 	return (
 		<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
-			{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+			{rating.score}/10 - {rating.title}
 		</h3>
 	);
 }

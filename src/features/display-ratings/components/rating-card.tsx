@@ -5,7 +5,7 @@ import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { getRatingEmoji, getTimeAgo } from "~/utils/rating-utils";
+import { getTimeAgo } from "~/utils/datetime-utils";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -118,7 +118,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 					params={{ ratingSlug: rating.slug }}
 					className="hover:underline"
 				>
-					{getRatingEmoji(rating.score)} {rating.score}/10 - {rating.title}
+					{rating.score}/10 - {rating.title}
 				</Link>
 			</h3>
 

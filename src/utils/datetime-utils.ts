@@ -1,18 +1,3 @@
-export function getRatingEmoji(rating: number): string {
-	const roundedRating = Math.round(rating);
-
-	if (roundedRating >= 10) return "🤩";
-	if (roundedRating >= 9) return "😍";
-	if (roundedRating >= 8) return "😄";
-	if (roundedRating >= 7) return "😊";
-	if (roundedRating >= 6) return "🙂";
-	if (roundedRating >= 5) return "😑";
-	if (roundedRating >= 4) return "😐";
-	if (roundedRating >= 3) return "😕";
-	if (roundedRating >= 2) return "😞";
-	return "😭";
-}
-
 export function getTimeAgo(date: Date | string | number): string {
 	const now = new Date();
 
