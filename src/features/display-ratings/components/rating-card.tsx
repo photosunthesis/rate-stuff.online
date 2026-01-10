@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../types";
 import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
@@ -37,6 +37,7 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 						className="text-emerald-400 underline hover:text-emerald-300"
 						target="_blank"
 						rel="noopener noreferrer"
+						onClick={(e) => e.stopPropagation()}
 					>
 						{children}
 					</a>
@@ -49,6 +50,7 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 }
 
 export function RatingCard({ rating }: RatingCardProps) {
+	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
@@ -73,7 +75,26 @@ export function RatingCard({ rating }: RatingCardProps) {
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 
 	return (
-		<div className="block px-4 py-2">
+		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
+		<div
+			className="block px-4 py-2 cursor-pointer"
+			role="link"
+			tabIndex={0}
+			onClick={() =>
+				navigate({
+					to: "/rating/$ratingSlug",
+					params: { ratingSlug: rating.slug },
+				})
+			}
+			onKeyDown={(e) => {
+				if (e.key === "Enter" || e.key === " ") {
+					navigate({
+						to: "/rating/$ratingSlug",
+						params: { ratingSlug: rating.slug },
+					});
+				}
+			}}
+		>
 			{/* Header */}
 			<div className="flex items-center gap-3">
 				<Avatar
@@ -99,6 +120,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 							to="/stuff/$stuffSlug"
 							params={{ stuffSlug: rating.stuff.slug }}
 							className="font-medium text-white hover:underline"
+							onClick={(e) => e.stopPropagation()}
 						>
 							{rating.stuff.name}
 						</Link>
@@ -114,6 +136,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 					to="/rating/$ratingSlug"
 					params={{ ratingSlug: rating.slug }}
 					className="hover:underline"
+					onClick={(e) => e.stopPropagation()}
 				>
 					{rating.score}/10 - {rating.title}
 				</Link>
@@ -217,7 +240,10 @@ export function RatingCard({ rating }: RatingCardProps) {
 						/>
 						<button
 							type="button"
-							onClick={() => setIsExpanded(true)}
+							onClick={(e) => {
+								e.stopPropagation();
+								setIsExpanded(true);
+							}}
 							className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
 						>
 							See more
@@ -229,7 +255,10 @@ export function RatingCard({ rating }: RatingCardProps) {
 						{shouldTruncate && (
 							<button
 								type="button"
-								onClick={() => setIsExpanded(false)}
+								onClick={(e) => {
+									e.stopPropagation();
+									setIsExpanded(false);
+								}}
 								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer"
 							>
 								See less
@@ -247,6 +276,7 @@ export function RatingCard({ rating }: RatingCardProps) {
 							key={tag}
 							href={`#${tag}`}
 							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+							onClick={(e) => e.stopPropagation()}
 						>
 							#{tag}
 						</a>

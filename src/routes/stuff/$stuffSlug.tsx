@@ -114,7 +114,7 @@ function RouteComponent() {
 				<main className="border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
 					<div className="px-4 py-4">
 						<StuffHeader stuff={safeStuff} />{" "}
-						<div className="-mx-4 border-t border-neutral-800 mb-2" />{" "}
+						<div className="-mx-4 border-t border-neutral-800" />{" "}
 						<StuffRatingsList slug={slug} />
 					</div>
 				</main>
