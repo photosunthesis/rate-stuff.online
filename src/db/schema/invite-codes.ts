@@ -1,9 +1,9 @@
-import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { ROLES, type Role } from "./users";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-export const inviteCodes = sqliteTable(
+export const inviteCodes = pgTable(
 	"invite_codes",
 	{
 		id: text("id")
@@ -17,10 +17,8 @@ export const inviteCodes = sqliteTable(
 		usedBy: text("used_by").references(() => users.id, {
 			onDelete: "set null",
 		}),
-		usedAt: integer("used_at", { mode: "timestamp_ms" }),
-		createdAt: integer("created_at", { mode: "timestamp_ms" })
-			.notNull()
-			.$defaultFn(() => new Date()),
+		usedAt: timestamp("used_at", { mode: "date" }),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 	},
 	(table) => [
 		index("created_by_idx").on(table.createdBy),

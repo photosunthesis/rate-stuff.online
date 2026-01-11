@@ -6,7 +6,7 @@ export async function uploadFile(
 	file: File | Blob | string,
 	options?: { type?: string },
 ): Promise<string> {
-	await env.rate_stuff_online_r2.put(key, file, {
+	await env.R2_BUCKET.put(key, file, {
 		httpMetadata: options?.type
 			? { contentType: options.type }
 			: file instanceof File

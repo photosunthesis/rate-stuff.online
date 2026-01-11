@@ -1,8 +1,8 @@
-import { integer, sqliteTable, text, index } from "drizzle-orm/sqlite-core";
+import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-export const passwordResetTokens = sqliteTable(
+export const passwordResetTokens = pgTable(
 	"password_reset_tokens",
 	{
 		id: text("id")
@@ -12,10 +12,8 @@ export const passwordResetTokens = sqliteTable(
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
 		token: text("token").notNull().unique(),
-		expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
-		createdAt: integer("created_at", { mode: "timestamp_ms" })
-			.notNull()
-			.$defaultFn(() => new Date()),
+		expiresAt: timestamp("expires_at", { mode: "date" }),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 	},
 	(table) => [index("password_reset_user_id_idx").on(table.userId)],
 );

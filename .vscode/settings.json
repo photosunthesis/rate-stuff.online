@@ -38,7 +38,8 @@
 		"tsconfig.json": "tsconfig.*.json",
 		"vite.config.ts": "vite.config.*.ts",
 		"biome.json": ".biomeignore",
-		"wrangler.jsonc": "worker-configuration.d.ts"
+		"wrangler.jsonc": "worker-configuration.d.ts",
+		"drizzle.config.ts": "drizzle.*.ts"
 	},
 	"biome.lsp.trace.server": "verbose",
 	"biome.enabled": true,

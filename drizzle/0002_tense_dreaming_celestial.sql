@@ -1,1 +1,0 @@
-ALTER TABLE `invite_codes` ADD `role` text DEFAULT 'user' NOT NULL;
