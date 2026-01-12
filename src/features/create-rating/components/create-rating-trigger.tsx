@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
 import { Avatar } from "~/components/ui/avatar";
-import { useCurrentUser } from "~/features/session/queries";
-
-interface CreateRatingTriggerProps {
-	onTrigger: () => void;
-}
 
 const prompts = [
 	"What's your take?",
@@ -15,8 +10,13 @@ const prompts = [
 	"What deserves a score?",
 ];
 
-export function CreateRatingTrigger({ onTrigger }: CreateRatingTriggerProps) {
-	const { user } = useCurrentUser();
+export function CreateRatingTrigger({
+	onTrigger,
+	user,
+}: {
+	onTrigger: () => void;
+	user: { name?: string; image?: string };
+}) {
 	const [prompt, setPrompt] = useState("");
 
 	useEffect(() => {
@@ -26,8 +26,8 @@ export function CreateRatingTrigger({ onTrigger }: CreateRatingTriggerProps) {
 	return (
 		<div className="flex gap-4 items-center w-full">
 			<Avatar
-				src={user?.avatarUrl ?? null}
-				alt={user?.displayName ?? "User"}
+				src={user?.image ?? null}
+				alt={user?.name ?? "User"}
 				size="sm"
 				className="shrink-0"
 			/>

@@ -1,15 +1,12 @@
 import { db } from "~/db/db";
-import { users, ratings } from "~/db/schema/schema";
+import { users, ratings } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/lib/media-storage";
 import { numberWithCommas } from "~/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const updateUserProfile = createServerOnlyFn(
-	async (
-		userId: string,
-		updates: { name?: string; avatarUrl?: string | null },
-	) => {
+	async (userId: string, updates: { name?: string; image?: string | null }) => {
 		const updatedUser = await db()
 			.update(users)
 			.set({ ...updates, updatedAt: new Date() })
@@ -23,8 +20,8 @@ export const updateUserProfile = createServerOnlyFn(
 		return {
 			id: updatedUser[0].id,
 			username: updatedUser[0].username,
-			displayName: updatedUser[0].name,
-			avatarUrl: updatedUser[0].avatarUrl,
+			name: updatedUser[0].name,
+			image: updatedUser[0].image,
 		};
 	},
 );
@@ -42,8 +39,8 @@ export const getUserById = createServerOnlyFn(async (userId: string) => {
 	return {
 		id: user.id,
 		username: user.username,
-		displayName: user.name,
-		avatarUrl: user.avatarUrl,
+		name: user.name,
+		image: user.image,
 	};
 });
 
@@ -54,7 +51,7 @@ export const getUserByUsername = createServerOnlyFn(
 				id: users.id,
 				username: users.username,
 				name: users.name,
-				avatarUrl: users.avatarUrl,
+				image: users.image,
 				createdAt: users.createdAt,
 				ratingCount: sql`COUNT(${ratings.id})`,
 			})
@@ -68,7 +65,7 @@ export const getUserByUsername = createServerOnlyFn(
 				users.id,
 				users.username,
 				users.name,
-				users.avatarUrl,
+				users.image,
 				users.createdAt,
 			)
 			.limit(1);
@@ -81,8 +78,8 @@ export const getUserByUsername = createServerOnlyFn(
 		return {
 			id: row.id,
 			username: row.username,
-			displayName: row.name,
-			avatarUrl: row.avatarUrl,
+			name: row.name,
+			image: row.image,
 			createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
 			ratingsCount: numberWithCommas(ratingsCount),
 		};

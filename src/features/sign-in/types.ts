@@ -10,8 +10,8 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type PublicUser = {
 	id: string;
 	username: string;
-	displayName: string | null;
-	avatarUrl?: string | null;
+	name: string | null;
+	image?: string | null;
 };
 
 export type AuthResponse =

@@ -1,26 +1,22 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
+import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/not-found";
 import { StuffHeader } from "~/features/stuff/components/stuff-header";
 import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
 import { useStuff } from "~/features/stuff/hooks";
 import { stuffQueryOptions } from "~/features/stuff/queries";
-import { useIsAuthenticated } from "~/features/session/queries";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {
 		const slug = params.stuffSlug;
 		if (!slug) throw redirect({ to: "/" });
-
 		await context.queryClient.ensureQueryData(stuffQueryOptions(slug));
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
 		const cachedRaw = match.context.queryClient.getQueryData(
 			stuffQueryOptions(params.stuffSlug).queryKey,
-		) as unknown;
+		);
 
 		let cached: { id?: string; name?: string; images?: string[] } | null = null;
 		if (cachedRaw && typeof cachedRaw === "object") {
@@ -74,7 +70,7 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
-	const { isAuthenticated } = useIsAuthenticated();
+	const { user } = Route.useRouteContext();
 	const { data, isLoading, error } = useStuff(slug);
 
 	if (isLoading) {
@@ -106,21 +102,22 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={isAuthenticated} />
-			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
-
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<div className="px-4 py-4">
-						<StuffHeader stuff={safeStuff} />{" "}
-						<div className="-mx-4 border-t border-neutral-800" />{" "}
-						<StuffRatingsList slug={slug} />
-					</div>
-				</main>
-
-				<RightSidebar isAuthenticated={isAuthenticated} />
+		<MainLayout
+			user={
+				user
+					? {
+							username: user?.username ?? "",
+							name: user?.name,
+							image: user?.image ?? "",
+						}
+					: undefined
+			}
+		>
+			<div className="px-4 py-4">
+				<StuffHeader stuff={safeStuff} />{" "}
+				<div className="-mx-4 border-t border-neutral-800" />{" "}
+				<StuffRatingsList slug={slug} />
 			</div>
-		</div>
+		</MainLayout>
 	);
 }

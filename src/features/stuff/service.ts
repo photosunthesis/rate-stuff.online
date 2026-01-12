@@ -5,7 +5,7 @@ import {
 	ratingsToTags,
 	tags,
 	users,
-} from "~/db/schema/schema";
+} from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { drizzle } from "drizzle-orm/node-postgres/driver";
@@ -18,7 +18,7 @@ type RatingQueryResult = {
 		id: string;
 		name: string | null;
 		username: string;
-		avatarUrl: string | null;
+		image: string | null;
 	} | null;
 	tagName: string | null;
 };
@@ -54,7 +54,7 @@ function groupAndMapRatings(
 						id: row.user?.id || "",
 						name: row.user?.name || null,
 						username: row.user?.username || "",
-						avatarUrl: row.user?.avatarUrl || null,
+						image: row.user?.image || null,
 					},
 					tags: [] as string[],
 				};
@@ -188,7 +188,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 					id: users.id,
 					name: users.name,
 					username: users.username,
-					avatarUrl: users.avatarUrl,
+					image: users.image,
 				},
 				tagName: tags.name,
 			})

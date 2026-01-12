@@ -1,10 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
 import { NotFound } from "~/components/not-found";
 import { Avatar } from "~/components/ui/avatar";
-import { useIsAuthenticated } from "~/features/session/queries";
 import {
 	userQueryOptions,
 	usePublicUser,
@@ -13,6 +9,7 @@ import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
 import { getTimeAgo } from "~/utils/datetime";
+import { MainLayout } from "~/components/layout/main-layout";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {
@@ -30,13 +27,13 @@ export const Route = createFileRoute("/user/$username")({
 		const user = cached ?? null;
 
 		const title = user
-			? user.displayName
-				? `${user.displayName} (@${user.username}) — Rate Stuff`
+			? user.name
+				? `${user.name} (@${user.username}) — Rate Stuff`
 				: `@${user.username} — Rate Stuff`
 			: `@${params.username} — Rate Stuff`;
 
 		const description = user
-			? `${user.displayName ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
+			? `${user.name ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
 					(user.ratingsCount ?? 0) === "1" ? "rating" : "ratings"
 				} on Rate Stuff.`
 			: `View ratings and profile for @${params.username} on Rate Stuff.`;
@@ -57,13 +54,13 @@ export const Route = createFileRoute("/user/$username")({
 			{ name: "robots", content: "index, follow" },
 		];
 
-		if (user?.avatarUrl) {
+		if (user?.image) {
 			metas.push({
 				name: "og:image",
 				property: "og:image",
-				content: user.avatarUrl,
+				content: user.image,
 			});
-			metas.push({ name: "twitter:image", content: user.avatarUrl });
+			metas.push({ name: "twitter:image", content: user.image });
 		}
 
 		return {
@@ -164,7 +161,7 @@ function UserRatingsList({
 
 function RouteComponent() {
 	const username = Route.useParams().username;
-	const { isAuthenticated } = useIsAuthenticated();
+	const { user } = Route.useRouteContext();
 	const { data: userData, isLoading, error } = usePublicUser(username);
 
 	if (isLoading) {
@@ -182,56 +179,47 @@ function RouteComponent() {
 	const ratingsCount = userData.ratingsCount ?? 0;
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={isAuthenticated} />
-			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
-
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<div className="px-4 py-4">
-						<div className="flex items-center gap-4 mb-4">
-							<div>
-								<Avatar
-									src={userData.avatarUrl ?? null}
-									alt={userData.displayName ?? `@${userData.username}`}
-									size="xl"
-								/>
-								{userData.displayName ? (
-									<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
-										<span className="text-white font-semibold text-lg">
-											{userData.displayName}
-										</span>
-										<span className="text-neutral-500 text-md font-medium">
-											(@{userData.username})
-										</span>
-									</div>
-								) : (
-									<div className="text-white font-semibold text-lg">
-										@{userData.username}
-									</div>
-								)}
-								<div className="text-neutral-500 text-sm">
-									{userData.createdAt ? (
-										<>
-											Joined {getTimeAgo(userData.createdAt)} · {ratingsCount}{" "}
-											{ratingsCount === "1" ? "rating" : "ratings"}
-										</>
-									) : null}
-								</div>
-							</div>
-						</div>
-
-						<div className="-mx-4 border-t border-neutral-800" />
-
-						<UserRatingsList
-							username={userData.username}
-							isAuthenticated={isAuthenticated}
+		<MainLayout user={{ username: user?.username ?? "" }}>
+			<div className="px-4 py-4">
+				<div className="flex items-center gap-4 mb-4">
+					<div>
+						<Avatar
+							src={userData.image ?? null}
+							alt={userData.name ?? `@${userData.username}`}
+							size="xl"
 						/>
+						{userData.name ? (
+							<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
+								<span className="text-white font-semibold text-lg">
+									{userData.name}
+								</span>
+								<span className="text-neutral-500 text-md font-medium">
+									(@{userData.username})
+								</span>
+							</div>
+						) : (
+							<div className="text-white font-semibold text-lg">
+								@{userData.username}
+							</div>
+						)}
+						<div className="text-neutral-500 text-sm">
+							{userData.createdAt ? (
+								<>
+									Joined {getTimeAgo(userData.createdAt)} · {ratingsCount}{" "}
+									{ratingsCount === "1" ? "rating" : "ratings"}
+								</>
+							) : null}
+						</div>
 					</div>
-				</main>
+				</div>
 
-				<RightSidebar isAuthenticated={isAuthenticated} />
+				<div className="-mx-4 border-t border-neutral-800" />
+
+				<UserRatingsList
+					username={userData.username}
+					isAuthenticated={user != null}
+				/>
 			</div>
-		</div>
+		</MainLayout>
 	);
 }

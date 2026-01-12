@@ -5,35 +5,52 @@ import {
 	queryOptions,
 } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { updateProfileFn } from "~/features/set-up-profile/api";
 import { uploadAvatarFn } from "~/features/set-up-profile/api";
 import { getUserByUsernameFn } from "~/features/set-up-profile/api";
-import type { UpdateProfileResponse } from "~/features/set-up-profile/types";
 import type { PublicUser } from "~/features/set-up-profile/types";
+import authClient from "~/lib/auth/auth-client";
+import { authQueryOptions } from "~/lib/auth/queries";
 
 export function useUpdateProfileMutation() {
-	const updateProfileFnRef = useServerFn(updateProfileFn);
 	const queryClient = useQueryClient();
 
-	return useMutation<
-		UpdateProfileResponse,
-		Error,
-		{ displayName?: string; avatarUrl?: string }
-	>({
-		mutationFn: async (data) => {
-			return updateProfileFnRef({ data });
-		},
-		onSuccess: (data) => {
-			if (data?.success && data.user) {
-				queryClient.setQueryData(["currentUser"], data.user);
-				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+	return useMutation({
+		mutationFn: async (data: { name?: string; image?: string }) => {
+			const payload: { name?: string; image?: string } = {};
+
+			if (data.name) payload.name = data.name;
+			if (data.image) payload.image = data.image;
+
+			const res = await authClient.updateUser(payload);
+
+			if (res.error) {
+				return {
+					success: false,
+					error: res.error.message || "Profile update failed",
+				};
 			}
+
+			const user = await queryClient.ensureQueryData({
+				...authQueryOptions(),
+				revalidateIfStale: true,
+			});
+
+			return {
+				success: true,
+				user: {
+					id: user?.id,
+					username: user?.username ?? "",
+					name: user?.name ?? null,
+					image: user?.image ?? null,
+				},
+			};
 		},
 	});
 }
 
 export function useUploadAvatarMutation() {
 	const uploadAvatarMutationFn = useServerFn(uploadAvatarFn);
+
 	return useMutation({
 		mutationFn: async (file: File) => {
 			const formData = new FormData();

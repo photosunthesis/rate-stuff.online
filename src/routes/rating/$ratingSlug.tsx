@@ -1,10 +1,11 @@
-import { createFileRoute, redirect, Link } from "@tanstack/react-router";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
+import {
+	createFileRoute,
+	redirect,
+	Link,
+	useRouter,
+} from "@tanstack/react-router";
 import { NotFound } from "~/components/not-found";
 import { useState } from "react";
-import { useIsAuthenticated } from "~/features/session/queries";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -15,6 +16,8 @@ import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
+import { ArrowLeft } from "lucide-react";
+import { MainLayout } from "~/components/layout/main-layout";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -134,13 +137,13 @@ function MarkdownContent({ content }: { content: string }) {
 
 function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 	const usernameHandle = rating.user.username;
-	const displayName = rating.user.name;
-	const displayText = displayName ? displayName : `@${usernameHandle}`;
+	const name = rating.user.name;
+	const displayText = name ? name : `@${usernameHandle}`;
 
 	return (
 		<div className="flex items-center gap-3">
 			<Avatar
-				src={rating.user.avatarUrl ?? null}
+				src={rating.user.image ?? null}
 				alt={displayText}
 				size="sm"
 				className="shrink-0"
@@ -174,13 +177,17 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 }
 
 function BackButton() {
+	const router = useRouter();
+
 	return (
 		<button
 			type="button"
-			onClick={() => window.history.back()}
-			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer"
+			onClick={() => router.history.back()}
+			aria-label="Go back"
+			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer flex items-center"
 		>
-			← Back
+			<ArrowLeft className="w-4 h-4 mr-2" />
+			<span>Back</span>
 		</button>
 	);
 }
@@ -417,8 +424,8 @@ function TagsList({ tags }: { tags?: string[] }) {
 }
 
 function RouteComponent() {
+	const { user } = Route.useRouteContext();
 	const ratingSlug = Route.useParams().ratingSlug;
-	const { isAuthenticated } = useIsAuthenticated();
 	const { data, isLoading, isError } = useRating(ratingSlug);
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
@@ -444,39 +451,32 @@ function RouteComponent() {
 	const handleImageClick = (src: string) => setLightboxSrc(src);
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={isAuthenticated} />
-			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
+		<>
+			<MainLayout
+				user={
+					user
+						? {
+								username: user?.username ?? "",
+								name: user?.name,
+								image: user?.image ?? "",
+							}
+						: undefined
+				}
+			>
+				<BackButton />
+				<div className="-mx-4 border-t border-neutral-800 mb-4" />
+				<RatingHeader rating={ratingTyped} />
+				<TitleBlock rating={ratingTyped} />
+				<ImagesGallery images={parsedImages} onImageClick={handleImageClick} />
+				<ContentSection rating={ratingTyped} />
+				<TagsList tags={ratingTyped.tags} />
+			</MainLayout>
 
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<div className="px-4 py-4">
-						<BackButton />
-
-						<div className="-mx-4 border-t border-neutral-800 mb-4" />
-
-						<RatingHeader rating={ratingTyped} />
-
-						<TitleBlock rating={ratingTyped} />
-
-						<ImagesGallery
-							images={parsedImages}
-							onImageClick={handleImageClick}
-						/>
-
-						<ContentSection rating={ratingTyped} />
-
-						<TagsList tags={ratingTyped.tags} />
-					</div>
-				</main>
-
-				<RightSidebar isAuthenticated={isAuthenticated} />
-			</div>
 			<Lightbox
 				src={lightboxSrc}
 				onClose={() => setLightboxSrc(null)}
 				alt={rating.title}
 			/>
-		</div>
+		</>
 	);
 }

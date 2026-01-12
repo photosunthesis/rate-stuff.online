@@ -1,21 +1,57 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { loginFn } from "~/features/sign-in/api";
+import { useMutation } from "@tanstack/react-query";
 import type { LoginInput, AuthResponse } from "~/features/sign-in/types";
+import authClient from "~/lib/auth/auth-client";
+import { z } from "zod";
 
 export function useLoginMutation() {
-	const loginMutationFn = useServerFn(loginFn);
-	const queryClient = useQueryClient();
-
 	return useMutation({
-		mutationFn: (data: LoginInput) => loginMutationFn({ data }),
-		onSuccess: (data: AuthResponse) => {
-			if (data.success && data.user) {
-				queryClient.setQueryData(["isAuthenticated"], true);
-				queryClient.setQueryData(["currentUser"], data.user);
-				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
-				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+		mutationFn: async (data: LoginInput): Promise<AuthResponse> => {
+			const isEmail = z
+				.object({
+					email: z.email(),
+				})
+				.safeParse({ email: data.identifier }).success;
+
+			const result = isEmail
+				? await authClient.signIn.email({
+						email: data.identifier,
+						password: data.password,
+					})
+				: await authClient.signIn.username({
+						username: data.identifier,
+						password: data.password,
+					});
+
+			const user = result.data?.user as
+				| {
+						id: string;
+						email: string;
+						emailVerified: boolean;
+						username: string;
+						displayUsername: string;
+						name: string;
+						image: string | null | undefined;
+						createdAt: Date;
+						updatedAt: Date;
+				  }
+				| null
+				| undefined;
+
+			if (user) {
+				const publicUser = {
+					id: user.id,
+					username: user.username ?? user.email ?? "",
+					name: user.name ?? null,
+					image: user.image ?? null,
+				};
+
+				return { success: true, user: publicUser };
 			}
+
+			return {
+				success: false,
+				error: result.error?.message ?? "Login failed",
+			};
 		},
 	});
 }

@@ -4,23 +4,13 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { CreateRatingSection } from "~/features/create-rating/components/create-rating-section";
-import {
-	useIsAuthenticated,
-	isAuthenticatedQueryOptions,
-} from "~/features/session/queries";
+import { MainLayout } from "~/components/layout/main-layout";
 
 export const Route = createFileRoute("/")({
 	validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => ({
 		tag: search.tag as string | undefined,
 	}),
 	component: App,
-	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(isAuthenticatedQueryOptions());
-	},
 	head: ({ match }) => {
 		const tag = match.search?.tag as string | undefined;
 		const title = tag
@@ -47,28 +37,23 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { isAuthenticated } = useIsAuthenticated();
+	const { user } = Route.useRouteContext();
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			{/* Mobile Header */}
-			<MobileHeader isAuthenticated={isAuthenticated} />
-
-			<div className="flex flex-1 justify-center">
-				{/* Left Sidebar */}
-				<LeftSidebar />
-
-				{/* Main Content */}
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<CreateRatingSection />
-					<MainFeed tag={tag} />
-				</main>
-
-				{/* Right Sidebar */}
-				<RightSidebar isAuthenticated={isAuthenticated} />
-			</div>
-		</div>
+		<MainLayout
+			user={
+				user
+					? {
+							username: user?.username ?? "",
+							name: user?.name,
+							image: user?.image ?? "",
+						}
+					: undefined
+			}
+		>
+			<MainFeed tag={tag} user={{ username: user?.username ?? "" }} />
+		</MainLayout>
 	);
 }

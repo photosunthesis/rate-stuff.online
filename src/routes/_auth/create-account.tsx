@@ -1,38 +1,11 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { useCreateAccount } from "~/features/create-account/hooks";
+import { createFileRoute } from "@tanstack/react-router";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { CreateAccountForm } from "~/features/create-account/components/create-account-form";
-import {
-	isAuthenticatedQueryOptions,
-	useIsAuthenticated,
-} from "~/features/session/queries";
+import { useCreateAccount } from "~/features/create-account/hooks";
 
-export const Route = createFileRoute("/create-account")({
-	beforeLoad: async ({ context }) => {
-		const isAuthenticated = await context.queryClient.ensureQueryData(
-			isAuthenticatedQueryOptions(),
-		);
-
-		if (isAuthenticated) {
-			throw redirect({ to: "/" });
-		}
-	},
+export const Route = createFileRoute("/_auth/create-account")({
 	component: RouteComponent,
-	head: ({ match }) => {
-		const isAuthenticated = match.context.queryClient.getQueryData(
-			isAuthenticatedQueryOptions().queryKey,
-		);
-
-		if (isAuthenticated) {
-			return {
-				meta: [
-					{
-						title: "Redirecting... - Rate Stuff Online",
-					},
-				],
-			};
-		}
-
+	head: () => {
 		return {
 			meta: [
 				{
@@ -63,10 +36,8 @@ export const Route = createFileRoute("/create-account")({
 });
 
 function RouteComponent() {
-	const navigate = useNavigate();
 	const { createAccount, isPending, errorMessage, validationErrors } =
 		useCreateAccount();
-	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
 	const handleSubmit = async (data: {
 		inviteCode: string;
@@ -75,15 +46,8 @@ function RouteComponent() {
 		password: string;
 		confirmPassword: string;
 	}) => {
-		try {
-			await createAccount(data);
-			navigate({ to: "/set-up-profile" });
-		} catch {}
+		await createAccount(data);
 	};
-
-	if (isAuthenticated || isLoading) {
-		return null;
-	}
 
 	return (
 		<AuthLayout

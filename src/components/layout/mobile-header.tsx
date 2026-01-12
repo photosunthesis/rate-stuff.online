@@ -12,11 +12,8 @@ const headers = [
 	"Your opinion, now numbered.",
 ];
 
-interface MobileHeaderProps {
-	isAuthenticated: boolean;
-}
-
-export function MobileHeader({ isAuthenticated }: MobileHeaderProps) {
+export function MobileHeader({ user }: { user?: { username: string } }) {
+	const isAuthenticated = user != null;
 	const [header] = useState(
 		() => headers[Math.floor(Math.random() * headers.length)],
 	);

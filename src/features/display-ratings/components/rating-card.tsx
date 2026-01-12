@@ -57,10 +57,10 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const avatarUrl = rating.user.avatarUrl ?? null;
+	const image = rating.user.image ?? null;
 	const usernameHandle = rating.user.username;
-	const displayName = rating.user.name;
-	const displayText = displayName ? displayName : `@${usernameHandle}`;
+	const name = rating.user.name;
+	const displayText = name ? name : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
 	let parsedImages: string[] = [];
@@ -101,7 +101,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 			<div className="flex items-center gap-3">
 				{!hideAvatar && (
 					<Avatar
-						src={avatarUrl ?? null}
+						src={image ?? null}
 						alt={displayText}
 						size="sm"
 						className="shrink-0"

@@ -2,15 +2,6 @@ import type { ReactNode } from "react";
 import AppLogo from "~/components/app-logo";
 import { Link } from "@tanstack/react-router";
 
-interface AuthLayoutProps {
-	title: string;
-	description: string;
-	children: ReactNode;
-	footerText?: string;
-	footerLinkText?: string;
-	footerLinkTo?: string;
-}
-
 export function AuthLayout({
 	title,
 	description,
@@ -18,7 +9,14 @@ export function AuthLayout({
 	footerText,
 	footerLinkText,
 	footerLinkTo,
-}: AuthLayoutProps) {
+}: {
+	title: string;
+	description: string;
+	children: ReactNode;
+	footerText?: string;
+	footerLinkText?: string;
+	footerLinkTo?: string;
+}) {
 	return (
 		<div className="min-h-screen bg-neutral-950 flex items-center justify-center px-4">
 			<div className="w-full max-w-md">

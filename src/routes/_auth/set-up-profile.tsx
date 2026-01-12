@@ -1,26 +1,10 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { isAuthenticatedQueryOptions } from "~/features/session/queries";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SetUpProfileForm } from "~/features/set-up-profile/components/set-up-profile-form";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { useSetUpProfile } from "~/features/set-up-profile/hooks";
 import type { SetUpProfileInput } from "~/features/set-up-profile/types";
-import { currentUserQueryOptions } from "~/features/session/queries";
 
-export const Route = createFileRoute("/set-up-profile")({
-	beforeLoad: async ({ context }) => {
-		const isAuthenticated = await context.queryClient.ensureQueryData(
-			isAuthenticatedQueryOptions(),
-		);
-
-		await context.queryClient.ensureQueryData(currentUserQueryOptions());
-
-		if (!isAuthenticated) {
-			throw redirect({
-				to: "/sign-in",
-				search: { redirect: "/set-up-profile" },
-			});
-		}
-	},
+export const Route = createFileRoute("/_auth/set-up-profile")({
 	component: RouteComponent,
 	head: () => ({
 		meta: [
@@ -31,13 +15,13 @@ export const Route = createFileRoute("/set-up-profile")({
 });
 
 function RouteComponent() {
+	const { user } = Route.useRouteContext();
 	const navigate = useNavigate();
 	const {
 		updateProfile: update,
 		isPending,
 		errorMessage,
 		validationErrors,
-		user,
 	} = useSetUpProfile();
 
 	const handleSubmit = async (data: SetUpProfileInput) => {
@@ -62,8 +46,8 @@ function RouteComponent() {
 				isPending={isPending}
 				errorMessage={errorMessage}
 				validationErrors={validationErrors}
-				initialDisplayName={user?.displayName}
-				initialAvatarUrl={user?.avatarUrl}
+				initialDisplayName={user?.displayUsername}
+				initialAvatarUrl={user?.image}
 			/>
 		</AuthLayout>
 	);

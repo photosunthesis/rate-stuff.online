@@ -55,10 +55,10 @@ export function StuffRatingCard({ rating }: Props) {
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const avatarUrl = rating.user.avatarUrl ?? null;
+	const image = rating.user.image ?? null;
 	const usernameHandle = rating.user.username;
-	const displayName = rating.user.name;
-	const displayText = displayName ? displayName : `@${usernameHandle}`;
+	const name = rating.user.name;
+	const displayText = name ? name : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
 	let parsedImages: string[] = [];
@@ -96,12 +96,7 @@ export function StuffRatingCard({ rating }: Props) {
 			}}
 		>
 			<div className="flex items-center gap-3">
-				<Avatar
-					src={avatarUrl}
-					alt={displayText}
-					size="sm"
-					className="shrink-0"
-				/>
+				<Avatar src={image} alt={displayText} size="sm" className="shrink-0" />
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
 						<Link

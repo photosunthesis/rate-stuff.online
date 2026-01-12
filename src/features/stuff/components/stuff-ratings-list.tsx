@@ -5,7 +5,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 import { getStuffRatingsFn } from "../api";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
-import { useIsAuthenticated } from "~/features/session/queries";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
@@ -18,9 +17,13 @@ type Page = {
 
 const LIMIT = 10;
 
-export function StuffRatingsList({ slug }: { slug: string }) {
-	const { isAuthenticated } = useIsAuthenticated();
-
+export function StuffRatingsList({
+	slug,
+	user,
+}: {
+	slug: string;
+	user?: { name?: string; image?: string };
+}) {
 	// Default placeholders for the various query values so we can handle
 	// both authenticated (infinite) and guest (single page) flows uniformly.
 	let data: unknown | undefined;
@@ -31,6 +34,7 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 	let isFetchingNextPage = false;
 
 	// Call hooks unconditionally; enable/disable fetch based on auth state.
+	const isAuthenticated = user != null;
 	const authQuery = useStuffRatingsInfinite(slug, LIMIT, isAuthenticated);
 	const getStuffRatingsFnClient = useServerFn(getStuffRatingsFn);
 	const guestQuery = useQuery({

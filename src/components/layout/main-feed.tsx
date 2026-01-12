@@ -1,14 +1,19 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { RatingCard } from "~/features/display-ratings/components/rating-card";
 import { Button } from "~/components/ui/button";
-import { useIsAuthenticated } from "~/features/session/queries";
 import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-export function MainFeed({ tag }: { tag?: string }) {
-	const { isAuthenticated } = useIsAuthenticated();
+export function MainFeed({
+	tag,
+	user,
+}: {
+	tag?: string;
+	user?: { username: string };
+}) {
+	const isAuthenticated = user != null;
 	const {
 		data,
 		fetchNextPage,

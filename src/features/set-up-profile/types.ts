@@ -1,31 +1,25 @@
 import { z } from "zod";
 
 export const profileSetupSchema = z.object({
-	displayName: z
+	name: z
 		.string()
 		.max(50, "Display name must be at most 50 characters")
 		.optional()
 		.or(z.literal("")),
-	avatarUrl: z.string().optional().or(z.literal("")),
+	image: z.string().optional().or(z.literal("")),
 });
 
 export type SetUpProfileSchemaInput = z.infer<typeof profileSetupSchema>;
 
 // Client-side input includes an optional File for the avatar; the server
-// receives only the fields validated by `profileSetupSchema` (displayName, avatarUrl).
+// receives only the fields validated by `profileSetupSchema` (name, image).
 export type SetUpProfileInput = SetUpProfileSchemaInput & { avatar?: File };
 
 export type PublicUser = {
 	id: string;
 	username: string;
-	displayName: string | null;
-	avatarUrl?: string | null;
+	name: string | null;
+	image?: string | null;
 	createdAt?: string | null;
 	ratingsCount?: string;
-};
-
-export type UpdateProfileResponse = {
-	success: boolean;
-	user?: PublicUser;
-	error?: string;
 };

@@ -1,4 +1,4 @@
-import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/schema";
+import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { db } from "~/db/db";
@@ -10,7 +10,7 @@ type GroupedRating = typeof ratings.$inferSelect & {
 		id: string;
 		name: string | null;
 		username: string;
-		avatarUrl: string | null;
+		image: string | null;
 	} | null;
 	tags: string[];
 };
@@ -23,7 +23,7 @@ function groupRatingResults(
 			id: string;
 			name: string | null;
 			username: string;
-			avatarUrl: string | null;
+			image: string | null;
 		} | null;
 		tagName: string | null;
 	}>,
@@ -67,7 +67,7 @@ async function queryRatingsWithRelations(
 				id: users.id,
 				name: users.name,
 				username: users.username,
-				avatarUrl: users.avatarUrl,
+				image: users.image,
 			},
 			tagName: tags.name,
 		})

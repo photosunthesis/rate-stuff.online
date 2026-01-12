@@ -8,11 +8,8 @@ import {
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
 
-export function RightSidebar({
-	isAuthenticated = true,
-}: {
-	isAuthenticated?: boolean;
-}) {
+export function RightSidebar({ user }: { user?: { username: string } }) {
+	const isAuthenticated = user != null;
 	const { data: recentStuff, isLoading: loadingStuff } =
 		useRecentStuff(isAuthenticated);
 	const { data: recentTags, isLoading: loadingTags } =

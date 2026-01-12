@@ -1,24 +1,24 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { registerFn } from "~/features/create-account/api";
-import type {
-	RegisterInput,
-	AuthResponse,
-} from "~/features/create-account/types";
+import { useMutation } from "@tanstack/react-query";
+import authClient from "~/lib/auth/auth-client";
 
-export function useRegisterMutation() {
-	const registerMutationFn = useServerFn(registerFn);
-	const queryClient = useQueryClient();
-
+export function useCreateAccountMutation() {
 	return useMutation({
-		mutationFn: (data: RegisterInput) => registerMutationFn({ data }),
-		onSuccess: (data: AuthResponse) => {
-			if (data.success && data.user) {
-				queryClient.setQueryData(["isAuthenticated"], true);
-				queryClient.setQueryData(["currentUser"], data.user);
-				queryClient.invalidateQueries({ queryKey: ["isAuthenticated"] });
-				queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-			}
-		},
+		mutationFn: async (data: {
+			email: string;
+			password: string;
+			username: string;
+			inviteCode: string;
+		}) =>
+			authClient.signUp.email(
+				{
+					...data,
+					name: data.username,
+				},
+				{
+					onError: (error) => {
+						throw new Error(error.error.message || "Account creation failed");
+					},
+				},
+			),
 	});
 }

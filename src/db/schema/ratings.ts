@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, real, timestamp, index } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
+import { users } from "./auth";
 
 export const ratings = pgTable(
 	"ratings",
@@ -31,6 +31,10 @@ export const ratings = pgTable(
 		index("ratings_deleted_at_idx").on(table.deletedAt),
 	],
 );
+
+export const userRatingsRelations = relations(users, ({ many }) => ({
+	users: many(ratings),
+}));
 
 export const ratingsRelations = relations(ratings, ({ one, many }) => ({
 	user: one(users, {

@@ -1,9 +1,9 @@
 import { useUpdateProfileMutation, useUploadAvatarMutation } from "./queries";
-import { useCurrentUser } from "../session/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import type { SetUpProfileInput, PublicUser } from "./types";
 import { extractValidationErrors, normalizeError } from "~/utils/errors";
+import { authQueryOptions } from "~/lib/auth/queries";
 
 export function useSetUpProfile() {
 	const mutation = useUpdateProfileMutation();
@@ -15,7 +15,6 @@ export function useSetUpProfile() {
 	const [localValidationErrors, setLocalValidationErrors] = useState<
 		Record<string, string>
 	>({});
-	const { user } = useCurrentUser();
 
 	return {
 		updateProfile: async (data: SetUpProfileInput) => {
@@ -32,11 +31,13 @@ export function useSetUpProfile() {
 				try {
 					const uploadResult = await uploadMutation.mutateAsync(data.avatar);
 					uploadedUrl = uploadResult.url;
-					if (uploadedUrl)
-						queryClient.setQueryData<PublicUser | null>(
-							["currentUser"],
-							(old) => (old ? { ...old, avatarUrl: uploadedUrl } : old),
-						);
+
+					// Invalidate auth queries to refresh auth state
+					if (uploadedUrl) {
+						queryClient.removeQueries({
+							queryKey: authQueryOptions().queryKey,
+						});
+					}
 				} catch (e) {
 					const info = normalizeError(e);
 					if (info.errors) setLocalValidationErrors(info.errors);
@@ -46,18 +47,21 @@ export function useSetUpProfile() {
 				}
 			}
 
-			const payload: { displayName?: string; avatarUrl?: string } = {};
-			if (data.displayName) payload.displayName = data.displayName;
-			if (uploadedUrl) payload.avatarUrl = uploadedUrl;
-			else if (data.avatarUrl !== undefined)
-				payload.avatarUrl = data.avatarUrl ?? undefined;
+			const payload: { name?: string; image?: string } = {};
+			if (data.name) payload.name = data.name;
+			if (uploadedUrl) payload.image = uploadedUrl;
+			else if (data.image !== undefined)
+				payload.image = data.image ?? undefined;
 
 			try {
 				const result = await mutation.mutateAsync(payload);
 				if (!result.success) {
 					if (previousUser) {
-						queryClient.setQueryData(["currentUser"], previousUser);
+						queryClient.removeQueries({
+							queryKey: authQueryOptions().queryKey,
+						});
 					}
+
 					const validationErrors = extractValidationErrors(result);
 					setLocalValidationErrors(validationErrors);
 					const errMessage =
@@ -69,8 +73,11 @@ export function useSetUpProfile() {
 				return result;
 			} catch (e) {
 				if (previousUser) {
-					queryClient.setQueryData(["currentUser"], previousUser);
+					queryClient.removeQueries({
+						queryKey: authQueryOptions().queryKey,
+					});
 				}
+
 				const info = normalizeError(e);
 				if (info.errors) setLocalValidationErrors(info.errors);
 				const msg =
@@ -79,7 +86,6 @@ export function useSetUpProfile() {
 				throw new Error(msg);
 			}
 		},
-
 		isPending: mutation.isPending,
 		isError: mutation.isError || Boolean(localErrorMessage),
 		errorMessage:
@@ -98,7 +104,5 @@ export function useSetUpProfile() {
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 		},
-
-		user,
 	};
 }

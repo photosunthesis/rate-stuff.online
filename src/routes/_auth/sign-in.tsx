@@ -1,45 +1,14 @@
-import {
-	createFileRoute,
-	redirect,
-	useNavigate,
-	useSearch,
-} from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSignIn } from "~/features/sign-in/hooks";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { SignInForm } from "~/features/sign-in/components/sig-in-form";
-import {
-	isAuthenticatedQueryOptions,
-	useIsAuthenticated,
-} from "~/features/session/queries";
 
-export const Route = createFileRoute("/sign-in")({
-	beforeLoad: async ({ context }) => {
-		const isAuthenticated = await context.queryClient.ensureQueryData(
-			isAuthenticatedQueryOptions(),
-		);
-		if (isAuthenticated) {
-			throw redirect({ to: "/" });
-		}
-	},
+export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
 	validateSearch: (search: Record<string, unknown>) => ({
 		redirect: search.redirect as string | undefined,
 	}),
-	head: ({ match }) => {
-		const isAuthenticated = match.context.queryClient.getQueryData(
-			isAuthenticatedQueryOptions().queryKey,
-		);
-
-		if (isAuthenticated) {
-			return {
-				meta: [
-					{
-						title: "Redirecting... - Rate Stuff Online",
-					},
-				],
-			};
-		}
-
+	head: () => {
 		return {
 			meta: [
 				{
@@ -60,9 +29,8 @@ export const Route = createFileRoute("/sign-in")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const search = useSearch({ from: "/sign-in" });
+	const redirectUrl = Route.useRouteContext().redirectUrl;
 	const { signIn, isPending, errorMessage, validationErrors } = useSignIn();
-	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
 	const handleSubmit = async (data: {
 		identifier: string;
@@ -70,14 +38,10 @@ function RouteComponent() {
 	}) => {
 		try {
 			await signIn(data);
-			const redirectTo = search.redirect || "/";
+			const redirectTo = redirectUrl || "/";
 			navigate({ to: redirectTo });
 		} catch {}
 	};
-
-	if (isAuthenticated || isLoading) {
-		return null;
-	}
 
 	return (
 		<AuthLayout

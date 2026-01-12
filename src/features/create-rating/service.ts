@@ -1,5 +1,5 @@
 import { db } from "~/db/db";
-import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/schema";
+import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import { uploadFile } from "~/lib/media-storage";
@@ -38,65 +38,67 @@ export const searchTags = createServerOnlyFn(
 	},
 );
 
-export const getOrCreateStuff = createServerOnlyFn(async (name: string) =>
-	db().transaction(async (tx) => {
-		const existing = await tx
-			.select()
-			.from(stuff)
-			.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
-			.limit(1)
-			.then((res) => res[0]);
-
-		if (existing) return null;
-
-		try {
-			const [newStuff] = await tx
-				.insert(stuff)
-				.values({ name, slug: generateSlug(name) })
-				.onConflictDoNothing()
-				.returning();
-
-			if (newStuff) return newStuff;
-
-			const selected = await tx
+export const getOrCreateStuff = createServerOnlyFn(
+	async (name: string, userId: string) =>
+		db().transaction(async (tx) => {
+			const existing = await tx
 				.select()
 				.from(stuff)
 				.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
 				.limit(1)
 				.then((res) => res[0]);
 
-			if (selected) return selected;
+			if (existing) return null;
 
-			return null;
-		} catch {
-			return null;
-		}
-	}),
+			try {
+				const [newStuff] = await tx
+					.insert(stuff)
+					.values({ name, slug: generateSlug(name), createdBy: userId })
+					.onConflictDoNothing()
+					.returning();
+
+				if (newStuff) return newStuff;
+
+				const selected = await tx
+					.select()
+					.from(stuff)
+					.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
+					.limit(1)
+					.then((res) => res[0]);
+
+				if (selected) return selected;
+
+				return null;
+			} catch {
+				return null;
+			}
+		}),
 );
 
-export const createTags = createServerOnlyFn(async (names: string[]) =>
-	db().transaction(async (tx) => {
-		if (names.length === 0) return [];
+export const createTags = createServerOnlyFn(
+	async (names: string[], userId: string) =>
+		db().transaction(async (tx) => {
+			if (names.length === 0) return [];
 
-		const normalizedNames = names.map((n) => n.toLowerCase().trim());
-		const uniqueNames = Array.from(new Set(normalizedNames));
-		const existingTags = await tx
-			.select()
-			.from(tags)
-			.where(inArray(tags.name, uniqueNames));
-		const existingNames = new Set(existingTags.map((t) => t.name));
-		const newNames = uniqueNames.filter((n) => !existingNames.has(n));
+			const normalizedNames = names.map((n) => n.toLowerCase().trim());
+			const uniqueNames = Array.from(new Set(normalizedNames));
+			const existingTags = await tx
+				.select()
+				.from(tags)
+				.where(inArray(tags.name, uniqueNames));
+			const existingNames = new Set(existingTags.map((t) => t.name));
+			const newNames = uniqueNames.filter((n) => !existingNames.has(n));
 
-		if (newNames.length > 0) {
-			await tx
-				.insert(tags)
-				.values(newNames.map((name) => ({ name })))
-				.onConflictDoNothing()
-				.execute();
-		}
+			if (newNames.length > 0) {
+				await tx
+					.insert(tags)
+					.values(newNames.map((name) => ({ name, createdBy: userId })))
+					.onConflictDoNothing()
+					.execute();
+			}
 
-		return tx.select().from(tags).where(inArray(tags.name, uniqueNames));
-	}),
+			return tx.select().from(tags).where(inArray(tags.name, uniqueNames));
+		}),
 );
 
 export const createRating = createServerOnlyFn(
@@ -105,7 +107,7 @@ export const createRating = createServerOnlyFn(
 			let stuffId = input.stuffId;
 
 			if (!stuffId && input.stuffName) {
-				const stuffResult = await getOrCreateStuff(input.stuffName);
+				const stuffResult = await getOrCreateStuff(input.stuffName, userId);
 
 				if (!stuffResult) {
 					throw new Error(`Failed to create or retrieve "stuff"`);
@@ -118,7 +120,7 @@ export const createRating = createServerOnlyFn(
 				throw new Error(`Failed to determine the "stuff" for the rating`);
 			}
 
-			const tagObjects = await createTags(input.tags);
+			const tagObjects = await createTags(input.tags, userId);
 			const slug = generateSlug(input.title);
 			const [rating] = await tx
 				.insert(ratings)

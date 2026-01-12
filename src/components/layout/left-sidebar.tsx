@@ -1,11 +1,8 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import AppLogo from "~/components/app-logo";
-import {
-	useIsAuthenticated,
-	useLogoutMutation,
-} from "~/features/session/queries";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
+import authClient from "~/lib/auth/auth-client";
 
 const headers = [
 	"Rate literally anything.",
@@ -17,11 +14,9 @@ const headers = [
 	"Your opinion, now numbered.",
 ];
 
-export function LeftSidebar() {
-	const { isAuthenticated } = useIsAuthenticated();
-	const logoutMutation = useLogoutMutation();
+export function LeftSidebar({ user }: { user?: { username: string } }) {
+	const isAuthenticated = user != null;
 	const navigate = useNavigate();
-
 	const [header] = useState(
 		() => headers[Math.floor(Math.random() * headers.length)],
 	);
@@ -33,8 +28,13 @@ export function LeftSidebar() {
 	const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 	const handleLogout = async () => {
-		await logoutMutation.mutateAsync();
-		navigate({ to: "/" });
+		await authClient.signOut({
+			fetchOptions: {
+				onSuccess: () => {
+					navigate({ to: "/" });
+				},
+			},
+		});
 	};
 
 	const handleMouseDown = () => {

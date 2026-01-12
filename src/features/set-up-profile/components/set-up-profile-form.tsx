@@ -31,15 +31,15 @@ export function SetUpProfileForm({
 	const [avatarFile, setAvatarFile] = useState<File | null>(null);
 	const [isCompressing, setIsCompressing] = useState(false);
 	const [fileError, setFileError] = useState<string | null>(null);
-	const [displayNameValue, setDisplayNameValue] = useState<string>("");
+	const [nameValue, setDisplayNameValue] = useState<string>("");
 	const [hasValues, setHasValues] = useState<boolean>(false);
 	const [avatarRemoved, setAvatarRemoved] = useState<boolean>(false);
 	const previewRef = useRef<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	useEffect(() => {
-		setHasValues(Boolean(avatarFile) || Boolean(displayNameValue?.trim()));
-	}, [avatarFile, displayNameValue]);
+		setHasValues(Boolean(avatarFile) || Boolean(nameValue?.trim()));
+	}, [avatarFile, nameValue]);
 
 	function clearAvatar() {
 		if (previewRef.current) URL.revokeObjectURL(previewRef.current);
@@ -59,7 +59,7 @@ export function SetUpProfileForm({
 
 	const form = useForm({
 		defaultValues: {
-			displayName: initialDisplayName ?? "",
+			name: initialDisplayName ?? "",
 		} as SetUpProfileInput,
 		onSubmit: async ({ value }) => {
 			if (!hasValues) return;
@@ -67,7 +67,7 @@ export function SetUpProfileForm({
 				...value,
 				avatar: avatarFile ?? undefined,
 			};
-			if (avatarRemoved && !avatarFile) payload.avatarUrl = "";
+			if (avatarRemoved && !avatarFile) payload.image = "";
 			await onSubmit(payload);
 		},
 	});
@@ -82,7 +82,7 @@ export function SetUpProfileForm({
 		setDisplayNameValue(initialDisplayName ?? "");
 
 		if (initialDisplayName !== undefined) {
-			form.reset({ displayName: initialDisplayName ?? "" });
+			form.reset({ name: initialDisplayName ?? "" });
 		}
 	}, [initialDisplayName, form.reset]);
 
@@ -217,7 +217,7 @@ export function SetUpProfileForm({
 
 				{/* Display name field */}
 				<form.Field
-					name="displayName"
+					name="name"
 					validators={{
 						onChange: ({ value }) => {
 							if (value && value.length > 50)
@@ -240,7 +240,7 @@ export function SetUpProfileForm({
 								placeholder="How should we call you?"
 								error={
 									field.state.meta.errors[0]?.toString() ||
-									validationErrors?.displayName
+									validationErrors?.name
 								}
 							/>
 							<p className="text-neutral-500 text-xs mt-1.5">
