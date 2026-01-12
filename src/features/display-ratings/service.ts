@@ -1,7 +1,8 @@
-import { getDb } from "~/db/index";
-import { env } from "cloudflare:workers";
 import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema";
 import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
+import { createServerOnlyFn } from "@tanstack/react-start";
+import { db } from "~/db";
+import type { drizzle } from "drizzle-orm/node-postgres";
 
 type GroupedRating = typeof ratings.$inferSelect & {
 	stuff: typeof stuff.$inferSelect | null;
@@ -50,6 +51,7 @@ function groupRatingResults(
 }
 
 async function queryRatingsWithRelations(
+	db: ReturnType<typeof drizzle>,
 	whereConditions: ReturnType<typeof and>,
 	limit: number,
 	orderBy: [ReturnType<typeof desc>, ReturnType<typeof desc>] = [
@@ -57,8 +59,6 @@ async function queryRatingsWithRelations(
 		desc(ratings.id),
 	],
 ) {
-	const db = getDb(env);
-
 	return await db
 		.select({
 			rating: ratings,
@@ -81,63 +81,80 @@ async function queryRatingsWithRelations(
 		.limit(limit);
 }
 
-export async function getUserRatings(
-	userId: string,
-	limit = 10,
-	cursor?: { createdAt: Date; id: string },
-) {
-	const cursorFilter = cursor
-		? or(
-				lt(ratings.createdAt, cursor.createdAt),
-				and(eq(ratings.createdAt, cursor.createdAt), lt(ratings.id, cursor.id)),
-			)
-		: undefined;
+export const getUserRatings = createServerOnlyFn(
+	async (
+		userId: string,
+		limit = 10,
+		cursor?: { createdAt: Date; id: string },
+	) => {
+		const cursorFilter = cursor
+			? or(
+					lt(ratings.createdAt, cursor.createdAt),
+					and(
+						eq(ratings.createdAt, cursor.createdAt),
+						lt(ratings.id, cursor.id),
+					),
+				)
+			: undefined;
 
+		const results = await queryRatingsWithRelations(
+			db(),
+			and(eq(ratings.userId, userId), isNull(ratings.deletedAt), cursorFilter),
+			limit,
+		);
+
+		return groupRatingResults(results);
+	},
+);
+
+export const getFeedRatings = createServerOnlyFn(
+	async (
+		limit = 10,
+		cursor?: { createdAt: Date; id: string },
+		tag?: string,
+	) => {
+		const cursorFilter = cursor
+			? or(
+					lt(ratings.createdAt, cursor.createdAt),
+					and(
+						eq(ratings.createdAt, cursor.createdAt),
+						lt(ratings.id, cursor.id),
+					),
+				)
+			: undefined;
+
+		const tagFilter = tag ? eq(tags.name, tag) : undefined;
+
+		const results = await queryRatingsWithRelations(
+			db(),
+			and(isNull(ratings.deletedAt), cursorFilter, tagFilter),
+			limit,
+		);
+
+		const grouped = groupRatingResults(results);
+
+		if (tag) {
+			return grouped.filter((r) => r.tags.includes(tag)).slice(0, limit);
+		}
+
+		return grouped;
+	},
+);
+
+export const getRatingById = createServerOnlyFn(async (id: string) => {
 	const results = await queryRatingsWithRelations(
-		and(eq(ratings.userId, userId), isNull(ratings.deletedAt), cursorFilter),
-		limit,
+		db(),
+		and(eq(ratings.id, id)),
+		1,
 	);
-
-	return groupRatingResults(results);
-}
-
-export async function getFeedRatings(
-	limit = 10,
-	cursor?: { createdAt: Date; id: string },
-	tag?: string,
-) {
-	const cursorFilter = cursor
-		? or(
-				lt(ratings.createdAt, cursor.createdAt),
-				and(eq(ratings.createdAt, cursor.createdAt), lt(ratings.id, cursor.id)),
-			)
-		: undefined;
-
-	const tagFilter = tag ? eq(tags.name, tag) : undefined;
-
-	const results = await queryRatingsWithRelations(
-		and(isNull(ratings.deletedAt), cursorFilter, tagFilter),
-		limit,
-	);
-
-	const grouped = groupRatingResults(results);
-
-	if (tag) {
-		return grouped.filter((r) => r.tags.includes(tag)).slice(0, limit);
-	}
-
-	return grouped;
-}
-
-export async function getRatingById(id: string) {
-	const results = await queryRatingsWithRelations(and(eq(ratings.id, id)), 1);
 
 	const grouped = groupRatingResults(results);
 	return grouped.length > 0 ? grouped[0] : null;
-}
+});
 
-export async function getRatingBySlug(slug: string) {
+export const getRatingBySlug = createServerOnlyFn(async (slug: string) => {
 	const results = await queryRatingsWithRelations(
+		db(),
 		and(eq(ratings.slug, slug)),
 		1,
 	);
@@ -145,12 +162,11 @@ export async function getRatingBySlug(slug: string) {
 	const grouped = groupRatingResults(results);
 
 	return grouped.length > 0 ? grouped[0] : null;
-}
+});
 
-export async function getRecentTags(limit = 10) {
-	const db = getDb(env);
+export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-	const rows = await db
+	const rows = await db()
 		.select({ name: tags.name, count: sql<number>`COUNT(*)` })
 		.from(ratingsToTags)
 		.leftJoin(ratings, eq(ratings.id, ratingsToTags.ratingId))
@@ -161,12 +177,11 @@ export async function getRecentTags(limit = 10) {
 		.limit(limit);
 
 	return rows.map((r) => ({ name: r.name, count: Number(r.count) }));
-}
+});
 
-export async function getRecentStuff(limit = 5) {
-	const db = getDb(env);
+export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-	const rows = await db
+	const rows = await db()
 		.select({
 			id: stuff.id,
 			name: stuff.name,
@@ -186,16 +201,17 @@ export async function getRecentStuff(limit = 5) {
 		name: r.name,
 		count: Number(r.count),
 	}));
-}
+});
 
-export async function getUserRatingsCount(userId: string) {
-	const db = getDb(env);
-	const row = await db
-		.select({ count: sql<number>`COUNT(*)` })
-		.from(ratings)
-		.where(and(eq(ratings.userId, userId), isNull(ratings.deletedAt)));
+export const getUserRatingsCount = createServerOnlyFn(
+	async (userId: string) => {
+		const row = await db()
+			.select({ count: sql<number>`COUNT(*)` })
+			.from(ratings)
+			.where(and(eq(ratings.userId, userId), isNull(ratings.deletedAt)));
 
-	if (!row || row.length === 0) return 0;
+		if (!row || row.length === 0) return 0;
 
-	return Number(row[0].count);
-}
+		return Number(row[0].count);
+	},
+);

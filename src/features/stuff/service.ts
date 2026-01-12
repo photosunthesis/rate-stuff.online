@@ -1,5 +1,4 @@
-import { getDb } from "~/db/index";
-import { env } from "cloudflare:workers";
+import { db } from "~/db/index";
 import {
 	ratings,
 	stuff as stuffTable,
@@ -9,7 +8,8 @@ import {
 } from "~/db/schema";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
-import type { StuffWithAggregates, StuffRatingsPage } from "./types";
+import type { drizzle } from "drizzle-orm/node-postgres/driver";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
 type RatingQueryResult = {
 	rating: typeof ratings.$inferSelect;
@@ -70,10 +70,10 @@ function groupAndMapRatings(
 }
 
 async function extractImagesForStuff(
+	db: ReturnType<typeof drizzle>,
 	stuffId: string,
 	maxImages = 8,
 ): Promise<string[]> {
-	const db = getDb(env);
 	const imageRows = await db
 		.select({ images: ratings.images })
 		.from(ratings)
@@ -110,11 +110,9 @@ async function extractImagesForStuff(
 	return images;
 }
 
-export async function getStuffBySlug(
-	slug: string,
-): Promise<StuffWithAggregates | null> {
-	const db = getDb(env);
-	const rows = await db
+export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
+	const dbInstance = db();
+	const rows = await dbInstance
 		.select({
 			id: stuffTable.id,
 			name: stuffTable.name,
@@ -144,8 +142,7 @@ export async function getStuffBySlug(
 	const row = rows[0];
 	const ratingCount = Number(row.ratingCount ?? 0);
 	const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
-
-	const images = await extractImagesForStuff(row.id);
+	const images = await extractImagesForStuff(dbInstance, row.id);
 
 	return {
 		id: row.id,
@@ -157,70 +154,71 @@ export async function getStuffBySlug(
 		ratingCount,
 		images,
 	};
-}
+});
 
-export async function getStuffRatingsBySlug(
-	slug: string,
-	limit = 10,
-	cursor?: string,
-): Promise<StuffRatingsPage | null> {
-	const db = getDb(env);
-	const parsed = parseCursor(cursor);
-	const cursorFilter = parsed
-		? or(
-				lt(ratings.createdAt, parsed.createdAt),
-				and(eq(ratings.createdAt, parsed.createdAt), lt(ratings.id, parsed.id)),
+export const getStuffRatingsBySlug = createServerOnlyFn(
+	async (slug: string, limit = 10, cursor?: string) => {
+		const dbInstance = db();
+		const parsed = parseCursor(cursor);
+		const cursorFilter = parsed
+			? or(
+					lt(ratings.createdAt, parsed.createdAt),
+					and(
+						eq(ratings.createdAt, parsed.createdAt),
+						lt(ratings.id, parsed.id),
+					),
+				)
+			: undefined;
+
+		const stuffResult = await dbInstance
+			.select({ id: stuffTable.id })
+			.from(stuffTable)
+			.where(eq(stuffTable.slug, slug))
+			.limit(1);
+
+		if (stuffResult.length === 0) return null;
+
+		const stuffId = stuffResult[0].id;
+
+		const results = await dbInstance
+			.select({
+				rating: ratings,
+				stuff: stuffTable,
+				user: {
+					id: users.id,
+					name: users.name,
+					username: users.username,
+					avatarUrl: users.avatarUrl,
+				},
+				tagName: tags.name,
+			})
+			.from(ratings)
+			.leftJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
+			.leftJoin(users, eq(ratings.userId, users.id))
+			.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
+			.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
+			.where(
+				and(
+					eq(ratings.stuffId, stuffId),
+					isNull(ratings.deletedAt),
+					cursorFilter,
+				),
 			)
-		: undefined;
+			.orderBy(desc(ratings.createdAt), desc(ratings.id))
+			.limit(limit);
 
-	const stuffResult = await db
-		.select({ id: stuffTable.id })
-		.from(stuffTable)
-		.where(eq(stuffTable.slug, slug))
-		.limit(1);
+		if (results.length === 0) {
+			return { ratings: [], nextCursor: undefined };
+		}
 
-	if (stuffResult.length === 0) return null;
+		const mapped = groupAndMapRatings(results);
 
-	const stuffId = stuffResult[0].id;
+		let nextCursor: string | undefined;
+		if (mapped.length === limit) {
+			const last = mapped[mapped.length - 1];
+			nextCursor = makeCursor(last.createdAt, last.id);
+		}
 
-	const results = await db
-		.select({
-			rating: ratings,
-			stuff: stuffTable,
-			user: {
-				id: users.id,
-				name: users.name,
-				username: users.username,
-				avatarUrl: users.avatarUrl,
-			},
-			tagName: tags.name,
-		})
-		.from(ratings)
-		.leftJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
-		.leftJoin(users, eq(ratings.userId, users.id))
-		.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
-		.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
-		.where(
-			and(
-				eq(ratings.stuffId, stuffId),
-				isNull(ratings.deletedAt),
-				cursorFilter,
-			),
-		)
-		.orderBy(desc(ratings.createdAt), desc(ratings.id))
-		.limit(limit);
-
-	if (results.length === 0) {
-		return { ratings: [], nextCursor: undefined };
-	}
-
-	const mapped = groupAndMapRatings(results);
-
-	let nextCursor: string | undefined;
-	if (mapped.length === limit) {
-		const last = mapped[mapped.length - 1];
-		nextCursor = makeCursor(last.createdAt, last.id);
-	}
-
-	return { ratings: mapped, nextCursor };
-}
+		return { ratings: mapped, nextCursor };
+	},
+);

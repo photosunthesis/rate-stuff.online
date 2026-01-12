@@ -1,31 +1,35 @@
-import { getDb } from "~/db/index";
-import { env } from "cloudflare:workers";
+import { db } from "~/db/index";
 import { users } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
 import { comparePasswords } from "~/utils/auth";
 import type { LoginInput } from "~/features/sign-in/types";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
-export async function authenticateUser(input: LoginInput) {
-	const db = getDb(env);
-	const user = await db
-		.select()
-		.from(users)
-		.where(
-			or(
-				eq(users.email, input.identifier),
-				eq(users.username, input.identifier),
-			),
-		)
-		.limit(1)
-		.then((res) => res[0]);
+export const authenticateUser = createServerOnlyFn(
+	async (input: LoginInput) => {
+		const user = await db()
+			.select()
+			.from(users)
+			.where(
+				or(
+					eq(users.email, input.identifier),
+					eq(users.username, input.identifier),
+				),
+			)
+			.limit(1)
+			.then((res) => res[0]);
 
-	if (!user) throw new Error("Invalid credentials");
+		if (!user) throw new Error("Invalid credentials");
 
-	const passwordMatches = await comparePasswords(input.password, user.password);
+		const passwordMatches = await comparePasswords(
+			input.password,
+			user.password,
+		);
 
-	if (!passwordMatches) throw new Error("Invalid credentials");
+		if (!passwordMatches) throw new Error("Invalid credentials");
 
-	const { password: _, ...userWithoutPassword } = user;
+		const { password: _, ...userWithoutPassword } = user;
 
-	return userWithoutPassword;
-}
+		return userWithoutPassword;
+	},
+);

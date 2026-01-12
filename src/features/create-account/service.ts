@@ -1,13 +1,12 @@
-import { getDb } from "~/db/index";
-import { env } from "cloudflare:workers";
 import { users, inviteCodes } from "~/db/schema";
 import { eq, isNull, and } from "drizzle-orm";
 import { hashPassword } from "~/utils/auth";
 import type { RegisterInput } from "~/features/create-account/types";
+import { db } from "~/db";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
-export async function createUser(input: RegisterInput) {
-	const db = getDb(env);
-	const newUser = await db.transaction(async (tx) => {
+export const createUser = createServerOnlyFn(async (input: RegisterInput) => {
+	const newUser = await db().transaction(async (tx) => {
 		const invite = await tx
 			.select()
 			.from(inviteCodes)
@@ -67,4 +66,4 @@ export async function createUser(input: RegisterInput) {
 	const { password: _, ...userWithoutPassword } = newUser;
 
 	return userWithoutPassword;
-}
+});

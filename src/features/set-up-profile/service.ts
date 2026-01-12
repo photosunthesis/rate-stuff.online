@@ -1,38 +1,36 @@
-import { getDb } from "~/db/index";
-import { env } from "cloudflare:workers";
+import { db } from "~/db/index";
 import { users, ratings } from "~/db/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
-import type { PublicUser } from "~/features/set-up-profile/types";
-import { uploadFile } from "~/utils/media-storage";
+import { uploadFile } from "~/lib/media-storage";
 import { numberWithCommas } from "~/utils/numbers";
-import { safeRandomUUID } from "~/utils/uuid";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
-export async function updateUserProfile(
-	userId: string,
-	updates: { name?: string; avatarUrl?: string | null },
-): Promise<PublicUser> {
-	const db = getDb(env);
-	const updatedUser = await db
-		.update(users)
-		.set({ ...updates, updatedAt: new Date() })
-		.where(eq(users.id, userId))
-		.returning();
+export const updateUserProfile = createServerOnlyFn(
+	async (
+		userId: string,
+		updates: { name?: string; avatarUrl?: string | null },
+	) => {
+		const updatedUser = await db()
+			.update(users)
+			.set({ ...updates, updatedAt: new Date() })
+			.where(eq(users.id, userId))
+			.returning();
 
-	if (!updatedUser || updatedUser.length === 0) {
-		throw new Error("User not found");
-	}
+		if (!updatedUser || updatedUser.length === 0) {
+			throw new Error("User not found");
+		}
 
-	return {
-		id: updatedUser[0].id,
-		username: updatedUser[0].username,
-		displayName: updatedUser[0].name,
-		avatarUrl: updatedUser[0].avatarUrl,
-	};
-}
+		return {
+			id: updatedUser[0].id,
+			username: updatedUser[0].username,
+			displayName: updatedUser[0].name,
+			avatarUrl: updatedUser[0].avatarUrl,
+		};
+	},
+);
 
-export async function getUserById(userId: string): Promise<PublicUser | null> {
-	const db = getDb(env);
-	const user = await db
+export const getUserById = createServerOnlyFn(async (userId: string) => {
+	const user = await db()
 		.select()
 		.from(users)
 		.where(eq(users.id, userId))
@@ -47,62 +45,60 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
 		displayName: user.name,
 		avatarUrl: user.avatarUrl,
 	};
-}
+});
 
-export async function getUserByUsername(
-	username: string,
-): Promise<(PublicUser & { createdAt?: string | null }) | null> {
-	const db = getDb(env);
-	const rows = await db
-		.select({
-			id: users.id,
-			username: users.username,
-			name: users.name,
-			avatarUrl: users.avatarUrl,
-			createdAt: users.createdAt,
-			ratingCount: sql`COUNT(${ratings.id})`,
-		})
-		.from(users)
-		.leftJoin(
-			ratings,
-			and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)),
-		)
-		.where(eq(users.username, username))
-		.groupBy(
-			users.id,
-			users.username,
-			users.name,
-			users.avatarUrl,
-			users.createdAt,
-		)
-		.limit(1);
+export const getUserByUsername = createServerOnlyFn(
+	async (username: string) => {
+		const rows = await db()
+			.select({
+				id: users.id,
+				username: users.username,
+				name: users.name,
+				avatarUrl: users.avatarUrl,
+				createdAt: users.createdAt,
+				ratingCount: sql`COUNT(${ratings.id})`,
+			})
+			.from(users)
+			.leftJoin(
+				ratings,
+				and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)),
+			)
+			.where(eq(users.username, username))
+			.groupBy(
+				users.id,
+				users.username,
+				users.name,
+				users.avatarUrl,
+				users.createdAt,
+			)
+			.limit(1);
 
-	if (!rows || rows.length === 0) return null;
+		if (!rows || rows.length === 0) return null;
 
-	const row = rows[0];
-	const ratingsCount = Number(row.ratingCount ?? 0);
+		const row = rows[0];
+		const ratingsCount = Number(row.ratingCount ?? 0);
 
-	return {
-		id: row.id,
-		username: row.username,
-		displayName: row.name,
-		avatarUrl: row.avatarUrl,
-		createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
-		ratingsCount: numberWithCommas(ratingsCount),
-	};
-}
+		return {
+			id: row.id,
+			username: row.username,
+			displayName: row.name,
+			avatarUrl: row.avatarUrl,
+			createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
+			ratingsCount: numberWithCommas(ratingsCount),
+		};
+	},
+);
 
-export async function uploadProfileImage(
-	file: File,
-	userId: string,
-): Promise<{ key: string; url: string }> {
-	const origExt = file.name?.split(".").pop() ?? "webp";
-	const extension =
-		file.type === "image/webp" || origExt.toLowerCase() === "webp"
-			? "webp"
-			: origExt;
-	const key = `avatars/${userId}/${safeRandomUUID()}.${extension}`;
-	const url = await uploadFile(env, key, file);
+export const uploadProfileImage = createServerOnlyFn(
+	async (file: File, userId: string) => {
+		const origExt = file.name?.split(".").pop() ?? "webp";
+		const extension =
+			file.type === "image/webp" || origExt.toLowerCase() === "webp"
+				? "webp"
+				: origExt;
+		const key = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
+		const url = await uploadFile(key, file);
 
-	return { key, url };
-}
+		return { key, url };
+	},
+);

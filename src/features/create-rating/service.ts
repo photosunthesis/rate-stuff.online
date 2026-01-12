@@ -1,47 +1,45 @@
-import { env } from "cloudflare:workers";
-import { getDb } from "~/db/index";
+import { db } from "~/db/index";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
-import type { Stuff, Tag } from "~/features/display-ratings/types";
-import { uploadFile } from "~/utils/media-storage";
+import { uploadFile } from "~/lib/media-storage";
 import { generateSlug } from "~/utils/slug";
-import { safeRandomUUID } from "~/utils/uuid";
+import { createServerOnlyFn } from "@tanstack/react-start";
 
-export async function searchStuff(query: string, limit = 10) {
-	const db = getDb(env);
-	const q = query.toLowerCase().trim();
+export const searchStuff = createServerOnlyFn(
+	async (query: string, limit = 10) => {
+		const q = query.toLowerCase().trim();
 
-	if (!q) return [];
+		if (!q) return [];
 
-	return db
-		.select()
-		.from(stuff)
-		.where(
-			and(like(sql`LOWER(${stuff.name})`, `${q}%`), isNull(stuff.deletedAt)),
-		)
-		.orderBy(desc(stuff.createdAt))
-		.limit(limit);
-}
+		return db()
+			.select()
+			.from(stuff)
+			.where(
+				and(like(sql`LOWER(${stuff.name})`, `${q}%`), isNull(stuff.deletedAt)),
+			)
+			.orderBy(desc(stuff.createdAt))
+			.limit(limit);
+	},
+);
 
-export async function searchTags(query: string, limit = 10) {
-	const db = getDb(env);
-	const q = query.toLowerCase().trim();
+export const searchTags = createServerOnlyFn(
+	async (query: string, limit = 10) => {
+		const q = query.toLowerCase().trim();
 
-	if (!q) return [];
+		if (!q) return [];
 
-	return db
-		.select()
-		.from(tags)
-		.where(like(sql`LOWER(${tags.name})`, `${q}%`))
-		.orderBy(desc(tags.createdAt))
-		.limit(limit);
-}
+		return db()
+			.select()
+			.from(tags)
+			.where(like(sql`LOWER(${tags.name})`, `${q}%`))
+			.orderBy(desc(tags.createdAt))
+			.limit(limit);
+	},
+);
 
-async function getOrCreateStuff(name: string): Promise<Stuff | null> {
-	const db = getDb(env);
-
-	return db.transaction(async (tx) => {
+export const getOrCreateStuff = createServerOnlyFn(async (name: string) =>
+	db().transaction(async (tx) => {
 		const existing = await tx
 			.select()
 			.from(stuff)
@@ -73,13 +71,11 @@ async function getOrCreateStuff(name: string): Promise<Stuff | null> {
 		} catch {
 			return null;
 		}
-	});
-}
+	}),
+);
 
-async function createTags(names: string[]): Promise<Tag[]> {
-	const db = getDb(env);
-
-	return db.transaction(async (tx) => {
+export const createTags = createServerOnlyFn(async (names: string[]) =>
+	db().transaction(async (tx) => {
 		if (names.length === 0) return [];
 
 		const normalizedNames = names.map((n) => n.toLowerCase().trim());
@@ -100,73 +96,73 @@ async function createTags(names: string[]): Promise<Tag[]> {
 		}
 
 		return tx.select().from(tags).where(inArray(tags.name, uniqueNames));
-	});
-}
+	}),
+);
 
-export async function createRating(userId: string, input: CreateRatingInput) {
-	const db = getDb(env);
+export const createRating = createServerOnlyFn(
+	async (userId: string, input: CreateRatingInput) =>
+		db().transaction(async (tx) => {
+			let stuffId = input.stuffId;
 
-	return db.transaction(async (tx) => {
-		let stuffId = input.stuffId;
+			if (!stuffId && input.stuffName) {
+				const stuffResult = await getOrCreateStuff(input.stuffName);
 
-		if (!stuffId && input.stuffName) {
-			const stuffResult = await getOrCreateStuff(input.stuffName);
+				if (!stuffResult) {
+					throw new Error(`Failed to create or retrieve "stuff"`);
+				}
 
-			if (!stuffResult) {
-				throw new Error(`Failed to create or retrieve "stuff"`);
+				stuffId = stuffResult.id;
 			}
 
-			stuffId = stuffResult.id;
-		}
+			if (!stuffId) {
+				throw new Error(`Failed to determine the "stuff" for the rating`);
+			}
 
-		if (!stuffId) {
-			throw new Error(`Failed to determine the "stuff" for the rating`);
-		}
+			const tagObjects = await createTags(input.tags);
+			const slug = generateSlug(input.title);
+			const [rating] = await tx
+				.insert(ratings)
+				.values({
+					userId,
+					stuffId: stuffId,
+					title: input.title,
+					score: input.score,
+					content: input.content,
+					images: JSON.stringify(input.images),
+					slug,
+				})
+				.returning();
 
-		const tagObjects = await createTags(input.tags);
-		const slug = generateSlug(input.title);
-		const [rating] = await tx
-			.insert(ratings)
-			.values({
-				userId,
-				stuffId: stuffId,
-				title: input.title,
-				score: input.score,
-				content: input.content,
-				images: JSON.stringify(input.images),
-				slug,
-			})
-			.returning();
+			if (tagObjects.length > 0) {
+				await tx
+					.insert(ratingsToTags)
+					.values(
+						tagObjects.map((tag) => ({ ratingId: rating.id, tagId: tag.id })),
+					);
+			}
 
-		if (tagObjects.length > 0) {
-			await tx
-				.insert(ratingsToTags)
-				.values(
-					tagObjects.map((tag) => ({ ratingId: rating.id, tagId: tag.id })),
-				);
-		}
+			return rating;
+		}),
+);
 
-		return rating;
-	});
-}
+export const uploadImage = createServerOnlyFn(
+	async (file: File, ratingId: string) => {
+		const origExt = file.name?.split(".").pop() ?? "webp";
+		const extension =
+			file.type === "image/webp" || origExt.toLowerCase() === "webp"
+				? "webp"
+				: origExt;
+		const key = `ratings/${ratingId}/${crypto.randomUUID()}.${extension}`;
+		const url = await uploadFile(key, file);
 
-export async function uploadImage(file: File, ratingId: string) {
-	const origExt = file.name?.split(".").pop() ?? "webp";
-	const extension =
-		file.type === "image/webp" || origExt.toLowerCase() === "webp"
-			? "webp"
-			: origExt;
-	const key = `ratings/${ratingId}/${safeRandomUUID()}.${extension}`;
-	const url = await uploadFile(env, key, file);
+		return { key, url };
+	},
+);
 
-	return { key, url };
-}
-
-export async function updateRatingImages(ratingId: string, images: string[]) {
-	const db = getDb(env);
-
-	await db
-		.update(ratings)
-		.set({ images: JSON.stringify(images), updatedAt: new Date() })
-		.where(eq(ratings.id, ratingId));
-}
+export const updateRatingImages = createServerOnlyFn(
+	async (ratingId: string, images: string[]) =>
+		db()
+			.update(ratings)
+			.set({ images: JSON.stringify(images), updatedAt: new Date() })
+			.where(eq(ratings.id, ratingId)),
+);
