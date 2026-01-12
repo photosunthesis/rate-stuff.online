@@ -64,7 +64,7 @@ export const Route = createFileRoute("/create-account")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { createAccount, isPending, error, validationErrors } =
+	const { createAccount, isPending, errorMessage, validationErrors } =
 		useCreateAccount();
 	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
@@ -96,7 +96,7 @@ function RouteComponent() {
 			<RegisterForm
 				onSubmit={handleSubmit}
 				isPending={isPending}
-				error={error}
+				errorMessage={errorMessage}
 				validationErrors={validationErrors}
 			/>
 		</AuthLayout>

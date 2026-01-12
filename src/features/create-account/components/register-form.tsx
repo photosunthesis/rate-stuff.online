@@ -7,14 +7,14 @@ import { registerSchema, type RegisterInput } from "../types";
 interface RegisterFormProps {
 	onSubmit: (data: RegisterInput) => Promise<void>;
 	isPending: boolean;
-	error?: Error | null;
+	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
 }
 
 export function RegisterForm({
 	onSubmit,
 	isPending,
-	error,
+	errorMessage,
 	validationErrors,
 }: RegisterFormProps) {
 	const form = useForm({
@@ -30,11 +30,44 @@ export function RegisterForm({
 		},
 	});
 
-	const hasGlobalError = error && Object.keys(validationErrors).length === 0;
+	const inferredFieldErrors: Record<string, string> = {};
+
+	if (errorMessage) {
+		const msg = errorMessage.toLowerCase();
+		if (msg.includes("email") && !validationErrors.email)
+			inferredFieldErrors.email = errorMessage;
+
+		if (msg.includes("username") && !validationErrors.username)
+			inferredFieldErrors.username = errorMessage;
+
+		if (
+			(msg.includes("invite") || msg.includes("invite code")) &&
+			!validationErrors.inviteCode
+		)
+			inferredFieldErrors.inviteCode = errorMessage;
+
+		if (msg.includes("confirm") && !validationErrors.confirmPassword)
+			inferredFieldErrors.confirmPassword = errorMessage;
+
+		if (
+			msg.includes("password") &&
+			!validationErrors.password &&
+			!inferredFieldErrors.confirmPassword
+		)
+			inferredFieldErrors.password = errorMessage;
+	}
+
+	const mergedValidationErrors = {
+		...validationErrors,
+		...inferredFieldErrors,
+	};
+
+	const hasGlobalError =
+		Boolean(errorMessage) && Object.keys(mergedValidationErrors).length === 0;
 
 	return (
 		<>
-			{hasGlobalError && <FormError message={error.message} />}
+			{hasGlobalError && <FormError message={errorMessage ?? ""} />}
 
 			<form
 				onSubmit={(e) => {
@@ -67,7 +100,7 @@ export function RegisterForm({
 								placeholder="e.g., NUS420"
 								error={
 									field.state.meta.errors[0]?.toString() ||
-									validationErrors.inviteCode
+									mergedValidationErrors.inviteCode
 								}
 								required
 							/>
@@ -100,7 +133,7 @@ export function RegisterForm({
 							placeholder="coolusername123"
 							error={
 								field.state.meta.errors[0]?.toString() ||
-								validationErrors.username
+								mergedValidationErrors.username
 							}
 							required
 						/>
@@ -128,7 +161,8 @@ export function RegisterForm({
 							onChange={(e) => field.handleChange(e.target.value)}
 							placeholder="your@email.com"
 							error={
-								field.state.meta.errors[0]?.toString() || validationErrors.email
+								field.state.meta.errors[0]?.toString() ||
+								mergedValidationErrors.email
 							}
 							required
 						/>
@@ -157,7 +191,7 @@ export function RegisterForm({
 							placeholder="Secret password"
 							error={
 								field.state.meta.errors[0]?.toString() ||
-								validationErrors.password
+								mergedValidationErrors.password
 							}
 							required
 						/>
@@ -186,7 +220,7 @@ export function RegisterForm({
 							placeholder="Confirm password"
 							error={
 								field.state.meta.errors[0]?.toString() ||
-								validationErrors.confirmPassword
+								mergedValidationErrors.confirmPassword
 							}
 							required
 						/>

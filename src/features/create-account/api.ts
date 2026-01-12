@@ -1,8 +1,7 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, json } from "@tanstack/react-start";
 import { ZodError } from "zod";
 import {
 	registerSchema,
-	type AuthResponse,
 	type PublicUser,
 	type RegisterInput,
 } from "~/features/create-account/types";
@@ -47,35 +46,34 @@ const authRateLimit = createRateLimitMiddleware({
 export const registerFn = createServerFn({ method: "POST" })
 	.middleware([authRateLimit])
 	.inputValidator(registerSchema)
-	.handler(async ({ data }): Promise<AuthResponse> => {
+	.handler(async ({ data }) => {
 		try {
-			const result = await createUser(data as RegisterInput);
-
-			if (!result.success) {
-				return {
-					success: false,
-					error: result.error,
-					errors: result.fieldErrors,
-				};
-			}
+			const userData = await createUser(data as RegisterInput);
 
 			await setSessionCookie({
-				userId: result.data.id,
-				email: result.data.email,
+				userId: userData.id,
+				email: userData.email,
 			});
 
-			return { success: true, user: mapUserData(result.data) };
+			return { success: true, user: mapUserData(userData) };
 		} catch (error) {
-			if (error instanceof ZodError) {
-				return {
+			if (error instanceof ZodError)
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{ status: 422 },
+				);
+
+			throw json(
+				{
 					success: false,
-					error: "Validation failed",
-					errors: formatZodError(error),
-				};
-			}
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Registration failed",
-			};
+					errorMessage:
+						error instanceof Error ? error.message : "Registration failed",
+				},
+				{ status: 500 },
+			);
 		}
 	});
