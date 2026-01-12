@@ -39,7 +39,7 @@ A small, delightful app for quickly rating and discovering "stuff" — whether i
 
 1. Install dependencies: `pnpm install`
 2. Run locally: `pnpm dev`
-3. Database migrations: `pnpm db:migrate:local`
+3. Database migrations: `pnpm db:migrate`
 
 ## License 📄
 
