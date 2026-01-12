@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, json } from "@tanstack/react-start";
 import { ZodError } from "zod";
 import {
 	loginSchema,
@@ -38,44 +38,43 @@ function mapUserData(userData: {
 	};
 }
 
-const authRateLimit = createRateLimitMiddleware({
-	binding: "AUTH_RATE_LIMITER",
-	keyFn: rateLimitKeys.byIp,
-	errorMessage: "Too many requests. Please try again after a short while.",
-});
-
 export const loginFn = createServerFn({ method: "POST" })
-	.middleware([authRateLimit])
+	.middleware([
+		createRateLimitMiddleware({
+			binding: "AUTH_RATE_LIMITER",
+			keyFn: rateLimitKeys.byIp,
+			errorMessage: "Too many requests. Please try again after a short while.",
+		}),
+	])
 	.inputValidator(loginSchema)
 	.handler(async ({ data }): Promise<AuthResponse> => {
 		try {
-			const result = await authenticateUser(data as LoginInput);
-
-			if (!result.success) {
-				return {
-					success: false,
-					error: result.error,
-					errors: result.fieldErrors,
-				};
-			}
+			const userData = await authenticateUser(data as LoginInput);
 
 			await setSessionCookie({
-				userId: result.data.id,
-				email: result.data.email,
+				userId: userData.id,
+				email: userData.email,
 			});
 
-			return { success: true, user: mapUserData(result.data) };
+			return { success: true, user: mapUserData(userData) };
 		} catch (error) {
 			if (error instanceof ZodError) {
-				return {
-					success: false,
-					error: "Validation failed",
-					errors: formatZodError(error),
-				};
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{ status: 400 },
+				);
 			}
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Login failed",
-			};
+
+			throw json(
+				{
+					success: false,
+					errorMessage: error instanceof Error ? error.message : "Login failed",
+				},
+				{ status: 500 },
+			);
 		}
 	});

@@ -4,19 +4,19 @@ import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { loginSchema, type LoginInput } from "../types";
 
-interface LoginFormProps {
+interface SignInFormProps {
 	onSubmit: (data: LoginInput) => Promise<void>;
 	isPending: boolean;
-	error?: Error | null;
+	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
 }
 
-export function LoginForm({
+export function SignInForm({
 	onSubmit,
 	isPending,
-	error,
+	errorMessage,
 	validationErrors,
-}: LoginFormProps) {
+}: SignInFormProps) {
 	const form = useForm({
 		defaultValues: {
 			identifier: "",
@@ -27,11 +27,35 @@ export function LoginForm({
 		},
 	});
 
-	const hasGlobalError = error && Object.keys(validationErrors).length === 0;
+	const inferredFieldErrors: Record<string, string> = {};
+	if (errorMessage) {
+		const msg = errorMessage.toLowerCase();
+		if (
+			(msg.includes("email") || msg.includes("username")) &&
+			!validationErrors.identifier
+		)
+			inferredFieldErrors.identifier = errorMessage;
+
+		if (msg.includes("password") && !validationErrors.password)
+			inferredFieldErrors.password = errorMessage;
+
+		if (msg.includes("invalid credentials")) {
+			inferredFieldErrors.identifier = errorMessage;
+			inferredFieldErrors.password = errorMessage;
+		}
+	}
+
+	const mergedValidationErrors = {
+		...validationErrors,
+		...inferredFieldErrors,
+	};
+
+	const hasGlobalError =
+		Boolean(errorMessage) && Object.keys(mergedValidationErrors).length === 0;
 
 	return (
 		<>
-			{hasGlobalError && <FormError message={error.message} />}
+			{hasGlobalError && <FormError message={errorMessage ?? ""} />}
 
 			<form
 				onSubmit={(e) => {
@@ -63,7 +87,7 @@ export function LoginForm({
 							placeholder="you@example.com or your-username"
 							error={
 								field.state.meta.errors[0]?.toString() ||
-								validationErrors.identifier
+								mergedValidationErrors.identifier
 							}
 							required
 						/>
@@ -92,7 +116,7 @@ export function LoginForm({
 							placeholder="Your password"
 							error={
 								field.state.meta.errors[0]?.toString() ||
-								validationErrors.password
+								mergedValidationErrors.password
 							}
 							required
 						/>
@@ -108,6 +132,7 @@ export function LoginForm({
 							disabled={!canSubmit || isPending || isSubmitting}
 							isLoading={isPending || isSubmitting}
 							className="mt-6"
+							loadingMessage="Signing in..."
 						>
 							Sign In
 						</Button>

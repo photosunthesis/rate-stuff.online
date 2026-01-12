@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { useSignIn } from "~/features/sign-in/hooks";
 import { AuthLayout } from "~/components/layout/auth-layout";
-import { LoginForm } from "~/features/sign-in/components/login-form";
+import { SignInForm } from "~/features/sign-in/components/sig-in-form";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/sign-in")({
 function RouteComponent() {
 	const navigate = useNavigate();
 	const search = useSearch({ from: "/sign-in" });
-	const { signIn, isPending, error, validationErrors } = useSignIn();
+	const { signIn, isPending, errorMessage, validationErrors } = useSignIn();
 	const { isAuthenticated, isLoading } = useIsAuthenticated();
 
 	const handleSubmit = async (data: {
@@ -87,10 +87,10 @@ function RouteComponent() {
 			footerLinkText="Create an account"
 			footerLinkTo="/create-account"
 		>
-			<LoginForm
+			<SignInForm
 				onSubmit={handleSubmit}
 				isPending={isPending}
-				error={error}
+				errorMessage={errorMessage}
 				validationErrors={validationErrors}
 			/>
 		</AuthLayout>
