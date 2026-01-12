@@ -9,11 +9,11 @@ export const profileSetupSchema = z.object({
 	avatarUrl: z.string().optional().or(z.literal("")),
 });
 
-export type ProfileSetupSchemaInput = z.infer<typeof profileSetupSchema>;
+export type SetUpProfileSchemaInput = z.infer<typeof profileSetupSchema>;
 
 // Client-side input includes an optional File for the avatar; the server
 // receives only the fields validated by `profileSetupSchema` (displayName, avatarUrl).
-export type ProfileSetupInput = ProfileSetupSchemaInput & { avatar?: File };
+export type SetUpProfileInput = SetUpProfileSchemaInput & { avatar?: File };
 
 export type PublicUser = {
 	id: string;

@@ -1,9 +1,9 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { isAuthenticatedQueryOptions } from "~/features/session/queries";
-import { ProfileSetupForm } from "~/features/set-up-profile/components/profile-setup-form";
+import { SetUpProfileForm } from "~/features/set-up-profile/components/set-up-profile-form";
 import { AuthLayout } from "~/components/layout/auth-layout";
 import { useSetUpProfile } from "~/features/set-up-profile/hooks";
-import type { ProfileSetupInput } from "~/features/set-up-profile/types";
+import type { SetUpProfileInput } from "~/features/set-up-profile/types";
 import { currentUserQueryOptions } from "~/features/session/queries";
 
 export const Route = createFileRoute("/set-up-profile")({
@@ -40,7 +40,7 @@ function RouteComponent() {
 		user,
 	} = useSetUpProfile();
 
-	const handleSubmit = async (data: ProfileSetupInput) => {
+	const handleSubmit = async (data: SetUpProfileInput) => {
 		try {
 			const result = await update(data);
 			if (result && (result as { success?: boolean }).success) {
@@ -56,7 +56,7 @@ function RouteComponent() {
 			title="Set up your profile"
 			description="Personalize your account with a photo and display name."
 		>
-			<ProfileSetupForm
+			<SetUpProfileForm
 				onSubmit={handleSubmit}
 				onSkip={() => navigate({ to: "/" })}
 				isPending={isPending}

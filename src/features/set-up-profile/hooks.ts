@@ -2,7 +2,7 @@ import { useUpdateProfileMutation, useUploadAvatarMutation } from "./queries";
 import { useCurrentUser } from "../session/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import type { ProfileSetupInput, PublicUser } from "./types";
+import type { SetUpProfileInput, PublicUser } from "./types";
 import { extractValidationErrors, normalizeError } from "~/utils/errors";
 
 export function useSetUpProfile() {
@@ -18,7 +18,7 @@ export function useSetUpProfile() {
 	const { user } = useCurrentUser();
 
 	return {
-		updateProfile: async (data: ProfileSetupInput) => {
+		updateProfile: async (data: SetUpProfileInput) => {
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 
