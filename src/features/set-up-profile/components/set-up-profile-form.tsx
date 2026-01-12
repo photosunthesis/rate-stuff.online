@@ -271,7 +271,7 @@ export function SetUpProfileForm({
 						{([canSubmit, isSubmitting]) => (
 							<Button
 								type="submit"
-								loadingMessage="Setting up..."
+								loadingLabel="Setting up..."
 								disabled={
 									!hasValues ||
 									!canSubmit ||

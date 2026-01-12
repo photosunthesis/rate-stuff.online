@@ -3,12 +3,12 @@ import type { ButtonHTMLAttributes } from "react";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: "primary" | "secondary";
 	isLoading?: boolean;
-	loadingMessage?: string;
+	loadingLabel?: string;
 }
 
 export function Button({
 	variant = "primary",
-	loadingMessage = "Loading...",
+	loadingLabel = "Loading...",
 	isLoading,
 	children,
 	disabled,
@@ -33,7 +33,7 @@ export function Button({
 			} ${className || ""}`}
 			{...props}
 		>
-			{isLoading ? loadingMessage : children}
+			{isLoading ? loadingLabel : children}
 		</button>
 	);
 }

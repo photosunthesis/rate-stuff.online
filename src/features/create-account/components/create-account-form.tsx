@@ -233,7 +233,7 @@ export function CreateAccountForm({
 					{([canSubmit, isSubmitting]) => (
 						<Button
 							type="submit"
-							loadingMessage="Creating Account..."
+							loadingLabel="Creating Account..."
 							disabled={!canSubmit || isPending || isSubmitting}
 							isLoading={isPending || isSubmitting}
 							className="mt-6"

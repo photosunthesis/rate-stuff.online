@@ -284,6 +284,7 @@ export function CreateRatingForm({
 							</Button>
 							<Button
 								type="submit"
+								loadingLabel="Creating..."
 								disabled={!canSubmit || isPending || isSubmitting}
 								isLoading={isPending || isSubmitting}
 								className="w-auto! px-6 py-1.5 text-sm"

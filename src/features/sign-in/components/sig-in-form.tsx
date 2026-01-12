@@ -132,7 +132,7 @@ export function SignInForm({
 							disabled={!canSubmit || isPending || isSubmitting}
 							isLoading={isPending || isSubmitting}
 							className="mt-6"
-							loadingMessage="Signing in..."
+							loadingLabel="Signing in..."
 						>
 							Sign In
 						</Button>
