@@ -1,8 +1,27 @@
-import { db } from "~/db/index";
-import { ratings, stuff as stuffTable } from "~/db/schema";
+import { getDb } from "~/db/index";
+import { env } from "cloudflare:workers";
+import {
+	ratings,
+	stuff as stuffTable,
+	ratingsToTags,
+	tags,
+	users,
+} from "~/db/schema";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { StuffWithAggregates, StuffRatingsPage } from "./types";
+
+type RatingQueryResult = {
+	rating: typeof ratings.$inferSelect;
+	stuff: typeof stuffTable.$inferSelect | null;
+	user: {
+		id: string;
+		name: string | null;
+		username: string;
+		avatarUrl: string | null;
+	} | null;
+	tagName: string | null;
+};
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -17,9 +36,84 @@ function makeCursor(createdAt: Date | string | number, id: string) {
 	return `${new Date(createdAt).toISOString()}|${id}`;
 }
 
+function groupAndMapRatings(
+	results: RatingQueryResult[],
+): RatingWithRelations[] {
+	const grouped = results.reduce(
+		(acc, row) => {
+			const ratingId = row.rating.id;
+			if (!acc[ratingId]) {
+				acc[ratingId] = {
+					...row.rating,
+					stuff: {
+						id: row.stuff?.id || "",
+						name: row.stuff?.name || "",
+						slug: row.stuff?.slug || "",
+					},
+					user: {
+						id: row.user?.id || "",
+						name: row.user?.name || null,
+						username: row.user?.username || "",
+						avatarUrl: row.user?.avatarUrl || null,
+					},
+					tags: [] as string[],
+				};
+			}
+			if (row.tagName) acc[ratingId].tags.push(row.tagName);
+
+			return acc;
+		},
+		{} as Record<string, RatingWithRelations>,
+	);
+
+	return Object.values(grouped);
+}
+
+async function extractImagesForStuff(
+	stuffId: string,
+	maxImages = 8,
+): Promise<string[]> {
+	const db = getDb(env);
+	const imageRows = await db
+		.select({ images: ratings.images })
+		.from(ratings)
+		.where(
+			and(
+				eq(ratings.stuffId, stuffId),
+				sql`${ratings.images} IS NOT NULL`,
+				isNull(ratings.deletedAt),
+			),
+		)
+		.orderBy(desc(ratings.createdAt), desc(ratings.id))
+		.limit(100);
+
+	const images: string[] = [];
+	const seen = new Set<string>();
+
+	for (const r of imageRows) {
+		if (!r.images) continue;
+		try {
+			const parsed: unknown = JSON.parse(r.images);
+			if (Array.isArray(parsed)) {
+				for (const img of parsed) {
+					if (typeof img === "string" && !seen.has(img)) {
+						images.push(img);
+						seen.add(img);
+						if (images.length >= maxImages) break;
+					}
+				}
+			}
+		} catch {}
+		if (images.length >= maxImages) break;
+	}
+
+	return images;
+}
+
 export async function getStuffBySlug(
 	slug: string,
 ): Promise<StuffWithAggregates | null> {
+	const db = getDb(env);
 	const rows = await db
 		.select({
 			id: stuffTable.id,
@@ -27,8 +121,8 @@ export async function getStuffBySlug(
 			slug: stuffTable.slug,
 			createdAt: stuffTable.createdAt,
 			updatedAt: stuffTable.updatedAt,
-			ratingCount: sql`COUNT(${ratings.id})`,
-			avgScore: sql`AVG(${ratings.score})`,
+			ratingCount: sql<number>`COUNT(${ratings.id})`,
+			avgScore: sql<number>`AVG(${ratings.score})`,
 		})
 		.from(stuffTable)
 		.leftJoin(
@@ -51,38 +145,7 @@ export async function getStuffBySlug(
 	const ratingCount = Number(row.ratingCount ?? 0);
 	const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
 
-	const imageRows = await db
-		.select({ images: ratings.images })
-		.from(ratings)
-		.where(
-			and(
-				eq(ratings.stuffId, row.id),
-				sql`${ratings.images} IS NOT NULL`,
-				isNull(ratings.deletedAt),
-			),
-		)
-		.orderBy(desc(ratings.createdAt), desc(ratings.id))
-		.limit(100);
-
-	const images: string[] = [];
-	const seen = new Set<string>();
-
-	for (const r of imageRows) {
-		if (!r.images) continue;
-		try {
-			const parsed: unknown = JSON.parse(r.images);
-			if (Array.isArray(parsed)) {
-				for (const img of parsed) {
-					if (typeof img === "string" && !seen.has(img)) {
-						images.push(img);
-						seen.add(img);
-						if (images.length >= 8) break;
-					}
-				}
-			}
-		} catch {}
-		if (images.length >= 8) break;
-	}
+	const images = await extractImagesForStuff(row.id);
 
 	return {
 		id: row.id,
@@ -101,6 +164,7 @@ export async function getStuffRatingsBySlug(
 	limit = 10,
 	cursor?: string,
 ): Promise<StuffRatingsPage | null> {
+	const db = getDb(env);
 	const parsed = parseCursor(cursor);
 	const cursorFilter = parsed
 		? or(
@@ -109,47 +173,48 @@ export async function getStuffRatingsBySlug(
 			)
 		: undefined;
 
-	// Find stuff id first (more reliable than embedding a subquery in sqlite)
-	const s = await db.query.stuff.findFirst({
-		where: eq(stuffTable.slug, slug),
-		columns: { id: true },
-	});
-	if (!s) return null;
+	const stuffResult = await db
+		.select({ id: stuffTable.id })
+		.from(stuffTable)
+		.where(eq(stuffTable.slug, slug))
+		.limit(1);
 
-	const results = await db.query.ratings.findMany({
-		where: and(
-			eq(ratings.stuffId, s.id),
-			isNull(ratings.deletedAt),
-			cursorFilter,
-		),
-		limit,
-		orderBy: [desc(ratings.createdAt), desc(ratings.id)],
-		with: {
-			stuff: true,
+	if (stuffResult.length === 0) return null;
+
+	const stuffId = stuffResult[0].id;
+
+	const results = await db
+		.select({
+			rating: ratings,
+			stuff: stuffTable,
 			user: {
-				columns: {
-					id: true,
-					name: true,
-					username: true,
-					avatarUrl: true,
-				},
+				id: users.id,
+				name: users.name,
+				username: users.username,
+				avatarUrl: users.avatarUrl,
 			},
-			tags: {
-				with: {
-					tag: true,
-				},
-			},
-		},
-	});
+			tagName: tags.name,
+		})
+		.from(ratings)
+		.leftJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
+		.leftJoin(users, eq(ratings.userId, users.id))
+		.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
+		.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
+		.where(
+			and(
+				eq(ratings.stuffId, stuffId),
+				isNull(ratings.deletedAt),
+				cursorFilter,
+			),
+		)
+		.orderBy(desc(ratings.createdAt), desc(ratings.id))
+		.limit(limit);
 
 	if (results.length === 0) {
 		return { ratings: [], nextCursor: undefined };
 	}
 
-	const mapped: RatingWithRelations[] = results.map((r) => ({
-		...r,
-		tags: (r.tags ?? []).map((t) => t.tag.name),
-	}));
+	const mapped = groupAndMapRatings(results);
 
 	let nextCursor: string | undefined;
 	if (mapped.length === limit) {

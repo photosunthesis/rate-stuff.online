@@ -1,8 +1,8 @@
-import { db } from "~/db/index";
+import { getDb } from "~/db/index";
+import { env } from "cloudflare:workers";
 import { users, ratings } from "~/db/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import type { PublicUser } from "~/features/set-up-profile/types";
-import { env } from "cloudflare:workers";
 import { uploadFile } from "~/utils/media-storage-utils";
 import { numberWithCommas } from "~/utils/number-utils";
 import { safeRandomUUID } from "~/utils/uuid-utils";
@@ -16,6 +16,7 @@ export async function updateUserProfile(
 	updates: { name?: string; avatarUrl?: string | null },
 ): Promise<Result<PublicUser>> {
 	try {
+		const db = getDb(env);
 		const updatedUser = await db
 			.update(users)
 			.set({ ...updates, updatedAt: new Date() })
@@ -41,7 +42,13 @@ export async function updateUserProfile(
 }
 
 export async function getUserById(userId: string): Promise<PublicUser | null> {
-	const user = await db.query.users.findFirst({ where: eq(users.id, userId) });
+	const db = getDb(env);
+	const user = await db
+		.select()
+		.from(users)
+		.where(eq(users.id, userId))
+		.limit(1)
+		.then((res) => res[0]);
 
 	if (!user) return null;
 
@@ -56,26 +63,42 @@ export async function getUserById(userId: string): Promise<PublicUser | null> {
 export async function getUserByUsername(
 	username: string,
 ): Promise<(PublicUser & { createdAt?: string | null }) | null> {
-	const user = await db.query.users.findFirst({
-		where: eq(users.username, username),
-	});
-
-	if (!user) return null;
-
-	// Count user's non-deleted ratings
+	const db = getDb(env);
 	const rows = await db
-		.select({ count: sql`COUNT(*)` })
-		.from(ratings)
-		.where(and(eq(ratings.userId, user.id), isNull(ratings.deletedAt)));
+		.select({
+			id: users.id,
+			username: users.username,
+			name: users.name,
+			avatarUrl: users.avatarUrl,
+			createdAt: users.createdAt,
+			ratingCount: sql`COUNT(${ratings.id})`,
+		})
+		.from(users)
+		.leftJoin(
+			ratings,
+			and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)),
+		)
+		.where(eq(users.username, username))
+		.groupBy(
+			users.id,
+			users.username,
+			users.name,
+			users.avatarUrl,
+			users.createdAt,
+		)
+		.limit(1);
 
-	const ratingsCount = rows && rows.length > 0 ? Number(rows[0].count) : 0;
+	if (!rows || rows.length === 0) return null;
+
+	const row = rows[0];
+	const ratingsCount = Number(row.ratingCount ?? 0);
 
 	return {
-		id: user.id,
-		username: user.username,
-		displayName: user.name,
-		avatarUrl: user.avatarUrl,
-		createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : null,
+		id: row.id,
+		username: row.username,
+		displayName: row.name,
+		avatarUrl: row.avatarUrl,
+		createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
 		ratingsCount: numberWithCommas(ratingsCount),
 	};
 }

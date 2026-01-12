@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { db } from "~/db/index";
+import { getDb } from "~/db/index";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
@@ -13,108 +13,135 @@ type Result<T> =
 	| { success: false; error: string; fieldErrors?: Record<string, string> };
 
 export async function searchStuff(query: string, limit = 10) {
+	const db = getDb(env);
 	const q = query.toLowerCase().trim();
+
 	if (!q) return [];
 
-	return db.query.stuff.findMany({
-		where: and(
-			like(sql`LOWER(${stuff.name})`, `${q}%`),
-			isNull(stuff.deletedAt),
-		),
-		limit,
-		orderBy: desc(stuff.createdAt),
-	});
+	return db
+		.select()
+		.from(stuff)
+		.where(
+			and(like(sql`LOWER(${stuff.name})`, `${q}%`), isNull(stuff.deletedAt)),
+		)
+		.orderBy(desc(stuff.createdAt))
+		.limit(limit);
 }
 
 export async function searchTags(query: string, limit = 10) {
+	const db = getDb(env);
 	const q = query.toLowerCase().trim();
+
 	if (!q) return [];
 
-	return db.query.tags.findMany({
-		where: like(sql`LOWER(${tags.name})`, `${q}%`),
-		limit,
+	return db
+		.select()
+		.from(tags)
+		.where(like(sql`LOWER(${tags.name})`, `${q}%`))
+		.orderBy(desc(tags.createdAt))
+		.limit(limit);
+}
+
+async function getOrCreateStuff(name: string): Promise<Stuff | null> {
+	const db = getDb(env);
+
+	return db.transaction(async (tx) => {
+		const existing = await tx
+			.select()
+			.from(stuff)
+			.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
+			.limit(1)
+			.then((res) => res[0]);
+
+		if (existing) return null;
+
+		try {
+			const [newStuff] = await tx
+				.insert(stuff)
+				.values({ name, slug: generateSlug(name) })
+				.onConflictDoNothing()
+				.returning();
+
+			if (newStuff) return newStuff;
+
+			const selected = await tx
+				.select()
+				.from(stuff)
+				.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
+				.limit(1)
+				.then((res) => res[0]);
+
+			if (selected) return selected;
+
+			return null;
+		} catch {
+			return null;
+		}
 	});
 }
 
-export async function getOrCreateStuff(name: string): Promise<Result<Stuff>> {
-	const existing = await db.query.stuff.findFirst({
-		where: and(eq(stuff.name, name), isNull(stuff.deletedAt)),
+async function createTags(names: string[]): Promise<Tag[]> {
+	const db = getDb(env);
+
+	return db.transaction(async (tx) => {
+		if (names.length === 0) return [];
+
+		const normalizedNames = names.map((n) => n.toLowerCase().trim());
+		const uniqueNames = Array.from(new Set(normalizedNames));
+		const existingTags = await tx
+			.select()
+			.from(tags)
+			.where(inArray(tags.name, uniqueNames));
+		const existingNames = new Set(existingTags.map((t) => t.name));
+		const newNames = uniqueNames.filter((n) => !existingNames.has(n));
+
+		if (newNames.length > 0) {
+			await tx
+				.insert(tags)
+				.values(newNames.map((name) => ({ name })))
+				.onConflictDoNothing()
+				.execute();
+		}
+
+		return tx.select().from(tags).where(inArray(tags.name, uniqueNames));
 	});
-
-	if (existing) {
-		return { success: true, data: existing };
-	}
-
-	try {
-		const [newStuff] = await db
-			.insert(stuff)
-			.values({ name, slug: generateSlug(name) })
-			.returning();
-
-		return { success: true, data: newStuff };
-	} catch {
-		return { success: false, error: "Failed to create stuff" };
-	}
-}
-
-export async function createTags(names: string[]): Promise<Tag[]> {
-	if (names.length === 0) return [];
-
-	const normalizedNames = names.map((n) => n.toLowerCase().trim());
-	const uniqueNames = Array.from(new Set(normalizedNames));
-
-	const existingTags = await db.query.tags.findMany({
-		where: inArray(tags.name, uniqueNames),
-	});
-	const existingNames = new Set(existingTags.map((t) => t.name));
-	const newNames = uniqueNames.filter((n) => !existingNames.has(n));
-
-	if (newNames.length > 0) {
-		// Bulk-insert missing tag names and ignore conflicts if they already exist.
-		// If the driver doesn't support `onConflictDoNothing`, this will throw
-		// and surface the error so it can be handled by the caller.
-		await db
-			.insert(tags)
-			.values(newNames.map((name) => ({ name })))
-			.onConflictDoNothing()
-			.run();
-	}
-
-	return db.query.tags.findMany({ where: inArray(tags.name, uniqueNames) });
 }
 
 export async function createRating(
 	userId: string,
 	input: CreateRatingInput,
 ): Promise<Result<typeof ratings.$inferSelect>> {
-	let stuffId = input.stuffId;
+	const db = getDb(env);
 
-	if (!stuffId && input.stuffName) {
-		const stuffResult = await getOrCreateStuff(input.stuffName);
-		if (!stuffResult.success) {
+	return db.transaction(async (tx) => {
+		let stuffId = input.stuffId;
+
+		if (!stuffId && input.stuffName) {
+			const stuffResult = await getOrCreateStuff(input.stuffName);
+
+			if (!stuffResult) {
+				return {
+					success: false,
+					error: "Failed to create or find stuff",
+					fieldErrors: { stuffId: "Failed to create or find stuff" },
+				};
+			}
+			stuffId = stuffResult.id;
+		}
+
+		if (!stuffId) {
 			return {
 				success: false,
-				error: stuffResult.error,
-				fieldErrors: { stuffId: stuffResult.error },
+				error: "Stuff ID is required",
+				fieldErrors: { stuffId: "Please select or create something to rate" },
 			};
 		}
-		stuffId = stuffResult.data.id;
-	}
 
-	if (!stuffId) {
-		return {
-			success: false,
-			error: "Stuff ID is required",
-			fieldErrors: { stuffId: "Please select or create something to rate" },
-		};
-	}
-
-	try {
 		const tagObjects = await createTags(input.tags);
 
 		const slug = generateSlug(input.title);
 
-		const [rating] = await db
+		const [rating] = await tx
 			.insert(ratings)
 			.values({
 				userId,
@@ -128,18 +155,15 @@ export async function createRating(
 			.returning();
 
 		if (tagObjects.length > 0) {
-			await db.insert(ratingsToTags).values(
-				tagObjects.map((tag) => ({
-					ratingId: rating.id,
-					tagId: tag.id,
-				})),
-			);
+			await tx
+				.insert(ratingsToTags)
+				.values(
+					tagObjects.map((tag) => ({ ratingId: rating.id, tagId: tag.id })),
+				);
 		}
 
 		return { success: true, data: rating };
-	} catch {
-		return { success: false, error: "Failed to create rating" };
-	}
+	});
 }
 
 export async function uploadImage(
@@ -167,6 +191,8 @@ export async function updateRatingImages(
 	images: string[],
 ): Promise<Result<null>> {
 	try {
+		const db = getDb(env);
+
 		await db
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })

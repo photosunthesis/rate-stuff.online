@@ -1,1 +1,0 @@
-ALTER TABLE `invite_codes` DROP COLUMN `expires_at`;

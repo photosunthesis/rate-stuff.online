@@ -1,30 +1,28 @@
 import { relations } from "drizzle-orm";
 import {
-	sqliteTable,
+	pgTable,
 	text,
 	primaryKey,
-	integer,
+	timestamp,
 	index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-export const tags = sqliteTable("tags", {
+export const tags = pgTable("tags", {
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => safeRandomUUID()),
 	name: text("name").notNull().unique(),
-	createdAt: integer("created_at", { mode: "timestamp_ms" })
-		.notNull()
-		.$defaultFn(() => new Date()),
-	deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
+	createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({
 	ratings: many(ratingsToTags),
 }));
 
-export const ratingsToTags = sqliteTable(
+export const ratingsToTags = pgTable(
 	"ratings_to_tags",
 	{
 		ratingId: text("rating_id")

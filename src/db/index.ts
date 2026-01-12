@@ -1,5 +1,10 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
-import * as schema from "./schema/index.ts";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
-export const db = drizzle(env.rate_stuff_online_db, { schema });
+export const getDb = (env: Env) => {
+	const pool = new Pool({
+		connectionString: env.HYPERDRIVE.connectionString,
+	});
+
+	return drizzle({ client: pool });
+};

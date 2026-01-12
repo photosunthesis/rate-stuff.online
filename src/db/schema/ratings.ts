@@ -1,17 +1,11 @@
 import { relations } from "drizzle-orm";
-import {
-	sqliteTable,
-	text,
-	real,
-	integer,
-	index,
-} from "drizzle-orm/sqlite-core";
+import { pgTable, text, real, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-export const ratings = sqliteTable(
+export const ratings = pgTable(
 	"ratings",
 	{
 		id: text("id")
@@ -28,13 +22,9 @@ export const ratings = sqliteTable(
 		content: text("content").notNull(),
 		slug: text("slug").notNull().unique(),
 		images: text("images"),
-		createdAt: integer("created_at", { mode: "timestamp_ms" })
-			.notNull()
-			.$defaultFn(() => new Date()),
-		updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-			.notNull()
-			.$defaultFn(() => new Date()),
-		deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+		updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
+		deletedAt: timestamp("deleted_at", { mode: "date" }),
 	},
 	(table) => [
 		index("ratings_created_at_idx").on(table.createdAt),

@@ -1,8 +1,8 @@
-import { sqliteTable, text, index, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, text, index, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-export const sessions = sqliteTable(
+export const sessions = pgTable(
 	"sessions",
 	{
 		id: text("id")
@@ -11,10 +11,8 @@ export const sessions = sqliteTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
-		createdAt: integer("created_at", { mode: "timestamp_ms" })
-			.notNull()
-			.$defaultFn(() => new Date()),
+		expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 	},
 	(table) => [index("sessions_user_id_idx").on(table.userId)],
 );

@@ -1,4 +1,5 @@
-import { db } from "~/db/index";
+import { getDb } from "~/db/index";
+import { env } from "cloudflare:workers";
 import { users } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
 import { comparePasswords } from "~/utils/auth-utils";
@@ -22,12 +23,18 @@ type UserData = {
 export async function authenticateUser(
 	input: LoginInput,
 ): Promise<Result<UserData>> {
-	const user = await db.query.users.findFirst({
-		where: or(
-			eq(users.email, input.identifier),
-			eq(users.username, input.identifier),
-		),
-	});
+	const db = getDb(env);
+	const user = await db
+		.select()
+		.from(users)
+		.where(
+			or(
+				eq(users.email, input.identifier),
+				eq(users.username, input.identifier),
+			),
+		)
+		.limit(1)
+		.then((res) => res[0]);
 
 	if (!user) {
 		return {
