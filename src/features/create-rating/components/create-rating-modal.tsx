@@ -19,7 +19,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 	const modalId = useId();
 	const [isClosing, setIsClosing] = useState(false);
 	const EXIT_ANIMATION_MS = 250;
-	const { createRating, isPending, error, validationErrors, reset } =
+	const { createRating, isPending, errorMessage, validationErrors, reset } =
 		useCreateRating();
 
 	const handleClose = useCallback(
@@ -134,7 +134,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 					<CreateRatingForm
 						onSubmit={createRating}
 						isPending={isPending}
-						error={error}
+						errorMessage={errorMessage}
 						validationErrors={validationErrors}
 						onSuccess={handleFormSuccess}
 						onCancel={handleClose}

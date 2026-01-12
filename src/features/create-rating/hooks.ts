@@ -48,62 +48,146 @@ export function useCreateRating() {
 	const uploadMutation = useUploadImageMutation();
 	const updateImagesMutation = useUpdateRatingImagesMutation();
 
+	function extractValidationErrors(payload: unknown): Record<string, string> {
+		if (!payload || typeof payload !== "object" || Array.isArray(payload))
+			return {};
+		const obj = payload as Record<string, unknown>;
+		const candidate = obj.fieldErrors ?? obj.errors ?? obj.error ?? undefined;
+		if (!candidate || typeof candidate !== "object" || Array.isArray(candidate))
+			return {};
+		const c = candidate as Record<string, unknown>;
+		const isStringMap = Object.values(c).every((v) => typeof v === "string");
+		return isStringMap ? (c as Record<string, string>) : {};
+	}
+
+	function normalizeError(err: unknown): {
+		errorMessage?: string;
+		errors?: Record<string, string>;
+	} {
+		if (!err) return {};
+		if (err instanceof Error) {
+			const msg = err.message ?? "";
+			try {
+				const parsed = JSON.parse(msg);
+				return normalizeError(parsed);
+			} catch {
+				return { errorMessage: msg };
+			}
+		}
+		if (typeof err === "string") {
+			try {
+				const parsed = JSON.parse(err);
+				return normalizeError(parsed);
+			} catch {
+				return { errorMessage: err };
+			}
+		}
+		if (typeof err === "object" && err !== null && !Array.isArray(err)) {
+			const o = err as Record<string, unknown>;
+			const message =
+				typeof o.errorMessage === "string"
+					? o.errorMessage
+					: typeof o.error === "string"
+						? o.error
+						: typeof o.message === "string"
+							? o.message
+							: undefined;
+			const errors = extractValidationErrors(o);
+			return {
+				errorMessage: message,
+				errors: Object.keys(errors).length ? errors : undefined,
+			};
+		}
+		return { errorMessage: String(err) };
+	}
+
+	const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(
+		null,
+	);
+	const [localValidationErrors, setLocalValidationErrors] = useState<
+		Record<string, string>
+	>({});
+
 	return {
 		createRating: async (input: CreateRatingHookInput) => {
+			setLocalErrorMessage(null);
+			setLocalValidationErrors({});
+
 			const ratingInput: CreateRatingInput = {
 				...input,
 				content: normalizeParagraphBreaks(input.content),
 				images: [],
 			};
 
-			const result = await createMutation.mutateAsync(ratingInput);
+			try {
+				const result = await createMutation.mutateAsync(ratingInput);
 
-			if (!result.success || !result.data) {
-				throw new Error(result.error || "Failed to create rating");
-			}
-
-			const ratingId = result.data.id;
-
-			const imageUrls: string[] = [];
-
-			if (input.images && input.images.length > 0) {
-				const uploadPromises = input.images.map((file) =>
-					uploadMutation.mutateAsync({ file, ratingId }),
-				);
-
-				const results = await Promise.all(uploadPromises);
-				const firstError = results.find((r) => !r.success);
-
-				if (firstError && !firstError.success) {
-					throw new Error(firstError.error || "Failed to upload images");
+				if (!result.success || !result.data) {
+					const validationErrors = extractValidationErrors(result);
+					setLocalValidationErrors(validationErrors);
+					const msg =
+						(result as unknown as { errorMessage?: string }).errorMessage ??
+						"Failed to create rating";
+					setLocalErrorMessage(msg);
+					throw new Error(msg);
 				}
 
-				results.forEach((r) => {
-					if (r.success) imageUrls.push(r.data.url);
-				});
-			}
+				const ratingId = result.data.id;
 
-			if (imageUrls.length > 0) {
-				const updateResult = await updateImagesMutation.mutateAsync({
-					ratingId,
-					images: imageUrls,
-				});
-				if (!updateResult.success) {
-					throw new Error(
-						updateResult.error || "Failed to update rating images",
-					);
+				const imageUrls: string[] = [];
+
+				if (input.images && input.images.length > 0) {
+					for (const file of input.images) {
+						try {
+							const result = await uploadMutation.mutateAsync({
+								file,
+								ratingId,
+							});
+							imageUrls.push(result.url);
+						} catch (e) {
+							const info = normalizeError(e);
+							if (info.errors) setLocalValidationErrors(info.errors);
+							const msg =
+								info.errorMessage ??
+								(e instanceof Error ? e.message : String(e));
+							setLocalErrorMessage(msg);
+							throw new Error(msg);
+						}
+					}
 				}
+
+				if (imageUrls.length > 0) {
+					await updateImagesMutation.mutateAsync({
+						ratingId,
+						images: imageUrls,
+					});
+				}
+			} catch (e) {
+				const info = normalizeError(e);
+				if (info.errors) setLocalValidationErrors(info.errors);
+				const msg =
+					info.errorMessage ?? (e instanceof Error ? e.message : String(e));
+				setLocalErrorMessage(msg);
+				throw new Error(msg);
 			}
 		},
 		isPending: createMutation.isPending || uploadMutation.isPending,
-		error: createMutation.error || uploadMutation.error,
+		errorMessage:
+			localErrorMessage ??
+			(createMutation.data &&
+			!(createMutation.data as { success?: boolean }).success
+				? (createMutation.data as unknown as { errorMessage?: string })
+						.errorMessage
+				: undefined),
 		validationErrors:
-			(createMutation.data && !createMutation.data.success
-				? createMutation.data.fieldErrors
-				: {}) || {},
+			(createMutation.data
+				? extractValidationErrors(createMutation.data)
+				: localValidationErrors) || {},
 		reset: () => {
 			createMutation.reset();
 			uploadMutation.reset();
+			setLocalErrorMessage(null);
+			setLocalValidationErrors({});
 		},
 	};
 }

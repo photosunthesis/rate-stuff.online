@@ -17,7 +17,7 @@ interface CreateRatingFormProps {
 		data: Omit<CreateRatingInput, "images"> & { images?: File[] },
 	) => Promise<void>;
 	isPending: boolean;
-	error?: Error | null;
+	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
 	onSuccess?: () => void;
 	onCancel?: () => void;
@@ -26,7 +26,7 @@ interface CreateRatingFormProps {
 export function CreateRatingForm({
 	onSubmit,
 	isPending,
-	error,
+	errorMessage,
 	validationErrors,
 	onSuccess,
 	onCancel,
@@ -78,10 +78,51 @@ export function CreateRatingForm({
 		},
 	});
 
-	const hasGlobalError = error && Object.keys(validationErrors).length === 0;
+	const inferredFieldErrors: Record<string, string> = {};
+	if (errorMessage) {
+		const msg = errorMessage.toLowerCase();
+		if (msg.includes("title") && !validationErrors.title)
+			inferredFieldErrors.title = errorMessage;
+		if (
+			(msg.includes("score") || msg.includes("rating")) &&
+			!validationErrors.score
+		)
+			inferredFieldErrors.score = errorMessage;
+		if (
+			(msg.includes("content") ||
+				msg.includes("thought") ||
+				msg.includes("review")) &&
+			!validationErrors.content
+		)
+			inferredFieldErrors.content = errorMessage;
+		if (
+			(msg.includes("stuff") ||
+				msg.includes("item") ||
+				msg.includes("not found") ||
+				msg.includes("name")) &&
+			!validationErrors.stuffId
+		)
+			inferredFieldErrors.stuffId = errorMessage;
+		if (msg.includes("tag") && !validationErrors.tags)
+			inferredFieldErrors.tags = errorMessage;
+		if (
+			(msg.includes("image") || msg.includes("upload")) &&
+			!validationErrors.images
+		)
+			inferredFieldErrors.images = errorMessage;
+	}
 
-	const getErrorMessage = (err: Error | null | undefined): string => {
+	const mergedValidationErrors = {
+		...validationErrors,
+		...inferredFieldErrors,
+	};
+
+	const hasGlobalError =
+		Boolean(errorMessage) && Object.keys(mergedValidationErrors).length === 0;
+
+	const getErrorMessage = (err: string | Error | null | undefined): string => {
 		if (!err) return "";
+		if (typeof err === "string") return err;
 		try {
 			const parsed = JSON.parse(err.message);
 			if (Array.isArray(parsed)) {
@@ -115,7 +156,7 @@ export function CreateRatingForm({
 			>
 				{hasGlobalError && (
 					<div className="mb-6">
-						<FormError message={getErrorMessage(error)} />
+						<FormError message={getErrorMessage(errorMessage)} />
 					</div>
 				)}
 
@@ -124,7 +165,7 @@ export function CreateRatingForm({
 						<StuffSelector
 							value={selectedStuff || undefined}
 							onChange={setSelectedStuff}
-							error={validationErrors.stuffId}
+							error={mergedValidationErrors.stuffId}
 						/>
 					</div>
 
@@ -149,7 +190,9 @@ export function CreateRatingForm({
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
 									placeholder="Brief description of your experience"
-									error={field.state.meta.errors[0] || validationErrors.title}
+									error={
+										field.state.meta.errors[0] || mergedValidationErrors.title
+									}
 									required
 								/>
 							)}
@@ -182,7 +225,9 @@ export function CreateRatingForm({
 									min="1"
 									max="10"
 									step="0.1"
-									error={field.state.meta.errors[0] || validationErrors.score}
+									error={
+										field.state.meta.errors[0] || mergedValidationErrors.score
+									}
 									required
 								/>
 							)}
@@ -207,7 +252,9 @@ export function CreateRatingForm({
 									label="Your thoughts"
 									value={field.state.value}
 									onChange={(value) => field.handleChange(value)}
-									error={field.state.meta.errors[0] || validationErrors.content}
+									error={
+										field.state.meta.errors[0] || mergedValidationErrors.content
+									}
 									charLimit={5000}
 									placeholder="Elaborate on your rating..."
 								/>
@@ -219,7 +266,7 @@ export function CreateRatingForm({
 						<TagSelector
 							selectedTags={selectedTags}
 							onChange={setSelectedTags}
-							error={validationErrors.tags}
+							error={mergedValidationErrors.tags}
 							maxTags={5}
 						/>
 					</div>
@@ -228,7 +275,7 @@ export function CreateRatingForm({
 						<ImageField
 							images={selectedImages}
 							onChange={setSelectedImages}
-							error={validationErrors.images}
+							error={mergedValidationErrors.images}
 							maxFiles={4}
 						/>
 					</div>

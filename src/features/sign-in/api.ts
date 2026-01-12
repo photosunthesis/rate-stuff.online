@@ -65,7 +65,7 @@ export const loginFn = createServerFn({ method: "POST" })
 						errorMessage: "Validation failed",
 						errors: formatZodError(error),
 					},
-					{ status: 400 },
+					{ status: 422 },
 				);
 			}
 

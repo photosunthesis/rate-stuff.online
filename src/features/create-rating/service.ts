@@ -8,10 +8,6 @@ import { uploadFile } from "~/utils/media-storage-utils";
 import { generateSlug } from "~/utils/slug-utils";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-type Result<T> =
-	| { success: true; data: T }
-	| { success: false; error: string; fieldErrors?: Record<string, string> };
-
 export async function searchStuff(query: string, limit = 10) {
 	const db = getDb(env);
 	const q = query.toLowerCase().trim();
@@ -107,10 +103,7 @@ async function createTags(names: string[]): Promise<Tag[]> {
 	});
 }
 
-export async function createRating(
-	userId: string,
-	input: CreateRatingInput,
-): Promise<Result<typeof ratings.$inferSelect>> {
+export async function createRating(userId: string, input: CreateRatingInput) {
 	const db = getDb(env);
 
 	return db.transaction(async (tx) => {
@@ -120,27 +113,18 @@ export async function createRating(
 			const stuffResult = await getOrCreateStuff(input.stuffName);
 
 			if (!stuffResult) {
-				return {
-					success: false,
-					error: "Failed to create or find stuff",
-					fieldErrors: { stuffId: "Failed to create or find stuff" },
-				};
+				throw new Error(`Failed to create or retrieve "stuff"`);
 			}
+
 			stuffId = stuffResult.id;
 		}
 
 		if (!stuffId) {
-			return {
-				success: false,
-				error: "Stuff ID is required",
-				fieldErrors: { stuffId: "Please select or create something to rate" },
-			};
+			throw new Error(`Failed to determine the "stuff" for the rating`);
 		}
 
 		const tagObjects = await createTags(input.tags);
-
 		const slug = generateSlug(input.title);
-
 		const [rating] = await tx
 			.insert(ratings)
 			.values({
@@ -162,44 +146,27 @@ export async function createRating(
 				);
 		}
 
-		return { success: true, data: rating };
+		return rating;
 	});
 }
 
-export async function uploadImage(
-	file: File,
-	ratingId: string,
-): Promise<Result<{ key: string; url: string }>> {
+export async function uploadImage(file: File, ratingId: string) {
 	const origExt = file.name?.split(".").pop() ?? "webp";
 	const extension =
 		file.type === "image/webp" || origExt.toLowerCase() === "webp"
 			? "webp"
 			: origExt;
 	const key = `ratings/${ratingId}/${safeRandomUUID()}.${extension}`;
+	const url = await uploadFile(env, key, file);
 
-	try {
-		const url = await uploadFile(env, key, file);
-
-		return { success: true, data: { key, url } };
-	} catch {
-		return { success: false, error: "Failed to upload image" };
-	}
+	return { key, url };
 }
 
-export async function updateRatingImages(
-	ratingId: string,
-	images: string[],
-): Promise<Result<null>> {
-	try {
-		const db = getDb(env);
+export async function updateRatingImages(ratingId: string, images: string[]) {
+	const db = getDb(env);
 
-		await db
-			.update(ratings)
-			.set({ images: JSON.stringify(images), updatedAt: new Date() })
-			.where(eq(ratings.id, ratingId));
-
-		return { success: true, data: null };
-	} catch {
-		return { success: false, error: "Failed to update rating images" };
-	}
+	await db
+		.update(ratings)
+		.set({ images: JSON.stringify(images), updatedAt: new Date() })
+		.where(eq(ratings.id, ratingId));
 }

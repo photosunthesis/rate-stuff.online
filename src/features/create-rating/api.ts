@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, json } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
 import { createRatingSchema } from "~/features/display-ratings/types";
 import {
@@ -36,10 +36,10 @@ export const searchStuffFn = createServerFn({ method: "GET" })
 		try {
 			const results = await searchStuff(data.query);
 			return { success: true, data: results };
-		} catch (error) {
+		} catch {
 			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Search failed",
+				success: true,
+				data: [],
 			};
 		}
 	});
@@ -51,10 +51,10 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 		try {
 			const results = await searchTags(data.query);
 			return { success: true, data: results };
-		} catch (error) {
+		} catch {
 			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Search failed",
+				success: true,
+				data: [],
 			};
 		}
 	});
@@ -64,27 +64,30 @@ export const createRatingFn = createServerFn({ method: "POST" })
 	.inputValidator(createRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {
-			const result = await createRating(context.userSession.userId, data);
-			if (!result.success)
-				return {
-					success: false,
-					error: result.error,
-					fieldErrors: result.fieldErrors,
-				};
+			const rating = await createRating(context.userSession.userId, data);
 
-			return { success: true, data: result.data };
+			return { success: true, data: rating };
 		} catch (error) {
 			if (error instanceof ZodError)
-				return {
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{
+						status: 422,
+					},
+				);
+
+			throw json(
+				{
 					success: false,
-					error: "Validation failed",
-					fieldErrors: formatZodError(error),
-				};
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to create rating",
-			};
+					errorMessage:
+						error instanceof Error ? error.message : "Failed to create rating",
+				},
+				{ status: 500 },
+			);
 		}
 	});
 
@@ -117,15 +120,23 @@ export const uploadImageFn = createServerFn({ method: "POST" })
 			return result;
 		} catch (error) {
 			if (error instanceof ZodError)
-				return {
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{ status: 422 },
+				);
+
+			throw json(
+				{
 					success: false,
-					error: "Validation failed",
-					fieldErrors: formatZodError(error),
-				};
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Upload failed",
-			};
+					errorMessage:
+						error instanceof Error ? error.message : "Image upload failed",
+				},
+				{ status: 500 },
+			);
 		}
 	});
 
@@ -142,9 +153,15 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 			const result = await updateRatingImages(data.ratingId, data.images);
 			return result;
 		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Update failed",
-			};
+			return json(
+				{
+					success: false,
+					errorMessage:
+						error instanceof Error
+							? error.message
+							: "Failed to update rating images",
+				},
+				{ status: 500 },
+			);
 		}
 	});
