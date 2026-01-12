@@ -1,13 +1,12 @@
 import { pgTable, text, index, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { safeRandomUUID } from "~/utils/uuid";
 
 export const sessions = pgTable(
 	"sessions",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => safeRandomUUID()),
+			.$defaultFn(() => crypto.randomUUID()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),

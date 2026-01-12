@@ -7,12 +7,11 @@ import {
 	index,
 } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
-import { safeRandomUUID } from "~/utils/uuid";
 
 export const tags = pgTable("tags", {
 	id: text("id")
 		.primaryKey()
-		.$defaultFn(() => safeRandomUUID()),
+		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
 	createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 	deletedAt: timestamp("deleted_at", { mode: "date" }),

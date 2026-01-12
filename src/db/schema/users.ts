@@ -1,7 +1,6 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, uniqueIndex, timestamp } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
-import { safeRandomUUID } from "~/utils/uuid";
 
 export const ROLES = {
 	USER: "user",
@@ -16,7 +15,7 @@ export const users = pgTable(
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => safeRandomUUID()),
+			.$defaultFn(() => crypto.randomUUID()),
 		username: text("username").notNull(),
 		email: text("email").notNull().unique(),
 		password: text("password").notNull(),

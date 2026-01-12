@@ -3,14 +3,13 @@ import { pgTable, text, real, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
-import { safeRandomUUID } from "~/utils/uuid";
 
 export const ratings = pgTable(
 	"ratings",
 	{
 		id: text("id")
 			.primaryKey()
-			.$defaultFn(() => safeRandomUUID()),
+			.$defaultFn(() => crypto.randomUUID()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
