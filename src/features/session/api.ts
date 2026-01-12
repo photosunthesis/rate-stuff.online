@@ -1,8 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import {
-	getSession as getSessionUtil,
-	clearSessionCookie,
-} from "~/utils/auth-utils";
+import { getSession as getSessionUtil, clearSessionCookie } from "~/utils/auth";
 import { getUserById as getUserByIdService } from "~/features/set-up-profile/service";
 import type { PublicUser } from "~/features/set-up-profile/types";
 import { authMiddleware } from "~/middlewares/auth-middleware";

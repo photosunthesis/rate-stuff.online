@@ -1,6 +1,6 @@
 import { pgTable, text, index, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export const sessions = pgTable(
 	"sessions",

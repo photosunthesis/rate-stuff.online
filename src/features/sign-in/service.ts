@@ -2,7 +2,7 @@ import { getDb } from "~/db/index";
 import { env } from "cloudflare:workers";
 import { users } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
-import { comparePasswords } from "~/utils/auth-utils";
+import { comparePasswords } from "~/utils/auth";
 import type { LoginInput } from "~/features/sign-in/types";
 
 export async function authenticateUser(input: LoginInput) {

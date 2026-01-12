@@ -6,7 +6,7 @@ import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export function RightSidebar({
 	isAuthenticated = true,

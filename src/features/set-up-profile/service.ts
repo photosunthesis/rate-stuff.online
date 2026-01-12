@@ -3,9 +3,9 @@ import { env } from "cloudflare:workers";
 import { users, ratings } from "~/db/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import type { PublicUser } from "~/features/set-up-profile/types";
-import { uploadFile } from "~/utils/media-storage-utils";
-import { numberWithCommas } from "~/utils/number-utils";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { uploadFile } from "~/utils/media-storage";
+import { numberWithCommas } from "~/utils/numbers";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export async function updateUserProfile(
 	userId: string,

@@ -12,7 +12,7 @@ import {
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
-import { getTimeAgo } from "~/utils/datetime-utils";
+import { getTimeAgo } from "~/utils/datetime";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {

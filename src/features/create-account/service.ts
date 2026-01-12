@@ -2,7 +2,7 @@ import { getDb } from "~/db/index";
 import { env } from "cloudflare:workers";
 import { users, inviteCodes } from "~/db/schema";
 import { eq, isNull, and } from "drizzle-orm";
-import { hashPassword } from "~/utils/auth-utils";
+import { hashPassword } from "~/utils/auth";
 import type { RegisterInput } from "~/features/create-account/types";
 
 export async function createUser(input: RegisterInput) {

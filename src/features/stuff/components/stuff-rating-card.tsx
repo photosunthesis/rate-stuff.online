@@ -4,7 +4,7 @@ import type { RatingWithRelations } from "~/features/display-ratings/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Avatar } from "~/components/ui/avatar";
-import { getTimeAgo } from "~/utils/datetime-utils";
+import { getTimeAgo } from "~/utils/datetime";
 
 interface Props {
 	rating: RatingWithRelations;

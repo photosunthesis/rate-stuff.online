@@ -14,7 +14,7 @@ import {
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
-import { getTimeAgo } from "~/utils/datetime-utils";
+import { getTimeAgo } from "~/utils/datetime";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";

@@ -6,7 +6,7 @@ import {
 	type PublicUser,
 	type LoginInput,
 } from "~/features/sign-in/types";
-import { setSessionCookie } from "~/utils/auth-utils";
+import { setSessionCookie } from "~/utils/auth";
 import { authenticateUser } from "./service";
 import {
 	createRateLimitMiddleware,

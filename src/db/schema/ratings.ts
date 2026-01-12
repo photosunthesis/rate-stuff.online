@@ -3,7 +3,7 @@ import { pgTable, text, real, timestamp, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export const ratings = pgTable(
 	"ratings",

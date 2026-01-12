@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export const stuff = pgTable("stuff", {
 	id: text("id")

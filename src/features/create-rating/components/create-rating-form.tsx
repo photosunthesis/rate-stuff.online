@@ -11,6 +11,7 @@ import { StuffSelector } from "~/features/create-rating/components/stuff-selecto
 import { TagSelector } from "~/features/create-rating/components/tag-selector";
 import { CompactMarkdownEditor } from "~/features/create-rating/components/compact-markdown-editor";
 import { ImageField } from "~/features/create-rating/components/image-field";
+import { getErrorMessage } from "~/utils/errors";
 
 interface CreateRatingFormProps {
 	onSubmit: (
@@ -119,20 +120,6 @@ export function CreateRatingForm({
 
 	const hasGlobalError =
 		Boolean(errorMessage) && Object.keys(mergedValidationErrors).length === 0;
-
-	const getErrorMessage = (err: string | Error | null | undefined): string => {
-		if (!err) return "";
-		if (typeof err === "string") return err;
-		try {
-			const parsed = JSON.parse(err.message);
-			if (Array.isArray(parsed)) {
-				return parsed[0]?.message || err.message;
-			}
-			return parsed.message || err.message;
-		} catch {
-			return err.message;
-		}
-	};
 
 	useEffect(() => {
 		if (hasGlobalError && scrollableRef.current) {

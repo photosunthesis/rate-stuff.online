@@ -4,9 +4,9 @@ import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import type { Stuff, Tag } from "~/features/display-ratings/types";
-import { uploadFile } from "~/utils/media-storage-utils";
-import { generateSlug } from "~/utils/slug-utils";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { uploadFile } from "~/utils/media-storage";
+import { generateSlug } from "~/utils/slug";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export async function searchStuff(query: string, limit = 10) {
 	const db = getDb(env);

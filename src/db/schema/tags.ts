@@ -7,7 +7,7 @@ import {
 	index,
 } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
-import { safeRandomUUID } from "~/utils/uuid-utils";
+import { safeRandomUUID } from "~/utils/uuid";
 
 export const tags = pgTable("tags", {
 	id: text("id")

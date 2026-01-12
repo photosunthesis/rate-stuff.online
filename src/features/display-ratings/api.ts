@@ -10,7 +10,7 @@ import { getRecentTags, getRecentStuff } from "./service";
 import { authMiddleware } from "~/middlewares/auth-middleware";
 import { z } from "zod";
 import { getUserByUsername } from "../set-up-profile/service";
-import { getSession } from "~/utils/auth-utils";
+import { getSession } from "~/utils/auth";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;

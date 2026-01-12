@@ -5,7 +5,7 @@ import {
 	type PublicUser,
 	type RegisterInput,
 } from "~/features/create-account/types";
-import { setSessionCookie } from "~/utils/auth-utils";
+import { setSessionCookie } from "~/utils/auth";
 import { createUser } from "./service";
 import {
 	createRateLimitMiddleware,
