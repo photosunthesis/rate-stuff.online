@@ -160,9 +160,20 @@ export const uploadImage = createServerOnlyFn(
 );
 
 export const updateRatingImages = createServerOnlyFn(
-	async (ratingId: string, images: string[]) =>
-		db()
+	async (ratingId: string, images: string[]) => {
+		const updated = await db()
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })
-			.where(eq(ratings.id, ratingId)),
+			.where(eq(ratings.id, ratingId))
+			.returning();
+
+		if (!updated || updated.length === 0) return null;
+
+		const row = updated[0];
+		return {
+			...row,
+			images:
+				typeof row.images === "string" ? JSON.parse(row.images) : row.images,
+		};
+	},
 );
