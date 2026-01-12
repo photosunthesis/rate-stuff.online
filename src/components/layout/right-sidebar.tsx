@@ -2,22 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
+import { randomSuffix } from "~/utils/slug";
 import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
-
-function generateId(prefix = "", length = 8): string {
-	const CHARS = "0123456789abcdefghijklmnopqrstuvwxyz";
-	let result = "";
-
-	result = Array.from(
-		{ length },
-		() => CHARS[Math.floor(Math.random() * CHARS.length)],
-	).join("");
-
-	return prefix ? `${prefix}${result}` : result;
-}
 
 export function RightSidebar({
 	isAuthenticated = true,
@@ -30,11 +19,11 @@ export function RightSidebar({
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 5 }, (_, i) => generateId(`s_${i}`)),
+		() => Array.from({ length: 5 }, (_) => `s_${randomSuffix()}`),
 		[],
 	);
 	const skeletonTagKeys = useMemo(
-		() => Array.from({ length: 6 }, (_, i) => generateId(`t_${i}`)),
+		() => Array.from({ length: 6 }, (_) => `t_${randomSuffix()}`),
 		[],
 	);
 

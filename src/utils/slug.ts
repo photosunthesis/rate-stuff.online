@@ -16,7 +16,7 @@ export function generateSlug(title?: string, maxLength = 128, suffixBytes = 3) {
 	return `${base}${SUFFIX}`;
 }
 
-function randomSuffix(bytes = 3) {
+export function randomSuffix(bytes = 3) {
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 	const len = Math.max(1, bytes * 2);
 	let out = "";
