@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, json } from "@tanstack/react-start";
 import {
 	getUserRatings,
 	getFeedRatings,
@@ -52,11 +52,16 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to fetch ratings",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch ratings",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -69,10 +74,16 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 			// Always return the wrapped shape
 			return { success: true, data: ratings, nextCursor: undefined };
 		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to fetch feed",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch feed",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -88,10 +99,9 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const cursor = parseCursor(data.cursor);
-
 			const ratings = await getFeedRatings(data.limit, cursor, data.tag);
-
 			let nextCursor: string | undefined;
+
 			if (ratings.length === data.limit) {
 				const last = ratings[ratings.length - 1];
 				nextCursor = makeCursor(last.createdAt, last.id);
@@ -99,10 +109,16 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to fetch feed",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch feed",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -117,16 +133,21 @@ export const getRatingBySlugFn = createServerFn({ method: "GET" })
 			const rating = await getRatingBySlug(data.slug);
 
 			if (!rating) {
-				return { success: false, error: "Not found" };
+				throw json({ success: false, error: "Not found" }, { status: 404 });
 			}
 
 			return { success: true, data: rating };
 		} catch (error) {
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to fetch rating",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch rating",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -146,9 +167,7 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 			const session = await getSession();
 			const requestedLimit = data.limit ?? 10;
 			const limit = session ? requestedLimit : Math.min(requestedLimit, 10);
-
 			const cursor = parseCursor(data.cursor);
-
 			const ratings = await getUserRatings(user.id, limit, cursor);
 
 			let nextCursor: string | undefined;
@@ -159,11 +178,16 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to fetch ratings",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch ratings",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -172,14 +196,19 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const user = await getUserByUsername(data.username);
-			if (!user) return { success: false, error: "Not found" };
+
+			if (!user)
+				throw json({ success: false, error: "Not found" }, { status: 404 });
 
 			const count = await getUserRatingsCount(user.id);
 			return { success: true, data: { count } };
 		} catch (error) {
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to fetch count",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to fetch ratings count",
 			};
 		}
 	});
@@ -190,19 +219,25 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 			id: z.string(),
 		}),
 	)
-
 	.handler(async ({ data }) => {
 		try {
 			const rating = await getRatingById(data.id);
 
-			if (!rating) return { success: false, error: "Not found" };
+			if (!rating)
+				throw json({ success: false, error: "Not found" }, { status: 404 });
+
 			return { success: true, data: rating };
 		} catch (error) {
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to fetch rating",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch rating",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -211,12 +246,19 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 	.handler(async () => {
 		try {
 			const tags = await getRecentTags(10);
-			return { success: true, data: tags };
+
+			return { success: true, data: tags as { name: string; count: number }[] };
 		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to fetch tags",
-			};
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch tags",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});
 
@@ -225,14 +267,25 @@ export const getRecentStuffFn = createServerFn({ method: "GET" })
 	.handler(async () => {
 		try {
 			const stuff = await getRecentStuff(5);
-			return { success: true, data: stuff };
-		} catch (error) {
 			return {
-				success: false,
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to fetch recent stuff",
+				success: true,
+				data: stuff as {
+					id: string;
+					name: string;
+					slug: string;
+					count: number;
+				}[],
 			};
+		} catch (error) {
+			throw json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to fetch stuff",
+				},
+				{
+					status: 500,
+				},
+			);
 		}
 	});

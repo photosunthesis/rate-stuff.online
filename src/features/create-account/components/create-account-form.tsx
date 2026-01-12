@@ -4,19 +4,19 @@ import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { registerSchema, type RegisterInput } from "../types";
 
-interface RegisterFormProps {
+interface CreateAccountFormProps {
 	onSubmit: (data: RegisterInput) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
 }
 
-export function RegisterForm({
+export function CreateAccountForm({
 	onSubmit,
 	isPending,
 	errorMessage,
 	validationErrors,
-}: RegisterFormProps) {
+}: CreateAccountFormProps) {
 	const form = useForm({
 		defaultValues: {
 			inviteCode: "",
@@ -233,6 +233,7 @@ export function RegisterForm({
 					{([canSubmit, isSubmitting]) => (
 						<Button
 							type="submit"
+							loadingMessage="Creating Account..."
 							disabled={!canSubmit || isPending || isSubmitting}
 							isLoading={isPending || isSubmitting}
 							className="mt-6"

@@ -1,7 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useCreateAccount } from "~/features/create-account/hooks";
 import { AuthLayout } from "~/components/layout/auth-layout";
-import { RegisterForm } from "~/features/create-account/components/register-form";
+import { CreateAccountForm } from "~/features/create-account/components/create-account-form";
 import {
 	isAuthenticatedQueryOptions,
 	useIsAuthenticated,
@@ -93,7 +93,7 @@ function RouteComponent() {
 			footerLinkText="Sign in"
 			footerLinkTo="/sign-in"
 		>
-			<RegisterForm
+			<CreateAccountForm
 				onSubmit={handleSubmit}
 				isPending={isPending}
 				errorMessage={errorMessage}
