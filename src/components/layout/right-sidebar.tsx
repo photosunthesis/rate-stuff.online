@@ -6,7 +6,18 @@ import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
-import { safeRandomUUID } from "~/utils/uuid";
+
+function generateId(prefix = "", length = 8): string {
+	const CHARS = "0123456789abcdefghijklmnopqrstuvwxyz";
+	let result = "";
+
+	result = Array.from(
+		{ length },
+		() => CHARS[Math.floor(Math.random() * CHARS.length)],
+	).join("");
+
+	return prefix ? `${prefix}${result}` : result;
+}
 
 export function RightSidebar({
 	isAuthenticated = true,
@@ -19,11 +30,11 @@ export function RightSidebar({
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 5 }, () => safeRandomUUID()),
+		() => Array.from({ length: 5 }, (_, i) => generateId(`s_${i}`)),
 		[],
 	);
 	const skeletonTagKeys = useMemo(
-		() => Array.from({ length: 6 }, () => safeRandomUUID()),
+		() => Array.from({ length: 6 }, (_, i) => generateId(`t_${i}`)),
 		[],
 	);
 
