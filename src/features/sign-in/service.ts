@@ -1,5 +1,5 @@
-import { db } from "~/db/index";
-import { users } from "~/db/schema";
+import { db } from "~/db/db";
+import { users } from "~/db/schema/schema";
 import { eq, or } from "drizzle-orm";
 import { comparePasswords } from "~/utils/auth";
 import type { LoginInput } from "~/features/sign-in/types";

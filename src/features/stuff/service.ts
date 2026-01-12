@@ -1,11 +1,11 @@
-import { db } from "~/db/index";
+import { db } from "~/db/db";
 import {
 	ratings,
 	stuff as stuffTable,
 	ratingsToTags,
 	tags,
 	users,
-} from "~/db/schema";
+} from "~/db/schema/schema";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { drizzle } from "drizzle-orm/node-postgres/driver";

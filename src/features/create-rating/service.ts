@@ -1,5 +1,5 @@
-import { db } from "~/db/index";
-import { stuff, ratings, tags, ratingsToTags } from "~/db/schema";
+import { db } from "~/db/db";
+import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/schema";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import { uploadFile } from "~/lib/media-storage";

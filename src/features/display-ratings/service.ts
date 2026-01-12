@@ -1,7 +1,7 @@
-import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema";
+import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/schema";
 import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import { db } from "~/db";
+import { db } from "~/db/db";
 import type { drizzle } from "drizzle-orm/node-postgres";
 
 type GroupedRating = typeof ratings.$inferSelect & {

@@ -1,8 +1,8 @@
-import { users, inviteCodes } from "~/db/schema";
+import { users, inviteCodes } from "~/db/schema/schema";
 import { eq, isNull, and } from "drizzle-orm";
 import { hashPassword } from "~/utils/auth";
 import type { RegisterInput } from "~/features/create-account/types";
-import { db } from "~/db";
+import { db } from "~/db/db";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const createUser = createServerOnlyFn(async (input: RegisterInput) => {

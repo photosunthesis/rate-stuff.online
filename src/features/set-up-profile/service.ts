@@ -1,5 +1,5 @@
-import { db } from "~/db/index";
-import { users, ratings } from "~/db/schema";
+import { db } from "~/db/db";
+import { users, ratings } from "~/db/schema/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/lib/media-storage";
 import { numberWithCommas } from "~/utils/numbers";
