@@ -7,38 +7,27 @@ import { uploadFile } from "~/utils/media-storage-utils";
 import { numberWithCommas } from "~/utils/number-utils";
 import { safeRandomUUID } from "~/utils/uuid-utils";
 
-type Result<T> =
-	| { success: true; data: T }
-	| { success: false; error: string; fieldErrors?: Record<string, string> };
-
 export async function updateUserProfile(
 	userId: string,
 	updates: { name?: string; avatarUrl?: string | null },
-): Promise<Result<PublicUser>> {
-	try {
-		const db = getDb(env);
-		const updatedUser = await db
-			.update(users)
-			.set({ ...updates, updatedAt: new Date() })
-			.where(eq(users.id, userId))
-			.returning();
+): Promise<PublicUser> {
+	const db = getDb(env);
+	const updatedUser = await db
+		.update(users)
+		.set({ ...updates, updatedAt: new Date() })
+		.where(eq(users.id, userId))
+		.returning();
 
-		if (!updatedUser || updatedUser.length === 0) {
-			return { success: false, error: "Failed to update profile" };
-		}
-
-		return {
-			success: true,
-			data: {
-				id: updatedUser[0].id,
-				username: updatedUser[0].username,
-				displayName: updatedUser[0].name,
-				avatarUrl: updatedUser[0].avatarUrl,
-			},
-		};
-	} catch {
-		return { success: false, error: "Failed to update profile" };
+	if (!updatedUser || updatedUser.length === 0) {
+		throw new Error("User not found");
 	}
+
+	return {
+		id: updatedUser[0].id,
+		username: updatedUser[0].username,
+		displayName: updatedUser[0].name,
+		avatarUrl: updatedUser[0].avatarUrl,
+	};
 }
 
 export async function getUserById(userId: string): Promise<PublicUser | null> {
@@ -106,19 +95,14 @@ export async function getUserByUsername(
 export async function uploadProfileImage(
 	file: File,
 	userId: string,
-): Promise<Result<{ key: string; url: string }>> {
+): Promise<{ key: string; url: string }> {
 	const origExt = file.name?.split(".").pop() ?? "webp";
 	const extension =
 		file.type === "image/webp" || origExt.toLowerCase() === "webp"
 			? "webp"
 			: origExt;
 	const key = `avatars/${userId}/${safeRandomUUID()}.${extension}`;
+	const url = await uploadFile(env, key, file);
 
-	try {
-		const url = await uploadFile(env, key, file);
-
-		return { success: true, data: { key, url } };
-	} catch {
-		return { success: false, error: "Failed to upload image" };
-	}
+	return { key, url };
 }

@@ -1,50 +1,69 @@
-import { useUpdateProfileMutation } from "./queries";
+import { useUpdateProfileMutation, useUploadAvatarMutation } from "./queries";
 import { useCurrentUser } from "../session/queries";
-import { useUploadAvatarMutation } from "./queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import type { ProfileSetupInput } from "./types";
-import type { PublicUser } from "./types";
+import type { ProfileSetupInput, PublicUser } from "./types";
 
-function parseValidationErrors(obj: unknown) {
-	if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
-	const source = obj as Record<string, unknown>;
-	const tryExtract = (candidate: unknown) => {
-		if (
-			candidate &&
-			typeof candidate === "object" &&
-			!Array.isArray(candidate)
-		) {
-			const c = candidate as Record<string, unknown>;
-			if (Object.values(c).every((v) => typeof v === "string"))
-				return c as Record<string, string>;
-		}
-		return undefined;
-	};
-	const fromErrors = tryExtract(source.errors ?? undefined);
-	if (fromErrors) return fromErrors;
-	const fromError = tryExtract(source.error ?? undefined);
-	if (fromError) return fromError;
-	return {};
+function extractValidationErrors(payload: unknown): Record<string, string> {
+	if (!payload || typeof payload !== "object" || Array.isArray(payload))
+		return {};
+	const obj = payload as Record<string, unknown>;
+	const candidate = obj.errors ?? obj.error ?? undefined;
+	if (!candidate || typeof candidate !== "object" || Array.isArray(candidate))
+		return {};
+	const c = candidate as Record<string, unknown>;
+	const isStringMap = Object.values(c).every((v) => typeof v === "string");
+	return isStringMap ? (c as Record<string, string>) : {};
 }
 
-function extractErrorMessage(obj: unknown) {
-	if (!obj || typeof obj !== "object" || Array.isArray(obj)) return undefined;
-	const o = obj as Record<string, unknown>;
-	if (typeof o.error === "string") return o.error;
-	if (typeof o.error === "object" && o.error !== null) {
-		const errObj = o.error as Record<string, unknown>;
-		if (typeof errObj.message === "string") return errObj.message;
+function normalizeError(err: unknown): {
+	errorMessage?: string;
+	errors?: Record<string, string>;
+} {
+	if (!err) return {};
+	if (err instanceof Error) {
+		const msg = err.message ?? "";
+		try {
+			const parsed = JSON.parse(msg);
+			return normalizeError(parsed);
+		} catch {
+			return { errorMessage: msg };
+		}
 	}
-	if (typeof o.errors === "string") return o.errors;
-	return undefined;
+	if (typeof err === "string") {
+		try {
+			const parsed = JSON.parse(err);
+			return normalizeError(parsed);
+		} catch {
+			return { errorMessage: err };
+		}
+	}
+	if (typeof err === "object" && err !== null && !Array.isArray(err)) {
+		const o = err as Record<string, unknown>;
+		const message =
+			typeof o.errorMessage === "string"
+				? o.errorMessage
+				: typeof o.error === "string"
+					? o.error
+					: typeof o.message === "string"
+						? o.message
+						: undefined;
+		const errors = extractValidationErrors(o);
+		return {
+			errorMessage: message,
+			errors: Object.keys(errors).length ? errors : undefined,
+		};
+	}
+	return { errorMessage: String(err) };
 }
 
 export function useSetUpProfile() {
 	const mutation = useUpdateProfileMutation();
 	const uploadMutation = useUploadAvatarMutation();
 	const queryClient = useQueryClient();
-	const [localError, setLocalError] = useState<Error | null>(null);
+	const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(
+		null,
+	);
 	const [localValidationErrors, setLocalValidationErrors] = useState<
 		Record<string, string>
 	>({});
@@ -52,7 +71,7 @@ export function useSetUpProfile() {
 
 	return {
 		updateProfile: async (data: ProfileSetupInput) => {
-			setLocalError(null);
+			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 
 			let uploadedUrl: string | undefined;
@@ -62,20 +81,20 @@ export function useSetUpProfile() {
 			]);
 
 			if (data.avatar instanceof File) {
-				const uploadResult = await uploadMutation.mutateAsync(data.avatar);
-				if (!uploadResult.success) {
-					const err = new Error(
-						uploadResult.error || "Failed to upload avatar",
-					);
-					setLocalError(err);
-					throw err;
-				}
-				uploadedUrl = uploadResult.data.url;
-
-				if (uploadedUrl) {
-					queryClient.setQueryData<PublicUser | null>(["currentUser"], (old) =>
-						old ? { ...old, avatarUrl: uploadedUrl } : old,
-					);
+				try {
+					const uploadResult = await uploadMutation.mutateAsync(data.avatar);
+					uploadedUrl = uploadResult.url;
+					if (uploadedUrl)
+						queryClient.setQueryData<PublicUser | null>(
+							["currentUser"],
+							(old) => (old ? { ...old, avatarUrl: uploadedUrl } : old),
+						);
+				} catch (e) {
+					const info = normalizeError(e);
+					if (info.errors) setLocalValidationErrors(info.errors);
+					const msg = info.errorMessage ?? "Failed to upload avatar";
+					setLocalErrorMessage(msg);
+					throw new Error(msg);
 				}
 			}
 
@@ -91,35 +110,47 @@ export function useSetUpProfile() {
 					if (previousUser) {
 						queryClient.setQueryData(["currentUser"], previousUser);
 					}
-					const validationErrors = parseValidationErrors(result);
+					const validationErrors = extractValidationErrors(result);
 					setLocalValidationErrors(validationErrors);
 					const errMessage =
-						extractErrorMessage(result) ?? "Failed to update profile";
-					const err = new Error(errMessage);
-					setLocalError(err);
-					throw err;
+						(result as unknown as { errorMessage?: string }).errorMessage ??
+						"Failed to update profile";
+					setLocalErrorMessage(errMessage);
+					throw new Error(errMessage);
 				}
 				return result;
-			} catch (err) {
+			} catch (e) {
 				if (previousUser) {
 					queryClient.setQueryData(["currentUser"], previousUser);
 				}
-				if (err instanceof Error) setLocalError(err);
-				throw err;
+				const info = normalizeError(e);
+				if (info.errors) setLocalValidationErrors(info.errors);
+				const msg =
+					info.errorMessage ?? (e instanceof Error ? e.message : String(e));
+				setLocalErrorMessage(msg);
+				throw new Error(msg);
 			}
 		},
+
 		isPending: mutation.isPending,
-		isError: mutation.isError || Boolean(localError),
-		error: localError || (mutation.error as Error) || null,
+		isError: mutation.isError || Boolean(localErrorMessage),
+		errorMessage:
+			localErrorMessage ||
+			(mutation.data && !mutation.data.success
+				? (mutation.data as unknown as { errorMessage?: string }).errorMessage
+				: undefined),
+
 		validationErrors:
 			(mutation.data && !mutation.data.success
-				? parseValidationErrors(mutation.data)
+				? extractValidationErrors(mutation.data)
 				: localValidationErrors) || {},
+
 		reset: () => {
 			mutation.reset();
-			setLocalError(null);
+			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 		},
+
 		user,
 	};
 }

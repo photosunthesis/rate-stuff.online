@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, json } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
 import {
 	profileSetupSchema,
@@ -10,12 +10,12 @@ import { authMiddleware } from "~/middlewares/auth-middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
+
 	for (const issue of error.issues) {
 		const key = issue.path?.length ? String(issue.path[0]) : "form";
-		if (!fieldErrors[key]) {
-			fieldErrors[key] = issue.message;
-		}
+		if (!fieldErrors[key]) fieldErrors[key] = issue.message;
 	}
+
 	return fieldErrors;
 }
 
@@ -44,40 +44,37 @@ export const updateProfileFn = createServerFn({ method: "POST" })
 			if (data.displayName && data.displayName.trim() !== "")
 				updates.name = data.displayName;
 
-			if (data.avatarUrl === "") {
-				updates.avatarUrl = undefined;
-			}
+			if (data.avatarUrl === "") updates.avatarUrl = undefined;
 
-			if (typeof data.avatarUrl === "string" && data.avatarUrl.trim() !== "") {
+			if (typeof data.avatarUrl === "string" && data.avatarUrl.trim() !== "")
 				updates.avatarUrl = data.avatarUrl;
-			}
 
-			const result = await updateUserProfile(
+			const updatedUser = await updateUserProfile(
 				userId,
 				updates as { name?: string; avatarUrl?: string | undefined },
 			);
-			if (!result.success) {
-				return {
-					success: false,
-					error: result.error || "Failed to update profile",
-				};
-			}
 
-			return { success: true, user: mapUserData(result.data) };
+			return { success: true, user: mapUserData(updatedUser) };
 		} catch (error) {
-			if (error instanceof ZodError) {
-				return {
-					success: false,
-					error: "Validation failed",
-					errors: formatZodError(error),
-				};
-			}
+			if (error instanceof ZodError)
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{ status: 422 },
+				);
 
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to update profile",
-			};
+			throw json(
+				{
+					success: false,
+					errorMessage: import.meta.env.DEV
+						? (error as Error).message
+						: "Failed to update profile",
+				},
+				{ status: 500 },
+			);
 		}
 	});
 
@@ -106,18 +103,30 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 				data.file,
 				context.userSession.userId,
 			);
+
 			return result;
 		} catch (error) {
 			if (error instanceof ZodError)
-				return {
+				throw json(
+					{
+						success: false,
+						errorMessage: "Validation failed",
+						errors: formatZodError(error),
+					},
+					{ status: 422 },
+				);
+
+			throw json(
+				{
 					success: false,
-					error: "Validation failed",
-					errors: formatZodError(error),
-				};
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Upload failed",
-			};
+					errorMessage: import.meta.env.DEV
+						? error instanceof Error
+							? error.message
+							: String(error)
+						: "Upload failed",
+				},
+				{ status: 500 },
+			);
 		}
 	});
 
@@ -126,12 +135,25 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const user = await getUserByUsername(data.username);
-			if (!user) return { success: false, error: "Not found" };
+
+			if (!user)
+				throw json(
+					{ success: false, errorMessage: "Not found" },
+					{ status: 404 },
+				);
+
 			return { success: true, data: user };
 		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to fetch user",
-			};
+			throw json(
+				{
+					success: false,
+					errorMessage: import.meta.env.DEV
+						? error instanceof Error
+							? error.message
+							: String(error)
+						: "Failed to fetch user",
+				},
+				{ status: 500 },
+			);
 		}
 	});

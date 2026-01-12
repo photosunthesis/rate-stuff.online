@@ -11,7 +11,7 @@ interface Props {
 	onSubmit: (data: ProfileSetupInput) => Promise<void>;
 	onSkip: () => void;
 	isPending?: boolean;
-	error?: Error | null;
+	errorMessage?: string;
 	validationErrors?: Record<string, string>;
 	initialDisplayName?: string | null;
 	initialAvatarUrl?: string | null;
@@ -21,7 +21,7 @@ export function ProfileSetupForm({
 	onSubmit,
 	onSkip,
 	isPending,
-	error,
+	errorMessage,
 	validationErrors,
 	initialDisplayName,
 	initialAvatarUrl,
@@ -86,35 +86,9 @@ export function ProfileSetupForm({
 		}
 	}, [initialDisplayName, form.reset]);
 
-	const hasGlobalError =
-		error && Object.keys(validationErrors ?? {}).length === 0;
-
-	const getErrorMessage = (err: unknown): string => {
-		if (!err) return "";
-		if (typeof err === "string") return err;
-		if (err instanceof Error) {
-			const message = err.message ?? "";
-			if (!message) return String(err);
-			try {
-				const parsed = JSON.parse(message);
-				if (Array.isArray(parsed)) return parsed[0]?.message ?? message;
-				if (parsed && typeof parsed === "object")
-					return (parsed as { message?: string }).message ?? message;
-				return message;
-			} catch {
-				return message;
-			}
-		}
-		try {
-			return JSON.stringify(err);
-		} catch {
-			return String(err);
-		}
-	};
-
 	return (
 		<>
-			{hasGlobalError && <FormError message={getErrorMessage(error)} />}
+			{errorMessage && <FormError message={errorMessage} />}
 			<form
 				onSubmit={async (e) => {
 					e.preventDefault();

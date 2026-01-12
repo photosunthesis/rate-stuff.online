@@ -35,7 +35,7 @@ function RouteComponent() {
 	const {
 		updateProfile: update,
 		isPending,
-		error,
+		errorMessage,
 		validationErrors,
 		user,
 	} = useSetUpProfile();
@@ -60,7 +60,7 @@ function RouteComponent() {
 				onSubmit={handleSubmit}
 				onSkip={() => navigate({ to: "/" })}
 				isPending={isPending}
-				error={error}
+				errorMessage={errorMessage}
 				validationErrors={validationErrors}
 				initialDisplayName={user?.displayName}
 				initialAvatarUrl={user?.avatarUrl}
