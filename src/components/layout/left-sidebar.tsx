@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
 import authClient from "~/lib/core/auth-client";
@@ -20,7 +20,6 @@ const getHeader = () => {
 
 export function LeftSidebar({ user }: { user?: { username: string } }) {
 	const isAuthenticated = user != null;
-	const navigate = useNavigate();
 	const [isHolding, setIsHolding] = useState(false);
 	const [holdProgress, setHoldProgress] = useState(0);
 	const [showTooltip, setShowTooltip] = useState(false);
@@ -30,7 +29,8 @@ export function LeftSidebar({ user }: { user?: { username: string } }) {
 
 	const handleLogout = async () => {
 		await authClient.signOut();
-		navigate({ to: "/" });
+		// navigate({ to: "/" }); // using navigate doesn't work for some reason >:(
+		window.location.href = "/";
 	};
 
 	const handleMouseDown = () => {
@@ -49,8 +49,10 @@ export function LeftSidebar({ user }: { user?: { username: string } }) {
 			setHoldProgress(progress);
 
 			if (progress >= 100) {
-				if (progressIntervalRef.current)
+				if (progressIntervalRef.current) {
 					clearInterval(progressIntervalRef.current);
+				}
+
 				handleLogout();
 			}
 		}, 16); // 60fps
