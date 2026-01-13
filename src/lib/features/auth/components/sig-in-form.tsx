@@ -2,10 +2,10 @@ import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
-import { loginSchema, type LoginInput } from "../types";
+import { loginSchema } from "../types";
 
 interface SignInFormProps {
-	onSubmit: (data: LoginInput) => Promise<void>;
+	onSubmit: (data: { identifier: string; password: string }) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
@@ -21,7 +21,7 @@ export function SignInForm({
 		defaultValues: {
 			identifier: "",
 			password: "",
-		} as LoginInput,
+		},
 		onSubmit: async ({ value }) => {
 			await onSubmit(value);
 		},

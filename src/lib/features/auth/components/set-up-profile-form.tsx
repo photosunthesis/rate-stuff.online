@@ -5,10 +5,9 @@ import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { User as UserIcon, Camera, X } from "lucide-react";
-import type { SetUpProfileInput } from "../types";
 
 interface Props {
-	onSubmit: (data: SetUpProfileInput) => Promise<void>;
+	onSubmit: (data: { avatar?: File | string; name?: string }) => Promise<void>;
 	onSkip: () => void;
 	isPending?: boolean;
 	errorMessage?: string;
@@ -60,14 +59,19 @@ export function SetUpProfileForm({
 	const form = useForm({
 		defaultValues: {
 			name: initialDisplayName ?? "",
-		} as SetUpProfileInput,
+		},
 		onSubmit: async ({ value }) => {
 			if (!hasValues) return;
-			const payload: SetUpProfileInput = {
+
+			const payload: Parameters<typeof onSubmit>[0] = {
 				...value,
 				avatar: avatarFile ?? undefined,
 			};
-			if (avatarRemoved && !avatarFile) payload.image = "";
+
+			if (avatarRemoved && !avatarFile) {
+				payload.avatar = "";
+			}
+
 			await onSubmit(payload);
 		},
 	});

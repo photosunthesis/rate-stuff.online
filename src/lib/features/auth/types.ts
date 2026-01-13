@@ -19,8 +19,6 @@ export const registerBaseSchema = z.object({
 		.regex(/[0-9]/, "Password must contain at least one number"),
 });
 
-export type RegisterBaseInput = z.infer<typeof registerBaseSchema>;
-
 export const registerSchema = registerBaseSchema
 	.extend({
 		confirmPassword: z.string().min(1, "Please confirm your password"),
@@ -35,8 +33,6 @@ export const loginSchema = z.object({
 	password: z.string().min(1, "Password is required"),
 });
 
-export type LoginInput = z.infer<typeof loginSchema>;
-
 export const profileSetupSchema = z.object({
 	name: z
 		.string()
@@ -45,12 +41,6 @@ export const profileSetupSchema = z.object({
 		.or(z.literal("")),
 	image: z.string().optional().or(z.literal("")),
 });
-
-export type SetUpProfileSchemaInput = z.infer<typeof profileSetupSchema>;
-
-// Client-side input includes an optional File for the avatar; the server
-// receives only the fields validated by `profileSetupSchema` (name, image).
-export type SetUpProfileInput = SetUpProfileSchemaInput & { avatar?: File };
 
 export type PublicUser = {
 	id: string;

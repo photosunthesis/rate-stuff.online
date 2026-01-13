@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SetUpProfileForm } from "~/lib/features/auth/components/set-up-profile-form";
 import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
-import type { SetUpProfileInput } from "~/lib/features/auth/types";
 import { useState } from "react";
 import { extractValidationErrors } from "~/lib/utils/errors";
 import authClient from "~/lib/core/auth-client";
@@ -30,7 +29,11 @@ function RouteComponent() {
 		Record<string, string>
 	>({});
 
-	const handleSubmit = async (data: SetUpProfileInput) => {
+	const handleSubmit = async (data: {
+		avatar?: File | string;
+		name?: string;
+		image?: string | null;
+	}) => {
 		setIsPending(true);
 		setValidationErrors({});
 
