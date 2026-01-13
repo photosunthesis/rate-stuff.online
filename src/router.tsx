@@ -3,6 +3,7 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 import { routeTree } from "~/routeTree.gen";
 import { NotFound } from "~/components/ui/not-found";
 import { QueryClient } from "@tanstack/react-query";
+import { ErrorOccurred } from "./components/ui/error-occured";
 
 export function getRouter() {
 	const queryClient = new QueryClient({
@@ -22,7 +23,7 @@ export function getRouter() {
 		// https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: NotFound,
-		defaultErrorComponent: NotFound,
+		defaultErrorComponent: ErrorOccurred,
 		scrollRestoration: true,
 		defaultStructuralSharing: true,
 	});
