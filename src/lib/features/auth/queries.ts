@@ -1,33 +1,6 @@
-import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import {
-	getCurrentUserFn,
-	getUserByUsernameFn,
-	updateUserProfileFn,
-	uploadAvatarFn,
-} from "./api";
-import { useServerFn } from "@tanstack/react-start";
+import { queryOptions } from "@tanstack/react-query";
+import { getCurrentUserFn, getUserByUsernameFn } from "./api";
 import type { PublicUser } from "./types";
-
-export function useUpdateProfileMutation() {
-	const updateProfileMutationFn = useServerFn(updateUserProfileFn);
-
-	return useMutation({
-		mutationFn: async (data: { name?: string; image?: string }) =>
-			updateProfileMutationFn({ data }),
-	});
-}
-
-export function useUploadAvatarMutation() {
-	const uploadAvatarMutationFn = useServerFn(uploadAvatarFn);
-
-	return useMutation({
-		mutationFn: async (file: File) => {
-			const formData = new FormData();
-			formData.append("file", file);
-			return uploadAvatarMutationFn({ data: formData });
-		},
-	});
-}
 
 export const userQueryOptions = (username: string) =>
 	queryOptions({
@@ -50,10 +23,6 @@ export const userQueryOptions = (username: string) =>
 		staleTime: 0,
 		gcTime: 1000 * 60 * 10,
 	});
-
-export function usePublicUser(username: string) {
-	return useQuery(userQueryOptions(username));
-}
 
 export const authQueryOptions = () =>
 	queryOptions({

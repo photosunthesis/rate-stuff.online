@@ -80,7 +80,6 @@ export function SignUpForm({
 					e.preventDefault();
 					e.stopPropagation();
 					form.handleSubmit();
-					console.log("submitted");
 				}}
 				className="space-y-4"
 				noValidate

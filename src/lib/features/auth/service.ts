@@ -1,4 +1,4 @@
-import { db } from "~/db/db";
+import { db } from "~/db";
 import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/lib/core/media-storage";

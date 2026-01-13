@@ -4,10 +4,10 @@ import {
 	setResponseHeader,
 	setResponseStatus,
 } from "@tanstack/react-start/server";
-import { auth } from "~/lib/core/auth";
+import { getAuth } from "~/lib/core/auth";
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
-	const session = await auth.api.getSession({
+	const session = await getAuth().api.getSession({
 		headers: getRequest().headers,
 		query: {
 			// ensure session is fresh

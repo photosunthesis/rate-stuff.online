@@ -125,11 +125,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
-				<script
-					dangerouslySetInnerHTML={{
-						__html: "console.log('inline HTML script executed')",
-					}}
-				/>
 				<Scripts />
 			</body>
 		</html>

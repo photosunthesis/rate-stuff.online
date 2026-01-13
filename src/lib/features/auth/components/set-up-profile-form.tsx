@@ -282,7 +282,7 @@ export function SetUpProfileForm({
 								}
 								isLoading={isPending || isSubmitting || isCompressing}
 							>
-								Continue
+								Set Up Profile
 							</Button>
 						)}
 					</form.Subscribe>

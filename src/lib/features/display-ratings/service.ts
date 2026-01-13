@@ -1,15 +1,15 @@
 import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, gte, sql, or } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import { db } from "~/db/db";
-import type { drizzle } from "drizzle-orm/node-postgres";
+import { db } from "~/db";
+import type { drizzle } from "drizzle-orm/postgres-js";
 
 type GroupedRating = typeof ratings.$inferSelect & {
 	stuff: typeof stuff.$inferSelect | null;
 	user: {
 		id: string;
 		name: string | null;
-		username: string;
+		username: string | null;
 		image: string | null;
 	} | null;
 	tags: string[];
@@ -22,7 +22,7 @@ function groupRatingResults(
 		user: {
 			id: string;
 			name: string | null;
-			username: string;
+			username: string | null;
 			image: string | null;
 		} | null;
 		tagName: string | null;

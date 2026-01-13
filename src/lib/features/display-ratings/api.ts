@@ -10,7 +10,7 @@ import { getRecentTags, getRecentStuff } from "./service";
 import { z } from "zod";
 import { authMiddleware } from "~/lib/features/auth/middleware";
 import { getUserByUsername } from "~/lib/features/auth/service";
-import { auth } from "~/lib/core/auth";
+import { getAuth } from "~/lib/core/auth";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -161,7 +161,7 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 			if (!user) return { success: false, error: "Not found" };
 
 			const requestedLimit = data.limit ?? 10;
-			const limit = (await auth.api.getSession())
+			const limit = (await getAuth().api.getSession())
 				? requestedLimit
 				: Math.min(requestedLimit, 10);
 			const cursor = parseCursor(data.cursor);

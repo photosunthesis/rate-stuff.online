@@ -10,9 +10,6 @@ import { isEmail } from "~/lib/utils/strings";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
-	validateSearch: (search: Record<string, unknown>) => ({
-		redirect: search.redirect as string | undefined,
-	}),
 	head: () => {
 		return {
 			meta: [
@@ -42,7 +39,6 @@ function RouteComponent() {
 	);
 
 	const handleSuccess = (redirect?: string) => {
-		console.log(`Sign-in successful, redirecting to: ${redirect}`);
 		queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
 		navigate({ to: redirect ?? "/" });
 	};

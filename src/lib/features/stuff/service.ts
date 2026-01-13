@@ -1,4 +1,4 @@
-import { db } from "~/db/db";
+import { db } from "~/db";
 import {
 	ratings,
 	stuff as stuffTable,
@@ -8,7 +8,7 @@ import {
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
-import type { drizzle } from "drizzle-orm/node-postgres/driver";
+import type { drizzle } from "drizzle-orm/postgres-js";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 type RatingQueryResult = {
@@ -17,7 +17,7 @@ type RatingQueryResult = {
 	user: {
 		id: string;
 		name: string | null;
-		username: string;
+		username: string | null;
 		image: string | null;
 	} | null;
 	tagName: string | null;

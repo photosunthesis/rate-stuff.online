@@ -1,4 +1,4 @@
-import { db } from "~/db/db";
+import { db } from "~/db";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";

@@ -14,14 +14,15 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as UserRouteRouteImport } from './routes/user/route'
 import { Route as StuffRouteRouteImport } from './routes/stuff/route'
 import { Route as RatingRouteRouteImport } from './routes/rating/route'
+import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserUsernameRouteImport } from './routes/user/$username'
 import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
 import { Route as RatingRatingSlugRouteImport } from './routes/rating/$ratingSlug'
+import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
-import { Route as AuthSetUpProfileRouteImport } from './routes/_auth/set-up-profile'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const TermsRoute = TermsRouteImport.update({
@@ -49,6 +50,10 @@ const RatingRouteRoute = RatingRouteRouteImport.update({
   path: '/rating',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedRouteRoute = AuthedRouteRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -73,6 +78,11 @@ const RatingRatingSlugRoute = RatingRatingSlugRouteImport.update({
   path: '/$ratingSlug',
   getParentRoute: () => RatingRouteRoute,
 } as any)
+const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
+  id: '/set-up-profile',
+  path: '/set-up-profile',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -81,11 +91,6 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthSetUpProfileRoute = AuthSetUpProfileRouteImport.update({
-  id: '/set-up-profile',
-  path: '/set-up-profile',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -101,9 +106,9 @@ export interface FileRoutesByFullPath {
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/set-up-profile': typeof AuthSetUpProfileRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -116,9 +121,9 @@ export interface FileRoutesByTo {
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/set-up-profile': typeof AuthSetUpProfileRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -128,14 +133,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/_authed': typeof AuthedRouteRouteWithChildren
   '/rating': typeof RatingRouteRouteWithChildren
   '/stuff': typeof StuffRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/_auth/set-up-profile': typeof AuthSetUpProfileRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
+  '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -150,9 +156,9 @@ export interface FileRouteTypes {
     | '/user'
     | '/privacy'
     | '/terms'
-    | '/set-up-profile'
     | '/sign-in'
     | '/sign-up'
+    | '/set-up-profile'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -165,9 +171,9 @@ export interface FileRouteTypes {
     | '/user'
     | '/privacy'
     | '/terms'
-    | '/set-up-profile'
     | '/sign-in'
     | '/sign-up'
+    | '/set-up-profile'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -176,14 +182,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
+    | '/_authed'
     | '/rating'
     | '/stuff'
     | '/user'
     | '/privacy'
     | '/terms'
-    | '/_auth/set-up-profile'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
+    | '/_authed/set-up-profile'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -193,6 +200,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
   RatingRouteRoute: typeof RatingRouteRouteWithChildren
   StuffRouteRoute: typeof StuffRouteRouteWithChildren
   UserRouteRoute: typeof UserRouteRouteWithChildren
@@ -238,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RatingRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -273,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RatingRatingSlugRouteImport
       parentRoute: typeof RatingRouteRoute
     }
+    '/_authed/set-up-profile': {
+      id: '/_authed/set-up-profile'
+      path: '/set-up-profile'
+      fullPath: '/set-up-profile'
+      preLoaderRoute: typeof AuthedSetUpProfileRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
     '/_auth/sign-up': {
       id: '/_auth/sign-up'
       path: '/sign-up'
@@ -287,13 +309,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_auth/set-up-profile': {
-      id: '/_auth/set-up-profile'
-      path: '/set-up-profile'
-      fullPath: '/set-up-profile'
-      preLoaderRoute: typeof AuthSetUpProfileRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -305,19 +320,29 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteRouteChildren {
-  AuthSetUpProfileRoute: typeof AuthSetUpProfileRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthSetUpProfileRoute: AuthSetUpProfileRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
+)
+
+interface AuthedRouteRouteChildren {
+  AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
+}
+
+const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
+}
+
+const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
+  AuthedRouteRouteChildren,
 )
 
 interface RatingRouteRouteChildren {
@@ -359,6 +384,7 @@ const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  AuthedRouteRoute: AuthedRouteRouteWithChildren,
   RatingRouteRoute: RatingRouteRouteWithChildren,
   StuffRouteRoute: StuffRouteRouteWithChildren,
   UserRouteRoute: UserRouteRouteWithChildren,

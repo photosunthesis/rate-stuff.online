@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { isEmail } from "~/lib/utils/strings";
 import { z } from "zod";
 import {
 	createRateLimitMiddleware,
@@ -14,7 +13,7 @@ import {
 	validateInviteCode,
 } from "./service";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
-import { auth } from "../../core/auth";
+import { getAuth } from "../../core/auth";
 
 export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.middleware([
@@ -50,78 +49,6 @@ export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
 				success: false,
 				errorMessage:
 					error instanceof Error ? error.message : "Operation failed",
-			};
-		}
-	});
-
-export const signInFn = createServerFn({ method: "POST" })
-	.middleware([
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.AUTH,
-			keyFn: rateLimitKeys.byIp,
-			errorMessage: "Too many sign-in attempts. Please try again later.",
-		}),
-	])
-	.inputValidator(
-		z.object({
-			identifier: z.string().min(1),
-			password: z.string().min(1),
-		}),
-	)
-	.handler(async ({ data }) => {
-		try {
-			isEmail(data.identifier)
-				? await auth.api.signInEmail({
-						body: {
-							email: data.identifier,
-							password: data.password,
-						},
-					})
-				: await auth.api.signInUsername({
-						body: {
-							username: data.identifier,
-							password: data.password,
-						},
-					});
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			return {
-				success: false,
-				errorMessage: error instanceof Error ? error.message : "Sign-in failed",
-			};
-		}
-	});
-
-export const updateUserProfileFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
-	.inputValidator(
-		z.object({
-			name: z.string().min(1).max(50).optional(),
-			image: z.url().optional(),
-		}),
-	)
-	.handler(async ({ data }) => {
-		try {
-			const payload: { name?: string; image?: string } = {};
-
-			if (data.name) payload.name = data.name;
-			if (data.image) payload.image = data.image;
-
-			await auth.api.updateUser({
-				body: payload,
-			});
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			return {
-				success: false,
-				errorMessage:
-					error instanceof Error ? error.message : "Profile update failed",
 			};
 		}
 	});
@@ -186,7 +113,7 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 
 export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const session = await auth.api.getSession({
+		const session = await getAuth().api.getSession({
 			headers: getRequest().headers,
 			returnHeaders: true,
 		});
