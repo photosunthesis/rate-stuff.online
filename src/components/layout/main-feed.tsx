@@ -6,14 +6,9 @@ import { useFeedRatings } from "~/lib/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { CreateRatingSection } from "~/lib/features/create-rating/components/create-rating-section";
+import type { PublicUser } from "~/lib/features/auth/types";
 
-export function MainFeed({
-	tag,
-	user,
-}: {
-	tag?: string;
-	user?: { username: string };
-}) {
+export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const {
 		data,
@@ -92,9 +87,7 @@ export function MainFeed({
 				</div>
 			)}
 
-			{isAuthenticated && (
-				<CreateRatingSection user={{ name: user?.username }} />
-			)}
+			{isAuthenticated && <CreateRatingSection user={user} />}
 
 			<div>
 				{ratings.map((rating, idx) => (

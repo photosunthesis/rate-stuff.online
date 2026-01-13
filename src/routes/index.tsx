@@ -6,6 +6,7 @@ import {
 import { MainFeed } from "~/components/layout/main-feed";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/lib/features/auth/queries";
+import type { PublicUser } from "~/lib/features/auth/types";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
@@ -49,22 +50,20 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	const { user } = Route.useRouteContext();
+	const publicUser: PublicUser | undefined = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? undefined,
+			}
+		: undefined;
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
 
 	return (
-		<MainLayout
-			user={
-				user
-					? {
-							username: user?.username ?? "",
-							name: user?.name,
-							image: user?.image ?? "",
-						}
-					: undefined
-			}
-		>
-			<MainFeed tag={tag} user={{ username: user?.username ?? "" }} />
+		<MainLayout user={publicUser}>
+			<MainFeed tag={tag} user={publicUser} />
 		</MainLayout>
 	);
 }

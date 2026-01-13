@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { CreateRatingModal } from "~/lib/features/create-rating/components/create-rating-modal";
 import { CreateRatingTrigger } from "~/lib/features/create-rating/components/create-rating-trigger";
+import type { PublicUser } from "../../auth/types";
 
-export function CreateRatingSection({
-	user,
-}: {
-	user: { name?: string; image?: string };
-}) {
+export function CreateRatingSection({ user }: { user: PublicUser }) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	if (!user) return null;

@@ -7,8 +7,9 @@ import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/lib/features/display-ratings/queries";
+import type { PublicUser } from "~/lib/features/auth/types";
 
-export function RightSidebar({ user }: { user?: { username: string } }) {
+export function RightSidebar({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const { data: recentStuff, isLoading: loadingStuff } =
 		useRecentStuff(isAuthenticated);

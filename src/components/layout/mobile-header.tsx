@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
+import type { PublicUser } from "~/lib/features/auth/types";
 
 const headers = [
 	"Rate literally anything.",
@@ -12,7 +13,7 @@ const headers = [
 	"Your opinion, now numbered.",
 ];
 
-export function MobileHeader({ user }: { user?: { username: string } }) {
+export function MobileHeader({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const [header] = useState(
 		() => headers[Math.floor(Math.random() * headers.length)],

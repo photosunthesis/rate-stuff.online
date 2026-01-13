@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
 import authClient from "~/lib/core/auth-client";
+import type { PublicUser } from "~/lib/features/auth/types";
 
 const getHeader = () => {
 	const headers = [
@@ -18,7 +19,7 @@ const getHeader = () => {
 	return headers[Math.floor(Math.random() * headers.length)];
 };
 
-export function LeftSidebar({ user }: { user?: { username: string } }) {
+export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const [isHolding, setIsHolding] = useState(false);
 	const [holdProgress, setHoldProgress] = useState(0);
