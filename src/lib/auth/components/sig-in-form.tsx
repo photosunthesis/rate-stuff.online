@@ -58,6 +58,7 @@ export function SignInForm({
 			{hasGlobalError && <FormError message={errorMessage ?? ""} />}
 
 			<form
+				method="post"
 				onSubmit={(e) => {
 					e.preventDefault();
 					e.stopPropagation();

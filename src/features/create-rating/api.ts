@@ -11,8 +11,8 @@ import {
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
-} from "~/middlewares/rate-limit-middleware";
-import { authMiddleware } from "~/middlewares/auth-middleware";
+} from "~/lib/rate-limit/middleware";
+import { authMiddleware } from "~/lib/auth/middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
@@ -24,7 +24,7 @@ function formatZodError(error: ZodError): Record<string, string> {
 }
 
 const rateLimitMiddleware = createRateLimitMiddleware({
-	binding: "GENERAL_RATE_LIMITER",
+	binding: "GENERAL",
 	keyFn: rateLimitKeys.bySession,
 	errorMessage: "Too many requests. Please try again after a short while.",
 });
@@ -64,7 +64,7 @@ export const createRatingFn = createServerFn({ method: "POST" })
 	.inputValidator(createRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {
-			const rating = await createRating(context.userSession.userId, data);
+			const rating = await createRating(context.user.id, data);
 
 			return { success: true, data: rating };
 		} catch (error) {

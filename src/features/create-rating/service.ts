@@ -3,7 +3,7 @@ import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
 import { uploadFile } from "~/lib/media-storage";
-import { generateSlug } from "~/utils/slug";
+import { generateSlug } from "~/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const searchStuff = createServerOnlyFn(

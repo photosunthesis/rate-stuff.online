@@ -1,7 +1,7 @@
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { routeTree } from "~/routeTree.gen";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import { QueryClient } from "@tanstack/react-query";
 
 export function getRouter() {
@@ -22,6 +22,7 @@ export function getRouter() {
 		// https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#passing-all-loader-events-to-an-external-cache
 		defaultPreloadStaleTime: 0,
 		defaultNotFoundComponent: NotFound,
+		defaultErrorComponent: NotFound,
 		scrollRestoration: true,
 		defaultStructuralSharing: true,
 	});

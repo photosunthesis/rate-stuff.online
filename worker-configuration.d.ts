@@ -11,8 +11,8 @@ declare namespace Cloudflare {
 		BETTER_AUTH_URL: string;
 		BETTER_AUTH_SECRET: string;
 		R2_BUCKET: R2Bucket;
-		GENERAL_RATE_LIMITER: RateLimit;
-		AUTH_RATE_LIMITER: RateLimit;
+		GENERAL: RateLimit;
+		AUTH: RateLimit;
 		HYPERDRIVE: Hyperdrive;
 	}
 }

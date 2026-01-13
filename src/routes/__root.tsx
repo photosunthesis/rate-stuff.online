@@ -6,7 +6,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
 import { authQueryOptions, type AuthQueryResult } from "~/lib/auth/queries";
 
@@ -103,7 +103,12 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
 	return (
 		<RootDocument>
-			<UmamiAnalytics debug={import.meta.env.DEV} lazyLoad={true} />
+			<UmamiAnalytics
+				url={process.env.UMAMI_URL}
+				websiteId={process.env.UMAMI_ID}
+				debug={process.env.DEV === "true"}
+				lazyLoad={true}
+			/>
 			<Outlet />
 		</RootDocument>
 	);

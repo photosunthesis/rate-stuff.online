@@ -7,10 +7,10 @@ import {
 	getRatingById,
 } from "./service";
 import { getRecentTags, getRecentStuff } from "./service";
-import { authMiddleware } from "~/middlewares/auth-middleware";
+import { authMiddleware } from "~/lib/auth/middleware";
 import { z } from "zod";
-import { getUserByUsername } from "../set-up-profile/service";
-import { getSession } from "~/utils/auth";
+import { getUserByUsername } from "../../lib/auth/service";
+import { auth } from "~/lib/auth/auth";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -36,12 +36,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	.handler(async ({ data, context }) => {
 		try {
 			const cursor = parseCursor(data.cursor);
-
-			const ratings = await getUserRatings(
-				context.userSession.userId,
-				data.limit,
-				cursor,
-			);
+			const ratings = await getUserRatings(context.user.id, data.limit, cursor);
 
 			let nextCursor: string | undefined;
 
@@ -162,11 +157,13 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const user = await getUserByUsername(data.username);
+
 			if (!user) return { success: false, error: "Not found" };
 
-			const session = await getSession();
 			const requestedLimit = data.limit ?? 10;
-			const limit = session ? requestedLimit : Math.min(requestedLimit, 10);
+			const limit = (await auth.api.getSession())
+				? requestedLimit
+				: Math.min(requestedLimit, 10);
 			const cursor = parseCursor(data.cursor);
 			const ratings = await getUserRatings(user.id, limit, cursor);
 

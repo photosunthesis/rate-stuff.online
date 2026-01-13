@@ -68,20 +68,22 @@ export function useCreateRating() {
 			};
 
 			try {
-				const result = await createMutation.mutateAsync(ratingInput);
+				const result = (await createMutation.mutateAsync(ratingInput)) as {
+					success?: boolean;
+					data?: { id: string } | null;
+					errorMessage?: string;
+					errors?: Record<string, string>;
+				};
 
 				if (!result.success || !result.data) {
 					const validationErrors = extractValidationErrors(result);
 					setLocalValidationErrors(validationErrors);
-					const msg =
-						(result as unknown as { errorMessage?: string }).errorMessage ??
-						"Failed to create rating";
+					const msg = result.errorMessage ?? "Failed to create rating";
 					setLocalErrorMessage(msg);
 					throw new Error(msg);
 				}
 
 				const ratingId = result.data.id;
-
 				const imageUrls: string[] = [];
 
 				if (input.images && input.images.length > 0) {

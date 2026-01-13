@@ -1,7 +1,12 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSignIn } from "~/features/sign-in/hooks";
-import { AuthLayout } from "~/components/layout/auth-layout";
-import { SignInForm } from "~/features/sign-in/components/sig-in-form";
+import { useState } from "react";
+import authClient from "~/lib/auth/auth";
+import { AuthLayout } from "~/lib/auth/components/auth-layout";
+import { SignInForm } from "~/lib/auth/components/sig-in-form";
+import { authQueryOptions } from "~/lib/auth/queries";
+import { normalizeError } from "~/utils/errors";
+import { isEmail } from "~/utils/strings";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
@@ -28,19 +33,74 @@ export const Route = createFileRoute("/_auth/sign-in")({
 });
 
 function RouteComponent() {
-	const navigate = useNavigate();
 	const redirectUrl = Route.useRouteContext().redirectUrl;
-	const { signIn, isPending, errorMessage, validationErrors } = useSignIn();
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [validationErrors, setValidationErrors] = useState(
+		{} as Record<string, string>,
+	);
+
+	const handleSuccess = (redirect?: string) => {
+		console.log(`Sign-in successful, redirecting to: ${redirect}`);
+		queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
+		navigate({ to: redirect ?? "/" });
+	};
+
+	const handleError = (err: unknown) => {
+		const info = normalizeError(err);
+		if (info.errors) {
+			setValidationErrors(info.errors);
+			return;
+		}
+		setErrorMessage(info.errorMessage ?? "Failed to sign in");
+	};
+
+	const { mutate: signInMutate, isPending } = useMutation({
+		mutationFn: async (data: {
+			identifier: string;
+			password: string;
+			redirectUrl?: string;
+		}) => {
+			let result: unknown;
+			if (isEmail(data.identifier)) {
+				const payload = {
+					email: data.identifier,
+					password: data.password,
+					callbackURL: data.redirectUrl,
+				};
+
+				result = await authClient.signIn.email(payload, {
+					onSuccess: () => handleSuccess(data.redirectUrl),
+					onError: handleError,
+				});
+			} else {
+				const payload = {
+					username: data.identifier,
+					password: data.password,
+				};
+
+				result = await authClient.signIn.username(payload, {
+					onSuccess: () => handleSuccess(data.redirectUrl),
+					onError: handleError,
+				});
+			}
+
+			return result;
+		},
+	});
 
 	const handleSubmit = async (data: {
 		identifier: string;
 		password: string;
 	}) => {
-		try {
-			await signIn(data);
-			const redirectTo = redirectUrl || "/";
-			navigate({ to: redirectTo });
-		} catch {}
+		if (isPending) return;
+
+		signInMutate({
+			identifier: data.identifier,
+			password: data.password,
+			redirectUrl,
+		});
 	};
 
 	return (

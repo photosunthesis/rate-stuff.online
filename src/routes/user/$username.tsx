@@ -1,15 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
-import {
-	userQueryOptions,
-	usePublicUser,
-} from "~/features/set-up-profile/queries";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
+import { usePublicUser, userQueryOptions } from "~/lib/auth/queries";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {

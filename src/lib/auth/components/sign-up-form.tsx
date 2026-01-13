@@ -4,19 +4,19 @@ import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { registerSchema, type RegisterInput } from "../types";
 
-interface CreateAccountFormProps {
+interface SignUpFormProps {
 	onSubmit: (data: RegisterInput) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
 }
 
-export function CreateAccountForm({
+export function SignUpForm({
 	onSubmit,
 	isPending,
 	errorMessage,
 	validationErrors,
-}: CreateAccountFormProps) {
+}: SignUpFormProps) {
 	const form = useForm({
 		defaultValues: {
 			inviteCode: "",

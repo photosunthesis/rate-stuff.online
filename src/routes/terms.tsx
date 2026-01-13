@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AppLogo from "~/components/app-logo";
+import AppLogo from "~/components/ui/app-logo";
 
 export const Route = createFileRoute("/terms")({
 	component: RouteComponent,

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
-import { randomSuffix } from "~/utils/slug";
+import { randomSuffix } from "~/utils/strings";
 import {
 	useRecentTags,
 	useRecentStuff,

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import AppLogo from "~/components/app-logo";
+import AppLogo from "~/components/ui/app-logo";
 import { Link } from "@tanstack/react-router";
 
 export function AuthLayout({

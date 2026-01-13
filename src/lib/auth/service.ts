@@ -1,5 +1,5 @@
 import { db } from "~/db/db";
-import { users, ratings } from "~/db/schema/";
+import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/lib/media-storage";
 import { numberWithCommas } from "~/utils/numbers";
@@ -25,24 +25,6 @@ export const updateUserProfile = createServerOnlyFn(
 		};
 	},
 );
-
-export const getUserById = createServerOnlyFn(async (userId: string) => {
-	const user = await db()
-		.select()
-		.from(users)
-		.where(eq(users.id, userId))
-		.limit(1)
-		.then((res) => res[0]);
-
-	if (!user) return null;
-
-	return {
-		id: user.id,
-		username: user.username,
-		name: user.name,
-		image: user.image,
-	};
-});
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
@@ -97,5 +79,36 @@ export const uploadProfileImage = createServerOnlyFn(
 		const url = await uploadFile(key, file);
 
 		return { key, url };
+	},
+);
+
+export const validateInviteCode = createServerOnlyFn(
+	async (inviteCode: string) => {
+		const code = await db()
+			.select()
+			.from(inviteCodes)
+			.where(
+				and(
+					eq(inviteCodes.code, inviteCode),
+					isNull(inviteCodes.usedBy),
+					isNull(inviteCodes.usedAt),
+				),
+			)
+			.limit(1)
+			.then((res) => res[0]);
+
+		return !!code;
+	},
+);
+
+export const markInviteCodeAsUsed = createServerOnlyFn(
+	async (inviteCode: string, userId: string) => {
+		await db()
+			.update(inviteCodes)
+			.set({
+				usedBy: userId,
+				usedAt: new Date(),
+			})
+			.where(eq(inviteCodes.code, inviteCode));
 	},
 );

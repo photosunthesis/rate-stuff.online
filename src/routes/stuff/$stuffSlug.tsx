@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import { StuffHeader } from "~/features/stuff/components/stuff-header";
 import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
 import { useStuff } from "~/features/stuff/hooks";

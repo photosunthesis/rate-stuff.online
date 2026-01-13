@@ -5,9 +5,20 @@ import {
 } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
 import { MainLayout } from "~/components/layout/main-layout";
+import { authQueryOptions } from "~/lib/auth/queries";
 
 export const Route = createFileRoute("/")({
-	validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => ({
+	beforeLoad: async ({ context }) => {
+		const user = await context.queryClient.ensureQueryData({
+			...authQueryOptions(),
+			revalidateIfStale: true,
+		});
+
+		return { user };
+	},
+	validateSearch: (
+		search: Record<string, string | null> & SearchSchemaInput,
+	) => ({
 		tag: search.tag as string | undefined,
 	}),
 	component: App,

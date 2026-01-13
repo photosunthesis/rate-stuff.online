@@ -4,7 +4,7 @@ import {
 	Link,
 	useRouter,
 } from "@tanstack/react-router";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

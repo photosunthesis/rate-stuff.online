@@ -1,31 +1,32 @@
 import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import AppLogo from "~/components/app-logo";
+import AppLogo from "~/components/ui/app-logo";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
-import authClient from "~/lib/auth/auth-client";
+import authClient from "~/lib/auth/auth";
 
-const headers = [
-	"Rate literally anything.",
-	"Score everything, regret nothing.",
-	"Rate reality, one to ten.",
-	"Everything gets a score.",
-	"The world, out of ten.",
-	"Rate the whole universe.",
-	"Your opinion, now numbered.",
-];
+const getHeader = () => {
+	const headers = [
+		"Rate literally anything.",
+		"Give something a score.",
+		"Rate reality, one to ten.",
+		"Everything gets a score.",
+		"The world, out of ten.",
+		"Rate the whole universe.",
+		"Your opinion, now numbered.",
+	];
+
+	return headers[Math.floor(Math.random() * headers.length)];
+};
 
 export function LeftSidebar({ user }: { user?: { username: string } }) {
 	const isAuthenticated = user != null;
 	const navigate = useNavigate();
-	const [header] = useState(
-		() => headers[Math.floor(Math.random() * headers.length)],
-	);
-
 	const [isHolding, setIsHolding] = useState(false);
 	const [holdProgress, setHoldProgress] = useState(0);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const [header] = useState(() => getHeader());
 
 	const handleLogout = async () => {
 		await authClient.signOut({
@@ -105,7 +106,7 @@ export function LeftSidebar({ user }: { user?: { username: string } }) {
 				{!isAuthenticated ? (
 					<div className="space-y-2">
 						<Link
-							to="/create-account"
+							to="/sign-up"
 							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
 						>
 							Create Account

@@ -1,8 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { SetUpProfileForm } from "~/features/set-up-profile/components/set-up-profile-form";
-import { AuthLayout } from "~/components/layout/auth-layout";
-import { useSetUpProfile } from "~/features/set-up-profile/hooks";
-import type { SetUpProfileInput } from "~/features/set-up-profile/types";
+import { SetUpProfileForm } from "~/lib/auth/components/set-up-profile-form";
+import { AuthLayout } from "~/lib/auth/components/auth-layout";
+import type { PublicUser, SetUpProfileInput } from "~/lib/auth/types";
+import {
+	authQueryOptions,
+	useUpdateProfileMutation,
+	useUploadAvatarMutation,
+} from "~/lib/auth/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { extractValidationErrors, normalizeError } from "~/utils/errors";
 
 export const Route = createFileRoute("/_auth/set-up-profile")({
 	component: RouteComponent,
@@ -17,22 +24,98 @@ export const Route = createFileRoute("/_auth/set-up-profile")({
 function RouteComponent() {
 	const { user } = Route.useRouteContext();
 	const navigate = useNavigate();
-	const {
-		updateProfile: update,
-		isPending,
-		errorMessage,
-		validationErrors,
-	} = useSetUpProfile();
+	const mutation = useUpdateProfileMutation();
+	const uploadMutation = useUploadAvatarMutation();
+	const queryClient = useQueryClient();
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [validationErrors, setValidationErrors] = useState<
+		Record<string, string>
+	>({});
+
+	const update = async (data: SetUpProfileInput) => {
+		setErrorMessage(null);
+		setValidationErrors({});
+
+		let uploadedUrl: string | undefined;
+
+		const previousUser = queryClient.getQueryData<PublicUser | null>([
+			"currentUser",
+		]);
+
+		if (data.avatar instanceof File) {
+			try {
+				const result = await uploadMutation.mutateAsync(data.avatar);
+
+				if (!result.success) {
+					const errors = extractValidationErrors(result);
+					setValidationErrors(errors);
+					const msg =
+						(result as unknown as { errorMessage?: string }).errorMessage ??
+						"Failed to upload avatar";
+					setErrorMessage(msg);
+					throw new Error(msg);
+				}
+
+				await queryClient.ensureQueryData({
+					...authQueryOptions(),
+					revalidateIfStale: true,
+				});
+			} catch (e) {
+				const info = normalizeError(e);
+				if (info.errors) setValidationErrors(info.errors);
+				const msg = info.errorMessage ?? "Failed to upload avatar";
+				setErrorMessage(msg);
+				throw new Error(msg);
+			}
+		}
+
+		const payload: { name?: string; image?: string } = {};
+
+		if (data.name) payload.name = data.name;
+		if (uploadedUrl) payload.image = uploadedUrl;
+		else if (data.image !== undefined) payload.image = data.image ?? undefined;
+
+		try {
+			const result = await mutation.mutateAsync(payload);
+
+			if (!result.success) {
+				if (previousUser) {
+					queryClient.removeQueries({
+						queryKey: authQueryOptions().queryKey,
+					});
+				}
+
+				const errors = extractValidationErrors(result);
+				setValidationErrors(errors);
+				const errMessage =
+					(result as unknown as { errorMessage?: string }).errorMessage ??
+					"Failed to update profile";
+				setErrorMessage(errMessage);
+				throw new Error(errMessage);
+			}
+			return result;
+		} catch (e) {
+			if (previousUser) {
+				queryClient.removeQueries({
+					queryKey: authQueryOptions().queryKey,
+				});
+			}
+
+			const info = normalizeError(e);
+			if (info.errors) setValidationErrors(info.errors);
+			const msg =
+				info.errorMessage ?? (e instanceof Error ? e.message : String(e));
+			setErrorMessage(msg);
+			throw new Error(msg);
+		}
+	};
+
+	const isPending = mutation.isPending;
 
 	const handleSubmit = async (data: SetUpProfileInput) => {
-		try {
-			const result = await update(data);
-			if (result && (result as { success?: boolean }).success) {
-				navigate({ to: "/" });
-			}
-		} catch {
-			// no navigation; error will be shown in the form via props
-		}
+		await update(data).then(() => {
+			navigate({ to: "/" });
+		});
 	};
 
 	return (
@@ -44,8 +127,18 @@ function RouteComponent() {
 				onSubmit={handleSubmit}
 				onSkip={() => navigate({ to: "/" })}
 				isPending={isPending}
-				errorMessage={errorMessage}
-				validationErrors={validationErrors}
+				errorMessage={
+					errorMessage ??
+					(mutation.data && !mutation.data.success
+						? (mutation.data as unknown as { errorMessage?: string })
+								.errorMessage
+						: undefined)
+				}
+				validationErrors={
+					(mutation.data && !mutation.data.success
+						? extractValidationErrors(mutation.data)
+						: validationErrors) || {}
+				}
 				initialDisplayName={user?.displayUsername}
 				initialAvatarUrl={user?.image}
 			/>
