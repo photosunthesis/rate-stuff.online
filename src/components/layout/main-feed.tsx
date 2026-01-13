@@ -5,6 +5,7 @@ import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton"
 import { useFeedRatings } from "~/lib/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import { CreateRatingSection } from "~/lib/features/create-rating/components/create-rating-section";
 
 export function MainFeed({
 	tag,
@@ -22,6 +23,7 @@ export function MainFeed({
 		isLoading,
 		error,
 	} = useFeedRatings(10, isAuthenticated, tag);
+
 	const { ref, inView } = useInView();
 	const navigate = useNavigate();
 
@@ -57,7 +59,7 @@ export function MainFeed({
 
 	if (error) {
 		return (
-			<div className="p-4 text-center text-red-500">
+			<div className="p-4 text-center text-neutral-500">
 				Error loading ratings: {error.message}
 			</div>
 		);
@@ -88,6 +90,10 @@ export function MainFeed({
 						</Button>
 					</div>
 				</div>
+			)}
+
+			{isAuthenticated && (
+				<CreateRatingSection user={{ name: user?.username }} />
 			)}
 
 			<div>

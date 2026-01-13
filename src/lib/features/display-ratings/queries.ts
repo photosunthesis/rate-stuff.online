@@ -76,7 +76,7 @@ export function useRating(slug?: string) {
 
 export function useFeedRatings(
 	limit: number = 10,
-	isAuthenticated: boolean = true,
+	isAuthenticated: boolean,
 	tag?: string,
 ) {
 	const serverFn = isAuthenticated ? getFeedRatingsFn : getPublicFeedRatingsFn;

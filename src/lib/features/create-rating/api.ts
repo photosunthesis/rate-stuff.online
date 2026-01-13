@@ -12,7 +12,7 @@ import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
 } from "~/lib/features/rate-limit/middleware";
-import { authMiddleware } from "~/lib/auth/middleware";
+import { authMiddleware } from "../auth/middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
 	const fieldErrors: Record<string, string> = {};
