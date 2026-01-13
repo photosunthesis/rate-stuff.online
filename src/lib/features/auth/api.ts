@@ -5,7 +5,7 @@ import {
 	createRateLimitMiddleware,
 	RATE_LIMITER_BINDING,
 	rateLimitKeys,
-} from "~/lib/rate-limit/middleware";
+} from "~/lib/features/rate-limit/middleware";
 import { authMiddleware } from "~/lib/features/auth/middleware";
 import {
 	getUserByUsername as getUserByUsernameService,
