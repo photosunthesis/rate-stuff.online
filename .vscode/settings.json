@@ -39,7 +39,8 @@
 		"vite.config.ts": "vite.config.*.ts",
 		"biome.json": ".biomeignore",
 		"wrangler.jsonc": "worker-configuration.d.ts",
-		"drizzle.config.ts": "drizzle.*.ts"
+		"drizzle.config.ts": "drizzle.*.ts",
+		".env": ".env.*"
 	},
 	"biome.lsp.trace.server": "verbose",
 	"biome.enabled": true,
