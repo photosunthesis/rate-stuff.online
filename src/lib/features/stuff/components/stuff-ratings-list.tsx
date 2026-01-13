@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
 import { getStuffRatingsFn } from "../api";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 

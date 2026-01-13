@@ -6,7 +6,7 @@ import { randomSuffix } from "~/lib/utils/strings";
 import {
 	useRecentTags,
 	useRecentStuff,
-} from "~/features/display-ratings/queries";
+} from "~/lib/features/display-ratings/queries";
 
 export function RightSidebar({ user }: { user?: { username: string } }) {
 	const isAuthenticated = user != null;

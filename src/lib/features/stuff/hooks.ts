@@ -2,7 +2,7 @@ import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getStuffRatingsFn } from "./api";
 import { stuffQueryOptions } from "./queries";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 
 type PageResult = {
 	success: boolean;

@@ -11,10 +11,10 @@ import remarkGfm from "remark-gfm";
 import {
 	useRating,
 	ratingQueryOptions,
-} from "~/features/display-ratings/queries";
+} from "~/lib/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";

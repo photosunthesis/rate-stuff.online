@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
-import { usePublicUserRatings } from "~/features/display-ratings/queries";
-import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
+import { usePublicUserRatings } from "~/lib/features/display-ratings/queries";
+import { UserRatingCard } from "~/lib/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";

@@ -1,6 +1,6 @@
 import { createServerFn, json } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
-import { createRatingSchema } from "~/features/display-ratings/types";
+import { createRatingSchema } from "~/lib/features/display-ratings/types";
 import {
 	createRating,
 	uploadImage,

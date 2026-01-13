@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus } from "lucide-react";
-import { useStuffSearch } from "~/features/create-rating/hooks";
+import { useStuffSearch } from "~/lib/features/create-rating/hooks";
 
 interface StuffSelectorProps {
 	value?: { id?: string; name: string };

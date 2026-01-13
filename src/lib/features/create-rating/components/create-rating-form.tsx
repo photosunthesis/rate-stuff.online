@@ -6,11 +6,11 @@ import { FormError } from "~/components/ui/form-error";
 import {
 	createRatingSchema,
 	type CreateRatingInput,
-} from "~/features/create-rating/types";
-import { StuffSelector } from "~/features/create-rating/components/stuff-selector";
-import { TagSelector } from "~/features/create-rating/components/tag-selector";
-import { CompactMarkdownEditor } from "~/features/create-rating/components/compact-markdown-editor";
-import { ImageField } from "~/features/create-rating/components/image-field";
+} from "~/lib/features/create-rating/types";
+import { StuffSelector } from "~/lib/features/create-rating/components/stuff-selector";
+import { TagSelector } from "~/lib/features/create-rating/components/tag-selector";
+import { CompactMarkdownEditor } from "~/lib/features/create-rating/components/compact-markdown-editor";
+import { ImageField } from "~/lib/features/create-rating/components/image-field";
 import { getErrorMessage } from "~/lib/utils/errors";
 
 interface CreateRatingFormProps {

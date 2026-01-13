@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
-import { CreateRatingTrigger } from "~/features/create-rating/components/create-rating-trigger";
+import { CreateRatingModal } from "~/lib/features/create-rating/components/create-rating-modal";
+import { CreateRatingTrigger } from "~/lib/features/create-rating/components/create-rating-trigger";
 
 export function CreateRatingSection({
 	user,
