@@ -36,7 +36,7 @@ export function MobileHeader({ user }: { user?: { username: string } }) {
 				</h1>
 				<div className="gap-2 flex">
 					<Link
-						to="/create-account"
+						to="/sign-up"
 						className="flex-1 px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
 					>
 						Create Account

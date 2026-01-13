@@ -240,7 +240,7 @@ export function StuffRatingsList({
 					</div>
 					<div className="flex gap-3 justify-center">
 						<Link
-							to="/create-account"
+							to="/sign-up"
 							className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
 						>
 							Create Account

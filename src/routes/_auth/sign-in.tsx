@@ -106,7 +106,7 @@ function RouteComponent() {
 			description="The universe is peer-reviewed. Jump back in."
 			footerText="New here?"
 			footerLinkText="Create an account"
-			footerLinkTo="/create-account"
+			footerLinkTo="/sign-up"
 		>
 			<SignInForm
 				onSubmit={handleSubmit}
