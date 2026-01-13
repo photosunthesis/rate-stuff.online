@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createMiddleware } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { auth } from "~/lib/auth/auth";
+import authClient from "../core/auth-client";
 
 export const RATE_LIMITER_BINDING = {
 	GENERAL: "GENERAL",
@@ -90,8 +90,7 @@ export const rateLimitKeys = {
 
 	bySession: async (request: Request) => {
 		try {
-			const session = await auth.api.getSession({
-				headers: request.headers,
+			const session = await authClient.getSession({
 				query: { disableCookieCache: true },
 			});
 

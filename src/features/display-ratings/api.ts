@@ -7,10 +7,10 @@ import {
 	getRatingById,
 } from "./service";
 import { getRecentTags, getRecentStuff } from "./service";
-import { authMiddleware } from "~/lib/auth/middleware";
 import { z } from "zod";
-import { getUserByUsername } from "../../lib/auth/service";
-import { auth } from "~/lib/auth/auth";
+import { authMiddleware } from "~/lib/features/auth/middleware";
+import { getUserByUsername } from "~/lib/features/auth/service";
+import { auth } from "~/lib/core/auth";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;

@@ -4,8 +4,7 @@ import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { db } from "~/db/db";
 import { username } from "better-auth/plugins";
-import { createAuthClient } from "better-auth/client";
-import { usernameClient } from "better-auth/client/plugins";
+// import * as schema from "~/db/schema";
 
 const getAuthConfig = createServerOnlyFn(() =>
 	betterAuth({
@@ -14,9 +13,10 @@ const getAuthConfig = createServerOnlyFn(() =>
 			enabled: false,
 		},
 
-		database: drizzleAdapter(db(), {
+		database: drizzleAdapter(db, {
 			provider: "pg",
 			usePlural: true,
+			// schema: schema,
 		}),
 
 		user: {
@@ -51,10 +51,3 @@ const getAuthConfig = createServerOnlyFn(() =>
 );
 
 export const auth = getAuthConfig();
-
-const authClient = createAuthClient({
-	baseURL: process.env.VITE_BASE_URL,
-	plugins: [usernameClient()],
-});
-
-export default authClient;

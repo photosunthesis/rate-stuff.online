@@ -1,11 +1,17 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { AuthLayout } from "~/lib/auth/components/auth-layout";
-import { SignUpForm } from "~/lib/auth/components/sign-up-form";
-import { authQueryOptions, useSignUpMutation } from "~/lib/auth/queries";
-import type { RegisterInput } from "~/lib/auth/types";
-import { extractValidationErrors, normalizeError } from "~/utils/errors";
+import authClient from "~/lib/core/auth-client";
+import {
+	markInviteCodeAsUsedFn,
+	validateInviteCodeFn,
+} from "~/lib/features/auth/api";
+import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
+import { SignUpForm } from "~/lib/features/auth/components/sign-up-form";
+import { authQueryOptions } from "~/lib/features/auth/queries";
+import { registerSchema } from "~/lib/features/auth/types";
+import { extractValidationErrors } from "~/lib/utils/errors";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
@@ -40,39 +46,77 @@ export const Route = createFileRoute("/_auth/sign-up")({
 });
 
 function RouteComponent() {
-	const signUp = useSignUpMutation();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState({});
+	const validateInviteCode = useServerFn(validateInviteCodeFn);
+	const markInviteCodeAsUsed = useServerFn(markInviteCodeAsUsedFn);
 
-	const handleSubmit = async (data: RegisterInput) => {
-		setErrorMessage(null);
-		setValidationErrors({});
+	const { mutate: signUpMutate, isPending } = useMutation({
+		mutationFn: async (data: {
+			username: string;
+			email: string;
+			password: string;
+			inviteCode: string;
+		}) => {
+			setErrorMessage(null);
+			setValidationErrors({});
 
-		try {
-			const result = await signUp.mutateAsync(data);
-			if (!result.success) {
-				const errors = extractValidationErrors(result);
+			const parseResult = registerSchema.safeParse(data);
+
+			if (!parseResult.success) {
+				const errors = extractValidationErrors(parseResult.error);
 				setValidationErrors(errors);
-				const msg =
-					(result as unknown as { errorMessage?: string }).errorMessage ??
-					"Failed to create account";
-				setErrorMessage(msg);
-				throw new Error(msg);
+				return;
 			}
 
-			queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
+			const validCodeResult = await validateInviteCode({
+				data: { inviteCode: data.inviteCode },
+			});
 
-			navigate({ to: "/set-up-profile" });
-		} catch (e) {
-			const info = normalizeError(e);
-			if (info.errors) setValidationErrors(info.errors);
-			const msg =
-				info.errorMessage ?? (e instanceof Error ? e.message : String(e));
-			setErrorMessage(msg);
-			throw new Error(msg);
-		}
+			if (!validCodeResult.success) {
+				setValidationErrors({
+					inviteCode: "Invalid invite code",
+				});
+				return;
+			}
+
+			await authClient.signUp.email(
+				{
+					name: data.username, //  We'll let the user change this later
+					username: data.username,
+					email: data.email,
+					password: data.password,
+				},
+				{
+					onSuccess: async () => {
+						queryClient.removeQueries({
+							queryKey: authQueryOptions().queryKey,
+						});
+
+						await markInviteCodeAsUsed({
+							data: { inviteCode: data.inviteCode },
+						});
+
+						navigate({ to: "/set-up-profile" });
+					},
+					onError: (error) => {
+						setErrorMessage(error.error.message ?? "Failed to sign up");
+					},
+				},
+			);
+		},
+	});
+
+	const handleSubmit = async (data: {
+		username: string;
+		email: string;
+		password: string;
+		inviteCode: string;
+	}) => {
+		if (isPending) return;
+		signUpMutate(data);
 	};
 
 	return (
@@ -85,18 +129,9 @@ function RouteComponent() {
 		>
 			<SignUpForm
 				onSubmit={handleSubmit}
-				isPending={signUp.isPending}
-				errorMessage={
-					errorMessage ??
-					(signUp.data && !(signUp.data as { success?: boolean }).success
-						? (signUp.data as unknown as { errorMessage?: string }).errorMessage
-						: undefined)
-				}
-				validationErrors={
-					(signUp.data && !(signUp.data as { success?: boolean }).success
-						? extractValidationErrors(signUp.data)
-						: validationErrors) || {}
-				}
+				isPending={isPending}
+				errorMessage={errorMessage}
+				validationErrors={validationErrors}
 			/>
 		</AuthLayout>
 	);

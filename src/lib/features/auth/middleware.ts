@@ -4,7 +4,7 @@ import {
 	setResponseHeader,
 	setResponseStatus,
 } from "@tanstack/react-start/server";
-import { auth } from "~/lib/auth/auth";
+import { auth } from "~/lib/core/auth";
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
 	const session = await auth.api.getSession({

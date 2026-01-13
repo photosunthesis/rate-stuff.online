@@ -5,7 +5,7 @@ import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { getTimeAgo } from "~/utils/datetime";
+import { getTimeAgo } from "~/lib/utils/datetime";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;

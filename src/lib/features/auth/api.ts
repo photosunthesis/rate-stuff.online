@@ -1,60 +1,55 @@
 import { createServerFn } from "@tanstack/react-start";
-import { isEmail } from "~/utils/strings";
+import { isEmail } from "~/lib/utils/strings";
 import { z } from "zod";
 import {
 	createRateLimitMiddleware,
 	RATE_LIMITER_BINDING,
 	rateLimitKeys,
 } from "~/lib/rate-limit/middleware";
-import { authMiddleware } from "~/lib/auth/middleware";
+import { authMiddleware } from "~/lib/features/auth/middleware";
 import {
 	getUserByUsername as getUserByUsernameService,
 	markInviteCodeAsUsed,
 	uploadProfileImage,
 	validateInviteCode,
 } from "./service";
-import { registerBaseSchema } from "./types";
-import { auth } from "~/lib/auth/auth";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
+import { auth } from "../../core/auth";
 
-export const createAccountFn = createServerFn({ method: "POST" })
+export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.middleware([
 		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.AUTH,
+			binding: RATE_LIMITER_BINDING.GENERAL,
 			keyFn: rateLimitKeys.byIp,
-			errorMessage: "Too many sign-up attempts. Please try again later.",
+			errorMessage: "Too many requests. Please try again later.",
 		}),
 	])
-	.inputValidator(registerBaseSchema)
+	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
 	.handler(async ({ data }) => {
 		try {
-			if (!(await validateInviteCode(data.inviteCode))) {
-				return {
-					success: false,
-					errorMessage: "Invite code is not valid",
-					errors: { inviteCode: "Invite code is not valid" },
-				};
-			}
-
-			const result = await auth.api.signUpEmail({
-				body: {
-					name: data.username, // We'll let the user change this later
-					username: data.username,
-					email: data.email,
-					password: data.password,
-				},
-			});
-
-			await markInviteCodeAsUsed(data.inviteCode, result.user.id);
-
-			return {
-				success: true,
-			};
+			const isValid = await validateInviteCode(data.inviteCode);
+			return { success: isValid };
 		} catch (error) {
 			return {
 				success: false,
 				errorMessage:
-					error instanceof Error ? error.message : "Account creation failed",
+					error instanceof Error ? error.message : "Validation failed",
+			};
+		}
+	});
+
+export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware])
+	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
+	.handler(async ({ data, context }) => {
+		try {
+			await markInviteCodeAsUsed(data.inviteCode, context.user.id);
+			return { success: true };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Operation failed",
 			};
 		}
 	});

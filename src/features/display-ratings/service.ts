@@ -98,7 +98,7 @@ export const getUserRatings = createServerOnlyFn(
 			: undefined;
 
 		const results = await queryRatingsWithRelations(
-			db(),
+			db,
 			and(eq(ratings.userId, userId), isNull(ratings.deletedAt), cursorFilter),
 			limit,
 		);
@@ -126,7 +126,7 @@ export const getFeedRatings = createServerOnlyFn(
 		const tagFilter = tag ? eq(tags.name, tag) : undefined;
 
 		const results = await queryRatingsWithRelations(
-			db(),
+			db,
 			and(isNull(ratings.deletedAt), cursorFilter, tagFilter),
 			limit,
 		);
@@ -143,7 +143,7 @@ export const getFeedRatings = createServerOnlyFn(
 
 export const getRatingById = createServerOnlyFn(async (id: string) => {
 	const results = await queryRatingsWithRelations(
-		db(),
+		db,
 		and(eq(ratings.id, id)),
 		1,
 	);
@@ -154,7 +154,7 @@ export const getRatingById = createServerOnlyFn(async (id: string) => {
 
 export const getRatingBySlug = createServerOnlyFn(async (slug: string) => {
 	const results = await queryRatingsWithRelations(
-		db(),
+		db,
 		and(eq(ratings.slug, slug)),
 		1,
 	);
@@ -166,7 +166,7 @@ export const getRatingBySlug = createServerOnlyFn(async (slug: string) => {
 
 export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-	const rows = await db()
+	const rows = await db
 		.select({ name: tags.name, count: sql<number>`COUNT(*)` })
 		.from(ratingsToTags)
 		.leftJoin(ratings, eq(ratings.id, ratingsToTags.ratingId))
@@ -181,7 +181,7 @@ export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 
 export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-	const rows = await db()
+	const rows = await db
 		.select({
 			id: stuff.id,
 			name: stuff.name,
@@ -205,7 +205,7 @@ export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
 
 export const getUserRatingsCount = createServerOnlyFn(
 	async (userId: string) => {
-		const row = await db()
+		const row = await db
 			.select({ count: sql<number>`COUNT(*)` })
 			.from(ratings)
 			.where(and(eq(ratings.userId, userId), isNull(ratings.deletedAt)));

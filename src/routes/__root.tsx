@@ -8,7 +8,10 @@ import {
 import appCss from "~/styles.css?url";
 import { NotFound } from "~/components/ui/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
-import { authQueryOptions, type AuthQueryResult } from "~/lib/auth/queries";
+import {
+	authQueryOptions,
+	type AuthQueryResult,
+} from "~/lib/features/auth/queries";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -122,6 +125,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: "console.log('inline HTML script executed')",
+					}}
+				/>
 				<Scripts />
 			</body>
 		</html>

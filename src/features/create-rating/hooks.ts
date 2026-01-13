@@ -6,7 +6,7 @@ import {
 } from "./queries";
 import { useStuffSearchQuery, useTagSearchQuery } from "./queries";
 import type { CreateRatingInput } from "./types";
-import { extractValidationErrors, normalizeError } from "~/utils/errors";
+import { extractValidationErrors, normalizeError } from "~/lib/utils/errors";
 
 function normalizeParagraphBreaks(md: string) {
 	if (!md) return "";

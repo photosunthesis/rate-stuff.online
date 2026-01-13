@@ -2,10 +2,16 @@ import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
-import { registerSchema, type RegisterInput } from "../types";
+import { registerSchema } from "../types";
 
 interface SignUpFormProps {
-	onSubmit: (data: RegisterInput) => Promise<void>;
+	onSubmit: (data: {
+		username: string;
+		email: string;
+		password: string;
+		confirmPassword: string;
+		inviteCode: string;
+	}) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
@@ -19,12 +25,12 @@ export function SignUpForm({
 }: SignUpFormProps) {
 	const form = useForm({
 		defaultValues: {
-			inviteCode: "",
 			username: "",
 			email: "",
 			password: "",
 			confirmPassword: "",
-		} as RegisterInput,
+			inviteCode: "",
+		},
 		onSubmit: async ({ value }) => {
 			await onSubmit(value);
 		},
@@ -74,6 +80,7 @@ export function SignUpForm({
 					e.preventDefault();
 					e.stopPropagation();
 					form.handleSubmit();
+					console.log("submitted");
 				}}
 				className="space-y-4"
 				noValidate

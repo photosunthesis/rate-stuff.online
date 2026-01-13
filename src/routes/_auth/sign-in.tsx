@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/lib/auth/auth";
-import { AuthLayout } from "~/lib/auth/components/auth-layout";
-import { SignInForm } from "~/lib/auth/components/sig-in-form";
-import { authQueryOptions } from "~/lib/auth/queries";
-import { normalizeError } from "~/utils/errors";
-import { isEmail } from "~/utils/strings";
+import authClient from "~/lib/core/auth-client";
+import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
+import { SignInForm } from "~/lib/features/auth/components/sig-in-form";
+import { authQueryOptions } from "~/lib/features/auth/queries";
+import { normalizeError } from "~/lib/utils/errors";
+import { isEmail } from "~/lib/utils/strings";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
@@ -62,7 +62,6 @@ function RouteComponent() {
 			password: string;
 			redirectUrl?: string;
 		}) => {
-			let result: unknown;
 			if (isEmail(data.identifier)) {
 				const payload = {
 					email: data.identifier,
@@ -70,7 +69,7 @@ function RouteComponent() {
 					callbackURL: data.redirectUrl,
 				};
 
-				result = await authClient.signIn.email(payload, {
+				await authClient.signIn.email(payload, {
 					onSuccess: () => handleSuccess(data.redirectUrl),
 					onError: handleError,
 				});
@@ -80,13 +79,11 @@ function RouteComponent() {
 					password: data.password,
 				};
 
-				result = await authClient.signIn.username(payload, {
+				await authClient.signIn.username(payload, {
 					onSuccess: () => handleSuccess(data.redirectUrl),
 					onError: handleError,
 				});
 			}
-
-			return result;
 		},
 	});
 

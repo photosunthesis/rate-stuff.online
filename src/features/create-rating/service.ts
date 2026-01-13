@@ -2,8 +2,8 @@ import { db } from "~/db/db";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import type { CreateRatingInput } from "./types";
-import { uploadFile } from "~/lib/media-storage";
-import { generateSlug } from "~/utils/strings";
+import { uploadFile } from "~/lib/core/media-storage";
+import { generateSlug } from "~/lib/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const searchStuff = createServerOnlyFn(
@@ -12,7 +12,7 @@ export const searchStuff = createServerOnlyFn(
 
 		if (!q) return [];
 
-		return db()
+		return db
 			.select()
 			.from(stuff)
 			.where(
@@ -29,7 +29,7 @@ export const searchTags = createServerOnlyFn(
 
 		if (!q) return [];
 
-		return db()
+		return db
 			.select()
 			.from(tags)
 			.where(like(sql`LOWER(${tags.name})`, `${q}%`))
@@ -40,7 +40,7 @@ export const searchTags = createServerOnlyFn(
 
 export const getOrCreateStuff = createServerOnlyFn(
 	async (name: string, userId: string) =>
-		db().transaction(async (tx) => {
+		db.transaction(async (tx) => {
 			const existing = await tx
 				.select()
 				.from(stuff)
@@ -77,7 +77,7 @@ export const getOrCreateStuff = createServerOnlyFn(
 
 export const createTags = createServerOnlyFn(
 	async (names: string[], userId: string) =>
-		db().transaction(async (tx) => {
+		db.transaction(async (tx) => {
 			if (names.length === 0) return [];
 
 			const normalizedNames = names.map((n) => n.toLowerCase().trim());
@@ -103,7 +103,7 @@ export const createTags = createServerOnlyFn(
 
 export const createRating = createServerOnlyFn(
 	async (userId: string, input: CreateRatingInput) =>
-		db().transaction(async (tx) => {
+		db.transaction(async (tx) => {
 			let stuffId = input.stuffId;
 
 			if (!stuffId && input.stuffName) {
@@ -163,7 +163,7 @@ export const uploadImage = createServerOnlyFn(
 
 export const updateRatingImages = createServerOnlyFn(
 	async (ratingId: string, images: string[]) => {
-		const updated = await db()
+		const updated = await db
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })
 			.where(eq(ratings.id, ratingId))

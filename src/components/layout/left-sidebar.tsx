@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
 import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
-import authClient from "~/lib/auth/auth";
+import authClient from "~/lib/core/auth-client";
 
 const getHeader = () => {
 	const headers = [
@@ -29,13 +29,8 @@ export function LeftSidebar({ user }: { user?: { username: string } }) {
 	const [header] = useState(() => getHeader());
 
 	const handleLogout = async () => {
-		await authClient.signOut({
-			fetchOptions: {
-				onSuccess: () => {
-					navigate({ to: "/" });
-				},
-			},
-		});
+		await authClient.signOut();
+		navigate({ to: "/" });
 	};
 
 	const handleMouseDown = () => {

@@ -1,13 +1,13 @@
 import { db } from "~/db/db";
 import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
-import { uploadFile } from "~/lib/media-storage";
-import { numberWithCommas } from "~/utils/numbers";
+import { uploadFile } from "~/lib/core/media-storage";
+import { numberWithCommas } from "~/lib/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
-		const updatedUser = await db()
+		const updatedUser = await db
 			.update(users)
 			.set({ ...updates, updatedAt: new Date() })
 			.where(eq(users.id, userId))
@@ -28,7 +28,7 @@ export const updateUserProfile = createServerOnlyFn(
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
-		const rows = await db()
+		const rows = await db
 			.select({
 				id: users.id,
 				username: users.username,
@@ -84,7 +84,7 @@ export const uploadProfileImage = createServerOnlyFn(
 
 export const validateInviteCode = createServerOnlyFn(
 	async (inviteCode: string) => {
-		const code = await db()
+		const code = await db
 			.select()
 			.from(inviteCodes)
 			.where(
@@ -103,7 +103,7 @@ export const validateInviteCode = createServerOnlyFn(
 
 export const markInviteCodeAsUsed = createServerOnlyFn(
 	async (inviteCode: string, userId: string) => {
-		await db()
+		await db
 			.update(inviteCodes)
 			.set({
 				usedBy: userId,

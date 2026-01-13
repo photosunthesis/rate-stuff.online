@@ -1,6 +1,5 @@
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import {
-	createAccountFn,
 	getCurrentUserFn,
 	getUserByUsernameFn,
 	updateUserProfileFn,
@@ -8,19 +7,6 @@ import {
 } from "./api";
 import { useServerFn } from "@tanstack/react-start";
 import type { PublicUser } from "./types";
-
-export function useSignUpMutation() {
-	const createAccountMutationFn = useServerFn(createAccountFn);
-
-	return useMutation({
-		mutationFn: async (data: {
-			email: string;
-			password: string;
-			username: string;
-			inviteCode: string;
-		}) => createAccountMutationFn({ data }),
-	});
-}
 
 export function useUpdateProfileMutation() {
 	const updateProfileMutationFn = useServerFn(updateUserProfileFn);

@@ -111,7 +111,7 @@ async function extractImagesForStuff(
 }
 
 export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
-	const dbInstance = db();
+	const dbInstance = db;
 	const rows = await dbInstance
 		.select({
 			id: stuffTable.id,
@@ -158,7 +158,7 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 
 export const getStuffRatingsBySlug = createServerOnlyFn(
 	async (slug: string, limit = 10, cursor?: string) => {
-		const dbInstance = db();
+		const dbInstance = db;
 		const parsed = parseCursor(cursor);
 		const cursorFilter = parsed
 			? or(

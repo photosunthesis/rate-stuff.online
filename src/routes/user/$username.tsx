@@ -4,16 +4,21 @@ import { Avatar } from "~/components/ui/avatar";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
-import { getTimeAgo } from "~/utils/datetime";
+import { getTimeAgo } from "~/lib/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
-import { usePublicUser, userQueryOptions } from "~/lib/auth/queries";
+import { userQueryOptions } from "~/lib/features/auth/queries";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {
 		const username = params.username;
+
 		if (!username) throw redirect({ to: "/" });
 
-		await context.queryClient.ensureQueryData(userQueryOptions(username));
+		const publicUser = await context.queryClient.ensureQueryData(
+			userQueryOptions(username),
+		);
+
+		return { publicUser };
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
@@ -157,23 +162,11 @@ function UserRatingsList({
 }
 
 function RouteComponent() {
-	const username = Route.useParams().username;
-	const { user } = Route.useRouteContext();
-	const { data: userData, isLoading, error } = usePublicUser(username);
+	const { user, publicUser } = Route.useRouteContext();
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-			</div>
-		);
-	}
+	if (!publicUser) return <NotFound />;
 
-	if (error || !userData) {
-		return <NotFound />;
-	}
-
-	const ratingsCount = userData.ratingsCount ?? 0;
+	const ratingsCount = publicUser.ratingsCount ?? 0;
 
 	return (
 		<MainLayout user={{ username: user?.username ?? "" }}>
@@ -181,28 +174,28 @@ function RouteComponent() {
 				<div className="flex items-center gap-4 mb-4">
 					<div>
 						<Avatar
-							src={userData.image ?? null}
-							alt={userData.name ?? `@${userData.username}`}
+							src={publicUser.image ?? null}
+							alt={publicUser.name ?? `@${publicUser.username}`}
 							size="xl"
 						/>
-						{userData.name ? (
+						{publicUser.name ? (
 							<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
 								<span className="text-white font-semibold text-lg">
-									{userData.name}
+									{publicUser.name}
 								</span>
 								<span className="text-neutral-500 text-md font-medium">
-									(@{userData.username})
+									(@{publicUser.username})
 								</span>
 							</div>
 						) : (
 							<div className="text-white font-semibold text-lg">
-								@{userData.username}
+								@{publicUser.username}
 							</div>
 						)}
 						<div className="text-neutral-500 text-sm">
-							{userData.createdAt ? (
+							{publicUser.createdAt ? (
 								<>
-									Joined {getTimeAgo(userData.createdAt)} · {ratingsCount}{" "}
+									Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}
 									{ratingsCount === "1" ? "rating" : "ratings"}
 								</>
 							) : null}
@@ -213,7 +206,7 @@ function RouteComponent() {
 				<div className="-mx-4 border-t border-neutral-800" />
 
 				<UserRatingsList
-					username={userData.username}
+					username={publicUser.username}
 					isAuthenticated={user != null}
 				/>
 			</div>

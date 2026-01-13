@@ -3,7 +3,7 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getTimeAgo } from "~/utils/datetime";
+import { getTimeAgo } from "~/lib/utils/datetime";
 
 interface UserRatingCardProps {
 	rating: RatingWithRelations;

@@ -1,15 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { SetUpProfileForm } from "~/lib/auth/components/set-up-profile-form";
-import { AuthLayout } from "~/lib/auth/components/auth-layout";
-import type { PublicUser, SetUpProfileInput } from "~/lib/auth/types";
+import { SetUpProfileForm } from "~/lib/features/auth/components/set-up-profile-form";
+import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
+import type { PublicUser, SetUpProfileInput } from "~/lib/features/auth/types";
 import {
 	authQueryOptions,
 	useUpdateProfileMutation,
 	useUploadAvatarMutation,
-} from "~/lib/auth/queries";
+} from "~/lib/features/auth/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { extractValidationErrors, normalizeError } from "~/utils/errors";
+import { extractValidationErrors, normalizeError } from "~/lib/utils/errors";
 
 export const Route = createFileRoute("/_auth/set-up-profile")({
 	component: RouteComponent,
