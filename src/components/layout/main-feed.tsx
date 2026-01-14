@@ -33,7 +33,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	if (isLoading) {
 		return (
 			<div>
-				{[0, 1, 2].map((n, idx) => (
+				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
 						className={
@@ -42,9 +42,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<div className="px-4 py-3">
-							<RatingCardSkeleton variant="rating" />
-						</div>
+						<RatingCardSkeleton variant="rating" showImage={idx % 2 === 0} />
 					</div>
 				))}
 			</div>
@@ -98,7 +96,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<div className="px-4 py-3">
+						<div className="px-4">
 							<RatingCard key={rating.id} rating={rating} />
 						</div>
 					</div>

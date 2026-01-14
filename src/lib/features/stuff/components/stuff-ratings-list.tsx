@@ -1,11 +1,8 @@
 import { useStuffRatingsInfinite } from "../hooks";
 import { StuffRatingCard } from "./stuff-rating-card";
 import { useEffect, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import { getStuffRatingsFn } from "../api";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
-import { useQuery } from "@tanstack/react-query";
 import type { PublicUser } from "../../auth/types";
 
 type Page = {
@@ -33,59 +30,19 @@ export function StuffRatingsList({
 	let hasNextPage = false;
 	let isFetchingNextPage = false;
 
-	// Call hooks unconditionally; enable/disable fetch based on auth state.
+	// Consolidate to a single infinite query for both guest and authenticated users.
+	// The hook fetches the first page for everyone; we only trigger loading more
+	// pages when the user is authenticated (avoids extra guest pagination).
 	const isAuthenticated = user != null;
-	const authQuery = useStuffRatingsInfinite(slug, LIMIT, isAuthenticated);
-	const getStuffRatingsFnClient = useServerFn(getStuffRatingsFn);
-	const guestQuery = useQuery({
-		queryKey: ["stuff", slug, "ratings", "guest"],
-		queryFn: async () => {
-			const res = (await getStuffRatingsFnClient({
-				data: { slug, limit: LIMIT },
-			})) as Page;
-			if (!res.success) throw new Error(res.error ?? "Failed to load ratings");
-			return res;
-		},
-		enabled: !isAuthenticated,
-		staleTime: 0,
-		gcTime: 1000 * 60 * 10,
-	});
+	const ratingsQuery = useStuffRatingsInfinite(slug, LIMIT, true);
 
-	if (isAuthenticated) {
-		data = authQuery.data;
-		isLoading = authQuery.isLoading;
-		error = authQuery.error;
-		fetchNextPage = authQuery.fetchNextPage;
-		hasNextPage = !!authQuery.hasNextPage;
-		isFetchingNextPage = authQuery.isFetchingNextPage;
-	} else {
-		data = guestQuery.data ? { pages: [guestQuery.data] } : undefined;
-		isLoading = guestQuery.isLoading;
-		error = guestQuery.error ?? null;
-		fetchNextPage = undefined;
-		hasNextPage = false;
-		isFetchingNextPage = false;
-	}
+	data = ratingsQuery.data;
+	isLoading = ratingsQuery.isLoading;
+	error = ratingsQuery.error ?? null;
+	fetchNextPage = ratingsQuery.fetchNextPage;
+	hasNextPage = !!ratingsQuery.hasNextPage;
+	isFetchingNextPage = ratingsQuery.isFetchingNextPage;
 
-	// Direct client-side debug fetch to verify server response (visible in console)
-	const getStuffRatings = useServerFn(getStuffRatingsFn);
-	const [debugResp, setDebugResp] = useState<Record<string, unknown> | null>(
-		null,
-	);
-	useEffect(() => {
-		let mounted = true;
-		getStuffRatings({ data: { slug, limit: LIMIT } })
-			.then((r) => {
-				if (!mounted) return;
-				setDebugResp(r);
-			})
-			.catch((err) => {
-				setDebugResp({ error: String(err) });
-			});
-		return () => {
-			mounted = false;
-		};
-	}, [slug, getStuffRatings]);
 	const observerTarget = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -95,7 +52,8 @@ export function StuffRatingsList({
 					entries[0].isIntersecting &&
 					hasNextPage &&
 					!isFetchingNextPage &&
-					fetchNextPage
+					fetchNextPage &&
+					isAuthenticated
 				) {
 					fetchNextPage();
 				}
@@ -111,7 +69,7 @@ export function StuffRatingsList({
 				observer.unobserve(observerTarget.current);
 			}
 		};
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
 
 	const [showSkeleton, setShowSkeleton] = useState(true);
 	const [skeletonFading, setSkeletonFading] = useState(false);
@@ -160,7 +118,7 @@ export function StuffRatingsList({
 				className={`py-2 transition-opacity duration-300 ${skeletonFading ? "opacity-0" : "opacity-100"}`}
 				data-skeleton
 			>
-				{[0, 1, 2].map((n, idx) => (
+				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
 						className={
@@ -168,7 +126,7 @@ export function StuffRatingsList({
 						}
 						data-skel-item
 					>
-						<RatingCardSkeleton variant="stuff" />
+						<RatingCardSkeleton variant="stuff" showImage={idx % 2 === 0} />
 					</div>
 				))}
 			</div>
@@ -191,11 +149,6 @@ export function StuffRatingsList({
 		return (
 			<div className="text-center py-12">
 				<p className="text-neutral-500">No ratings yet.</p>
-				{debugResp && (
-					<pre className="text-xs text-left text-neutral-400 mt-4 p-2 bg-neutral-900 rounded">
-						{JSON.stringify(debugResp, null, 2)}
-					</pre>
-				)}
 			</div>
 		);
 	}
@@ -208,8 +161,8 @@ export function StuffRatingsList({
 						key={rating.id}
 						className={
 							idx === 0
-								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
-								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+								? "hover:bg-neutral-800/50 transition-colors"
+								: "border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
 						<StuffRatingCard rating={rating} />
@@ -217,19 +170,23 @@ export function StuffRatingsList({
 				))}
 			</div>
 
-			{isAuthenticated
-				? hasNextPage && (
-						<div ref={observerTarget} className="py-4 text-center">
-							{isFetchingNextPage ? (
-								<div className="flex justify-center">
-									<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
-								</div>
-							) : (
-								<p className="text-neutral-500 text-sm">Scroll for more...</p>
-							)}
-						</div>
-					)
-				: null}
+			{isFetchingNextPage ? (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						Loading more...
+					</div>
+				</div>
+			) : hasNextPage ? (
+				<div ref={observerTarget} className="py-4 text-center">
+					<p className="text-neutral-500 text-sm">Scroll for more...</p>
+				</div>
+			) : (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						All caught up! \(￣▽￣)/
+					</div>
+				</div>
+			)}
 		</>
 	);
 }

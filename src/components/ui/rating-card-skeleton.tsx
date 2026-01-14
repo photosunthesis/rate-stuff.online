@@ -1,15 +1,15 @@
-import { useMemo } from "react";
-
 interface Props {
 	variant?: "rating" | "user" | "stuff";
 	noIndent?: boolean;
 	hideAvatar?: boolean;
+	showImage?: boolean;
 }
 
 export function RatingCardSkeleton({
 	variant = "rating",
 	noIndent = false,
 	hideAvatar = false,
+	showImage = false,
 }: Props) {
 	const indent = noIndent ? "" : "ml-11";
 	const titleMargin = variant === "user" ? "mb-3" : "mb-2";
@@ -30,35 +30,20 @@ export function RatingCardSkeleton({
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
 						<div className="h-3 bg-neutral-800 rounded w-48 mb-2" />
-						<div className="h-3 bg-neutral-800 rounded w-32" />
 					</div>
 				</div>
 			</div>
 		);
 
-	// Randomize number of image placeholders (0, 1, or 2)
-	const imageCount = useMemo(() => Math.floor(Math.random() * 3), []);
-
-	const imagePlaceholder = (() => {
-		if (imageCount === 0) return null;
-		if (imageCount === 1) {
-			return (
-				<div className={`${indent} mb-3`}>
-					<div className={`h-40 bg-neutral-900 rounded-xl`} />
-				</div>
-			);
-		}
-		// imageCount === 2
-		return (
-			<div className={`${indent} mb-3 flex gap-2`}>
-				<div className="flex-1 h-40 bg-neutral-900 rounded-xl" />
-				<div className="flex-1 h-40 bg-neutral-900 rounded-xl" />
-			</div>
-		);
-	})();
+	// Show a single image placeholder when requested
+	const imagePlaceholder = showImage ? (
+		<div className={`${indent} mb-3`}>
+			<div className={`h-40 bg-neutral-900 rounded-xl`} />
+		</div>
+	) : null;
 
 	return (
-		<div>
+		<div className="px-8 py-4">
 			{/* Header */}
 			{header}
 

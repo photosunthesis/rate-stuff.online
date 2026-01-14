@@ -11,13 +11,13 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 
 		if (!slug) throw redirect({ to: "/" });
 
-		const res = await context.queryClient.ensureQueryData(
+		const stuff = await context.queryClient.ensureQueryData(
 			stuffQueryOptions(slug),
 		);
 
-		if (!res) throw notFound();
+		if (!stuff) throw notFound();
 
-		return { stuff: res };
+		return { stuff: stuff };
 	},
 	component: RouteComponent,
 	notFoundComponent: NotFound,

@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
+import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { usePublicUserRatings } from "~/lib/features/display-ratings/queries";
 import { UserRatingCard } from "~/lib/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
@@ -79,7 +80,6 @@ function UserRatingsList({
 	username: string;
 	isAuthenticated: boolean;
 }) {
-	const LIMIT = isAuthenticated ? 12 : 10;
 	const {
 		data,
 		isLoading,
@@ -87,15 +87,20 @@ function UserRatingsList({
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePublicUserRatings(username, LIMIT, isAuthenticated);
+	} = usePublicUserRatings(username, 10, isAuthenticated); // Limit of 10 ratings per page
 
 	const observerTarget = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
-				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-					fetchNextPage();
+				if (
+					entries[0].isIntersecting &&
+					hasNextPage &&
+					!isFetchingNextPage &&
+					isAuthenticated
+				) {
+					fetchNextPage?.();
 				}
 			},
 			{ threshold: 0.1 },
@@ -110,12 +115,18 @@ function UserRatingsList({
 				observer.unobserve(observerTarget.current);
 			}
 		};
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+			<div className="-mx-4">
+				<div className="divide-y divide-neutral-800">
+					{[1, 2, 3, 4, 5].map((i) => (
+						<div key={i} className="px-4">
+							<RatingCardSkeleton noIndent hideAvatar showImage={i % 2 === 0} />
+						</div>
+					))}
+				</div>
 			</div>
 		);
 	}
@@ -142,19 +153,27 @@ function UserRatingsList({
 		<>
 			<div className="-mx-4 divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
-					<UserRatingCard key={rating.id} rating={rating} noIndent />
+					<div key={rating.id} className="px-4">
+						<UserRatingCard key={rating.id} rating={rating} noIndent />
+					</div>
 				))}
 			</div>
 
-			{hasNextPage && (
+			{isFetchingNextPage ? (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						Loading more...
+					</div>
+				</div>
+			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					{isFetchingNextPage ? (
-						<div className="flex justify-center">
-							<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
-						</div>
-					) : (
-						<p className="text-neutral-500 text-sm">Scroll for more...</p>
-					)}
+					<p className="text-neutral-500 text-sm">Scroll for more...</p>
+				</div>
+			) : (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						All caught up! \(￣▽￣)/
+					</div>
 				</div>
 			)}
 		</>
@@ -178,7 +197,7 @@ function RouteComponent() {
 
 	return (
 		<MainLayout user={currentUser}>
-			<div className="flex items-center gap-4 mb-4">
+			<div className="flex items-center gap-4 m-4">
 				<div>
 					<Avatar
 						src={publicUser.image ?? null}

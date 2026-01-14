@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useMemo, useEffect, useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { randomSuffix } from "~/lib/utils/strings";
 import {
 	useRecentTags,
 	useRecentStuff,
@@ -16,15 +15,12 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 4 }, (_) => `s_${randomSuffix()}`),
+		() => Array.from({ length: 4 }, (_, i) => `s_${i}`),
 		[],
 	);
 	const skeletonTagWidths = useMemo(() => {
 		const widths = ["w-8", "w-10", "w-12", "w-16", "w-20"];
-		return Array.from(
-			{ length: 6 },
-			() => widths[Math.floor(Math.random() * widths.length)],
-		);
+		return Array.from({ length: 6 }, (_, i) => widths[i % widths.length]);
 	}, []);
 
 	const [isRoot, setIsRoot] = useState(false);

@@ -79,7 +79,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block cursor-pointer"
+			className="block cursor-pointer p-4"
 			role="link"
 			tabIndex={0}
 			onClick={() =>
@@ -274,7 +274,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 
 			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
-				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
+				<div className={`flex flex-wrap gap-2 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) => (
 						<Link
 							key={tag}

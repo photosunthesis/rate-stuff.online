@@ -8,7 +8,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const images = Array.isArray(stuff.images) ? stuff.images.slice(0, 4) : [];
 
 	return (
-		<div className="mb-4">
+		<div className="m-4">
 			{/* Gallery: 1-4 images using same layout as RatingCard */}
 			{images.length === 0 ? null : images.length === 1 ? (
 				<div className="mb-4">

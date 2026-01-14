@@ -77,7 +77,7 @@ export function StuffRatingCard({ rating }: Props) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block cursor-pointer"
+			className="block cursor-pointer p-4"
 			role="link"
 			tabIndex={0}
 			onClick={() =>
@@ -246,7 +246,7 @@ export function StuffRatingCard({ rating }: Props) {
 			</div>
 
 			{parsedTags && parsedTags.length > 0 && (
-				<div className="flex flex-wrap gap-2 mb-3 ml-11">
+				<div className="flex flex-wrap gap-2 mb-1 ml-11">
 					{parsedTags.map((tag: string) => (
 						<Link
 							key={tag}

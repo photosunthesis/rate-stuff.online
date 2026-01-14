@@ -21,7 +21,7 @@ export const getStuffBySlugFn = createServerFn({ method: "GET" })
 		}
 	});
 
-export const getStuffRatingsFn = createServerFn({ method: "GET" })
+export const getPaginatedStuffRatingsFn = createServerFn({ method: "GET" })
 	.inputValidator(
 		z.object({
 			slug: z.string(),

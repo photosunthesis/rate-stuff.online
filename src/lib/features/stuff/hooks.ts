@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getStuffRatingsFn } from "./api";
+import { getPaginatedStuffRatingsFn } from "./api";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 
 type PageResult = {
@@ -15,17 +15,17 @@ export function useStuffRatingsInfinite(
 	limit = 10,
 	enabled = true,
 ) {
-	const getStuffRatings = useServerFn(getStuffRatingsFn);
+	const getPaginatedStuffRatings = useServerFn(getPaginatedStuffRatingsFn);
 
 	return useInfiniteQuery<
 		PageResult,
 		Error,
 		PageResult,
-		readonly ["stuff", string, "ratings"]
+		readonly ["stuff", string, "ratings", number]
 	>({
-		queryKey: ["stuff", slug, "ratings"],
+		queryKey: ["stuff", slug, "ratings", limit],
 		queryFn: async ({ pageParam }: { pageParam?: unknown }) => {
-			const res = (await getStuffRatings({
+			const res = (await getPaginatedStuffRatings({
 				data: { slug, limit, cursor: pageParam as string | undefined },
 			})) as PageResult;
 
@@ -39,8 +39,10 @@ export function useStuffRatingsInfinite(
 			return lastPage.nextCursor;
 		},
 		initialPageParam: undefined as string | undefined,
-		staleTime: 0,
+		staleTime: 1000 * 60, // 1 minute
 		gcTime: 1000 * 60 * 10,
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
 		enabled,
 	});
 }

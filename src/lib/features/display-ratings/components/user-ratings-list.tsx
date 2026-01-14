@@ -3,8 +3,6 @@ import { RatingCard } from "./rating-card";
 import { useEffect, useRef } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 
-const LIMIT = 10;
-
 export function UserRatingsList() {
 	const {
 		data,
@@ -13,7 +11,7 @@ export function UserRatingsList() {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = useUserRatings(LIMIT);
+	} = useUserRatings(10); // Limit of 10 ratings per page
 
 	const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -42,16 +40,14 @@ export function UserRatingsList() {
 	if (isLoading) {
 		return (
 			<div>
-				{[0, 1, 2].map((n, idx) => (
+				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
 						className={
 							idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
 						}
 					>
-						<div className="px-4 py-3">
-							<RatingCardSkeleton variant="user" noIndent />
-						</div>
+						<RatingCardSkeleton variant="user" noIndent showImage={idx % 2 === 0} />
 					</div>
 				))}
 			</div>

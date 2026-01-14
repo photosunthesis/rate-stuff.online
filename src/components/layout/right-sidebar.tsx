@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { TrendingUp } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
-import { randomSuffix } from "~/lib/utils/strings";
 import {
 	useRecentTags,
 	useRecentStuff,
@@ -17,15 +16,12 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 5 }, (_) => `s_${randomSuffix()}`),
+		() => Array.from({ length: 5 }, (_, i) => `s_${i}`),
 		[],
 	);
 	const skeletonTagWidths = useMemo(() => {
 		const widths = ["w-8", "w-10", "w-12", "w-16", "w-20"];
-		return Array.from(
-			{ length: 6 },
-			() => widths[Math.floor(Math.random() * widths.length)],
-		);
+		return Array.from({ length: 6 }, (_, i) => widths[i % widths.length]);
 	}, []);
 
 	return (

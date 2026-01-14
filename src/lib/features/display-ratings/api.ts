@@ -10,7 +10,6 @@ import { getRecentTags, getRecentStuff } from "./service";
 import { z } from "zod";
 import { authMiddleware } from "~/lib/features/auth/middleware";
 import { getUserByUsername } from "~/lib/features/auth/service";
-import { getAuth } from "~/lib/core/auth";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -160,10 +159,10 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 
 			if (!user) return { success: false, error: "Not found" };
 
-			const requestedLimit = data.limit ?? 10;
-			const limit = (await getAuth().api.getSession())
-				? requestedLimit
-				: Math.min(requestedLimit, 10);
+			// Limit is determined by the caller (client). Remove server-side
+			// session check to avoid requiring request headers here — the
+			// client passes a capped `limit` based on auth state.
+			const limit = data.limit ?? 10;
 			const cursor = parseCursor(data.cursor);
 			const ratings = await getUserRatings(user.id, limit, cursor);
 
