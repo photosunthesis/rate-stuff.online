@@ -38,7 +38,14 @@ export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	});
 
 export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.GENERAL,
+			keyFn: rateLimitKeys.bySession,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
 	.handler(async ({ data, context }) => {
 		try {
@@ -54,7 +61,14 @@ export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
 	});
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.GENERAL,
+			keyFn: rateLimitKeys.bySession,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(
 		z.preprocess(
 			(val) => {

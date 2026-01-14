@@ -9,7 +9,12 @@ import {
 import { getRecentTags, getRecentStuff } from "./service";
 import { z } from "zod";
 import { authMiddleware } from "~/lib/features/auth/middleware";
+import {
+	createRateLimitMiddleware,
+	RATE_LIMITER_BINDING,
+} from "~/lib/features/rate-limit/middleware";
 import { getUserByUsername } from "~/lib/features/auth/service";
+import { rateLimitKeys } from "../rate-limit/middleware";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -25,7 +30,14 @@ function makeCursor(createdAt: Date | string | number, id: string) {
 }
 
 export const getUserRatingsFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.PAGINATION,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
@@ -55,6 +67,13 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	});
 
 export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
+	.middleware([
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.PAGINATION,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(z.object({ tag: z.string().optional() }))
 	.handler(async ({ data }) => {
 		try {
@@ -70,7 +89,14 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 	});
 
 export const getFeedRatingsFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.PAGINATION,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
@@ -123,6 +149,13 @@ export const getRatingBySlugFn = createServerFn({ method: "GET" })
 	});
 
 export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
+	.middleware([
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.PAGINATION,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(
 		z.object({
 			username: z.string(),
@@ -203,7 +236,14 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentTagsFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.GENERAL,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.handler(async () => {
 		try {
 			const tags = await getRecentTags(10);
@@ -218,7 +258,14 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentStuffFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([
+		authMiddleware,
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.GENERAL,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.handler(async () => {
 		try {
 			const stuff = await getRecentStuff(5);

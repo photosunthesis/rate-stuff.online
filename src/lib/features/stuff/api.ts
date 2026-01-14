@@ -1,6 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { getStuffBySlug, getStuffRatingsBySlug } from "./service";
+import {
+	createRateLimitMiddleware,
+	RATE_LIMITER_BINDING,
+	rateLimitKeys,
+} from "~/lib/features/rate-limit/middleware";
 
 export const getStuffBySlugFn = createServerFn({ method: "GET" })
 	.inputValidator(
@@ -22,6 +27,13 @@ export const getStuffBySlugFn = createServerFn({ method: "GET" })
 	});
 
 export const getPaginatedStuffRatingsFn = createServerFn({ method: "GET" })
+	.middleware([
+		createRateLimitMiddleware({
+			binding: RATE_LIMITER_BINDING.PAGINATION,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+			errorMessage: "Too many requests. Please try again later.",
+		}),
+	])
 	.inputValidator(
 		z.object({
 			slug: z.string(),

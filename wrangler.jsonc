@@ -17,10 +17,10 @@
 			}
 		},
 		{
-			"name": "AUTH",
+			"name": "PAGINATION",
 			"namespace_id": "1002",
 			"simple": {
-				"limit": 10,
+				"limit": 300,
 				"period": 60
 			}
 		}

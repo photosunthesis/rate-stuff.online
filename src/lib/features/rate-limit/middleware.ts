@@ -5,7 +5,7 @@ import authClient from "~/lib/core/auth-client";
 
 export const RATE_LIMITER_BINDING = {
 	GENERAL: "GENERAL",
-	AUTH: "AUTH",
+	PAGINATION: "PAGINATION",
 } as const;
 
 export type RateLimiterBinding =
@@ -90,4 +90,12 @@ export const rateLimitKeys = {
 
 	byHeader: (headerName: string) => (request: Request) =>
 		request.headers.get(headerName) || "unknown",
+
+	bySessionThenIpAndEndpoint: async (request: Request) => {
+		const sessionKey = await rateLimitKeys.bySession(request);
+
+		if (sessionKey && !sessionKey.startsWith("anonymous")) return sessionKey;
+
+		return rateLimitKeys.byIpAndEndpoint(request);
+	},
 };
