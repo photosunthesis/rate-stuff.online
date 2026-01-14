@@ -135,7 +135,7 @@ export function StuffRatingsList({
 
 	if (error) {
 		return (
-			<div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+			<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
 				Failed to load ratings. Please try again.
 			</div>
 		);

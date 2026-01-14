@@ -1,4 +1,4 @@
-import { createServerFn, json } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
 import {
 	getUserRatings,
 	getFeedRatings,
@@ -46,16 +46,11 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch ratings",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch ratings",
+			};
 		}
 	});
 
@@ -65,19 +60,12 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 		try {
 			const ratings = await getFeedRatings(12, undefined, data.tag);
 
-			// Always return the wrapped shape
 			return { success: true, data: ratings, nextCursor: undefined };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch feed",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch feed",
+			};
 		}
 	});
 
@@ -103,16 +91,10 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch feed",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch feed",
+			};
 		}
 	});
 
@@ -127,21 +109,16 @@ export const getRatingBySlugFn = createServerFn({ method: "GET" })
 			const rating = await getRatingBySlug(data.slug);
 
 			if (!rating) {
-				throw json({ success: false, error: "Not found" }, { status: 404 });
+				return { success: false, error: "Not found" };
 			}
 
 			return { success: true, data: rating };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch rating",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch rating",
+			};
 		}
 	});
 
@@ -174,16 +151,11 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch ratings",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch ratings",
+			};
 		}
 	});
 
@@ -193,8 +165,7 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 		try {
 			const user = await getUserByUsername(data.username);
 
-			if (!user)
-				throw json({ success: false, error: "Not found" }, { status: 404 });
+			if (!user) return { success: false, error: "Not found" };
 
 			const count = await getUserRatingsCount(user.id);
 			return { success: true, data: { count } };
@@ -219,21 +190,15 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 		try {
 			const rating = await getRatingById(data.id);
 
-			if (!rating)
-				throw json({ success: false, error: "Not found" }, { status: 404 });
+			if (!rating) throw new Error("Not found");
 
 			return { success: true, data: rating };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch rating",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error:
+					error instanceof Error ? error.message : "Failed to fetch rating",
+			};
 		}
 	});
 
@@ -245,16 +210,10 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 
 			return { success: true, data: tags as { name: string; count: number }[] };
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch tags",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch tags",
+			};
 		}
 	});
 
@@ -273,15 +232,9 @@ export const getRecentStuffFn = createServerFn({ method: "GET" })
 				}[],
 			};
 		} catch (error) {
-			throw json(
-				{
-					success: false,
-					error:
-						error instanceof Error ? error.message : "Failed to fetch stuff",
-				},
-				{
-					status: 500,
-				},
-			);
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch stuff",
+			};
 		}
 	});

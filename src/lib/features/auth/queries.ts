@@ -9,18 +9,18 @@ export const userQueryOptions = (username: string) =>
 			const res = (await getUserByUsernameFn({ data: { username } })) as {
 				success: boolean;
 				data?: PublicUser;
-				error?: string;
+				errorMessage?: string;
 			};
 
 			if (!res.success) {
-				const err = res.error ?? "Failed to load user";
+				const err = res.errorMessage ?? "Failed to load user";
 				if (err.toLowerCase().includes("not found")) return null;
 				throw new Error(err);
 			}
 
 			return res.data ?? null;
 		},
-		staleTime: 0,
+		staleTime: 1000 * 60,
 		gcTime: 1000 * 60 * 10,
 	});
 

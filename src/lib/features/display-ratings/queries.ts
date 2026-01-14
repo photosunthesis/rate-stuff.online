@@ -38,12 +38,15 @@ export function useUserRatings(limit: number = 10) {
 	return useInfiniteQuery({
 		queryKey: ratingKeys.mine(),
 		queryFn: async ({ pageParam }: { pageParam?: string }) => {
-			return (await getUserRatings({
+			const res = (await getUserRatings({
 				data: {
 					limit,
 					cursor: pageParam,
 				},
 			})) as PageResult;
+			if (!res || res.success === false)
+				throw new Error(res?.error ?? "Failed to load ratings");
+			return res;
 		},
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
@@ -60,11 +63,14 @@ export const ratingQueryOptions = (slug: string | undefined) =>
 		queryKey: ["rating", slug],
 		queryFn: async () => {
 			if (!slug) return null;
-			return (await getRatingBySlugFn({ data: { slug } })) as {
+			const res = (await getRatingBySlugFn({ data: { slug } })) as {
 				success: boolean;
 				data: RatingWithRelations | null;
 				error?: string;
 			};
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load rating");
+			return res;
 		},
 		staleTime: 0,
 		gcTime: 1000 * 60 * 10,
@@ -81,13 +87,16 @@ export function useFeedRatings(
 	return useInfiniteQuery({
 		queryKey: ratingKeys.feed(tag),
 		queryFn: async ({ pageParam }: { pageParam?: string }) => {
-			return (await getFeedRatings({
+			const res = (await getFeedRatings({
 				data: {
 					limit,
 					cursor: pageParam,
 					tag,
 				},
 			})) as PageResult;
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load feed");
+			return res;
 		},
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
@@ -120,13 +129,16 @@ export function usePublicUserRatings(
 	return useInfiniteQuery({
 		queryKey: key,
 		queryFn: async ({ pageParam }: { pageParam?: string }) => {
-			return (await getRatings({
+			const res = (await getRatings({
 				data: {
 					username: username ?? "",
 					limit: effectiveLimit,
 					cursor: pageParam,
 				},
 			})) as PageResult;
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load ratings");
+			return res;
 		},
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
@@ -157,7 +169,8 @@ export function useUserRatingsCount(
 				data?: { count: number } | null;
 				error?: string;
 			};
-			if (!res.success) throw new Error(res.error ?? "Failed to load count");
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load count");
 			return res.data ?? { count: 0 };
 		},
 		enabled,
@@ -176,7 +189,8 @@ export function useRecentTags(enabled: boolean = true) {
 				data?: { name: string; count: number }[];
 				error?: string;
 			};
-			if (!res.success) throw new Error(res.error ?? "Failed to load tags");
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load tags");
 			return res.data ?? [];
 		},
 		staleTime: 1000 * 60 * 5,
@@ -195,7 +209,8 @@ export function useRecentStuff(enabled: boolean = true) {
 				data?: { id: string; name: string; count: number; slug: string }[];
 				error?: string;
 			};
-			if (!res.success) throw new Error(res.error ?? "Failed to load stuff");
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load stuff");
 			return res.data ?? [];
 		},
 		staleTime: 1000 * 60 * 5,
