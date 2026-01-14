@@ -117,15 +117,6 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 						>
 							{displayText}
 						</Link>
-						<span className="text-neutral-500">has rated</span>
-						<Link
-							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff.slug }}
-							className="font-medium text-white hover:underline"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{rating.stuff.name}
-						</Link>
 						<span className="text-neutral-500">•</span>
 						<span className="text-neutral-500">{timeAgo}</span>
 					</div>
@@ -142,7 +133,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 					className="hover:underline"
 					onClick={(e) => e.stopPropagation()}
 				>
-					{rating.score}/10 - {rating.title}
+					{rating.stuff.name} - {rating.score}/10
 				</Link>
 			</h3>
 

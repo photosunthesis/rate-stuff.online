@@ -165,15 +165,29 @@ export const createRating = createServerOnlyFn(
 							.where(inArray(sql`LOWER(${tags.name})`, uniqueNames))
 					: [];
 
-			const slug = generateSlug(input.title);
+			// create a slug based on the stuff name (or provided stuffName) plus a short random suffix
 			const imagesJson = JSON.stringify(input.images ?? []);
+
+			let slugBase = input.stuffName;
+			if (!slugBase) {
+				const maybeStuff = await tx
+					.select()
+					.from(stuff)
+					.where(eq(stuff.id, resolvedStuffId))
+					.limit(1)
+					.then((r) => r[0]);
+				slugBase = maybeStuff?.name ?? "rating";
+			}
+
+			const slug = generateSlug(
+				`${slugBase}-${crypto.randomUUID().slice(0, 8)}`,
+			);
 
 			const [rating] = await tx
 				.insert(ratings)
 				.values({
 					userId,
 					stuffId: resolvedStuffId,
-					title: input.title,
 					score: input.score,
 					content: input.content,
 					images: imagesJson,

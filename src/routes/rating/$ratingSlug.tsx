@@ -49,7 +49,7 @@ export const Route = createFileRoute("/rating/$ratingSlug")({
 
 		const rating = cached?.success ? cached.data : null;
 		const title = rating
-			? `${rating.title} - ${rating.score}/10`
+			? `${rating.stuff.name} - ${rating.score}/10`
 			: "Rating - Rate Stuff Online";
 		const description = rating
 			? excerptFromMarkdown(rating.content, 160)
@@ -158,14 +158,6 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 					>
 						{displayText}
 					</Link>
-					<span className="text-neutral-500">has rated</span>
-					<Link
-						to="/stuff/$stuffSlug"
-						params={{ stuffSlug: rating.stuff.slug }}
-						className="font-medium text-white hover:underline"
-					>
-						{rating.stuff.name}
-					</Link>
 					<span className="text-neutral-500">•</span>
 					<span className="text-neutral-500">
 						{getTimeAgo(rating.createdAt)}
@@ -195,7 +187,7 @@ function BackButton() {
 function TitleBlock({ rating }: { rating: RatingWithRelations }) {
 	return (
 		<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
-			{rating.score}/10 - {rating.title}
+			{rating.stuff.name} - {rating.score}/10
 		</h3>
 	);
 }
@@ -235,7 +227,7 @@ function ContentSection({ rating }: { rating: RatingWithRelations }) {
 						},
 						datePublished: new Date(rating.createdAt).toISOString(),
 						reviewBody: excerptFromMarkdown(rating.content, 500),
-						name: rating.title,
+						name: `${rating.stuff.name} - ${rating.score}/10`,
 						reviewRating: {
 							"@type": "Rating",
 							ratingValue: rating.score,
@@ -467,7 +459,7 @@ function RouteComponent() {
 			<Lightbox
 				src={lightboxSrc}
 				onClose={() => setLightboxSrc(null)}
-				alt={rating.title}
+				alt={`${rating.stuff.name} - ${rating.score}/10`}
 			/>
 		</>
 	);

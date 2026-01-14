@@ -20,7 +20,6 @@ export function useCreateRatingMutation() {
 
 	return useMutation({
 		mutationFn: (data: {
-			title: string;
 			score: number;
 			content: string;
 			tags?: string[];

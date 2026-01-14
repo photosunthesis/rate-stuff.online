@@ -18,7 +18,6 @@ export type Rating = {
 	userId: string;
 	stuffId: string;
 	slug: string;
-	title: string;
 	score: number;
 	content: string;
 	images: string | null;
@@ -43,10 +42,6 @@ export type RatingWithRelations = Rating & {
 
 export const createRatingSchema = z
 	.object({
-		title: z
-			.string()
-			.min(1, "Title is required")
-			.max(200, "Title must be at most 200 characters"),
 		score: z.coerce
 			.number()
 			.min(1, "Score must be at least 1")

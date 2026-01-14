@@ -16,7 +16,6 @@ export const ratings = pgTable(
 		stuffId: text("stuff_id")
 			.notNull()
 			.references(() => stuff.id, { onDelete: "cascade" }),
-		title: text("title").notNull(),
 		score: real("score").notNull(),
 		content: text("content").notNull(),
 		slug: text("slug").notNull().unique(),

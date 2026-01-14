@@ -120,7 +120,7 @@ export function StuffRatingCard({ rating }: Props) {
 					className="hover:underline"
 					onClick={(e) => e.stopPropagation()}
 				>
-					{rating.score}/10 - {rating.title}
+					{rating.stuff.name} - {rating.score}/10
 				</Link>
 			</h3>
 

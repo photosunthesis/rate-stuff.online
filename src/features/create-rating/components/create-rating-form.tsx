@@ -43,7 +43,6 @@ export function CreateRatingForm({
 
 	const form = useForm({
 		defaultValues: {
-			title: "",
 			score: "",
 			content: "",
 		},
@@ -54,7 +53,6 @@ export function CreateRatingForm({
 
 			try {
 				const inputData = {
-					title: value.title,
 					score: Number(value.score),
 					content: value.content,
 					tags: selectedTags,
@@ -82,8 +80,6 @@ export function CreateRatingForm({
 	const inferredFieldErrors: Record<string, string> = {};
 	if (errorMessage) {
 		const msg = errorMessage.toLowerCase();
-		if (msg.includes("title") && !validationErrors.title)
-			inferredFieldErrors.title = errorMessage;
 		if (
 			(msg.includes("score") || msg.includes("rating")) &&
 			!validationErrors.score
@@ -154,36 +150,6 @@ export function CreateRatingForm({
 							onChange={setSelectedStuff}
 							error={mergedValidationErrors.stuffId}
 						/>
-					</div>
-
-					<div>
-						<form.Field
-							name="title"
-							validators={{
-								onChange: ({ value }) => {
-									const result =
-										createRatingSchema.shape.title.safeParse(value);
-									return result.success
-										? undefined
-										: result.error.issues[0].message;
-								},
-							}}
-						>
-							{(field) => (
-								<TextField
-									label="Title"
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Brief description of your experience"
-									error={
-										field.state.meta.errors[0] || mergedValidationErrors.title
-									}
-									required
-								/>
-							)}
-						</form.Field>
 					</div>
 
 					<div>
