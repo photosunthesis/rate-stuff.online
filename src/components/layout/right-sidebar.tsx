@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
 import { randomSuffix } from "~/lib/utils/strings";
@@ -20,10 +20,13 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 		() => Array.from({ length: 5 }, (_) => `s_${randomSuffix()}`),
 		[],
 	);
-	const skeletonTagKeys = useMemo(
-		() => Array.from({ length: 6 }, (_) => `t_${randomSuffix()}`),
-		[],
-	);
+	const skeletonTagWidths = useMemo(() => {
+		const widths = ["w-8", "w-10", "w-12", "w-16", "w-20"];
+		return Array.from(
+			{ length: 6 },
+			() => widths[Math.floor(Math.random() * widths.length)],
+		);
+	}, []);
 
 	return (
 		<aside className="w-80 px-4 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
@@ -73,7 +76,10 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 												</div>
 
 												<div className="text-neutral-500">
-													<ChevronRight className="w-4 h-4" />
+													<TrendingUp
+														className="w-4 h-4 text-neutral-400"
+														aria-hidden
+													/>
 												</div>
 											</Link>
 										))}
@@ -87,13 +93,14 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">
 								{loadingTags
-									? skeletonTagKeys.map((sKey) => (
+									? skeletonTagWidths.map((w, i) => (
 											<div
-												key={sKey}
-												className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 text-sm font-medium rounded-md"
-											>
-												<div className="h-4 bg-neutral-800 rounded w-12" />
-											</div>
+												key={`${w}-${
+													// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
+													i
+												}`}
+												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-md`}
+											/>
 										))
 									: (recentTags ?? []).map((tag) => (
 											<Link

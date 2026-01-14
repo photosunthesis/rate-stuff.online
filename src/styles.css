@@ -45,6 +45,10 @@
   .animate-backdrop-in { animation: backdropIn 250ms ease-out forwards !important; }
   .animate-backdrop-out { animation: backdropOut 200ms ease-in forwards !important; }
   .backdrop-blur-xs { -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+
+  /* Hide native scrollbars while keeping scroll behavior */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 body {
