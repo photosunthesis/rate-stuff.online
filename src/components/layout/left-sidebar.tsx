@@ -1,40 +1,39 @@
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import AppLogo from "~/components/app-logo";
-import {
-	useIsAuthenticated,
-	useLogoutMutation,
-} from "~/features/session/queries";
-import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import AppLogo from "~/components/ui/app-logo";
+import { Home, Compass, Bell, Settings, LogOut, Plus } from "lucide-react";
+import { CreateRatingModal } from "~/lib/features/create-rating/components/create-rating-modal";
+import authClient from "~/lib/core/auth-client";
+import type { PublicUser } from "~/lib/features/auth/types";
 
-const headers = [
-	"Rate literally anything.",
-	"Score everything, regret nothing.",
-	"Rate reality, one to ten.",
-	"Everything gets a score.",
-	"The world, out of ten.",
-	"Rate the whole universe.",
-	"Your opinion, now numbered.",
-];
+const getHeader = () => {
+	const headers = [
+		"Rate literally anything.",
+		"Give something a score.",
+		"Rate reality, one to ten.",
+		"Everything gets a score.",
+		"The world, out of ten.",
+		"Rate the whole universe.",
+		"Your opinion, now numbered.",
+	];
 
-export function LeftSidebar() {
-	const { isAuthenticated } = useIsAuthenticated();
-	const logoutMutation = useLogoutMutation();
-	const navigate = useNavigate();
+	return headers[Math.floor(Math.random() * headers.length)];
+};
 
-	const [header] = useState(
-		() => headers[Math.floor(Math.random() * headers.length)],
-	);
-
+export function LeftSidebar({ user }: { user?: PublicUser }) {
+	const [isCreateOpen, setIsCreateOpen] = useState(false);
+	const isAuthenticated = user != null;
 	const [isHolding, setIsHolding] = useState(false);
 	const [holdProgress, setHoldProgress] = useState(0);
 	const [showTooltip, setShowTooltip] = useState(false);
 	const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
+	const [header] = useState(() => getHeader());
 
 	const handleLogout = async () => {
-		await logoutMutation.mutateAsync();
-		navigate({ to: "/" });
+		await authClient.signOut();
+		// navigate({ to: "/" }); // using navigate doesn't work for some reason >:(
+		window.location.href = "/";
 	};
 
 	const handleMouseDown = () => {
@@ -53,8 +52,10 @@ export function LeftSidebar() {
 			setHoldProgress(progress);
 
 			if (progress >= 100) {
-				if (progressIntervalRef.current)
+				if (progressIntervalRef.current) {
 					clearInterval(progressIntervalRef.current);
+				}
+
 				handleLogout();
 			}
 		}, 16); // 60fps
@@ -89,6 +90,12 @@ export function LeftSidebar() {
 
 	return (
 		<>
+			{isAuthenticated && (
+				<CreateRatingModal
+					isOpen={isCreateOpen}
+					onClose={() => setIsCreateOpen(false)}
+				/>
+			)}
 			<aside className="w-64 px-4 py-6 hidden lg:flex flex-col sticky top-0 h-screen">
 				<div className="flex flex-col gap-2 mb-4">
 					<AppLogo size={30} />
@@ -105,7 +112,7 @@ export function LeftSidebar() {
 				{!isAuthenticated ? (
 					<div className="space-y-2">
 						<Link
-							to="/create-account"
+							to="/sign-up"
 							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
 						>
 							Create Account
@@ -120,6 +127,16 @@ export function LeftSidebar() {
 					</div>
 				) : (
 					<div className="flex flex-col h-full">
+						<div className="mb-6 mt-4 px-3">
+							<button
+								type="button"
+								onClick={() => setIsCreateOpen(true)}
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-1 cursor-pointer"
+							>
+								<Plus className="w-5 h-5" />
+								<span>New Rating</span>
+							</button>
+						</div>
 						<nav className="space-y-1 flex-1">
 							<Link
 								to="/"
@@ -216,6 +233,16 @@ export function LeftSidebar() {
 							</>
 						)}
 					</Link>
+
+					<button
+						type="button"
+						onClick={() => setIsCreateOpen(true)}
+						aria-label="New Rating"
+						title="New Rating"
+						className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
+					>
+						<Plus className="w-5 h-5" />
+					</button>
 					<Link
 						to="/"
 						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"

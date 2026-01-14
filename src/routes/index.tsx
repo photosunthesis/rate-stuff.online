@@ -4,23 +4,24 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { CreateRatingSection } from "~/features/create-rating/components/create-rating-section";
-import {
-	useIsAuthenticated,
-	isAuthenticatedQueryOptions,
-} from "~/features/session/queries";
+import { MainLayout } from "~/components/layout/main-layout";
+import { authQueryOptions } from "~/lib/features/auth/queries";
 
 export const Route = createFileRoute("/")({
-	validateSearch: (search: Record<string, unknown> & SearchSchemaInput) => ({
+	beforeLoad: async ({ context }) => {
+		const user = await context.queryClient.ensureQueryData({
+			...authQueryOptions(),
+			revalidateIfStale: true,
+		});
+
+		return { user };
+	},
+	validateSearch: (
+		search: Record<string, string | null> & SearchSchemaInput,
+	) => ({
 		tag: search.tag as string | undefined,
 	}),
 	component: App,
-	loader: async ({ context }) => {
-		await context.queryClient.ensureQueryData(isAuthenticatedQueryOptions());
-	},
 	head: ({ match }) => {
 		const tag = match.search?.tag as string | undefined;
 		const title = tag
@@ -47,28 +48,21 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
-	const { isAuthenticated } = useIsAuthenticated();
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
+	const { user } = Route.useRouteContext();
+	const currentUser = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? undefined,
+			}
+		: undefined;
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			{/* Mobile Header */}
-			<MobileHeader isAuthenticated={isAuthenticated} />
-
-			<div className="flex flex-1 justify-center">
-				{/* Left Sidebar */}
-				<LeftSidebar />
-
-				{/* Main Content */}
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<CreateRatingSection />
-					<MainFeed tag={tag} />
-				</main>
-
-				{/* Right Sidebar */}
-				<RightSidebar isAuthenticated={isAuthenticated} />
-			</div>
-		</div>
+		<MainLayout user={currentUser}>
+			<MainFeed tag={tag} user={currentUser} />
+		</MainLayout>
 	);
 }

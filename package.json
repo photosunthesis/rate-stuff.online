@@ -15,7 +15,9 @@
     "deploy": "wrangler deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:migrate-prod": "drizzle-kit migrate --config ./drizzle.config.prod.ts",
+    "db:migrate:prod": "drizzle-kit migrate --config ./drizzle.config.prod.ts",
+    "auth:secret": "pnpm dlx @better-auth/cli@latest secret",
+    "auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./src/lib/auth/auth.ts -y --output ./src/db/schema/auth.ts",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio"

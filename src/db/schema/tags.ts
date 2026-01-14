@@ -7,12 +7,16 @@ import {
 	index,
 } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
+import { users } from "./auth";
 
 export const tags = pgTable("tags", {
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	name: text("name").notNull().unique(),
+	createdBy: text("created_by")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade" }),
 	createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 	deletedAt: timestamp("deleted_at", { mode: "date" }),
 });

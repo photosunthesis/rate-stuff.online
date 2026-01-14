@@ -1,0 +1,138 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import authClient from "~/lib/core/auth-client";
+import {
+	markInviteCodeAsUsedFn,
+	validateInviteCodeFn,
+} from "~/lib/features/auth/api";
+import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
+import { SignUpForm } from "~/lib/features/auth/components/sign-up-form";
+import { authQueryOptions } from "~/lib/features/auth/queries";
+import { registerSchema } from "~/lib/features/auth/types";
+import { extractValidationErrors } from "~/lib/utils/errors";
+
+export const Route = createFileRoute("/_auth/sign-up")({
+	component: RouteComponent,
+	head: () => {
+		return {
+			meta: [
+				{
+					title: "Create Account - Rate Stuff Online",
+				},
+				{
+					name: "description",
+					content:
+						"Create a new account on Rate Stuff Online. Join our community and start rating stuff today.",
+				},
+				{
+					name: "og:title",
+					property: "og:title",
+					content: "Create Account - Rate Stuff Online",
+				},
+				{
+					name: "og:description",
+					property: "og:description",
+					content: "Join Rate Stuff Online and start rating",
+				},
+				{
+					name: "robots",
+					content: "noindex, follow",
+				},
+			],
+		};
+	},
+});
+
+function RouteComponent() {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [validationErrors, setValidationErrors] = useState({});
+	const validateInviteCode = useServerFn(validateInviteCodeFn);
+	const markInviteCodeAsUsed = useServerFn(markInviteCodeAsUsedFn);
+
+	const { mutate: signUpMutate, isPending } = useMutation({
+		mutationFn: async (data: {
+			username: string;
+			email: string;
+			password: string;
+			inviteCode: string;
+		}) => {
+			setErrorMessage(null);
+			setValidationErrors({});
+
+			const parseResult = registerSchema.safeParse(data);
+
+			if (!parseResult.success) {
+				const errors = extractValidationErrors(parseResult.error);
+				setValidationErrors(errors);
+				return;
+			}
+
+			const validCodeResult = await validateInviteCode({
+				data: { inviteCode: data.inviteCode },
+			});
+
+			if (!validCodeResult.success) {
+				setValidationErrors({
+					inviteCode: "Invalid invite code",
+				});
+				return;
+			}
+
+			await authClient.signUp.email(
+				{
+					name: data.username, //  We'll let the user change this later
+					username: data.username,
+					email: data.email,
+					password: data.password,
+				},
+				{
+					onSuccess: async () => {
+						queryClient.removeQueries({
+							queryKey: authQueryOptions().queryKey,
+						});
+
+						await markInviteCodeAsUsed({
+							data: { inviteCode: data.inviteCode },
+						});
+
+						navigate({ to: "/set-up-profile" });
+					},
+					onError: (error) => {
+						setErrorMessage(error.error.message ?? "Failed to sign up");
+					},
+				},
+			);
+		},
+	});
+
+	const handleSubmit = async (data: {
+		username: string;
+		email: string;
+		password: string;
+		inviteCode: string;
+	}) => {
+		if (isPending) return;
+		signUpMutate(data);
+	};
+
+	return (
+		<AuthLayout
+			title="Join the community"
+			description="Your account. Your ratings. One to ten. Start here."
+			footerText="Already have an account?"
+			footerLinkText="Sign in"
+			footerLinkTo="/sign-in"
+		>
+			<SignUpForm
+				onSubmit={handleSubmit}
+				isPending={isPending}
+				errorMessage={errorMessage}
+				validationErrors={validationErrors}
+			/>
+		</AuthLayout>
+	);
+}

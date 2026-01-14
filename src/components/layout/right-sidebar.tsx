@@ -1,42 +1,39 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo } from "react";
-import { randomSuffix } from "~/utils/slug";
 import {
 	useRecentTags,
 	useRecentStuff,
-} from "~/features/display-ratings/queries";
+} from "~/lib/features/display-ratings/queries";
+import type { PublicUser } from "~/lib/features/auth/types";
 
-export function RightSidebar({
-	isAuthenticated = true,
-}: {
-	isAuthenticated?: boolean;
-}) {
+export function RightSidebar({ user }: { user?: PublicUser }) {
+	const isAuthenticated = user != null;
 	const { data: recentStuff, isLoading: loadingStuff } =
 		useRecentStuff(isAuthenticated);
 	const { data: recentTags, isLoading: loadingTags } =
 		useRecentTags(isAuthenticated);
 
 	const skeletonStuffKeys = useMemo(
-		() => Array.from({ length: 5 }, (_) => `s_${randomSuffix()}`),
+		() => Array.from({ length: 5 }, (_, i) => `s_${i}`),
 		[],
 	);
-	const skeletonTagKeys = useMemo(
-		() => Array.from({ length: 6 }, (_) => `t_${randomSuffix()}`),
-		[],
-	);
+	const skeletonTagWidths = useMemo(() => {
+		const widths = ["w-8", "w-10", "w-12", "w-16", "w-20"];
+		return Array.from({ length: 6 }, (_, i) => widths[i % widths.length]);
+	}, []);
 
 	return (
 		<aside className="w-80 px-4 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recently Rated */}
+						{/* Recent Ratings */}
 						<section>
 							<div className="flex items-center justify-between mb-2 px-1">
 								<p className="text-md font-semibold text-white">
-									Recently Rated
+									Recent Ratings
 								</p>
 							</div>
 
@@ -51,11 +48,10 @@ export function RightSidebar({
 														: ""
 												}`}
 											>
-												<div className="w-9 h-9 bg-neutral-800 rounded-md" />
 												<div className="flex-1 min-w-0">
-													<div className="h-3 bg-neutral-800 rounded w-3/4 mb-2" />
-													<div className="h-2 bg-neutral-800 rounded w-1/2" />
+													<div className="h-3 bg-neutral-800 rounded w-3/4" />
 												</div>
+												<div className="w-4 h-4 bg-neutral-800 rounded" />
 											</div>
 										))
 									: (recentStuff ?? []).map((thing, i) => (
@@ -76,7 +72,10 @@ export function RightSidebar({
 												</div>
 
 												<div className="text-neutral-500">
-													<ChevronRight className="w-4 h-4" />
+													<TrendingUp
+														className="w-4 h-4 text-neutral-400"
+														aria-hidden
+													/>
 												</div>
 											</Link>
 										))}
@@ -90,13 +89,14 @@ export function RightSidebar({
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">
 								{loadingTags
-									? skeletonTagKeys.map((sKey) => (
+									? skeletonTagWidths.map((w, i) => (
 											<div
-												key={sKey}
-												className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 text-sm font-medium rounded-md"
-											>
-												<div className="h-4 bg-neutral-800 rounded w-12" />
-											</div>
+												key={`${w}-${
+													// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
+													i
+												}`}
+												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-md`}
+											/>
 										))
 									: (recentTags ?? []).map((tag) => (
 											<Link

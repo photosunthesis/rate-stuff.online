@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
-import { users } from "./users";
-import { ROLES, type Role } from "./users";
+import { users } from "./auth";
+import { type Role, ROLES } from "./user_roles";
 
 export const inviteCodes = pgTable(
 	"invite_codes",

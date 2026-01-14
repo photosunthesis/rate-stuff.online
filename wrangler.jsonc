@@ -9,7 +9,7 @@
 	"main": "@tanstack/react-start/server-entry",
 	"ratelimits": [
 		{
-			"name": "GENERAL_RATE_LIMITER",
+			"name": "GENERAL",
 			"namespace_id": "1001",
 			"simple": {
 				"limit": 100,
@@ -17,10 +17,10 @@
 			}
 		},
 		{
-			"name": "AUTH_RATE_LIMITER",
+			"name": "PAGINATION",
 			"namespace_id": "1002",
 			"simple": {
-				"limit": 10,
+				"limit": 300,
 				"period": 60
 			}
 		}

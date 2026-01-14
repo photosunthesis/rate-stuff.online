@@ -1,25 +1,25 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
-import { NotFound } from "~/components/not-found";
+import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
-import { useIsAuthenticated } from "~/features/session/queries";
-import {
-	userQueryOptions,
-	usePublicUser,
-} from "~/features/set-up-profile/queries";
-import { usePublicUserRatings } from "~/features/display-ratings/queries";
-import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
+import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { usePublicUserRatings } from "~/lib/features/display-ratings/queries";
+import { UserRatingCard } from "~/lib/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
-import { getTimeAgo } from "~/utils/datetime";
+import { getTimeAgo } from "~/lib/utils/datetime";
+import { MainLayout } from "~/components/layout/main-layout";
+import { userQueryOptions } from "~/lib/features/auth/queries";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {
 		const username = params.username;
+
 		if (!username) throw redirect({ to: "/" });
 
-		await context.queryClient.ensureQueryData(userQueryOptions(username));
+		const publicUser = await context.queryClient.ensureQueryData(
+			userQueryOptions(username),
+		);
+
+		return { publicUser };
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
@@ -30,13 +30,13 @@ export const Route = createFileRoute("/user/$username")({
 		const user = cached ?? null;
 
 		const title = user
-			? user.displayName
-				? `${user.displayName} (@${user.username}) — Rate Stuff`
+			? user.name
+				? `${user.name} (@${user.username}) — Rate Stuff`
 				: `@${user.username} — Rate Stuff`
 			: `@${params.username} — Rate Stuff`;
 
 		const description = user
-			? `${user.displayName ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
+			? `${user.name ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
 					(user.ratingsCount ?? 0) === "1" ? "rating" : "ratings"
 				} on Rate Stuff.`
 			: `View ratings and profile for @${params.username} on Rate Stuff.`;
@@ -57,13 +57,13 @@ export const Route = createFileRoute("/user/$username")({
 			{ name: "robots", content: "index, follow" },
 		];
 
-		if (user?.avatarUrl) {
+		if (user?.image) {
 			metas.push({
 				name: "og:image",
 				property: "og:image",
-				content: user.avatarUrl,
+				content: user.image,
 			});
-			metas.push({ name: "twitter:image", content: user.avatarUrl });
+			metas.push({ name: "twitter:image", content: user.image });
 		}
 
 		return {
@@ -80,7 +80,6 @@ function UserRatingsList({
 	username: string;
 	isAuthenticated: boolean;
 }) {
-	const LIMIT = isAuthenticated ? 12 : 10;
 	const {
 		data,
 		isLoading,
@@ -88,15 +87,20 @@ function UserRatingsList({
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePublicUserRatings(username, LIMIT, isAuthenticated);
+	} = usePublicUserRatings(username, 10, isAuthenticated); // Limit of 10 ratings per page
 
 	const observerTarget = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
-				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-					fetchNextPage();
+				if (
+					entries[0].isIntersecting &&
+					hasNextPage &&
+					!isFetchingNextPage &&
+					isAuthenticated
+				) {
+					fetchNextPage?.();
 				}
 			},
 			{ threshold: 0.1 },
@@ -111,19 +115,28 @@ function UserRatingsList({
 				observer.unobserve(observerTarget.current);
 			}
 		};
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+			<div className="-mx-2">
+				<div className="divide-y divide-neutral-800">
+					{[1, 2, 3, 4, 5].map((i) => (
+						<RatingCardSkeleton
+							key={i}
+							noIndent
+							hideAvatar
+							showImage={i % 2 === 0}
+						/>
+					))}
+				</div>
 			</div>
 		);
 	}
 
 	if (error) {
 		return (
-			<div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+			<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
 				Failed to load ratings. Please try again.
 			</div>
 		);
@@ -143,19 +156,27 @@ function UserRatingsList({
 		<>
 			<div className="-mx-4 divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
-					<UserRatingCard key={rating.id} rating={rating} noIndent />
+					<div key={rating.id} className="px-4">
+						<UserRatingCard key={rating.id} rating={rating} noIndent />
+					</div>
 				))}
 			</div>
 
-			{hasNextPage && (
+			{isFetchingNextPage ? (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						Loading more...
+					</div>
+				</div>
+			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					{isFetchingNextPage ? (
-						<div className="flex justify-center">
-							<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
-						</div>
-					) : (
-						<p className="text-neutral-500 text-sm">Scroll for more...</p>
-					)}
+					<p className="text-neutral-500 text-sm">Scroll for more...</p>
+				</div>
+			) : (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						All caught up! \(￣▽￣)/
+					</div>
 				</div>
 			)}
 		</>
@@ -163,75 +184,60 @@ function UserRatingsList({
 }
 
 function RouteComponent() {
-	const username = Route.useParams().username;
-	const { isAuthenticated } = useIsAuthenticated();
-	const { data: userData, isLoading, error } = usePublicUser(username);
+	const { user, publicUser } = Route.useRouteContext();
+	const currentUser = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? "",
+			}
+		: undefined;
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-			</div>
-		);
-	}
+	if (!publicUser) return <NotFound />;
 
-	if (error || !userData) {
-		return <NotFound />;
-	}
-
-	const ratingsCount = userData.ratingsCount ?? 0;
+	const ratingsCount = publicUser.ratingsCount ?? 0;
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={isAuthenticated} />
-			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
-
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<div className="px-4 py-4">
-						<div className="flex items-center gap-4 mb-4">
-							<div>
-								<Avatar
-									src={userData.avatarUrl ?? null}
-									alt={userData.displayName ?? `@${userData.username}`}
-									size="xl"
-								/>
-								{userData.displayName ? (
-									<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
-										<span className="text-white font-semibold text-lg">
-											{userData.displayName}
-										</span>
-										<span className="text-neutral-500 text-md font-medium">
-											(@{userData.username})
-										</span>
-									</div>
-								) : (
-									<div className="text-white font-semibold text-lg">
-										@{userData.username}
-									</div>
-								)}
-								<div className="text-neutral-500 text-sm">
-									{userData.createdAt ? (
-										<>
-											Joined {getTimeAgo(userData.createdAt)} · {ratingsCount}{" "}
-											{ratingsCount === "1" ? "rating" : "ratings"}
-										</>
-									) : null}
-								</div>
-							</div>
+		<MainLayout user={currentUser}>
+			<div className="flex items-center gap-4 m-4">
+				<div>
+					<Avatar
+						src={publicUser.image ?? null}
+						alt={publicUser.name ?? `@${publicUser.username}`}
+						size="xl"
+					/>
+					{publicUser.name ? (
+						<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
+							<span className="text-white font-semibold text-lg">
+								{publicUser.name}
+							</span>
+							<span className="text-neutral-500 text-md font-medium">
+								(@{publicUser.username})
+							</span>
 						</div>
-
-						<div className="-mx-4 border-t border-neutral-800" />
-
-						<UserRatingsList
-							username={userData.username}
-							isAuthenticated={isAuthenticated}
-						/>
+					) : (
+						<div className="text-white font-semibold text-lg">
+							@{publicUser.username}
+						</div>
+					)}
+					<div className="text-neutral-500 text-sm">
+						{publicUser.createdAt ? (
+							<>
+								Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}
+								{ratingsCount === "1" ? "rating" : "ratings"}
+							</>
+						) : null}
 					</div>
-				</main>
-
-				<RightSidebar isAuthenticated={isAuthenticated} />
+				</div>
 			</div>
-		</div>
+
+			<div className="-mx-4 border-t border-neutral-800" />
+
+			<UserRatingsList
+				username={publicUser.username}
+				isAuthenticated={user != null}
+			/>
+		</MainLayout>
 	);
 }

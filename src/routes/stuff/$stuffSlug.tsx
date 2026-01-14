@@ -1,26 +1,30 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { MobileHeader } from "~/components/layout/mobile-header";
-import { LeftSidebar } from "~/components/layout/left-sidebar";
-import { RightSidebar } from "~/components/layout/right-sidebar";
-import { NotFound } from "~/components/not-found";
-import { StuffHeader } from "~/features/stuff/components/stuff-header";
-import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
-import { useStuff } from "~/features/stuff/hooks";
-import { stuffQueryOptions } from "~/features/stuff/queries";
-import { useIsAuthenticated } from "~/features/session/queries";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
+import { MainLayout } from "~/components/layout/main-layout";
+import { NotFound } from "~/components/ui/not-found";
+import { StuffHeader } from "~/lib/features/stuff/components/stuff-header";
+import { StuffRatingsList } from "~/lib/features/stuff/components/stuff-ratings-list";
+import { stuffQueryOptions } from "~/lib/features/stuff/queries";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {
 		const slug = params.stuffSlug;
+
 		if (!slug) throw redirect({ to: "/" });
 
-		await context.queryClient.ensureQueryData(stuffQueryOptions(slug));
+		const stuff = await context.queryClient.ensureQueryData(
+			stuffQueryOptions(slug),
+		);
+
+		if (!stuff) throw notFound();
+
+		return { stuff: stuff };
 	},
 	component: RouteComponent,
+	notFoundComponent: NotFound,
 	head: ({ params, match }) => {
 		const cachedRaw = match.context.queryClient.getQueryData(
 			stuffQueryOptions(params.stuffSlug).queryKey,
-		) as unknown;
+		);
 
 		let cached: { id?: string; name?: string; images?: string[] } | null = null;
 		if (cachedRaw && typeof cachedRaw === "object") {
@@ -74,22 +78,16 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
-	const { isAuthenticated } = useIsAuthenticated();
-	const { data, isLoading, error } = useStuff(slug);
+	const { user, stuff } = Route.useRouteContext();
+	const currentUser = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? "",
+			}
+		: undefined;
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-			</div>
-		);
-	}
-
-	if (error || !data) {
-		return <NotFound />;
-	}
-
-	const stuff = data;
 	// Normalize to safe shape to avoid runtime errors
 	const imagesForSafe = Array.isArray(
 		(stuff as unknown as { images?: unknown })?.images,
@@ -106,21 +104,10 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
-			<MobileHeader isAuthenticated={isAuthenticated} />
-			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
-
-				<main className="lg:border-x border-neutral-800 w-full max-w-2xl pb-16 lg:pb-0 overflow-hidden">
-					<div className="px-4 py-4">
-						<StuffHeader stuff={safeStuff} />{" "}
-						<div className="-mx-4 border-t border-neutral-800" />{" "}
-						<StuffRatingsList slug={slug} />
-					</div>
-				</main>
-
-				<RightSidebar isAuthenticated={isAuthenticated} />
-			</div>
-		</div>
+		<MainLayout user={currentUser}>
+			<StuffHeader stuff={safeStuff} />{" "}
+			<div className="-mx-4 border-t border-neutral-800" />{" "}
+			<StuffRatingsList slug={slug} />
+		</MainLayout>
 	);
 }
