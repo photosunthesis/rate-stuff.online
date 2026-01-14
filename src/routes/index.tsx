@@ -49,6 +49,8 @@ export const Route = createFileRoute("/")({
 });
 
 function App() {
+	const search = useSearch({ from: "/" });
+	const tag = search.tag as string | undefined;
 	const { user } = Route.useRouteContext();
 	const publicUser: PublicUser | undefined = user
 		? {
@@ -58,8 +60,6 @@ function App() {
 				image: user.image ?? undefined,
 			}
 		: undefined;
-	const search = useSearch({ from: "/" });
-	const tag = search.tag as string | undefined;
 
 	return (
 		<MainLayout user={publicUser}>

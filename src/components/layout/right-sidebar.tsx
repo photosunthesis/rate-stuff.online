@@ -30,11 +30,11 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recently Rated */}
+						{/* Recent Ratings */}
 						<section>
 							<div className="flex items-center justify-between mb-2 px-1">
 								<p className="text-md font-semibold text-white">
-									Recently Rated
+									Recent Ratings
 								</p>
 							</div>
 
@@ -49,11 +49,10 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 														: ""
 												}`}
 											>
-												<div className="w-9 h-9 bg-neutral-800 rounded-md" />
 												<div className="flex-1 min-w-0">
-													<div className="h-3 bg-neutral-800 rounded w-3/4 mb-2" />
-													<div className="h-2 bg-neutral-800 rounded w-1/2" />
+													<div className="h-3 bg-neutral-800 rounded w-3/4" />
 												</div>
+												<div className="w-4 h-4 bg-neutral-800 rounded" />
 											</div>
 										))
 									: (recentStuff ?? []).map((thing, i) => (
