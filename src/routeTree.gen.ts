@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as UserRouteRouteImport } from './routes/user/route'
 import { Route as StuffRouteRouteImport } from './routes/stuff/route'
@@ -29,6 +30,11 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/stuff': typeof StuffRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
@@ -127,6 +134,7 @@ export interface FileRoutesByTo {
   '/stuff': typeof StuffRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/stuff': typeof StuffRouteRouteWithChildren
   '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/stuff'
     | '/user'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/sign-in'
     | '/sign-up'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/stuff'
     | '/user'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/sign-in'
     | '/sign-up'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/stuff'
     | '/user'
     | '/privacy'
+    | '/sitemap.xml'
     | '/terms'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
@@ -217,6 +229,7 @@ export interface RootRouteChildren {
   StuffRouteRoute: typeof StuffRouteRouteWithChildren
   UserRouteRoute: typeof UserRouteRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiR2UploadRoute: typeof ApiR2UploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -229,6 +242,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -409,6 +429,7 @@ const rootRouteChildren: RootRouteChildren = {
   StuffRouteRoute: StuffRouteRouteWithChildren,
   UserRouteRoute: UserRouteRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiR2UploadRoute: ApiR2UploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
