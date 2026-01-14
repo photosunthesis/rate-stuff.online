@@ -15,6 +15,9 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 	const { data: searchResults, isLoading } = useStuffSearch(searchInput);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
+	// Prevent immediate re-opening after programmatic close (reduces flicker)
+	const suppressOpenRef = useRef(false);
+	const suppressionTimeoutRef = useRef<number | null>(null);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -23,17 +26,40 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 				!containerRef.current.contains(event.target as Node)
 			) {
 				setIsOpen(false);
+				// briefly suppress re-opening to avoid flicker if input regains focus
+				suppressOpenRef.current = true;
+				if (suppressionTimeoutRef.current) {
+					window.clearTimeout(suppressionTimeoutRef.current);
+				}
+				suppressionTimeoutRef.current = window.setTimeout(() => {
+					suppressOpenRef.current = false;
+					suppressionTimeoutRef.current = null;
+				}, 150);
 			}
 		};
 
 		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			if (suppressionTimeoutRef.current) {
+				window.clearTimeout(suppressionTimeoutRef.current);
+			}
+		};
 	}, []);
 
 	const handleSelect = (stuff: { id?: string; name: string }) => {
 		onChange(stuff);
 		setSearchInput("");
 		setIsOpen(false);
+		// suppress immediate re-open from programmatic UI change
+		suppressOpenRef.current = true;
+		if (suppressionTimeoutRef.current) {
+			window.clearTimeout(suppressionTimeoutRef.current);
+		}
+		suppressionTimeoutRef.current = window.setTimeout(() => {
+			suppressOpenRef.current = false;
+			suppressionTimeoutRef.current = null;
+		}, 150);
 	};
 
 	const handleCreateNew = () => {
@@ -41,12 +67,30 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			onChange({ name: searchInput.trim() });
 			setSearchInput("");
 			setIsOpen(false);
+			// suppress immediate re-open from programmatic UI change
+			suppressOpenRef.current = true;
+			if (suppressionTimeoutRef.current) {
+				window.clearTimeout(suppressionTimeoutRef.current);
+			}
+			suppressionTimeoutRef.current = window.setTimeout(() => {
+				suppressOpenRef.current = false;
+				suppressionTimeoutRef.current = null;
+			}, 150);
 		}
 	};
 
 	const handleClear = () => {
 		onChange(null);
 		setSearchInput("");
+		// suppress immediate re-open when focusing input
+		suppressOpenRef.current = true;
+		if (suppressionTimeoutRef.current) {
+			window.clearTimeout(suppressionTimeoutRef.current);
+		}
+		suppressionTimeoutRef.current = window.setTimeout(() => {
+			suppressOpenRef.current = false;
+			suppressionTimeoutRef.current = null;
+		}, 150);
 
 		setTimeout(() => inputRef.current?.focus(), 0);
 	};
@@ -111,9 +155,11 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 						value={searchInput}
 						onChange={(e) => {
 							setSearchInput(e.target.value);
-							setIsOpen(true);
+							if (!suppressOpenRef.current) setIsOpen(true);
 						}}
-						onFocus={() => setIsOpen(true)}
+						onFocus={() => {
+							if (!suppressOpenRef.current) setIsOpen(true);
+						}}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
 								e.preventDefault();
@@ -133,14 +179,10 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
 
 			{isOpen && searchInput.trim().length > 0 && (
-				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
-					{isLoading ? (
-						<div className="p-4 text-center text-neutral-500 text-sm">
-							Searching...
-						</div>
-					) : (
-						<>
-							{results.map((stuff: { id: string; name: string }) => (
+				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60">
+					<div className="overflow-y-auto max-h-52">
+						{results.length > 0 &&
+							results.map((stuff: { id: string; name: string }) => (
 								<button
 									key={stuff.id}
 									type="button"
@@ -153,18 +195,23 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 									<span className="text-xs text-neutral-500">Select</span>
 								</button>
 							))}
+					</div>
 
-							{!hasExactMatch && (
-								<button
-									type="button"
-									onClick={handleCreateNew}
-									className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-600 border-t border-neutral-800"
-								>
-									<Plus size={16} />
-									<span>Create "{searchInput}"</span>
-								</button>
-							)}
-						</>
+					{!hasExactMatch && !isLoading && (
+						<button
+							type="button"
+							onClick={handleCreateNew}
+							className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-600 border-t border-neutral-800"
+						>
+							<Plus size={16} />
+							<span>Create "{searchInput}"</span>
+						</button>
+					)}
+
+					{isLoading && (
+						<div className="p-3 text-center text-neutral-500 text-sm border-t border-neutral-800">
+							Searching...
+						</div>
 					)}
 				</div>
 			)}

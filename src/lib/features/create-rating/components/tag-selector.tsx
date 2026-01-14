@@ -21,6 +21,10 @@ export function TagSelector({
 	const { data: searchResults, isLoading } = useTagSearch(searchInput);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
+	// Prevent immediate re-opening right after programmatic close (avoids dropdown flicker)
+	const suppressOpenRef = useRef(false);
+	const suppressionTimeoutRef = useRef<number | null>(null);
+
 	const results = searchResults?.success ? searchResults.data : [];
 	const filteredResults = results.filter(
 		(tag: { id: string; name: string }) => !selectedTags.includes(tag.name),
@@ -37,11 +41,25 @@ export function TagSelector({
 				!containerRef.current.contains(event.target as Node)
 			) {
 				setIsOpen(false);
+				// briefly suppress re-opening to avoid flicker if input regains focus
+				suppressOpenRef.current = true;
+				if (suppressionTimeoutRef.current) {
+					window.clearTimeout(suppressionTimeoutRef.current);
+				}
+				suppressionTimeoutRef.current = window.setTimeout(() => {
+					suppressOpenRef.current = false;
+					suppressionTimeoutRef.current = null;
+				}, 150);
 			}
 		};
 
 		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			if (suppressionTimeoutRef.current) {
+				window.clearTimeout(suppressionTimeoutRef.current);
+			}
+		};
 	}, []);
 
 	const handleAddTag = (tagName: string) => {
@@ -55,6 +73,15 @@ export function TagSelector({
 		}
 		setSearchInput("");
 		setIsOpen(false);
+		// suppress immediate re-open from programmatic focus
+		suppressOpenRef.current = true;
+		if (suppressionTimeoutRef.current) {
+			window.clearTimeout(suppressionTimeoutRef.current);
+		}
+		suppressionTimeoutRef.current = window.setTimeout(() => {
+			suppressOpenRef.current = false;
+			suppressionTimeoutRef.current = null;
+		}, 150);
 		inputRef.current?.focus();
 	};
 
@@ -90,9 +117,11 @@ export function TagSelector({
 						value={searchInput}
 						onChange={(e) => {
 							setSearchInput(e.target.value);
-							setIsOpen(true);
+							if (!suppressOpenRef.current) setIsOpen(true);
 						}}
-						onFocus={() => setIsOpen(true)}
+						onFocus={() => {
+							if (!suppressOpenRef.current) setIsOpen(true);
+						}}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
 								e.preventDefault();

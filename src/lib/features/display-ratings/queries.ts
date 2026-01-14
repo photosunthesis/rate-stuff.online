@@ -70,10 +70,6 @@ export const ratingQueryOptions = (slug: string | undefined) =>
 		gcTime: 1000 * 60 * 10,
 	});
 
-export function useRating(slug?: string) {
-	return useQuery(ratingQueryOptions(slug));
-}
-
 export function useFeedRatings(
 	limit: number = 10,
 	isAuthenticated: boolean,

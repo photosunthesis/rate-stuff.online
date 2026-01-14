@@ -8,19 +8,26 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import {
 	createRatingFn,
-	uploadImageFn,
+	getUploadUrlFn,
 	updateRatingImagesFn,
 	searchStuffFn,
 	searchTagsFn,
 } from "./api";
-import type { CreateRatingInput } from "./types";
 
 export function useCreateRatingMutation() {
 	const createRatingMutationFn = useServerFn(createRatingFn);
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: CreateRatingInput) => createRatingMutationFn({ data }),
+		mutationFn: (data: {
+			title: string;
+			score: number;
+			content: string;
+			tags?: string[];
+			stuffId?: string;
+			stuffName?: string;
+			images?: string[];
+		}) => createRatingMutationFn({ data }),
 		onSuccess: (data) => {
 			if (data && (data as { success?: boolean }).success) {
 				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
@@ -28,14 +35,11 @@ export function useCreateRatingMutation() {
 				queryClient.invalidateQueries({ queryKey: ["recent", "tags"] });
 			}
 		},
-		onError: () => {
-			// no-op: let calling code handle errors
-		},
 	});
 }
 
 export function useUploadImageMutation() {
-	const uploadImageMutationFn = useServerFn(uploadImageFn);
+	const getUploadUrl = useServerFn(getUploadUrlFn);
 	return useMutation({
 		mutationFn: async ({
 			file,
@@ -44,10 +48,30 @@ export function useUploadImageMutation() {
 			file: File;
 			ratingId: string;
 		}) => {
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("ratingId", ratingId);
-			return uploadImageMutationFn({ data: formData });
+			const presign = await getUploadUrl({
+				data: { ratingId, filename: file.name, contentType: file.type },
+			});
+			if (!presign || !(presign as { success?: boolean }).success) {
+				throw new Error("Failed to get upload url");
+			}
+
+			const payload = (
+				presign as { data: { key: string; putUrl: string; publicUrl: string } }
+			).data;
+			const putResp = await fetch(payload.putUrl, {
+				method: "PUT",
+				credentials: "include",
+				body: file,
+				headers: { "Content-Type": file.type },
+			});
+
+			if (!putResp.ok) throw new Error("Upload failed");
+
+			const jsonResp = (await putResp.json().catch(() => null)) as {
+				url?: string;
+			} | null;
+			const publicUrl = jsonResp?.url ?? payload.publicUrl;
+			return { key: payload.key, url: publicUrl };
 		},
 	});
 }

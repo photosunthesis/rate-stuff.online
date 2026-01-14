@@ -1,8 +1,7 @@
 import { db } from "~/db";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
-import type { CreateRatingInput } from "./types";
-import { uploadFile } from "~/lib/core/media-storage";
+import { createPresignedUploadUrl } from "~/lib/core/media-storage";
 import { generateSlug } from "~/lib/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 
@@ -75,89 +74,140 @@ export const getOrCreateStuff = createServerOnlyFn(
 		}),
 );
 
-export const createTags = createServerOnlyFn(
-	async (names: string[], userId: string) =>
-		db.transaction(async (tx) => {
-			if (names.length === 0) return [];
-
-			const normalizedNames = names.map((n) => n.toLowerCase().trim());
-			const uniqueNames = Array.from(new Set(normalizedNames));
-			const existingTags = await tx
-				.select()
-				.from(tags)
-				.where(inArray(tags.name, uniqueNames));
-			const existingNames = new Set(existingTags.map((t) => t.name));
-			const newNames = uniqueNames.filter((n) => !existingNames.has(n));
-
-			if (newNames.length > 0) {
-				await tx
-					.insert(tags)
-					.values(newNames.map((name) => ({ name, createdBy: userId })))
-					.onConflictDoNothing()
-					.execute();
-			}
-
-			return tx.select().from(tags).where(inArray(tags.name, uniqueNames));
-		}),
-);
-
 export const createRating = createServerOnlyFn(
-	async (userId: string, input: CreateRatingInput) =>
+	async (
+		userId: string,
+		input: {
+			title: string;
+			score: number;
+			content: string;
+			tags?: string[];
+			stuffId?: string;
+			stuffName?: string;
+			images?: string[];
+		},
+	) =>
 		db.transaction(async (tx) => {
-			let stuffId = input.stuffId;
+			let resolvedStuffId = input.stuffId;
 
-			if (!stuffId && input.stuffName) {
-				const stuffResult = await getOrCreateStuff(input.stuffName, userId);
+			if (!resolvedStuffId && input.stuffName) {
+				const name = input.stuffName;
 
-				if (!stuffResult) {
-					throw new Error(`Failed to create or retrieve "stuff"`);
+				const existing = await tx
+					.select()
+					.from(stuff)
+					.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
+					.limit(1)
+					.then((r) => r[0]);
+
+				if (existing) {
+					resolvedStuffId = existing.id;
+				} else {
+					const [inserted] = await tx
+						.insert(stuff)
+						.values({ name, slug: generateSlug(name), createdBy: userId })
+						.onConflictDoNothing()
+						.returning();
+
+					if (inserted) {
+						resolvedStuffId = inserted.id;
+					} else {
+						const selected = await tx
+							.select()
+							.from(stuff)
+							.where(and(eq(stuff.name, name), isNull(stuff.deletedAt)))
+							.limit(1)
+							.then((r) => r[0]);
+
+						if (selected) resolvedStuffId = selected.id;
+					}
 				}
-
-				stuffId = stuffResult.id;
 			}
 
-			if (!stuffId) {
+			if (!resolvedStuffId) {
 				throw new Error(`Failed to determine the "stuff" for the rating`);
 			}
 
-			const tagObjects = await createTags(input.tags, userId);
+			// Normalize and dedupe tag names
+			const rawNames = input.tags ?? [];
+			const normalizedNames = rawNames
+				.map((n) => n?.toLowerCase().trim())
+				.filter(Boolean) as string[];
+			const uniqueNames = Array.from(new Set(normalizedNames));
+
+			// Insert any missing tags (compare by lower-cased name)
+			if (uniqueNames.length > 0) {
+				const existingTags = await tx
+					.select()
+					.from(tags)
+					.where(inArray(sql`LOWER(${tags.name})`, uniqueNames));
+
+				const existingLower = new Set(
+					existingTags.map((t) => t.name.toLowerCase()),
+				);
+				const toCreate = uniqueNames.filter((n) => !existingLower.has(n));
+
+				if (toCreate.length > 0) {
+					await tx
+						.insert(tags)
+						.values(toCreate.map((name) => ({ name, createdBy: userId })))
+						.onConflictDoNothing()
+						.execute();
+				}
+			}
+
+			// Re-select tag objects for associations (if any)
+			const tagObjects =
+				uniqueNames.length > 0
+					? await tx
+							.select()
+							.from(tags)
+							.where(inArray(sql`LOWER(${tags.name})`, uniqueNames))
+					: [];
+
 			const slug = generateSlug(input.title);
+			const imagesJson = JSON.stringify(input.images ?? []);
+
 			const [rating] = await tx
 				.insert(ratings)
 				.values({
 					userId,
-					stuffId: stuffId,
+					stuffId: resolvedStuffId,
 					title: input.title,
 					score: input.score,
 					content: input.content,
-					images: JSON.stringify(input.images),
+					images: imagesJson,
 					slug,
 				})
 				.returning();
+
+			if (!rating) throw new Error("Failed to create rating");
 
 			if (tagObjects.length > 0) {
 				await tx
 					.insert(ratingsToTags)
 					.values(
 						tagObjects.map((tag) => ({ ratingId: rating.id, tagId: tag.id })),
-					);
+					)
+					.onConflictDoNothing()
+					.execute();
 			}
 
 			return rating;
 		}),
 );
 
-export const uploadImage = createServerOnlyFn(
-	async (file: File, ratingId: string) => {
-		const origExt = file.name?.split(".").pop() ?? "webp";
+export const getUploadUrl = createServerOnlyFn(
+	async (ratingId: string, filename: string, contentType: string) => {
+		const origExt = filename?.split(".").pop() ?? "webp";
 		const extension =
-			file.type === "image/webp" || origExt.toLowerCase() === "webp"
+			contentType === "image/webp" || origExt.toLowerCase() === "webp"
 				? "webp"
 				: origExt;
 		const key = `ratings/${ratingId}/${crypto.randomUUID()}.${extension}`;
-		const url = await uploadFile(key, file);
 
-		return { key, url };
+		const presign = await createPresignedUploadUrl(key);
+		return presign;
 	},
 );
 

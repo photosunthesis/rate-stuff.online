@@ -13,21 +13,21 @@ export const stuffQueryOptions = (slug?: string) =>
 		queryKey: slug ? stuffKeys.detail(slug) : ["stuff", undefined],
 		queryFn: async () => {
 			if (!slug) return null;
+
 			const res = (await getStuffBySlugFn({ data: { slug } })) as {
 				success: boolean;
 				data?: StuffWithAggregates | null;
 				error?: string;
 			};
+
 			// Treat explicit "not found" server responses as a null result so
 			// the route can render a friendly NotFound page instead of throwing.
-			if (!res.success) {
+			if (!res.success || !res.data) {
 				const err = res.error ?? "Failed to load stuff";
-				if (err.toLowerCase().includes("not found")) {
-					return null;
-				}
 				throw new Error(err);
 			}
-			return res.data ?? null;
+
+			return res.data;
 		},
 		staleTime: 0,
 		gcTime: 1000 * 60 * 10,

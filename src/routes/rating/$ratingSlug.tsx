@@ -8,16 +8,14 @@ import { NotFound } from "~/components/ui/not-found";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-	useRating,
-	ratingQueryOptions,
-} from "~/lib/features/display-ratings/queries";
+import { ratingQueryOptions } from "~/lib/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
+import type { PublicUser } from "~/lib/features/auth/types";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -35,11 +33,14 @@ function excerptFromMarkdown(md: string, max = 160) {
 export const Route = createFileRoute("/rating/$ratingSlug")({
 	beforeLoad: async ({ params, context }) => {
 		const ratingSlug = params.ratingSlug;
-		if (!ratingSlug) {
-			throw redirect({ to: "/" });
-		}
 
-		await context.queryClient.ensureQueryData(ratingQueryOptions(ratingSlug));
+		if (!ratingSlug) throw redirect({ to: "/" });
+
+		const rating = await context.queryClient.ensureQueryData(
+			ratingQueryOptions(ratingSlug),
+		);
+
+		return { rating: rating?.data };
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
@@ -424,20 +425,22 @@ function TagsList({ tags }: { tags?: string[] }) {
 }
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
-	const ratingSlug = Route.useParams().ratingSlug;
-	const { data, isLoading, isError } = useRating(ratingSlug);
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+	const { user, rating } = Route.useRouteContext();
+	const publicUser: PublicUser | undefined = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? "",
+			}
+		: undefined;
 
-	if (isLoading) return null;
-	if (isError || !data || !data.success) return <NotFound />;
-
-	const rating = data.data;
 	if (!rating) return <NotFound />;
 
 	const ratingTyped = rating as RatingWithRelations;
-
 	let parsedImages: string[] = [];
+
 	if (typeof rating.images === "string") {
 		try {
 			parsedImages = JSON.parse(rating.images);
@@ -452,17 +455,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<MainLayout
-				user={
-					user
-						? {
-								username: user?.username ?? "",
-								name: user?.name,
-								image: user?.image ?? "",
-							}
-						: undefined
-				}
-			>
+			<MainLayout user={publicUser}>
 				<BackButton />
 				<div className="-mx-4 border-t border-neutral-800 mb-4" />
 				<RatingHeader rating={ratingTyped} />

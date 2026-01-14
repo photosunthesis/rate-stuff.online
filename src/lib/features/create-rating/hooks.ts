@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import {
-	useCreateRatingMutation,
-	useUploadImageMutation,
-	useUpdateRatingImagesMutation,
-} from "./queries";
+import { useCreateRatingMutation, useUploadImageMutation } from "./queries";
 import { useStuffSearchQuery, useTagSearchQuery } from "./queries";
-import type { CreateRatingInput } from "./types";
 import { extractValidationErrors, normalizeError } from "~/lib/utils/errors";
+import type { createRatingSchema } from "./types";
+import type { z } from "zod";
 
 function normalizeParagraphBreaks(md: string) {
 	if (!md) return "";
@@ -40,14 +37,9 @@ export function useTagSearch(query: string) {
 	return useTagSearchQuery(debouncedQuery);
 }
 
-type CreateRatingHookInput = Omit<CreateRatingInput, "images"> & {
-	images?: File[];
-};
-
 export function useCreateRating() {
 	const createMutation = useCreateRatingMutation();
 	const uploadMutation = useUploadImageMutation();
-	const updateImagesMutation = useUpdateRatingImagesMutation();
 
 	const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(
 		null,
@@ -57,18 +49,51 @@ export function useCreateRating() {
 	>({});
 
 	return {
-		createRating: async (input: CreateRatingHookInput) => {
+		createRating: async (
+			input: Omit<z.infer<typeof createRatingSchema>, "images"> & {
+				images?: File[];
+			},
+		) => {
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 
-			const ratingInput: CreateRatingInput = {
+			const ratingId = crypto.randomUUID();
+			const ratingInput = {
 				...input,
 				content: normalizeParagraphBreaks(input.content),
 				images: [],
+				id: ratingId,
 			};
 
+			const imageUrls: string[] = [];
+
 			try {
-				const result = (await createMutation.mutateAsync(ratingInput)) as {
+				if (input.images && input.images.length > 0) {
+					const uploads = input.images.map((file) =>
+						uploadMutation.mutateAsync({ file, ratingId }).then(
+							(result) => result.url,
+							(e) => {
+								const info = normalizeError(e);
+								if (info.errors)
+									setLocalValidationErrors((prev) => ({
+										...prev,
+										...info.errors,
+									}));
+								const msg =
+									info.errorMessage ??
+									(e instanceof Error ? e.message : String(e));
+								setLocalErrorMessage(msg);
+								throw e;
+							},
+						),
+					);
+
+					const urls = await Promise.all(uploads);
+					imageUrls.push(...urls);
+				}
+
+				const finalInput = { ...ratingInput, images: imageUrls };
+				const result = (await createMutation.mutateAsync(finalInput)) as {
 					success?: boolean;
 					data?: { id: string } | null;
 					errorMessage?: string;
@@ -81,36 +106,6 @@ export function useCreateRating() {
 					const msg = result.errorMessage ?? "Failed to create rating";
 					setLocalErrorMessage(msg);
 					throw new Error(msg);
-				}
-
-				const ratingId = result.data.id;
-				const imageUrls: string[] = [];
-
-				if (input.images && input.images.length > 0) {
-					for (const file of input.images) {
-						try {
-							const result = await uploadMutation.mutateAsync({
-								file,
-								ratingId,
-							});
-							imageUrls.push(result.url);
-						} catch (e) {
-							const info = normalizeError(e);
-							if (info.errors) setLocalValidationErrors(info.errors);
-							const msg =
-								info.errorMessage ??
-								(e instanceof Error ? e.message : String(e));
-							setLocalErrorMessage(msg);
-							throw new Error(msg);
-						}
-					}
-				}
-
-				if (imageUrls.length > 0) {
-					await updateImagesMutation.mutateAsync({
-						ratingId,
-						images: imageUrls,
-					});
 				}
 			} catch (e) {
 				const info = normalizeError(e);

@@ -30,28 +30,12 @@ export const createRatingSchema = z
 		path: ["stuffId"],
 	});
 
-export type CreateRatingInput = z.infer<typeof createRatingSchema>;
-
 export const stuffSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
 export const tagSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
-
-export type ValidationErrors = Record<string, string>;
-
-export type StuffSearchResponse =
-	| { success: true; stuff: { id: string; name: string }[] }
-	| { success: false; error: string };
-
-export type TagSearchResponse =
-	| { success: true; tags: { id: string; name: string }[] }
-	| { success: false; error: string };
-
-export type ImageUploadResponse =
-	| { success: true; key: string; url: string }
-	| { success: false; error: string };
 
 export const imageUploadSchema = z.object({
 	file: z

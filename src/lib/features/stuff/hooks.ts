@@ -1,7 +1,6 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getStuffRatingsFn } from "./api";
-import { stuffQueryOptions } from "./queries";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 
 type PageResult = {
@@ -10,10 +9,6 @@ type PageResult = {
 	nextCursor?: string;
 	error?: string;
 };
-
-export function useStuff(slug?: string) {
-	return useQuery(stuffQueryOptions(slug));
-}
 
 export function useStuffRatingsInfinite(
 	slug: string,

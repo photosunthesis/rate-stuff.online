@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserUsernameRouteImport } from './routes/user/$username'
 import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
 import { Route as RatingRatingSlugRouteImport } from './routes/rating/$ratingSlug'
+import { Route as ApiR2UploadRouteImport } from './routes/api/r2-upload'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
@@ -78,6 +79,11 @@ const RatingRatingSlugRoute = RatingRatingSlugRouteImport.update({
   path: '/$ratingSlug',
   getParentRoute: () => RatingRouteRoute,
 } as any)
+const ApiR2UploadRoute = ApiR2UploadRouteImport.update({
+  id: '/api/r2-upload',
+  path: '/api/r2-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
   id: '/set-up-profile',
   path: '/set-up-profile',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/api/r2-upload': typeof ApiR2UploadRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/api/r2-upload': typeof ApiR2UploadRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/api/r2-upload': typeof ApiR2UploadRoute
   '/rating/$ratingSlug': typeof RatingRatingSlugRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/set-up-profile'
+    | '/api/r2-upload'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/set-up-profile'
+    | '/api/r2-upload'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authed/set-up-profile'
+    | '/api/r2-upload'
     | '/rating/$ratingSlug'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   UserRouteRoute: typeof UserRouteRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
+  ApiR2UploadRoute: typeof ApiR2UploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/rating/$ratingSlug'
       preLoaderRoute: typeof RatingRatingSlugRouteImport
       parentRoute: typeof RatingRouteRoute
+    }
+    '/api/r2-upload': {
+      id: '/api/r2-upload'
+      path: '/api/r2-upload'
+      fullPath: '/api/r2-upload'
+      preLoaderRoute: typeof ApiR2UploadRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authed/set-up-profile': {
       id: '/_authed/set-up-profile'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   UserRouteRoute: UserRouteRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
+  ApiR2UploadRoute: ApiR2UploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

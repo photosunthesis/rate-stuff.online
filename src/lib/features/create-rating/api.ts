@@ -3,7 +3,7 @@ import { z, ZodError } from "zod";
 import { createRatingSchema } from "~/lib/features/display-ratings/types";
 import {
 	createRating,
-	uploadImage,
+	getUploadUrl,
 	searchStuff,
 	searchTags,
 	updateRatingImages,
@@ -91,49 +91,26 @@ export const createRatingFn = createServerFn({ method: "POST" })
 		}
 	});
 
-export const uploadImageFn = createServerFn({ method: "POST" })
+export const getUploadUrlFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, rateLimitMiddleware])
 	.inputValidator(
-		z.preprocess(
-			(val) => {
-				if (!(val instanceof FormData)) return val;
-				return {
-					file: val.get("file"),
-					ratingId: val.get("ratingId"),
-				};
-			},
-			z.object({
-				file: z
-					.instanceof(File)
-					.refine(
-						(f) => f.size <= 5 * 1024 * 1024,
-						"File size must be less than 5MB",
-					)
-					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
-				ratingId: z.string().min(1, "ratingId is required"),
-			}),
-		),
+		z.object({
+			ratingId: z.string().min(1),
+			filename: z.string().min(1),
+			contentType: z.string().min(1),
+		}),
 	)
 	.handler(async ({ data }) => {
 		try {
-			const result = await uploadImage(data.file, data.ratingId);
-			return result;
+			const { ratingId, filename, contentType } = data;
+			const result = await getUploadUrl(ratingId, filename, contentType);
+			return { success: true, data: result };
 		} catch (error) {
-			if (error instanceof ZodError)
-				throw json(
-					{
-						success: false,
-						errorMessage: "Validation failed",
-						errors: formatZodError(error),
-					},
-					{ status: 422 },
-				);
-
-			throw json(
+			return json(
 				{
 					success: false,
 					errorMessage:
-						error instanceof Error ? error.message : "Image upload failed",
+						error instanceof Error ? error.message : "Failed to get upload url",
 				},
 				{ status: 500 },
 			);

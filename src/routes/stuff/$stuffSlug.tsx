@@ -1,18 +1,27 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/ui/not-found";
+import type { PublicUser } from "~/lib/features/auth/types";
 import { StuffHeader } from "~/lib/features/stuff/components/stuff-header";
 import { StuffRatingsList } from "~/lib/features/stuff/components/stuff-ratings-list";
-import { useStuff } from "~/lib/features/stuff/hooks";
 import { stuffQueryOptions } from "~/lib/features/stuff/queries";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {
 		const slug = params.stuffSlug;
+
 		if (!slug) throw redirect({ to: "/" });
-		await context.queryClient.ensureQueryData(stuffQueryOptions(slug));
+
+		const res = await context.queryClient.ensureQueryData(
+			stuffQueryOptions(slug),
+		);
+
+		if (!res) throw notFound();
+
+		return { stuff: res };
 	},
 	component: RouteComponent,
+	notFoundComponent: NotFound,
 	head: ({ params, match }) => {
 		const cachedRaw = match.context.queryClient.getQueryData(
 			stuffQueryOptions(params.stuffSlug).queryKey,
@@ -70,22 +79,16 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
-	const { user } = Route.useRouteContext();
-	const { data, isLoading, error } = useStuff(slug);
+	const { user, stuff } = Route.useRouteContext();
+	const publicUser: PublicUser | undefined = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? "",
+			}
+		: undefined;
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center py-12">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-			</div>
-		);
-	}
-
-	if (error || !data) {
-		return <NotFound />;
-	}
-
-	const stuff = data;
 	// Normalize to safe shape to avoid runtime errors
 	const imagesForSafe = Array.isArray(
 		(stuff as unknown as { images?: unknown })?.images,
@@ -102,17 +105,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<MainLayout
-			user={
-				user
-					? {
-							username: user?.username ?? "",
-							name: user?.name,
-							image: user?.image ?? "",
-						}
-					: undefined
-			}
-		>
+		<MainLayout user={publicUser}>
 			<div className="px-4 py-4">
 				<StuffHeader stuff={safeStuff} />{" "}
 				<div className="-mx-4 border-t border-neutral-800" />{" "}

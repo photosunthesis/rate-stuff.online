@@ -3,19 +3,19 @@ import { useState, useRef, useEffect } from "react";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
-import {
-	createRatingSchema,
-	type CreateRatingInput,
-} from "~/lib/features/create-rating/types";
+import { createRatingSchema } from "~/lib/features/create-rating/types";
 import { StuffSelector } from "~/lib/features/create-rating/components/stuff-selector";
 import { TagSelector } from "~/lib/features/create-rating/components/tag-selector";
 import { CompactMarkdownEditor } from "~/lib/features/create-rating/components/compact-markdown-editor";
 import { ImageField } from "~/lib/features/create-rating/components/image-field";
 import { getErrorMessage } from "~/lib/utils/errors";
+import type { z } from "zod";
 
 interface CreateRatingFormProps {
 	onSubmit: (
-		data: Omit<CreateRatingInput, "images"> & { images?: File[] },
+		data: Omit<z.infer<typeof createRatingSchema>, "images"> & {
+			images?: File[];
+		},
 	) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
