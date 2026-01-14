@@ -18,11 +18,11 @@ export function MainLayout({
 			<div className="flex flex-1 justify-center">
 				<LeftSidebar user={user} />
 
-				<div className="w-full max-w-2xl">
+				<div className="w-full max-w-2xl flex flex-col">
 					{/* Discover strip is only shown on tablet/mobile, on desktop, the right sidebar is shown */}
 					<DiscoverStrip user={user} />
 
-					<main className="md:border-x border-neutral-800 w-full pb-16 lg:pb-0 overflow-hidden px-4">
+					<main className="flex-1 md:border-x border-neutral-800 w-full pb-16 lg:pb-0 overflow-hidden px-4">
 						{children}
 					</main>
 				</div>
