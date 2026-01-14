@@ -8,12 +8,12 @@ import {
 } from "./service";
 import { getRecentTags, getRecentStuff } from "./service";
 import { z } from "zod";
-import { authMiddleware } from "~/lib/features/auth/middleware";
+import { authMiddleware } from "~/features/auth/middleware";
 import {
 	createRateLimitMiddleware,
 	RATE_LIMITER_BINDING,
-} from "~/lib/features/rate-limit/middleware";
-import { getUserByUsername } from "~/lib/features/auth/service";
+} from "~/features/rate-limit/middleware";
+import { getUserByUsername } from "~/features/auth/service";
 import { rateLimitKeys } from "../rate-limit/middleware";
 
 function parseCursor(cursor?: string) {

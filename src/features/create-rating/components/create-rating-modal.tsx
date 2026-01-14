@@ -6,8 +6,8 @@ import {
 	type MouseEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import { CreateRatingForm } from "~/lib/features/create-rating/components/create-rating-form";
-import { useCreateRating } from "~/lib/features/create-rating/hooks";
+import { CreateRatingForm } from "~/features/create-rating/components/create-rating-form";
+import { useCreateRating } from "~/features/create-rating/hooks";
 import { X } from "lucide-react";
 
 interface CreateRatingModalProps {

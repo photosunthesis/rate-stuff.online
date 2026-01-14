@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPaginatedStuffRatingsFn } from "./api";
-import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 
 type PageResult = {
 	success: boolean;

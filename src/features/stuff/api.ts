@@ -5,7 +5,7 @@ import {
 	createRateLimitMiddleware,
 	RATE_LIMITER_BINDING,
 	rateLimitKeys,
-} from "~/lib/features/rate-limit/middleware";
+} from "~/features/rate-limit/middleware";
 
 export const getStuffBySlugFn = createServerFn({ method: "GET" })
 	.inputValidator(

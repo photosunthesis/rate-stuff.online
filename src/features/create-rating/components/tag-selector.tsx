@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus, X } from "lucide-react";
-import { useTagSearch } from "~/lib/features/create-rating/hooks";
+import { useTagSearch } from "~/features/create-rating/hooks";
 
 interface TagSelectorProps {
 	selectedTags: string[];

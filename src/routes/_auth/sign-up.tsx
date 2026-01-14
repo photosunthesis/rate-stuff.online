@@ -6,11 +6,11 @@ import authClient from "~/lib/core/auth-client";
 import {
 	markInviteCodeAsUsedFn,
 	validateInviteCodeFn,
-} from "~/lib/features/auth/api";
-import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
-import { SignUpForm } from "~/lib/features/auth/components/sign-up-form";
-import { authQueryOptions } from "~/lib/features/auth/queries";
-import { registerSchema } from "~/lib/features/auth/types";
+} from "~/features/auth/api";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { SignUpForm } from "~/features/auth/components/sign-up-form";
+import { authQueryOptions } from "~/features/auth/queries";
+import { registerSchema } from "~/features/auth/types";
 import { extractValidationErrors } from "~/lib/utils/errors";
 
 export const Route = createFileRoute("/_auth/sign-up")({

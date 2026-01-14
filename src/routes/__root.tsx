@@ -11,7 +11,7 @@ import UmamiAnalytics from "@danielgtmn/umami-react";
 import {
 	authQueryOptions,
 	type AuthQueryResult,
-} from "~/lib/features/auth/queries";
+} from "~/features/auth/queries";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;

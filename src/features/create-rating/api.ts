@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
-import { createRatingSchema } from "~/lib/features/display-ratings/types";
+import { createRatingSchema } from "~/features/display-ratings/types";
 import {
 	createRating,
 	getUploadUrl,
@@ -11,7 +11,7 @@ import {
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
-} from "~/lib/features/rate-limit/middleware";
+} from "~/features/rate-limit/middleware";
 import { authMiddleware } from "../auth/middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {

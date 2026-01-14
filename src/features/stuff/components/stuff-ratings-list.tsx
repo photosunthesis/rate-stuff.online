@@ -2,7 +2,7 @@ import { useStuffRatingsInfinite } from "../hooks";
 import { StuffRatingCard } from "./stuff-rating-card";
 import { useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { PublicUser } from "../../auth/types";
 
 type Page = {

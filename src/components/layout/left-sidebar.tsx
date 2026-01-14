@@ -2,9 +2,9 @@ import { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
 import { Home, Compass, Bell, Settings, LogOut, Plus } from "lucide-react";
-import { CreateRatingModal } from "~/lib/features/create-rating/components/create-rating-modal";
+import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
 import authClient from "~/lib/core/auth-client";
-import type { PublicUser } from "~/lib/features/auth/types";
+import type { PublicUser } from "~/features/auth/types";
 
 const getHeader = () => {
 	const headers = [

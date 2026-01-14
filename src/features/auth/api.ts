@@ -4,8 +4,8 @@ import {
 	createRateLimitMiddleware,
 	RATE_LIMITER_BINDING,
 	rateLimitKeys,
-} from "~/lib/features/rate-limit/middleware";
-import { authMiddleware } from "~/lib/features/auth/middleware";
+} from "~/features/rate-limit/middleware";
+import { authMiddleware } from "~/features/auth/middleware";
 import {
 	getUserByUsername as getUserByUsernameService,
 	markInviteCodeAsUsed,
@@ -13,7 +13,7 @@ import {
 	validateInviteCode,
 } from "./service";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
-import { getAuth } from "../../core/auth";
+import { getAuth } from "~/lib/core/auth";
 
 export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.middleware([

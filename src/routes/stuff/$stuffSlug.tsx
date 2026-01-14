@@ -1,9 +1,9 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/ui/not-found";
-import { StuffHeader } from "~/lib/features/stuff/components/stuff-header";
-import { StuffRatingsList } from "~/lib/features/stuff/components/stuff-ratings-list";
-import { stuffQueryOptions } from "~/lib/features/stuff/queries";
+import { StuffHeader } from "~/features/stuff/components/stuff-header";
+import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
+import { stuffQueryOptions } from "~/features/stuff/queries";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {

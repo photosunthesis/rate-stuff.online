@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Avatar } from "~/components/ui/avatar";

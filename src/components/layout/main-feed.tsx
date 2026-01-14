@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
-import { RatingCard } from "~/lib/features/display-ratings/components/rating-card";
+import { RatingCard } from "~/features/display-ratings/components/rating-card";
 import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import { useFeedRatings } from "~/lib/features/display-ratings/queries";
+import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import type { PublicUser } from "~/lib/features/auth/types";
+import type { PublicUser } from "~/features/auth/types";
 
 export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const isAuthenticated = user != null;

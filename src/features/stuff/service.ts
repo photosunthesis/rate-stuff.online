@@ -7,7 +7,7 @@ import {
 	users,
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
-import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { drizzle } from "drizzle-orm/postgres-js";
 import { createServerOnlyFn } from "@tanstack/react-start";
 

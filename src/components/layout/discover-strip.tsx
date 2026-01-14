@@ -4,8 +4,8 @@ import { TrendingUp } from "lucide-react";
 import {
 	useRecentTags,
 	useRecentStuff,
-} from "~/lib/features/display-ratings/queries";
-import type { PublicUser } from "~/lib/features/auth/types";
+} from "~/features/display-ratings/queries";
+import type { PublicUser } from "~/features/auth/types";
 
 export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;

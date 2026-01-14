@@ -2,7 +2,7 @@ import { MobileHeader } from "./mobile-header";
 import { LeftSidebar } from "./left-sidebar";
 import { RightSidebar } from "./right-sidebar";
 import { DiscoverStrip } from "./discover-strip";
-import type { PublicUser } from "~/lib/features/auth/types";
+import type { PublicUser } from "~/features/auth/types";
 
 export function MainLayout({
 	user,

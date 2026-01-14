@@ -1,4 +1,4 @@
-import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
+import type { RatingWithRelations } from "~/features/display-ratings/types";
 
 export type Stuff = {
 	id: string;

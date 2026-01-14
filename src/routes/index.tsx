@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-router";
 import { MainFeed } from "~/components/layout/main-feed";
 import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/lib/features/auth/queries";
+import { authQueryOptions } from "~/features/auth/queries";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {

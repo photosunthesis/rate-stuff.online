@@ -1,11 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { SetUpProfileForm } from "~/lib/features/auth/components/set-up-profile-form";
-import { AuthLayout } from "~/lib/features/auth/components/auth-layout";
+import { SetUpProfileForm } from "~/features/auth/components/set-up-profile-form";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { useState } from "react";
 import { extractValidationErrors } from "~/lib/utils/errors";
 import authClient from "~/lib/core/auth-client";
 import { useServerFn } from "@tanstack/react-start";
-import { uploadAvatarFn } from "~/lib/features/auth/api";
+import { uploadAvatarFn } from "~/features/auth/api";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,

@@ -56,7 +56,7 @@ Key files:
 - `src/db/client.ts` (Hyperdrive connection + Drizzle client)
 - `src/db/schema/*` (table definitions)
 - `src/lib/core/auth.ts` (Better Auth integration and cookie cache)
-- `src/lib/features/` (feature-scoped API, UI, and middleware)
+- `src/features/` (feature-scoped API, UI, and middleware)
 
 ---
 
