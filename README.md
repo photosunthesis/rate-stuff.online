@@ -34,17 +34,18 @@ A quick tour of the repo and where to look for important pieces.
 ```
 /                      # repo root
 ├─ src/
+│  ├─ assets/           # static assets (images, icons, etc.)
 │  ├─ components/
 │  │  ├─ layout/        # layout components (main-layout, sidebars, headers)
 │  │  └─ ui/            # small reusable UI pieces (button, avatar, text-field)
-│  ├─ lib/
-│  │  ├─ core/          # auth client, media storage, helpers
-│  │  ├─ features/      # feature modules (auth, create-rating, display-ratings, stuff, rate-limit)
-│  │  └─ utils/         # utility functions
 │  ├─ db/               # Drizzle client and schema (client.ts, schema/*)
+│  ├─ features/         # feature modules (auth, create-rating, display-ratings, stuff, rate-limit, file-storage)
+│  ├─ integrations/     # integration helpers/providers (e.g., TanStack Query)
+│  ├─ lib/              # app-level helpers and clients (auth client, server helpers, utils)
 │  ├─ routes/           # app routes and API handlers (see __root.tsx, api/r2-upload.ts)
 │  ├─ router.tsx
-│  └─ routeTree.gen.ts
+│  ├─ routeTree.gen.ts
+│  └─ styles.css
 ├─ drizzle/             # SQL migrations and snapshots
 ├─ public/              # static assets
 ├─ wrangler.jsonc       # Cloudflare Workers config
@@ -55,8 +56,8 @@ A quick tour of the repo and where to look for important pieces.
 Key files:
 - `src/db/client.ts` (Hyperdrive connection + Drizzle client)
 - `src/db/schema/*` (table definitions)
-- `src/lib/core/auth.ts` (Better Auth integration and cookie cache)
-- `src/features/` (feature-scoped API, UI, and middleware)
+- `src/lib/auth.client.ts` and `src/lib/auth.server.ts` (Better Auth integration & helpers)
+- `src/features/*` (feature-scoped API, UI, middleware — e.g., `src/features/auth`, `src/features/create-rating`)
 
 ---
 
