@@ -1,7 +1,7 @@
-import { db } from "~/db";
+import { db } from "~/lib/db";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
-import { createPresignedUploadUrl } from "~/lib/core/media-storage";
+import { createPresignedUploadUrl } from "~/features/file-storage/service";
 import { generateSlug } from "~/lib/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 

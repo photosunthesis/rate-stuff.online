@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { imagesBucketUrl } from "~/lib/core/media-storage";
+import {
+	imagesBucketUrl,
+	verifyPresignedUpload,
+	uploadFile,
+} from "~/features/file-storage/service";
 import { env } from "cloudflare:workers";
-import { getAuth } from "~/lib/core/auth";
+import { getAuth } from "~/lib/auth.server";
 
 export const Route = createFileRoute("/api/r2-upload")({
 	server: {
@@ -48,42 +52,21 @@ export const Route = createFileRoute("/api/r2-upload")({
 						);
 					}
 
-					const now = Math.floor(Date.now() / 1000);
-					const expNum = Number(expires);
-					if (Number.isNaN(expNum) || now > expNum) {
-						return new Response(
-							JSON.stringify({
-								success: false,
-								error: "Signature expired or invalid",
-							}),
-							{
-								status: 403,
-								headers: { "Content-Type": "application/json" },
-							},
-						);
-					}
+					const verification = await verifyPresignedUpload(key, expires, sig);
+					if (!verification.ok) {
+						if (verification.reason === "expired") {
+							return new Response(
+								JSON.stringify({
+									success: false,
+									error: "Signature expired or invalid",
+								}),
+								{
+									status: 403,
+									headers: { "Content-Type": "application/json" },
+								},
+							);
+						}
 
-					const secret = env.SESSION_SECRET;
-					const encoder = new TextEncoder();
-					const keyMaterial = await crypto.subtle.importKey(
-						"raw",
-						encoder.encode(secret),
-						{ name: "HMAC", hash: "SHA-256" },
-						false,
-						["sign"],
-					);
-
-					const data = encoder.encode(`${key}|${expires}`);
-					const signatureBuffer = await crypto.subtle.sign(
-						"HMAC",
-						keyMaterial,
-						data,
-					);
-					const expected = Array.from(new Uint8Array(signatureBuffer))
-						.map((b) => b.toString(16).padStart(2, "0"))
-						.join("");
-
-					if (sig !== expected) {
 						return new Response(
 							JSON.stringify({ success: false, error: "Invalid signature" }),
 							{
@@ -98,9 +81,7 @@ export const Route = createFileRoute("/api/r2-upload")({
 					const body = await request.arrayBuffer();
 
 					try {
-						await env.R2_BUCKET.put(key, body, {
-							httpMetadata: { contentType },
-						});
+						await uploadFile(env.R2_BUCKET, key, body, { type: contentType });
 					} catch (err) {
 						const msg = err instanceof Error ? err.message : String(err);
 						console.error("R2 put failed:", msg);

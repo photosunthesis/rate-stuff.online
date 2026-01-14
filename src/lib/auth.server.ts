@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import type { drizzle } from "drizzle-orm/postgres-js";
 import { username } from "better-auth/plugins";
-import { getDatabase } from "~/db";
+import { getDatabase } from "~/lib/db";
 
 const getAuthConfig = createServerOnlyFn((db: ReturnType<typeof drizzle>) =>
 	betterAuth({

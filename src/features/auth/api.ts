@@ -13,7 +13,7 @@ import {
 	validateInviteCode,
 } from "./service";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
-import { getAuth } from "~/lib/core/auth";
+import { getAuth } from "~/lib/auth.server";
 
 export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.middleware([

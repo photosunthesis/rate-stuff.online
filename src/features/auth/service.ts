@@ -1,9 +1,10 @@
-import { db } from "~/db";
+import { db } from "~/lib/db";
 import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
-import { uploadFile } from "~/lib/core/media-storage";
+import { uploadFile } from "~/features/file-storage/service";
 import { numberWithCommas } from "~/lib/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
@@ -76,7 +77,7 @@ export const uploadProfileImage = createServerOnlyFn(
 				? "webp"
 				: origExt;
 		const key = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
-		const url = await uploadFile(key, file);
+		const url = await uploadFile(env.R2_BUCKET, key, file);
 
 		return { key, url };
 	},

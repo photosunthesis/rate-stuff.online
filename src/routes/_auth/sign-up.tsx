@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import authClient from "~/lib/core/auth-client";
+import authClient from "~/lib/auth.client";
 import {
 	markInviteCodeAsUsedFn,
 	validateInviteCodeFn,

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/lib/core/auth-client";
+import authClient from "~/lib/auth.client";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignInForm } from "~/features/auth/components/sig-in-form";
 import { authQueryOptions } from "~/features/auth/queries";
