@@ -3,16 +3,45 @@ import AppLogo from "~/components/ui/app-logo";
 
 export const Route = createFileRoute("/privacy")({
 	component: RouteComponent,
-	head: () => ({
-		meta: [
-			{ title: "Privacy Policy - Rate Stuff Online" },
-			{
-				name: "description",
-				content:
-					"Privacy policy for Rate Stuff Online — what we collect and how we use it.",
-			},
-		],
-	}),
+	head: () => {
+		const title = "Privacy Policy - Rate Stuff Online";
+		const description =
+			"Privacy policy for Rate Stuff Online — what we collect and how we use it.";
+
+		return {
+			meta: [
+				{ title },
+				{ name: "description", content: description },
+				{ name: "robots", content: "index, follow" },
+				{ property: "og:title", content: title },
+				{ property: "og:description", content: description },
+				{ property: "og:type", content: "website" },
+				{ property: "og:url", content: "https://rate-stuff.online/privacy" },
+				{ name: "twitter:card", content: "summary" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:description", content: description },
+			],
+			links: [{ rel: "canonical", href: "/privacy" }],
+			scripts: [
+				{
+					type: "application/ld+json",
+					children: JSON.stringify({
+						"@context": "https://schema.org",
+						"@type": "WebPage",
+						name: title,
+						description,
+						url: "https://rate-stuff.online/privacy",
+						dateModified: "2026-01-15",
+						publisher: {
+							"@type": "Organization",
+							name: "Rate Stuff Online",
+							url: "https://rate-stuff.online",
+						},
+					}),
+				},
+			],
+		};
+	},
 });
 
 function RouteComponent() {
@@ -74,9 +103,19 @@ function RouteComponent() {
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Contact</h2>
 			<p>
-				If you have questions about privacy or data requests, please reach out
-				via the link in the footer to contact the site maintainers.
+				If you have questions about privacy or data requests, please email us at
+				<a
+					className="text-emerald-400 underline ml-1"
+					href="mailto:hello@rate-stuff.online"
+				>
+					hello@rate-stuff.online
+				</a>
+				.
 			</p>
+
+			<div className="mt-6 text-sm text-neutral-500">
+				Last updated: January 15, 2026
+			</div>
 		</main>
 	);
 }
