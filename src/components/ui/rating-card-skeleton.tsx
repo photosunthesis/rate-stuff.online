@@ -22,7 +22,6 @@ export function RatingCardSkeleton({
 				<div
 					className={`h-3 bg-neutral-800 rounded w-28 ${variant === "user" ? "" : "mb-2"}`}
 				/>
-				<div className={`h-3 bg-neutral-800 rounded w-20`} />
 			</div>
 		) : (
 			<div className="flex items-center gap-3">

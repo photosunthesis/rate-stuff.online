@@ -119,12 +119,15 @@ function UserRatingsList({
 
 	if (isLoading) {
 		return (
-			<div className="-mx-4">
+			<div className="-mx-2">
 				<div className="divide-y divide-neutral-800">
 					{[1, 2, 3, 4, 5].map((i) => (
-						<div key={i} className="px-4">
-							<RatingCardSkeleton noIndent hideAvatar showImage={i % 2 === 0} />
-						</div>
+						<RatingCardSkeleton
+							key={i}
+							noIndent
+							hideAvatar
+							showImage={i % 2 === 0}
+						/>
 					))}
 				</div>
 			</div>
