@@ -79,7 +79,7 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block px-3 py-1 cursor-pointer"
+			className="block cursor-pointer"
 			role="link"
 			tabIndex={0}
 			onClick={() =>

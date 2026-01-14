@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
-import { Home, Compass, Bell, Settings, LogOut } from "lucide-react";
+import { Home, Compass, Bell, Settings, LogOut, Plus } from "lucide-react";
+import { CreateRatingModal } from "~/lib/features/create-rating/components/create-rating-modal";
 import authClient from "~/lib/core/auth-client";
 import type { PublicUser } from "~/lib/features/auth/types";
 
@@ -20,6 +21,7 @@ const getHeader = () => {
 };
 
 export function LeftSidebar({ user }: { user?: PublicUser }) {
+	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const isAuthenticated = user != null;
 	const [isHolding, setIsHolding] = useState(false);
 	const [holdProgress, setHoldProgress] = useState(0);
@@ -88,6 +90,12 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 
 	return (
 		<>
+			{isAuthenticated && (
+				<CreateRatingModal
+					isOpen={isCreateOpen}
+					onClose={() => setIsCreateOpen(false)}
+				/>
+			)}
 			<aside className="w-64 px-4 py-6 hidden lg:flex flex-col sticky top-0 h-screen">
 				<div className="flex flex-col gap-2 mb-4">
 					<AppLogo size={30} />
@@ -119,6 +127,16 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					</div>
 				) : (
 					<div className="flex flex-col h-full">
+						<div className="mb-6 mt-4 px-3">
+							<button
+								type="button"
+								onClick={() => setIsCreateOpen(true)}
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-1 cursor-pointer"
+							>
+								<Plus className="w-5 h-5" />
+								<span>New Rating</span>
+							</button>
+						</div>
 						<nav className="space-y-1 flex-1">
 							<Link
 								to="/"
@@ -215,6 +233,16 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							</>
 						)}
 					</Link>
+
+					<button
+						type="button"
+						onClick={() => setIsCreateOpen(true)}
+						aria-label="New Rating"
+						title="New Rating"
+						className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
+					>
+						<Plus className="w-5 h-5" />
+					</button>
 					<Link
 						to="/"
 						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"

@@ -77,7 +77,7 @@ export function StuffRatingCard({ rating }: Props) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block cursor-pointer py-2"
+			className="block cursor-pointer"
 			role="link"
 			tabIndex={0}
 			onClick={() =>

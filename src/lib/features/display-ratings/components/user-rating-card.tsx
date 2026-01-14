@@ -73,7 +73,7 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block px-5 py-3 cursor-pointer hover:bg-neutral-800/50 transition-colors"
+			className="block cursor-pointer hover:bg-neutral-800/50 transition-colors"
 			role="link"
 			tabIndex={0}
 			onClick={() =>

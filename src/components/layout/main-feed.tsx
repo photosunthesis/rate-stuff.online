@@ -5,7 +5,6 @@ import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton"
 import { useFeedRatings } from "~/lib/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { CreateRatingSection } from "~/lib/features/create-rating/components/create-rating-section";
 import type { PublicUser } from "~/lib/features/auth/types";
 
 export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
@@ -63,7 +62,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	return (
 		<>
 			{tag && (
-				<div className="px-4 py-4 border-b border-neutral-800">
+				<div className="border-b border-neutral-800">
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-lg font-semibold text-white">
@@ -87,7 +86,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 				</div>
 			)}
 
-			{isAuthenticated && <CreateRatingSection user={user} />}
+			{/* Create rating trigger moved to sidebar (desktop) and a floating action button on mobile */}
 
 			<div>
 				{ratings.map((rating, idx) => (

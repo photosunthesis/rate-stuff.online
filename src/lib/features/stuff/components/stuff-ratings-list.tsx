@@ -168,9 +168,7 @@ export function StuffRatingsList({
 						}
 						data-skel-item
 					>
-						<div className="px-4 py-2">
-							<RatingCardSkeleton variant="stuff" />
-						</div>
+						<RatingCardSkeleton variant="stuff" />
 					</div>
 				))}
 			</div>
@@ -214,9 +212,7 @@ export function StuffRatingsList({
 								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<div className="px-4 py-2">
-							<StuffRatingCard rating={rating} />
-						</div>
+						<StuffRatingCard rating={rating} />
 					</div>
 				))}
 			</div>

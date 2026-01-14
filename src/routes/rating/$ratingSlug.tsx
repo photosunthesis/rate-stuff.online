@@ -15,7 +15,6 @@ import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
-import type { PublicUser } from "~/lib/features/auth/types";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -427,7 +426,7 @@ function TagsList({ tags }: { tags?: string[] }) {
 function RouteComponent() {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 	const { user, rating } = Route.useRouteContext();
-	const publicUser: PublicUser | undefined = user
+	const publicUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",

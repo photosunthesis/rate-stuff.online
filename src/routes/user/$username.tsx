@@ -163,53 +163,59 @@ function UserRatingsList({
 
 function RouteComponent() {
 	const { user, publicUser } = Route.useRouteContext();
+	const currentUser = user
+		? {
+				id: user.id ?? "",
+				username: user.username ?? "",
+				name: user.name === user.username ? null : (user.name ?? null),
+				image: user.image ?? "",
+			}
+		: undefined;
 
 	if (!publicUser) return <NotFound />;
 
 	const ratingsCount = publicUser.ratingsCount ?? 0;
 
 	return (
-		<MainLayout user={{ username: user?.username ?? "" }}>
-			<div className="px-4 py-4">
-				<div className="flex items-center gap-4 mb-4">
-					<div>
-						<Avatar
-							src={publicUser.image ?? null}
-							alt={publicUser.name ?? `@${publicUser.username}`}
-							size="xl"
-						/>
-						{publicUser.name ? (
-							<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
-								<span className="text-white font-semibold text-lg">
-									{publicUser.name}
-								</span>
-								<span className="text-neutral-500 text-md font-medium">
-									(@{publicUser.username})
-								</span>
-							</div>
-						) : (
-							<div className="text-white font-semibold text-lg">
-								@{publicUser.username}
-							</div>
-						)}
-						<div className="text-neutral-500 text-sm">
-							{publicUser.createdAt ? (
-								<>
-									Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}
-									{ratingsCount === "1" ? "rating" : "ratings"}
-								</>
-							) : null}
+		<MainLayout user={currentUser}>
+			<div className="flex items-center gap-4 mb-4">
+				<div>
+					<Avatar
+						src={publicUser.image ?? null}
+						alt={publicUser.name ?? `@${publicUser.username}`}
+						size="xl"
+					/>
+					{publicUser.name ? (
+						<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
+							<span className="text-white font-semibold text-lg">
+								{publicUser.name}
+							</span>
+							<span className="text-neutral-500 text-md font-medium">
+								(@{publicUser.username})
+							</span>
 						</div>
+					) : (
+						<div className="text-white font-semibold text-lg">
+							@{publicUser.username}
+						</div>
+					)}
+					<div className="text-neutral-500 text-sm">
+						{publicUser.createdAt ? (
+							<>
+								Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}
+								{ratingsCount === "1" ? "rating" : "ratings"}
+							</>
+						) : null}
 					</div>
 				</div>
-
-				<div className="-mx-4 border-t border-neutral-800" />
-
-				<UserRatingsList
-					username={publicUser.username}
-					isAuthenticated={user != null}
-				/>
 			</div>
+
+			<div className="-mx-4 border-t border-neutral-800" />
+
+			<UserRatingsList
+				username={publicUser.username}
+				isAuthenticated={user != null}
+			/>
 		</MainLayout>
 	);
 }

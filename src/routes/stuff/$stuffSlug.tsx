@@ -1,7 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/ui/not-found";
-import type { PublicUser } from "~/lib/features/auth/types";
 import { StuffHeader } from "~/lib/features/stuff/components/stuff-header";
 import { StuffRatingsList } from "~/lib/features/stuff/components/stuff-ratings-list";
 import { stuffQueryOptions } from "~/lib/features/stuff/queries";
@@ -80,7 +79,7 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
 	const { user, stuff } = Route.useRouteContext();
-	const publicUser: PublicUser | undefined = user
+	const publicUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",
@@ -106,11 +105,9 @@ function RouteComponent() {
 
 	return (
 		<MainLayout user={publicUser}>
-			<div className="px-4 py-4">
-				<StuffHeader stuff={safeStuff} />{" "}
-				<div className="-mx-4 border-t border-neutral-800" />{" "}
-				<StuffRatingsList slug={slug} />
-			</div>
+			<StuffHeader stuff={safeStuff} />{" "}
+			<div className="-mx-4 border-t border-neutral-800" />{" "}
+			<StuffRatingsList slug={slug} />
 		</MainLayout>
 	);
 }

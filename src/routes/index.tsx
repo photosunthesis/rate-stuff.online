@@ -6,7 +6,6 @@ import {
 import { MainFeed } from "~/components/layout/main-feed";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/lib/features/auth/queries";
-import type { PublicUser } from "~/lib/features/auth/types";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
@@ -52,7 +51,7 @@ function App() {
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
 	const { user } = Route.useRouteContext();
-	const publicUser: PublicUser | undefined = user
+	const publicUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",
