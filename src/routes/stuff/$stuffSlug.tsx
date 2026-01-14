@@ -26,7 +26,13 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 			stuffQueryOptions(params.stuffSlug).queryKey,
 		);
 
-		let cached: { id?: string; name?: string; images?: string[] } | null = null;
+		let cached: {
+			id?: string;
+			name?: string;
+			images?: string[];
+			averageRating?: number;
+			ratingCount?: number;
+		} | null = null;
 		if (cachedRaw && typeof cachedRaw === "object") {
 			const maybeWrapper = cachedRaw as Record<string, unknown>;
 			if ("data" in maybeWrapper && typeof maybeWrapper.data === "object") {
@@ -34,12 +40,16 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 					id?: string;
 					name?: string;
 					images?: string[];
+					averageRating?: number;
+					ratingCount?: number;
 				};
 			} else {
 				cached = maybeWrapper as {
 					id?: string;
 					name?: string;
 					images?: string[];
+					averageRating?: number;
+					ratingCount?: number;
 				};
 			}
 		}
@@ -54,13 +64,44 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 			: [];
 		const hasImages = images.length > 0;
 
+		const ratingCount =
+			typeof stuff?.ratingCount === "number"
+				? (stuff?.ratingCount as number)
+				: undefined;
+		const averageRating =
+			typeof stuff?.averageRating === "number"
+				? (stuff?.averageRating as number)
+				: undefined;
+
+		const description = stuff?.name
+			? averageRating != null && ratingCount != null
+				? `${stuff.name} — ${averageRating.toFixed(1)} average from ${ratingCount} ${
+						ratingCount === 1 ? "rating" : "ratings"
+					} on Rate Stuff Online.`
+				: `View ratings and details for ${stuff.name} on Rate Stuff Online.`
+			: "Stuff on Rate Stuff Online.";
+
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
+			{ name: "description", content: description },
+			{
+				name: "og:site_name",
+				property: "og:site_name",
+				content: "Rate Stuff Online",
+			},
+			{ name: "og:title", property: "og:title", content: title },
+			{
+				name: "og:description",
+				property: "og:description",
+				content: description,
+			},
+			{ name: "og:type", property: "og:type", content: "product" },
 			{
 				name: "twitter:card",
 				content: hasImages ? "summary_large_image" : "summary",
 			},
 			{ name: "twitter:title", content: title },
+			{ name: "twitter:description", content: description },
 			{ name: "robots", content: "index, follow" },
 		];
 
@@ -69,9 +110,29 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 			metas.push({ name: "twitter:image", content: images[0] });
 		}
 
+		const pageUrl = `https://rate-stuff.online/stuff/${params.stuffSlug}`;
+
+		const ld: Record<string, unknown> = {
+			"@context": "https://schema.org",
+			"@type": "Product",
+			name: stuff?.name ?? undefined,
+			image: hasImages ? images : undefined,
+			url: pageUrl,
+			description: description,
+		};
+
+		if (averageRating != null && ratingCount != null && ratingCount > 0) {
+			ld.aggregateRating = {
+				"@type": "AggregateRating",
+				ratingValue: averageRating.toFixed(2),
+				ratingCount: ratingCount,
+			};
+		}
+
 		return {
 			meta: metas,
 			links: [{ rel: "canonical", href: `/stuff/${params.stuffSlug}` }],
+			scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }],
 		};
 	},
 });

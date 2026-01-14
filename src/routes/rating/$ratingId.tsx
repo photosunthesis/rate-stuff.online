@@ -75,9 +75,16 @@ export const Route = createFileRoute("/rating/$ratingId")({
 			}
 		}
 
+		const pageUrl = `https://rate-stuff.online/rating/${params.ratingId}`;
+
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
 			{ name: "description", content: description },
+			{
+				name: "og:site_name",
+				property: "og:site_name",
+				content: "Rate Stuff Online",
+			},
 			{ name: "og:title", property: "og:title", content: title },
 			{
 				name: "og:description",
@@ -85,6 +92,7 @@ export const Route = createFileRoute("/rating/$ratingId")({
 				content: description,
 			},
 			{ name: "og:type", property: "og:type", content: "article" },
+			{ name: "og:url", property: "og:url", content: pageUrl },
 			{
 				name: "twitter:card",
 				content: image ? "summary_large_image" : "summary",
@@ -99,6 +107,14 @@ export const Route = createFileRoute("/rating/$ratingId")({
 			metas.push({ name: "twitter:image", content: image });
 		}
 
+		if (rating?.createdAt) {
+			metas.push({
+				name: "article:published_time",
+				property: "article:published_time",
+				content: new Date(rating.createdAt).toISOString(),
+			});
+		}
+
 		const scripts: { type: string; children: string }[] = [];
 		if (rating) {
 			scripts.push({
@@ -106,6 +122,8 @@ export const Route = createFileRoute("/rating/$ratingId")({
 				children: JSON.stringify({
 					"@context": "https://schema.org",
 					"@type": "Review",
+					url: pageUrl,
+					mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
 					author: {
 						"@type": "Person",
 						name: rating.user.name ?? rating.user.username ?? "User",
@@ -124,6 +142,11 @@ export const Route = createFileRoute("/rating/$ratingId")({
 						"@type": "Thing",
 						name: rating.stuff.name,
 						url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
+					},
+					publisher: {
+						"@type": "Organization",
+						name: "Rate Stuff Online",
+						url: "https://rate-stuff.online",
 					},
 					image: image,
 				}),

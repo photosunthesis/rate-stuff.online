@@ -44,6 +44,11 @@ export const Route = createFileRoute("/user/$username")({
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
 			{ name: "description", content: description },
+			{
+				name: "og:site_name",
+				property: "og:site_name",
+				content: "Rate Stuff Online",
+			},
 			{ name: "og:title", property: "og:title", content: title },
 			{
 				name: "og:description",
@@ -57,6 +62,8 @@ export const Route = createFileRoute("/user/$username")({
 			{ name: "robots", content: "index, follow" },
 		];
 
+		const pageUrl = `https://rate-stuff.online/user/${params.username}`;
+
 		if (user?.image) {
 			metas.push({
 				name: "og:image",
@@ -66,9 +73,35 @@ export const Route = createFileRoute("/user/$username")({
 			metas.push({ name: "twitter:image", content: user.image });
 		}
 
+		const ld = {
+			"@context": "https://schema.org",
+			"@type": "ProfilePage",
+			mainEntity: {
+				"@type": "Person",
+				name: user?.name ?? `@${params.username}`,
+				url: pageUrl,
+				image: user?.image ?? undefined,
+				sameAs: undefined,
+			},
+			name: title,
+			description,
+			url: pageUrl,
+		};
+
+		if (user?.createdAt) {
+			try {
+				ld.mainEntity = {
+					// biome-ignore lint/suspicious/noExplicitAny: okk to use here :D
+					...(ld as any).mainEntity,
+					birthDate: new Date(user.createdAt).toISOString(),
+				};
+			} catch {}
+		}
+
 		return {
 			meta: metas,
 			links: [{ rel: "canonical", href: `/user/${params.username}` }],
+			scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }],
 		};
 	},
 });

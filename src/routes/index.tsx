@@ -30,11 +30,18 @@ export const Route = createFileRoute("/")({
 		const description = tag
 			? `Ratings tagged with #${tag}. Discover and share your thoughts on various topics with our community.`
 			: "Rate and discover ratings for anything—movies, books, ideas, experiences, and more. Join our community and start rating today!";
+		const canonical = tag ? `/?tag=${encodeURIComponent(tag)}` : "/";
 
 		return {
 			meta: [
 				{ title },
 				{ name: "description", content: description },
+				{ name: "robots", content: "index, follow" },
+				{
+					name: "og:site_name",
+					property: "og:site_name",
+					content: "Rate Stuff Online",
+				},
 				{ name: "og:title", property: "og:title", content: title },
 				{
 					name: "og:description",
@@ -42,6 +49,41 @@ export const Route = createFileRoute("/")({
 					content: description,
 				},
 				{ name: "og:type", property: "og:type", content: "website" },
+				{
+					name: "og:url",
+					property: "og:url",
+					content: `https://rate-stuff.online${canonical}`,
+				},
+				{ name: "twitter:card", content: "summary" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:description", content: description },
+			],
+			links: [{ rel: "canonical", href: canonical }],
+			scripts: [
+				{
+					type: "application/ld+json",
+					children: JSON.stringify({
+						"@context": "https://schema.org",
+						"@type": "WebSite",
+						name: "Rate Stuff Online",
+						url: "https://rate-stuff.online",
+						potentialAction: {
+							"@type": "SearchAction",
+							target: "https://rate-stuff.online/?tag={search_term_string}",
+							"query-input": "required name=search_term_string",
+						},
+					}),
+				},
+				{
+					type: "application/ld+json",
+					children: JSON.stringify({
+						"@context": "https://schema.org",
+						"@type": "WebPage",
+						name: title,
+						description,
+						url: `https://rate-stuff.online${canonical}`,
+					}),
+				},
 			],
 		};
 	},
