@@ -44,11 +44,13 @@ export const Route = createFileRoute("/sitemap.xml")({
 						)
 						.join("");
 
-					// Users (by username) — only include users with a username
+					// Users (by username) — only include users with a username and exclude admins
 					const userRows = await db
 						.select({ username: users.username })
 						.from(users)
-						.where(sql`${users.username} IS NOT NULL`)
+						.where(
+							sql`${users.username} IS NOT NULL AND ${users.role} != ${"admin"}`,
+						)
 						.orderBy(desc(users.createdAt))
 						.limit(100);
 
