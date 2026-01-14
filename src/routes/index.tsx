@@ -51,7 +51,7 @@ function App() {
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
 	const { user } = Route.useRouteContext();
-	const publicUser = user
+	const currentUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",
@@ -61,8 +61,8 @@ function App() {
 		: undefined;
 
 	return (
-		<MainLayout user={publicUser}>
-			<MainFeed tag={tag} user={publicUser} />
+		<MainLayout user={currentUser}>
+			<MainFeed tag={tag} user={currentUser} />
 		</MainLayout>
 	);
 }

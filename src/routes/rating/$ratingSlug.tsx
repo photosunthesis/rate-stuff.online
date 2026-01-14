@@ -426,7 +426,7 @@ function TagsList({ tags }: { tags?: string[] }) {
 function RouteComponent() {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 	const { user, rating } = Route.useRouteContext();
-	const publicUser = user
+	const currentUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",
@@ -454,7 +454,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<MainLayout user={publicUser}>
+			<MainLayout user={currentUser}>
 				<BackButton />
 				<div className="-mx-4 border-t border-neutral-800 mb-4" />
 				<RatingHeader rating={ratingTyped} />

@@ -79,7 +79,7 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
 	const { user, stuff } = Route.useRouteContext();
-	const publicUser = user
+	const currentUser = user
 		? {
 				id: user.id ?? "",
 				username: user.username ?? "",
@@ -104,7 +104,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<MainLayout user={publicUser}>
+		<MainLayout user={currentUser}>
 			<StuffHeader stuff={safeStuff} />{" "}
 			<div className="-mx-4 border-t border-neutral-800" />{" "}
 			<StuffRatingsList slug={slug} />
