@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 		const tag = match.search?.tag as string | undefined;
 		const title = tag
 			? `Ratings with the #${tag} tag - Rate Stuff Online`
-			: " Rate stuff—concrete or abstract—on a scale of 1 to 10 - Rate Stuff Online";
+			: "Rate stuff—concrete or abstract—on a scale of 1 to 10 - Rate Stuff Online";
 		const description = tag
 			? `Ratings tagged with #${tag}. Discover and share your thoughts on various topics with our community.`
 			: "Rate and discover ratings for anything—movies, books, ideas, experiences, and more. Join our community and start rating today!";

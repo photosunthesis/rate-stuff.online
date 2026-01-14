@@ -29,14 +29,14 @@ function excerptFromMarkdown(md: string, max = 160) {
 	return text.length > max ? `${text.slice(0, max - 1).trim()}…` : text;
 }
 
-export const Route = createFileRoute("/rating/$ratingSlug")({
+export const Route = createFileRoute("/rating/$ratingId")({
 	beforeLoad: async ({ params, context }) => {
-		const ratingSlug = params.ratingSlug;
+		const ratingId = params.ratingId;
 
-		if (!ratingSlug) throw redirect({ to: "/" });
+		if (!ratingId) throw redirect({ to: "/" });
 
 		const rating = await context.queryClient.ensureQueryData(
-			ratingQueryOptions(ratingSlug),
+			ratingQueryOptions(ratingId),
 		);
 
 		return { rating: rating?.data };
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/rating/$ratingSlug")({
 	component: RouteComponent,
 	head: ({ params, match }) => {
 		const cached = match.context.queryClient.getQueryData(
-			ratingQueryOptions(params.ratingSlug).queryKey,
+			ratingQueryOptions(params.ratingId).queryKey,
 		);
 
 		const rating = cached?.success ? cached.data : null;
@@ -56,6 +56,7 @@ export const Route = createFileRoute("/rating/$ratingSlug")({
 			: "View a community rating on Rate Stuff Online.";
 
 		let image: string | undefined;
+
 		if (rating?.images) {
 			if (typeof rating.images === "string") {
 				try {
@@ -97,9 +98,41 @@ export const Route = createFileRoute("/rating/$ratingSlug")({
 			metas.push({ name: "twitter:image", content: image });
 		}
 
+		const scripts: { type: string; children: string }[] = [];
+		if (rating) {
+			scripts.push({
+				type: "application/ld+json",
+				children: JSON.stringify({
+					"@context": "https://schema.org",
+					"@type": "Review",
+					author: {
+						"@type": "Person",
+						name: rating.user.name ?? rating.user.username ?? "User",
+						url: `https://rate-stuff.online/@${rating.user.username ?? rating.user.id}`,
+					},
+					datePublished: new Date(rating.createdAt).toISOString(),
+					reviewBody: excerptFromMarkdown(rating.content, 500),
+					name: `${rating.stuff.name} - ${rating.score}/10`,
+					reviewRating: {
+						"@type": "Rating",
+						ratingValue: rating.score,
+						bestRating: 10,
+						worstRating: 1,
+					},
+					itemReviewed: {
+						"@type": "Thing",
+						name: rating.stuff.name,
+						url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
+					},
+					image: image,
+				}),
+			});
+		}
+
 		return {
 			meta: metas,
-			links: [{ rel: "canonical", href: `/rating/${params.ratingSlug}` }],
+			links: [{ rel: "canonical", href: `/rating/${params.ratingId}` }],
+			scripts,
 		};
 	},
 });
@@ -176,7 +209,7 @@ function BackButton() {
 			type="button"
 			onClick={() => router.history.back()}
 			aria-label="Go back"
-			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer flex items-center"
+			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer flex items-center pl-4 pt-4"
 		>
 			<ArrowLeft className="w-4 h-4 mr-2" />
 			<span>Back</span>
@@ -193,56 +226,9 @@ function TitleBlock({ rating }: { rating: RatingWithRelations }) {
 }
 
 function ContentSection({ rating }: { rating: RatingWithRelations }) {
-	let image: string | undefined;
-	if (rating?.images) {
-		if (typeof rating.images === "string") {
-			try {
-				const imgs = JSON.parse(rating.images as string);
-				if (Array.isArray(imgs) && imgs.length > 0) image = imgs[0];
-				else if (typeof imgs === "string") image = imgs;
-			} catch {
-				image = rating.images as string;
-			}
-		} else if (
-			Array.isArray(rating.images) &&
-			(rating.images as string[]).length > 0
-		) {
-			image = (rating.images as string[])[0];
-		}
-	}
-
 	return (
 		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal">
 			<MarkdownContent content={rating.content} />
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify({
-						"@context": "https://schema.org",
-						"@type": "Review",
-						author: {
-							"@type": "Person",
-							name: rating.user.name ?? rating.user.username ?? "User",
-							url: `https://rate-stuff.online/@${rating.user.username ?? rating.user.id}`,
-						},
-						datePublished: new Date(rating.createdAt).toISOString(),
-						reviewBody: excerptFromMarkdown(rating.content, 500),
-						name: `${rating.stuff.name} - ${rating.score}/10`,
-						reviewRating: {
-							"@type": "Rating",
-							ratingValue: rating.score,
-							bestRating: 10,
-							worstRating: 1,
-						},
-						itemReviewed: {
-							"@type": "Thing",
-							name: rating.stuff.name,
-							url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
-						},
-						image: image,
-					}),
-				}}
-			/>
 		</div>
 	);
 }
@@ -449,11 +435,16 @@ function RouteComponent() {
 			<MainLayout user={currentUser}>
 				<BackButton />
 				<div className="-mx-4 border-t border-neutral-800 mb-4" />
-				<RatingHeader rating={ratingTyped} />
-				<TitleBlock rating={ratingTyped} />
-				<ImagesGallery images={parsedImages} onImageClick={handleImageClick} />
-				<ContentSection rating={ratingTyped} />
-				<TagsList tags={ratingTyped.tags} />
+				<div className="px-4">
+					<RatingHeader rating={ratingTyped} />
+					<TitleBlock rating={ratingTyped} />
+					<ImagesGallery
+						images={parsedImages}
+						onImageClick={handleImageClick}
+					/>
+					<ContentSection rating={ratingTyped} />
+					<TagsList tags={ratingTyped.tags} />
+				</div>
 			</MainLayout>
 
 			<Lightbox

@@ -17,7 +17,6 @@ export type Rating = {
 	id: string;
 	userId: string;
 	stuffId: string;
-	slug: string;
 	score: number;
 	content: string;
 	images: string | null;
@@ -74,21 +73,3 @@ export const stuffSearchSchema = z.object({
 export const tagSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
-
-export type ValidationErrors = Record<string, string>;
-
-export type RatingResponse =
-	| { success: true; rating: Rating }
-	| { success: false; error: string; errors?: ValidationErrors };
-
-export type StuffSearchResponse =
-	| { success: true; stuff: Stuff[] }
-	| { success: false; error: string };
-
-export type TagSearchResponse =
-	| { success: true; tags: Tag[] }
-	| { success: false; error: string };
-
-export type ImageUploadResponse =
-	| { success: true; key: string; url: string }
-	| { success: false; error: string };

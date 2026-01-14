@@ -78,7 +78,6 @@ export const createRating = createServerOnlyFn(
 	async (
 		userId: string,
 		input: {
-			title: string;
 			score: number;
 			content: string;
 			tags?: string[];
@@ -168,21 +167,6 @@ export const createRating = createServerOnlyFn(
 			// create a slug based on the stuff name (or provided stuffName) plus a short random suffix
 			const imagesJson = JSON.stringify(input.images ?? []);
 
-			let slugBase = input.stuffName;
-			if (!slugBase) {
-				const maybeStuff = await tx
-					.select()
-					.from(stuff)
-					.where(eq(stuff.id, resolvedStuffId))
-					.limit(1)
-					.then((r) => r[0]);
-				slugBase = maybeStuff?.name ?? "rating";
-			}
-
-			const slug = generateSlug(
-				`${slugBase}-${crypto.randomUUID().slice(0, 8)}`,
-			);
-
 			const [rating] = await tx
 				.insert(ratings)
 				.values({
@@ -191,7 +175,6 @@ export const createRating = createServerOnlyFn(
 					score: input.score,
 					content: input.content,
 					images: imagesJson,
-					slug,
 				})
 				.returning();
 

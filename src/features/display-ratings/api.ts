@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import {
 	getUserRatings,
 	getFeedRatings,
-	getRatingBySlug,
 	getUserRatingsCount,
 	getRatingById,
 } from "./service";
@@ -120,30 +119,6 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 			return {
 				success: false,
 				error: error instanceof Error ? error.message : "Failed to fetch feed",
-			};
-		}
-	});
-
-export const getRatingBySlugFn = createServerFn({ method: "GET" })
-	.inputValidator(
-		z.object({
-			slug: z.string(),
-		}),
-	)
-	.handler(async ({ data }) => {
-		try {
-			const rating = await getRatingBySlug(data.slug);
-
-			if (!rating) {
-				return { success: false, error: "Not found" };
-			}
-
-			return { success: true, data: rating };
-		} catch (error) {
-			return {
-				success: false,
-				error:
-					error instanceof Error ? error.message : "Failed to fetch rating",
 			};
 		}
 	});

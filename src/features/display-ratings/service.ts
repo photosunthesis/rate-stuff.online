@@ -152,18 +152,6 @@ export const getRatingById = createServerOnlyFn(async (id: string) => {
 	return grouped.length > 0 ? grouped[0] : null;
 });
 
-export const getRatingBySlug = createServerOnlyFn(async (slug: string) => {
-	const results = await queryRatingsWithRelations(
-		db,
-		and(eq(ratings.slug, slug)),
-		1,
-	);
-
-	const grouped = groupRatingResults(results);
-
-	return grouped.length > 0 ? grouped[0] : null;
-});
-
 export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 	const rows = await db

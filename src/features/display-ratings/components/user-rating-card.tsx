@@ -78,15 +78,15 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 			tabIndex={0}
 			onClick={() =>
 				navigate({
-					to: "/rating/$ratingSlug",
-					params: { ratingSlug: rating.slug },
+					to: "/rating/$ratingId",
+					params: { ratingId: rating.id },
 				})
 			}
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					navigate({
-						to: "/rating/$ratingSlug",
-						params: { ratingSlug: rating.slug },
+						to: "/rating/$ratingId",
+						params: { ratingId: rating.id },
 					});
 				}
 			}}
@@ -96,7 +96,7 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 				<span className="text-neutral-400">A rating of</span>
 				<Link
 					to="/stuff/$stuffSlug"
-					params={{ stuffSlug: rating.stuff.slug }}
+					params={{ stuffSlug: rating.stuff.id }}
 					className="text-white hover:underline font-semibold"
 					onClick={(e) => e.stopPropagation()}
 				>
@@ -111,8 +111,8 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 				className={`text-lg md:text-xl font-semibold text-white mb-3 ${noIndent ? "" : "ml-11"}`}
 			>
 				<Link
-					to="/rating/$ratingSlug"
-					params={{ ratingSlug: rating.slug }}
+					to="/rating/$ratingId"
+					params={{ ratingId: rating.id }}
 					className="hover:underline"
 					onClick={(e) => e.stopPropagation()}
 				>

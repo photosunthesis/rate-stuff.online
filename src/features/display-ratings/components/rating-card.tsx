@@ -84,15 +84,15 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 			tabIndex={0}
 			onClick={() =>
 				navigate({
-					to: "/rating/$ratingSlug",
-					params: { ratingSlug: rating.slug },
+					to: "/rating/$ratingId",
+					params: { ratingId: rating.id },
 				})
 			}
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
 					navigate({
-						to: "/rating/$ratingSlug",
-						params: { ratingSlug: rating.slug },
+						to: "/rating/$ratingId",
+						params: { ratingId: rating.id },
 					});
 				}
 			}}
@@ -128,8 +128,8 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 				className={`text-lg md:text-xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
 			>
 				<Link
-					to="/rating/$ratingSlug"
-					params={{ ratingSlug: rating.slug }}
+					to="/rating/$ratingId"
+					params={{ ratingId: rating.id }}
 					className="hover:underline"
 					onClick={(e) => e.stopPropagation()}
 				>

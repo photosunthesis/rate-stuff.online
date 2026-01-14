@@ -10,14 +10,14 @@ import {
 	getPublicFeedRatingsFn,
 	getRatingsByUsernameFn,
 	getUserRatingsCountFn,
+	getRatingByIdFn,
 } from "./api";
-import { getRatingBySlugFn } from "./api";
 import type { RatingWithRelations } from "./types";
 import { getRecentTagsFn, getRecentStuffFn } from "./api";
 
 type PageResult = {
 	success: boolean;
-	data: RatingWithRelations[];
+	data?: RatingWithRelations[];
 	nextCursor?: string;
 	error?: string;
 };
@@ -58,14 +58,14 @@ export function useUserRatings(limit: number = 10) {
 	});
 }
 
-export const ratingQueryOptions = (slug: string | undefined) =>
+export const ratingQueryOptions = (id: string | undefined) =>
 	queryOptions({
-		queryKey: ["rating", slug],
+		queryKey: ["rating", id],
 		queryFn: async () => {
-			if (!slug) return null;
-			const res = (await getRatingBySlugFn({ data: { slug } })) as {
+			if (!id) return null;
+			const res = (await getRatingByIdFn({ data: { id } })) as {
 				success: boolean;
-				data: RatingWithRelations | null;
+				data?: RatingWithRelations;
 				error?: string;
 			};
 			if (!res || res.success === false)
