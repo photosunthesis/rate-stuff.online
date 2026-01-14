@@ -61,7 +61,7 @@ function App() {
 		: undefined;
 
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout user={currentUser} showDiscoverStrip={tag === undefined}>
 			<MainFeed tag={tag} user={currentUser} />
 		</MainLayout>
 	);

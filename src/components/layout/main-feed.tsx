@@ -60,7 +60,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	return (
 		<>
 			{tag && (
-				<div className="border-b border-neutral-800">
+				<div className="border-b border-neutral-800 px-4 py-2">
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-lg font-semibold text-white">
@@ -87,20 +87,23 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 			{/* Create rating trigger moved to sidebar (desktop) and a floating action button on mobile */}
 
 			<div>
-				{ratings.map((rating, idx) => (
-					<div
-						key={rating.id}
-						className={
-							idx === 0
-								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
-								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
-						}
-					>
-						<div className="px-4">
-							<RatingCard key={rating.id} rating={rating} />
+				{ratings.map((rating, idx) => {
+					if (!rating) return null;
+					return (
+						<div
+							key={rating.id}
+							className={
+								idx === 0
+									? "-mx-4 hover:bg-neutral-800/50 transition-colors"
+									: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+							}
+						>
+							<div className="px-4 -my-1">
+								<RatingCard rating={rating} />
+							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 
 			{isAuthenticated ? (

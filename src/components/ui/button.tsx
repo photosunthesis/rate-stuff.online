@@ -4,6 +4,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	variant?: "primary" | "secondary";
 	isLoading?: boolean;
 	loadingLabel?: string;
+	size?: "sm" | "md";
 }
 
 export function Button({
@@ -13,10 +14,16 @@ export function Button({
 	children,
 	disabled,
 	className,
+	size = "md",
 	...props
 }: ButtonProps) {
 	const baseStyles =
-		"w-full px-4 py-2 font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-950";
+		"w-full font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-950";
+
+	const sizeStyles = {
+		sm: "px-2.5 py-1.5 text-sm rounded-md",
+		md: "px-4 py-2 text-base rounded-xl",
+	};
 
 	const variantStyles = {
 		primary:
@@ -28,7 +35,7 @@ export function Button({
 	return (
 		<button
 			disabled={disabled || isLoading}
-			className={`${baseStyles} ${variantStyles[variant]} ${
+			className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${
 				disabled || isLoading ? "cursor-not-allowed" : "cursor-pointer"
 			} ${className || ""}`}
 			{...props}

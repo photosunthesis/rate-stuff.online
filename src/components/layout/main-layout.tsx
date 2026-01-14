@@ -6,9 +6,11 @@ import type { PublicUser } from "~/features/auth/types";
 
 export function MainLayout({
 	user,
+	showDiscoverStrip = false,
 	children,
 }: {
 	user?: PublicUser;
+	showDiscoverStrip?: boolean;
 	children: React.ReactNode;
 }) {
 	return (
@@ -19,8 +21,7 @@ export function MainLayout({
 				<LeftSidebar user={user} />
 
 				<div className="w-full max-w-2xl flex flex-col">
-					{/* Discover strip is only shown on tablet/mobile, on desktop, the right sidebar is shown */}
-					<DiscoverStrip user={user} />
+					{showDiscoverStrip && <DiscoverStrip user={user} />}
 
 					<main className="flex-1 md:border-x border-neutral-800 w-full pb-16 lg:pb-0 overflow-hidden">
 						{children}

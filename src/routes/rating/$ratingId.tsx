@@ -15,6 +15,7 @@ import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
+import { Button } from "~/components/ui/button";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -198,22 +199,6 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 				</div>
 			</div>
 		</div>
-	);
-}
-
-function BackButton() {
-	const router = useRouter();
-
-	return (
-		<button
-			type="button"
-			onClick={() => router.history.back()}
-			aria-label="Go back"
-			className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold mb-4 cursor-pointer flex items-center pl-4 pt-4"
-		>
-			<ArrowLeft className="w-4 h-4 mr-2" />
-			<span>Back</span>
-		</button>
 	);
 }
 
@@ -402,6 +387,7 @@ function TagsList({ tags }: { tags?: string[] }) {
 }
 
 function RouteComponent() {
+	const navigate = useRouter();
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 	const { user, rating } = Route.useRouteContext();
 	const currentUser = user
@@ -433,7 +419,17 @@ function RouteComponent() {
 	return (
 		<>
 			<MainLayout user={currentUser}>
-				<BackButton />
+				<div className="p-4">
+					<Button
+						size="sm"
+						variant="secondary"
+						className="w-auto! inline-flex items-center"
+						onClick={() => navigate.history.back()}
+					>
+						<ArrowLeft className="w-4 h-4 mr-1.5" />
+						<span>Back</span>
+					</Button>
+				</div>
 				<div className="-mx-4 border-t border-neutral-800 mb-4" />
 				<div className="px-4">
 					<RatingHeader rating={ratingTyped} />
