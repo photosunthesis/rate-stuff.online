@@ -4,15 +4,16 @@
   </a>
 </p>
 
-A small, delightful app for quickly rating and discovering "stuff" — whether it’s a product, idea, or anything you or your friends care about. Built for speed, simplicity, and community.
+A tiny corner to rate stuff — quickly create, browse, and score things you find interesting.
 
 ---
 
 ## Overview ✨
 
-- Single-purpose site to create, browse, and rate items (concrete or abstract).
-- Focus on lightweight UX, clear scores, and social discovery.
-- In active development — contributions and feedback are welcome.
+- An app for quickly rating and sharing things you stumble on.
+- Create, browse, and score items — concrete or delightfully vague.
+- Simple UI, clear scores, and low-key social discovery.
+- WIP in my spare time; pull requests, odd ideas, and feedback welcome.
 
 ## Tech stack 🔧
 
@@ -20,18 +21,42 @@ A small, delightful app for quickly rating and discovering "stuff" — whether i
 - Frontend: **React / TypeScript**, Vite
 - App framework & routing: **TanStack Start** & **TanStack Router**
 - Backend: **Cloudflare Workers** (edge-first server runtime)
-- Database: **Cloudflare D1** (SQL) + **Drizzle ORM** + SQL migrations
+- Database: **PostgreSQL (via Hyperdrive)** + **Drizzle ORM** + SQL migrations
 - Storage: **Cloudflare R2** (object storage for uploads)
 - State & Data: **TanStack Query** (data fetching & caching)
-- Authentication & Sessions: secure cookies / session table
+ - Authentication: Better Auth (https://www.better-auth.com/)
 - Build & package: **pnpm**
 
-## Architecture & notable details 🏗️
+## Project layout 🗂️
 
-- Serverless edge functions power the API for low-latency global responses.
-- Database schema managed with straightforward SQL migrations (see `drizzle/`).
-- Modular feature structure under `src/features/` (e.g., `create-rating`, `create-account`) for easy discoverability and maintenance.
-- Middleware for auth and rate limiting to keep the platform safe and performant.
+A quick tour of the repo and where to look for important pieces.
+
+```
+/                      # repo root
+├─ src/
+│  ├─ components/
+│  │  ├─ layout/        # layout components (main-layout, sidebars, headers)
+│  │  └─ ui/            # small reusable UI pieces (button, avatar, text-field)
+│  ├─ lib/
+│  │  ├─ core/          # auth client, media storage, helpers
+│  │  ├─ features/      # feature modules (auth, create-rating, display-ratings, stuff, rate-limit)
+│  │  └─ utils/         # utility functions
+│  ├─ db/               # Drizzle client and schema (client.ts, schema/*)
+│  ├─ routes/           # app routes and API handlers (see __root.tsx, api/r2-upload.ts)
+│  ├─ router.tsx
+│  └─ routeTree.gen.ts
+├─ drizzle/             # SQL migrations and snapshots
+├─ public/              # static assets
+├─ wrangler.jsonc       # Cloudflare Workers config
+├─ package.json
+└─ README.md
+```
+
+Key files:
+- `src/db/client.ts` (Hyperdrive connection + Drizzle client)
+- `src/db/schema/*` (table definitions)
+- `src/lib/core/auth.ts` (Better Auth integration and cookie cache)
+- `src/lib/features/` (feature-scoped API, UI, and middleware)
 
 ---
 
