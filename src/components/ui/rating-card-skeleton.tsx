@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 interface Props {
 	variant?: "rating" | "user" | "stuff";
 	noIndent?: boolean;
@@ -34,12 +36,26 @@ export function RatingCardSkeleton({
 			</div>
 		);
 
-	// Image placeholder: use a big rectangle for ratings, slightly smaller for "stuff"
-	const imagePlaceholder = (
-		<div className={`${indent} mb-3`}>
-			<div className={`h-40 bg-neutral-900 rounded-xl`} />
-		</div>
-	);
+	// Randomize number of image placeholders (0, 1, or 2)
+	const imageCount = useMemo(() => Math.floor(Math.random() * 3), []);
+
+	const imagePlaceholder = (() => {
+		if (imageCount === 0) return null;
+		if (imageCount === 1) {
+			return (
+				<div className={`${indent} mb-3`}>
+					<div className={`h-40 bg-neutral-900 rounded-xl`} />
+				</div>
+			);
+		}
+		// imageCount === 2
+		return (
+			<div className={`${indent} mb-3 flex gap-2`}>
+				<div className="flex-1 h-40 bg-neutral-900 rounded-xl" />
+				<div className="flex-1 h-40 bg-neutral-900 rounded-xl" />
+			</div>
+		);
+	})();
 
 	return (
 		<div>

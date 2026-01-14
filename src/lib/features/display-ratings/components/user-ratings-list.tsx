@@ -1,7 +1,7 @@
 import { useUserRatings } from "../queries";
 import { RatingCard } from "./rating-card";
 import { useEffect, useRef } from "react";
-import { RatingCardSkeleton } from "~/components/skeletons/rating-card-skeleton";
+import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 
 const LIMIT = 10;
 
