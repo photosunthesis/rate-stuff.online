@@ -22,7 +22,7 @@ export function Button({
 		primary:
 			"bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 text-white focus:ring-emerald-500",
 		secondary:
-			"bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-800/50 text-white focus:ring-neutral-500",
+			"bg-neutral-800 hover:bg-neutral-800/60 disabled:bg-neutral-800 text-white focus:ring-neutral-500",
 	};
 
 	return (

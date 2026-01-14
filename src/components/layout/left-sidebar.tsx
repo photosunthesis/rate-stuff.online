@@ -1,9 +1,17 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
-import { Home, Compass, Bell, Settings, LogOut, Plus } from "lucide-react";
+import {
+	Home,
+	Compass,
+	Bell,
+	Settings,
+	LogOut,
+	PencilLine,
+} from "lucide-react";
 import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
-import authClient from "~/lib/core/auth-client";
+import { ConfirmModal } from "~/components/ui/confirm-modal";
+import authClient from "~/lib/auth.client";
 import type { PublicUser } from "~/features/auth/types";
 
 const getHeader = () => {
@@ -22,79 +30,33 @@ const getHeader = () => {
 
 export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
+	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const isAuthenticated = user != null;
-	const [isHolding, setIsHolding] = useState(false);
-	const [holdProgress, setHoldProgress] = useState(0);
-	const [showTooltip, setShowTooltip] = useState(false);
-	const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
-	const tooltipTimerRef = useRef<NodeJS.Timeout | null>(null);
 	const [header] = useState(() => getHeader());
 
-	const handleLogout = async () => {
+	const handleSignOut = async () => {
 		await authClient.signOut();
-		// navigate({ to: "/" }); // using navigate doesn't work for some reason >:(
-		window.location.href = "/";
-	};
-
-	const handleMouseDown = () => {
-		if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-		setIsHolding(true);
-		setShowTooltip(true);
-		setHoldProgress(0);
-
-		const startTime = Date.now();
-		const duration = 2000; // 2 seconds
-
-		progressIntervalRef.current = setInterval(() => {
-			const elapsed = Date.now() - startTime;
-			const progress = Math.min((elapsed / duration) * 100, 100);
-
-			setHoldProgress(progress);
-
-			if (progress >= 100) {
-				if (progressIntervalRef.current) {
-					clearInterval(progressIntervalRef.current);
-				}
-
-				handleLogout();
-			}
-		}, 16); // 60fps
-	};
-
-	const handleMouseUp = () => {
-		setIsHolding(false);
-		setHoldProgress(0);
-		if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
-
-		if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-		tooltipTimerRef.current = setTimeout(() => {
-			setShowTooltip(false);
-		}, 1000); // Hide tooltip after 1 second
-	};
-
-	const handleMouseEnter = () => {
-		if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-		setShowTooltip(true);
-	};
-
-	const handleMouseLeave = () => {
-		if (isHolding) {
-			handleMouseUp();
-		} else {
-			if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-			tooltipTimerRef.current = setTimeout(() => {
-				setShowTooltip(false);
-			}, 3000);
-		}
+		window.location.href = "/"; // Using useNavigate doesn't work for some reason 🤷🏻
 	};
 
 	return (
 		<>
 			{isAuthenticated && (
-				<CreateRatingModal
-					isOpen={isCreateOpen}
-					onClose={() => setIsCreateOpen(false)}
-				/>
+				<>
+					<CreateRatingModal
+						isOpen={isCreateOpen}
+						onClose={() => setIsCreateOpen(false)}
+					/>
+					<ConfirmModal
+						destructive
+						isOpen={isSignOutOpen}
+						onClose={() => setIsSignOutOpen(false)}
+						title="Ready to sign out?"
+						description="You will be signed out. Come back anytime."
+						confirmLabel="Sign out"
+						onConfirm={handleSignOut}
+					/>
+				</>
 			)}
 			<aside className="w-64 px-4 py-6 hidden lg:flex flex-col sticky top-0 h-screen">
 				<div className="flex flex-col gap-2 mb-4">
@@ -108,7 +70,6 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						</h1>
 					)}
 				</div>
-
 				{!isAuthenticated ? (
 					<div className="space-y-2">
 						<Link
@@ -131,9 +92,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							<button
 								type="button"
 								onClick={() => setIsCreateOpen(true)}
-								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-1 cursor-pointer"
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
 							>
-								<Plus className="w-5 h-5" />
+								<PencilLine className="w-5 h-5" />
 								<span>New Rating</span>
 							</button>
 						</div>
@@ -178,45 +139,87 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						</nav>
 
 						<div className="mt-auto">
-							<div className="relative">
-								<div
-									className={`absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded-lg text-[11px] font-medium text-neutral-300 whitespace-nowrap shadow-2xl pointer-events-none transition-all duration-200 ${
-										showTooltip
-											? "opacity-100 translate-y-0"
-											: "opacity-0 translate-y-1"
-									}`}
-								>
-									Tap and hold
-									<div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-900 border-b border-r border-neutral-800 rotate-45" />
-								</div>
-								<button
-									type="button"
-									onMouseDown={handleMouseDown}
-									onMouseUp={handleMouseUp}
-									onMouseLeave={handleMouseLeave}
-									onMouseEnter={handleMouseEnter}
-									className="w-full flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-red-400 rounded-xl transition-all group cursor-pointer relative overflow-hidden outline-none"
-								>
-									<div
-										className="absolute inset-0 bg-red-400/30 pointer-events-none transition-opacity duration-200"
-										style={{
-											width: `${holdProgress}%`,
-											opacity: isHolding ? 1 : 0,
-										}}
-									/>
-									<div className="relative flex items-center gap-4">
-										<LogOut className="w-5 h-5" />
-										<span className="font-medium">Logout</span>
-									</div>
-								</button>
-							</div>
+							<button
+								type="button"
+								onClick={() => setIsSignOutOpen(true)}
+								className="w-full flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-red-400 hover:bg-red-700/20 rounded-xl transition-all group cursor-pointer outline-none"
+							>
+								<LogOut className="w-5 h-5" />
+								<span className="font-medium">Sign Out</span>
+							</button>
 						</div>
 					</div>
 				)}
 			</aside>
 
+			{/* Tablet icon-only sidebar */}
+			<aside className="hidden md:flex lg:hidden flex-col items-center sticky top-0 h-screen w-20 px-2 py-6">
+				<div className="flex flex-col gap-4 items-center mb-4">
+					<AppLogo size={26} />
+				</div>
+				<div className="flex-1 flex flex-col items-center justify-start space-y-2">
+					<Link
+						to="/"
+						activeOptions={{ exact: true }}
+						title="Home"
+						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+						activeProps={{ className: "text-white" }}
+					>
+						{({ isActive }) => (
+							<Home
+								className="w-6 h-6"
+								fill={isActive ? "currentColor" : "none"}
+							/>
+						)}
+					</Link>
+					<Link
+						to="/"
+						title="Explore"
+						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+					>
+						<Compass className="w-6 h-6" fill="none" />
+					</Link>
+					<Link
+						to="/"
+						title="Activity"
+						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+					>
+						<Bell className="w-6 h-6" fill="none" />
+					</Link>
+					<Link
+						to="/"
+						title="Settings"
+						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+					>
+						<Settings className="w-6 h-6" fill="none" />
+					</Link>
+				</div>
+
+				<div className="mb-4">
+					<button
+						type="button"
+						onClick={() => setIsCreateOpen(true)}
+						aria-label="New Rating"
+						title="New Rating"
+						className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+					>
+						<PencilLine className="w-4 h-4" />
+					</button>
+				</div>
+
+				{isAuthenticated && (
+					<button
+						type="button"
+						onClick={() => setIsSignOutOpen(true)}
+						className="mb-6 p-2 text-neutral-400 hover:text-red-400 rounded-lg transition-colors"
+					>
+						<LogOut className="w-5 h-5" />
+					</button>
+				)}
+			</aside>
+
 			{isAuthenticated && (
-				<nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
+				<nav className="md:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
 					<Link
 						to="/"
 						activeOptions={{ exact: true }}
@@ -241,7 +244,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						title="New Rating"
 						className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
 					>
-						<Plus className="w-5 h-5" />
+						<PencilLine className="w-5 h-5" />
 					</button>
 					<Link
 						to="/"

@@ -1,26 +1,30 @@
-import {
-	useEffect,
-	useId,
-	useCallback,
-	useState,
-	type MouseEvent,
-} from "react";
+import { useEffect, useId, useCallback, useState } from "react";
 import { createPortal } from "react-dom";
-import { CreateRatingForm } from "~/features/create-rating/components/create-rating-form";
-import { useCreateRating } from "~/features/create-rating/hooks";
 import { X } from "lucide-react";
 
-interface CreateRatingModalProps {
+interface ConfirmModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	title?: string;
+	description?: string;
+	confirmLabel?: string;
+	destructive?: boolean;
+	onConfirm: () => Promise<void> | void;
 }
 
-export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
+export function ConfirmModal({
+	isOpen,
+	onClose,
+	title = "Are you sure?",
+	description,
+	confirmLabel = "Confirm",
+	destructive = false,
+	onConfirm,
+}: ConfirmModalProps) {
 	const modalId = useId();
 	const [isClosing, setIsClosing] = useState(false);
+	const [isPending, setIsPending] = useState(false);
 	const EXIT_ANIMATION_MS = 250;
-	const { createRating, isPending, errorMessage, validationErrors, reset } =
-		useCreateRating();
 
 	const handleClose = useCallback(
 		(opts?: { immediate?: boolean }) => {
@@ -30,7 +34,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			if (immediate) {
 				onClose();
 				setIsClosing(false);
-				reset();
+				setIsPending(false);
 				return;
 			}
 
@@ -38,10 +42,10 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 			setTimeout(() => {
 				onClose();
 				setIsClosing(false);
-				reset();
+				setIsPending(false);
 			}, EXIT_ANIMATION_MS);
 		},
-		[onClose, isClosing, reset],
+		[onClose, isClosing],
 	);
 
 	useEffect(() => {
@@ -72,19 +76,27 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 		}
 	}, [isOpen]);
 
-	const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
+	const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (e.target === e.currentTarget) {
 			handleClose();
 		}
 	};
 
-	const handleFormSuccess = () => {
-		handleClose();
+	const handleConfirm = async () => {
+		setIsPending(true);
+		try {
+			await onConfirm();
+		} finally {
+			setIsPending(false);
+			handleClose();
+		}
 	};
 
-	if (!isOpen) {
-		return null;
-	}
+	const confirmBtnClass = destructive
+		? "px-5 py-2 rounded-xl bg-red-500/40 hover:bg-red-500/30 text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer font-medium"
+		: "px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer font-medium";
+
+	if (!isOpen) return null;
 
 	const modalContent = (
 		<div
@@ -95,11 +107,6 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 				isClosing ? "animate-fade-out" : "animate-fade-in"
 			}`}
 			onMouseDown={handleBackdropClick}
-			onKeyDown={(e) => {
-				if (e.key === "Escape") {
-					handleClose();
-				}
-			}}
 		>
 			<div
 				className={`absolute inset-0 bg-neutral-950/70 ${
@@ -109,7 +116,7 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 
 			<div
 				role="document"
-				className={`relative w-full h-screen md:h-auto md:max-w-2xl md:max-h-[85vh] rounded-md bg-neutral-900 md:border md:border-neutral-800 shadow-2xl z-10 overflow-hidden flex flex-col ${
+				className={`relative w-full md:max-w-md md:h-auto md:rounded-lg bg-neutral-900 border border-neutral-800 shadow-md z-10 overflow-hidden flex flex-col ${
 					isClosing
 						? "animate-zoom-out animate-fade-out"
 						: "animate-zoom-in animate-fade-in"
@@ -130,15 +137,36 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 					<X size={18} />
 				</button>
 
-				<div className="relative flex-1 flex flex-col min-h-0">
-					<CreateRatingForm
-						onSubmit={createRating}
-						isPending={isPending}
-						errorMessage={errorMessage}
-						validationErrors={validationErrors}
-						onSuccess={handleFormSuccess}
-						onCancel={handleClose}
-					/>
+				<div className="relative flex-1 flex flex-col min-h-0 p-4">
+					<div className="mb-4">
+						<h2
+							id={`modal-title-${modalId}`}
+							className="text-lg font-semibold text-white"
+						>
+							{title}
+						</h2>
+						{description && (
+							<p className="mt-2 text-sm text-neutral-400">{description}</p>
+						)}
+					</div>
+
+					<div className="mt-auto flex items-center justify-end gap-3">
+						<button
+							type="button"
+							onClick={() => handleClose()}
+							className="px-5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-800/60 text-neutral-300 transition-colors cursor-pointer font-medium"
+						>
+							Cancel
+						</button>
+						<button
+							type="button"
+							onClick={handleConfirm}
+							disabled={isPending}
+							className={confirmBtnClass}
+						>
+							{confirmLabel}
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

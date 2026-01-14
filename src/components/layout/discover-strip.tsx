@@ -33,7 +33,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	if (!isAuthenticated || !isRoot) return null;
 
 	return (
-		<div className="w-full block lg:hidden">
+		<div className="w-full block lg:hidden border-l border-r border-neutral-800">
 			{/* Single horizontal line with stuff items followed by tags */}
 			<div className="overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3">
 				{loadingStuff
