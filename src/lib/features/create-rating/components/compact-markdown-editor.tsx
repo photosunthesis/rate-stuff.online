@@ -56,7 +56,8 @@ export function CompactMarkdownEditor({
 				listItem: false,
 				orderedList: false,
 			}),
-			Link.configure({
+			// Use namespaced/renamed extensions to avoid duplicate-extension warnings
+			Link.extend({ name: "customLink" }).configure({
 				openOnClick: false,
 				autolink: true,
 				defaultProtocol: "https",
@@ -64,7 +65,7 @@ export function CompactMarkdownEditor({
 					class: "text-emerald-600 underline hover:text-emerald-500",
 				},
 			}),
-			Underline,
+			Underline.extend({ name: "customUnderline" }),
 			Markdown,
 			Placeholder.configure({
 				placeholder,
