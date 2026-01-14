@@ -1,4 +1,4 @@
-import { createServerFn, json } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
 import { z, ZodError } from "zod";
 import { createRatingSchema } from "~/lib/features/display-ratings/types";
 import {
@@ -69,25 +69,17 @@ export const createRatingFn = createServerFn({ method: "POST" })
 			return { success: true, data: rating };
 		} catch (error) {
 			if (error instanceof ZodError)
-				throw json(
-					{
-						success: false,
-						errorMessage: "Validation failed",
-						errors: formatZodError(error),
-					},
-					{
-						status: 422,
-					},
-				);
-
-			throw json(
-				{
+				return {
 					success: false,
-					errorMessage:
-						error instanceof Error ? error.message : "Failed to create rating",
-				},
-				{ status: 500 },
-			);
+					errorMessage: "Validation failed",
+					errors: formatZodError(error),
+				};
+
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to create rating",
+			};
 		}
 	});
 
@@ -106,14 +98,11 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 			const result = await getUploadUrl(ratingId, filename, contentType);
 			return { success: true, data: result };
 		} catch (error) {
-			return json(
-				{
-					success: false,
-					errorMessage:
-						error instanceof Error ? error.message : "Failed to get upload url",
-				},
-				{ status: 500 },
-			);
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to get upload url",
+			};
 		}
 	});
 
@@ -130,15 +119,12 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 			const result = await updateRatingImages(data.ratingId, data.images);
 			return result;
 		} catch (error) {
-			return json(
-				{
-					success: false,
-					errorMessage:
-						error instanceof Error
-							? error.message
-							: "Failed to update rating images",
-				},
-				{ status: 500 },
-			);
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error
+						? error.message
+						: "Failed to update rating images",
+			};
 		}
 	});
