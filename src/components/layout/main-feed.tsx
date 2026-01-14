@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { RatingCard } from "~/lib/features/display-ratings/components/rating-card";
 import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
@@ -119,33 +119,11 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 				) : (
 					<div className="-mx-4 border-t border-neutral-800">
 						<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
-							All caught up! ＼(￣▽￣)／
+							All caught up! \(￣▽￣)/
 						</div>
 					</div>
 				)
-			) : (
-				<div className="-mx-4 border-t border-neutral-800 px-4 py-8 text-center">
-					<div className="mb-4">
-						<p className="text-neutral-400 text-sm">Curious to see more? </p>
-					</div>
-
-					<div className="flex gap-3 justify-center">
-						<Link
-							to="/sign-up"
-							className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
-						>
-							Create Account
-						</Link>
-						<Link
-							to="/sign-in"
-							search={{ redirect: undefined }}
-							className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
-						>
-							Sign In
-						</Link>
-					</div>
-				</div>
-			)}
+			) : null}
 		</>
 	);
 }

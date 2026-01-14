@@ -6,7 +6,6 @@ import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { getStuffRatingsFn } from "../api";
 import type { RatingWithRelations } from "~/lib/features/display-ratings/types";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import type { PublicUser } from "../../auth/types";
 
 type Page = {
@@ -218,40 +217,19 @@ export function StuffRatingsList({
 				))}
 			</div>
 
-			{isAuthenticated ? (
-				hasNextPage && (
-					<div ref={observerTarget} className="py-4 text-center">
-						{isFetchingNextPage ? (
-							<div className="flex justify-center">
-								<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
-							</div>
-						) : (
-							<p className="text-neutral-500 text-sm">Scroll for more...</p>
-						)}
-					</div>
-				)
-			) : (
-				<div className="-mx-4 border-t border-neutral-800 px-4 py-8 text-center">
-					<div className="mb-4">
-						<p className="text-neutral-400 text-sm">Curious to see more? </p>
-					</div>
-					<div className="flex gap-3 justify-center">
-						<Link
-							to="/sign-up"
-							className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
-						>
-							Create Account
-						</Link>
-						<Link
-							to="/sign-in"
-							search={{ redirect: undefined }}
-							className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
-						>
-							Sign In
-						</Link>
-					</div>
-				</div>
-			)}
+			{isAuthenticated
+				? hasNextPage && (
+						<div ref={observerTarget} className="py-4 text-center">
+							{isFetchingNextPage ? (
+								<div className="flex justify-center">
+									<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
+								</div>
+							) : (
+								<p className="text-neutral-500 text-sm">Scroll for more...</p>
+							)}
+						</div>
+					)
+				: null}
 		</>
 	);
 }
