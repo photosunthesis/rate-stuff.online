@@ -1,4 +1,4 @@
-import { db } from "~/db";
+import { type Database, db } from "~/db";
 import {
 	ratings,
 	stuff as stuffTable,
@@ -7,7 +7,6 @@ import {
 	users,
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
-import type { drizzle } from "drizzle-orm/postgres-js";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { StuffRating } from "./types";
 
@@ -61,7 +60,7 @@ function makeCursor(createdAt: Date | string | number, id: string) {
 }
 
 async function extractImagesForStuff(
-	db: ReturnType<typeof drizzle>,
+	db: Database,
 	stuffId: string,
 	maxImages = 8,
 ): Promise<string[]> {

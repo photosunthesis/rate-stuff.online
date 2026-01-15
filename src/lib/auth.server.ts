@@ -2,11 +2,10 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-import type { drizzle } from "drizzle-orm/postgres-js";
 import { username } from "better-auth/plugins";
-import { getDatabase } from "~/db";
+import { getDatabase, type Database } from "~/db";
 
-const getAuthConfig = createServerOnlyFn((db: ReturnType<typeof drizzle>) =>
+const getAuthConfig = createServerOnlyFn((db: Database) =>
 	betterAuth({
 		baseURL: process.env.VITE_BASE_URL,
 		telemetry: {

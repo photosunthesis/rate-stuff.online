@@ -1,12 +1,15 @@
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "~/db/schema";
 
+export type Database = ReturnType<typeof drizzle>;
+
 export const getDatabase = createServerOnlyFn(() => {
-	const driver = postgres(env.HYPERDRIVE.connectionString);
-	return drizzle({ client: driver, schema, casing: "snake_case" });
+	return drizzle(env.HYPERDRIVE.connectionString, {
+		schema,
+		casing: "snake_case",
+	});
 });
 
-export const db = getDatabase();
+export const db: Database = getDatabase();
