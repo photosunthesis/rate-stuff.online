@@ -158,7 +158,7 @@ export const Route = createFileRoute("/rating/$ratingId")({
 			};
 
 			if (rating.stuff) {
-				ldJson["itemReviewed"] = {
+				ldJson.itemReviewed = {
 					"@type": "Thing",
 					name: rating.stuff.name,
 					url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
