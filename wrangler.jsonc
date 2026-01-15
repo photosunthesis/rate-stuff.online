@@ -4,7 +4,8 @@
 	"account_id": "9e3c2cc7f964e243adad719edb78462f",
 	"compatibility_date": "2025-09-02",
 	"compatibility_flags": [
-		"nodejs_compat"
+		"nodejs_compat",
+		"no_handle_cross_request_promise_resolution"
 	],
 	"main": "@tanstack/react-start/server-entry",
 	"observability": {
