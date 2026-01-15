@@ -59,7 +59,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 				</>
 			)}
 			<aside className="w-64 px-4 py-6 hidden lg:flex flex-col sticky top-0 h-screen">
-				<div className="flex flex-col gap-2 mb-4">
+				<div className="flex flex-col gap-2 mb-4 pl-3">
 					<AppLogo size={30} />
 					{!isAuthenticated && (
 						<h1
@@ -88,22 +88,12 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					</div>
 				) : (
 					<div className="flex flex-col h-full">
-						<div className="mb-6 mt-4 px-3">
-							<button
-								type="button"
-								onClick={() => setIsCreateOpen(true)}
-								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
-							>
-								<PencilLine className="w-4 h-4" />
-								<span>New Post</span>
-							</button>
-						</div>
-						<nav className="space-y-1 flex-1">
+						<nav className="space-y-1">
 							<Link
 								to="/"
 								activeOptions={{ exact: true }}
-								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
-								activeProps={{ className: "text-white bg-neutral-800/80" }}
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								activeProps={{ className: "text-white font-bold" }}
 							>
 								{({ isActive }) => (
 									<>
@@ -117,32 +107,43 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							</Link>
 							<Link
 								to="/"
-								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
 								<Compass className="w-5 h-5" fill="none" />
 								<span className="font-medium">Explore</span>
 							</Link>
 							<Link
 								to="/"
-								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
 								<Bell className="w-5 h-5" fill="none" />
 								<span className="font-medium">Activity</span>
 							</Link>
 							<Link
 								to="/"
-								className="flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 							>
 								<Settings className="w-5 h-5" fill="none" />
 								<span className="font-medium">Settings</span>
 							</Link>
 						</nav>
 
+						<div className="mb-6 mt-4 px-3">
+							<button
+								type="button"
+								onClick={() => setIsCreateOpen(true)}
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
+							>
+								<PencilLine className="w-4 h-4" />
+								<span>New Post</span>
+							</button>
+						</div>
+
 						<div className="mt-auto">
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-3 text-neutral-400 hover:text-red-400 hover:bg-red-700/20 rounded-xl transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-1.5 text-neutral-500 hover:text-red-400 hover:bg-red-700/20 rounded-xl transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-5 h-5" />
 								<span className="font-medium">Sign Out</span>
@@ -162,7 +163,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						to="/"
 						activeOptions={{ exact: true }}
 						title="Home"
-						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 						activeProps={{ className: "text-white" }}
 					>
 						{({ isActive }) => (
@@ -175,21 +176,21 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<Link
 						to="/"
 						title="Explore"
-						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 					>
 						<Compass className="w-6 h-6" fill="none" />
 					</Link>
 					<Link
 						to="/"
 						title="Activity"
-						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 					>
 						<Bell className="w-6 h-6" fill="none" />
 					</Link>
 					<Link
 						to="/"
 						title="Settings"
-						className="p-2 text-neutral-400 hover:text-white rounded-lg transition-colors"
+						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 					>
 						<Settings className="w-6 h-6" fill="none" />
 					</Link>
@@ -211,7 +212,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<button
 						type="button"
 						onClick={() => setIsSignOutOpen(true)}
-						className="mb-6 p-2 text-neutral-400 hover:text-red-400 rounded-lg transition-colors"
+						className="mb-6 p-2 text-neutral-500 hover:text-red-400 rounded-lg transition-colors"
 					>
 						<LogOut className="w-5 h-5" />
 					</button>
@@ -223,7 +224,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<Link
 						to="/"
 						activeOptions={{ exact: true }}
-						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
+						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
 					>
 						{({ isActive }) => (
@@ -248,21 +249,21 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					</button>
 					<Link
 						to="/"
-						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
+						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 					>
 						<Compass className="w-6 h-6" fill="none" />
 						<span className="text-[10px] font-medium">Explore</span>
 					</Link>
 					<Link
 						to="/"
-						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
+						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 					>
 						<Bell className="w-6 h-6" fill="none" />
 						<span className="text-[10px] font-medium">Activity</span>
 					</Link>
 					<Link
 						to="/"
-						className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors"
+						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 					>
 						<Settings className="w-6 h-6" fill="none" />
 						<span className="text-[10px] font-medium">Settings</span>
