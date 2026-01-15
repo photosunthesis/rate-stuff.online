@@ -57,9 +57,9 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const image = rating.user.image ?? null;
-	const usernameHandle = rating.user.username;
-	const name = rating.user.name;
+	const image = rating.user?.image ?? null;
+	const usernameHandle = rating.user?.username ?? "unknown";
+	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
@@ -109,32 +109,46 @@ export function RatingCard({ rating, hideAvatar, noIndent }: RatingCardProps) {
 				)}
 				<div className="flex-1 min-w-0">
 					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<Link
-							to="/user/$username"
-							params={{ username: usernameHandle }}
-							className="font-medium text-white hover:underline"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{displayText}
-						</Link>
+						{rating.user ? (
+							<Link
+								to="/user/$username"
+								params={{ username: usernameHandle }}
+								className="font-medium text-white hover:underline"
+								onClick={(e) => e.stopPropagation()}
+							>
+								{displayText}
+							</Link>
+						) : (
+							<span className="font-medium text-neutral-400">
+								{displayText}
+							</span>
+						)}
+						<span className="text-neutral-500">rated</span>
+						{rating.stuff ? (
+							<Link
+								to="/stuff/$stuffSlug"
+								params={{ stuffSlug: rating.stuff.slug }}
+								className="text-white hover:underline font-semibold"
+								onClick={(e) => e.stopPropagation()}
+							>
+								{rating.stuff.name}
+							</Link>
+						) : (
+							<span className="text-neutral-400 font-semibold">
+								Unknown Item
+							</span>
+						)}
 						<span className="text-neutral-500">•</span>
 						<span className="text-neutral-500">{timeAgo}</span>
 					</div>
 				</div>
 			</div>
 
-			{/* Rating and Title */}
+			{/* Rating */}
 			<h3
-				className={`text-lg md:text-xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
+				className={`text-xg md:text-2xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
 			>
-				<Link
-					to="/rating/$ratingId"
-					params={{ ratingId: rating.id }}
-					className="hover:underline"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{rating.stuff.name} - {rating.score}/10
-				</Link>
+				{rating.score}/10
 			</h3>
 
 			{/* Images */}

@@ -1,11 +1,7 @@
 import { z } from "zod";
+import type { ratings, stuff } from "~/db/schema";
 
-export type Stuff = {
-	id: string;
-	name: string;
-	createdAt: Date;
-	updatedAt: Date;
-};
+export type Stuff = typeof stuff.$inferSelect;
 
 export type Tag = {
 	id: string;
@@ -13,30 +9,15 @@ export type Tag = {
 	createdAt: Date;
 };
 
-export type Rating = {
-	id: string;
-	userId: string;
-	stuffId: string;
-	score: number;
-	content: string;
-	images: string | null;
-	createdAt: Date;
-	updatedAt: Date;
-};
-
-export type RatingWithRelations = Rating & {
+export type RatingWithRelations = typeof ratings.$inferSelect & {
 	tags: string[];
 	user: {
 		id: string;
 		name: string | null;
-		username: string;
-		image?: string | null;
-	};
-	stuff: {
-		id: string;
-		name: string;
-		slug: string;
-	};
+		username: string | null;
+		image: string | null;
+	} | null;
+	stuff: typeof stuff.$inferSelect | null;
 };
 
 export const createRatingSchema = z

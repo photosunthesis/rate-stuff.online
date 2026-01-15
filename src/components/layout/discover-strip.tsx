@@ -45,11 +45,11 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 								<div className="h-3 bg-neutral-800 rounded w-16" />
 							</div>
 						))
-					: (recentStuff ?? []).map((thing) => (
+					: (recentStuff ?? []).map((stuff) => (
 							<Link
-								key={thing.id}
+								key={stuff.id}
 								to="/stuff/$stuffSlug"
-								params={{ stuffSlug: thing.slug }}
+								params={{ stuffSlug: stuff.slug }}
 								className="inline-flex items-center py-0.5 pl-0.5 pr-2 bg-neutral-800 text-white text-sm font-medium rounded-md"
 							>
 								{/* small thumbnail/icon to differentiate stuff */}
@@ -61,7 +61,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 										/>
 									</div>
 								</div>
-								{thing.name}
+								{stuff.name}
 							</Link>
 						))}
 

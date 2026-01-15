@@ -3,6 +3,7 @@ import {
 	redirect,
 	Link,
 	useRouter,
+	notFound,
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
 import { useState } from "react";
@@ -40,17 +41,23 @@ export const Route = createFileRoute("/rating/$ratingId")({
 			ratingQueryOptions(ratingId),
 		);
 
+		if (!rating || !rating.success) {
+			throw notFound();
+		}
+
 		return { rating: rating?.data };
 	},
 	component: RouteComponent,
+	notFoundComponent: NotFound,
 	head: ({ params, match }) => {
 		const cached = match.context.queryClient.getQueryData(
 			ratingQueryOptions(params.ratingId).queryKey,
 		);
 
 		const rating = cached?.success ? cached.data : null;
+		const stuffName = rating?.stuff?.name ?? "Rating";
 		const title = rating
-			? `${rating.stuff.name} - ${rating.score}/10`
+			? `${stuffName} - ${rating.score}/10`
 			: "Rating - Rate Stuff Online";
 		const description = rating
 			? excerptFromMarkdown(rating.content, 160)
@@ -117,39 +124,50 @@ export const Route = createFileRoute("/rating/$ratingId")({
 
 		const scripts: { type: string; children: string }[] = [];
 		if (rating) {
+			const authorName =
+				rating.user?.name ?? rating.user?.username ?? "Anonymous User";
+			const authorUrl = rating.user
+				? `https://rate-stuff.online/@${rating.user.username ?? rating.user.id}`
+				: "https://rate-stuff.online";
+
+			const ldJson: Record<string, unknown> = {
+				"@context": "https://schema.org",
+				"@type": "Review",
+				url: pageUrl,
+				mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+				author: {
+					"@type": "Person",
+					name: authorName,
+					url: authorUrl,
+				},
+				datePublished: new Date(rating.createdAt).toISOString(),
+				reviewBody: excerptFromMarkdown(rating.content, 500),
+				name: `${stuffName} - ${rating.score}/10`,
+				reviewRating: {
+					"@type": "Rating",
+					ratingValue: rating.score,
+					bestRating: 10,
+					worstRating: 1,
+				},
+				publisher: {
+					"@type": "Organization",
+					name: "Rate Stuff Online",
+					url: "https://rate-stuff.online",
+				},
+				image: image,
+			};
+
+			if (rating.stuff) {
+				ldJson["itemReviewed"] = {
+					"@type": "Thing",
+					name: rating.stuff.name,
+					url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
+				};
+			}
+
 			scripts.push({
 				type: "application/ld+json",
-				children: JSON.stringify({
-					"@context": "https://schema.org",
-					"@type": "Review",
-					url: pageUrl,
-					mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
-					author: {
-						"@type": "Person",
-						name: rating.user.name ?? rating.user.username ?? "User",
-						url: `https://rate-stuff.online/@${rating.user.username ?? rating.user.id}`,
-					},
-					datePublished: new Date(rating.createdAt).toISOString(),
-					reviewBody: excerptFromMarkdown(rating.content, 500),
-					name: `${rating.stuff.name} - ${rating.score}/10`,
-					reviewRating: {
-						"@type": "Rating",
-						ratingValue: rating.score,
-						bestRating: 10,
-						worstRating: 1,
-					},
-					itemReviewed: {
-						"@type": "Thing",
-						name: rating.stuff.name,
-						url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
-					},
-					publisher: {
-						"@type": "Organization",
-						name: "Rate Stuff Online",
-						url: "https://rate-stuff.online",
-					},
-					image: image,
-				}),
+				children: JSON.stringify(ldJson),
 			});
 		}
 
@@ -193,28 +211,42 @@ function MarkdownContent({ content }: { content: string }) {
 }
 
 function RatingHeader({ rating }: { rating: RatingWithRelations }) {
-	const usernameHandle = rating.user.username;
-	const name = rating.user.name;
+	const usernameHandle = rating.user?.username ?? "unknown";
+	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
+	const image = rating.user?.image ?? null;
 
 	return (
 		<div className="flex items-center gap-3">
-			<Avatar
-				src={rating.user.image ?? null}
-				alt={displayText}
-				size="sm"
-				className="shrink-0"
-			/>
+			<Avatar src={image} alt={displayText} size="sm" className="shrink-0" />
 
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-1 flex-wrap text-sm">
-					<Link
-						to="/user/$username"
-						params={{ username: usernameHandle }}
-						className="font-medium text-white hover:underline"
-					>
-						{displayText}
-					</Link>
+					{rating.user ? (
+						<Link
+							to="/user/$username"
+							params={{ username: usernameHandle }}
+							className="font-medium text-white hover:underline"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{displayText}
+						</Link>
+					) : (
+						<span className="font-medium text-neutral-400">{displayText}</span>
+					)}
+					<span className="text-neutral-500">rated</span>
+					{rating.stuff ? (
+						<Link
+							to="/stuff/$stuffSlug"
+							params={{ stuffSlug: rating.stuff.slug }}
+							className="text-white hover:underline font-semibold"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{rating.stuff.name}
+						</Link>
+					) : (
+						<span className="text-neutral-400 font-semibold">Unknown Item</span>
+					)}
 					<span className="text-neutral-500">•</span>
 					<span className="text-neutral-500">
 						{getTimeAgo(rating.createdAt)}
@@ -227,8 +259,8 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 
 function TitleBlock({ rating }: { rating: RatingWithRelations }) {
 	return (
-		<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
-			{rating.stuff.name} - {rating.score}/10
+		<h3 className={`text-xg md:text-2xl font-semibold text-white mb-2 ml-11`}>
+			{rating.score}/10
 		</h3>
 	);
 }
@@ -469,7 +501,7 @@ function RouteComponent() {
 			<Lightbox
 				src={lightboxSrc}
 				onClose={() => setLightboxSrc(null)}
-				alt={`${rating.stuff.name} - ${rating.score}/10`}
+				alt={`${rating.stuff?.name ?? "Rating"} - ${rating.score}/10`}
 			/>
 		</>
 	);

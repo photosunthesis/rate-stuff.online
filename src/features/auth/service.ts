@@ -12,23 +12,29 @@ export const updateUserProfile = createServerOnlyFn(
 			.update(users)
 			.set({ ...updates, updatedAt: new Date() })
 			.where(eq(users.id, userId))
-			.returning();
+
+			.returning({
+				id: users.id,
+				username: users.username,
+				name: users.name,
+				image: users.image,
+			});
 
 		if (!updatedUser || updatedUser.length === 0) {
 			throw new Error("User not found");
 		}
 
-		return {
-			id: updatedUser[0].id,
-			username: updatedUser[0].username,
-			name: updatedUser[0].name,
-			image: updatedUser[0].image,
-		};
+		return updatedUser[0];
 	},
 );
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
+		const ratingCountSq = db
+			.select({ count: sql`count(*)` })
+			.from(ratings)
+			.where(and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)));
+
 		const rows = await db
 			.select({
 				id: users.id,
@@ -36,27 +42,15 @@ export const getUserByUsername = createServerOnlyFn(
 				name: users.name,
 				image: users.image,
 				createdAt: users.createdAt,
-				ratingCount: sql`COUNT(${ratings.id})`,
+				ratingCount: sql<number>`(${ratingCountSq})`,
 			})
 			.from(users)
-			.leftJoin(
-				ratings,
-				and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)),
-			)
 			.where(eq(users.username, username))
-			.groupBy(
-				users.id,
-				users.username,
-				users.name,
-				users.image,
-				users.createdAt,
-			)
 			.limit(1);
 
 		if (!rows || rows.length === 0) return null;
 
 		const row = rows[0];
-		const ratingsCount = Number(row.ratingCount ?? 0);
 
 		return {
 			id: row.id,
@@ -64,7 +58,8 @@ export const getUserByUsername = createServerOnlyFn(
 			name: row.name,
 			image: row.image,
 			createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
-			ratingsCount: numberWithCommas(ratingsCount),
+
+			ratingsCount: numberWithCommas(Number(row.ratingCount ?? 0)),
 		};
 	},
 );
@@ -86,7 +81,7 @@ export const uploadProfileImage = createServerOnlyFn(
 export const validateInviteCode = createServerOnlyFn(
 	async (inviteCode: string) => {
 		const code = await db
-			.select()
+			.select({ id: inviteCodes.id })
 			.from(inviteCodes)
 			.where(
 				and(
@@ -95,10 +90,9 @@ export const validateInviteCode = createServerOnlyFn(
 					isNull(inviteCodes.usedAt),
 				),
 			)
-			.limit(1)
-			.then((res) => res[0]);
+			.limit(1);
 
-		return !!code;
+		return code.length > 0;
 	},
 );
 

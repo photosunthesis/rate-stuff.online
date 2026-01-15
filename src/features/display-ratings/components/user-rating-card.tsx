@@ -94,30 +94,27 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 			{/* Compact header for user page (no avatar, no user link) */}
 			<div className="flex items-center gap-1 text-sm text-neutral-500 mb-2">
 				<span className="text-neutral-400">A rating of</span>
-				<Link
-					to="/stuff/$stuffSlug"
-					params={{ stuffSlug: rating.stuff.id }}
-					className="text-white hover:underline font-semibold"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{rating.stuff.name}
-				</Link>
+				{rating.stuff ? (
+					<Link
+						to="/stuff/$stuffSlug"
+						params={{ stuffSlug: rating.stuff.slug }}
+						className="text-white hover:underline font-semibold"
+						onClick={(e) => e.stopPropagation()}
+					>
+						{rating.stuff.name}
+					</Link>
+				) : (
+					<span className="text-neutral-400 font-semibold">Unknown Item</span>
+				)}
 				<span>•</span>
 				<span>{timeAgo}</span>
 			</div>
 
-			{/* Rating and Title */}
+			{/* Rating */}
 			<h3
-				className={`text-lg md:text-xl font-semibold text-white mb-3 ${noIndent ? "" : "ml-11"}`}
+				className={`text-xg md:text-2xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
 			>
-				<Link
-					to="/rating/$ratingId"
-					params={{ ratingId: rating.id }}
-					className="hover:underline"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{rating.stuff.name} - {rating.score}/10
-				</Link>
+				{rating.score}/10
 			</h3>
 
 			{/* Images */}
