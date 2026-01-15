@@ -16,6 +16,7 @@ interface ModalContextValue {
 	isVisible: boolean;
 	modalId: string;
 	preventClose?: boolean;
+	mobileVariant: "bottom-sheet" | "centered";
 }
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -33,9 +34,16 @@ interface ModalProps {
 	onClose: () => void;
 	children: ReactNode;
 	preventClose?: boolean;
+	mobileVariant?: "bottom-sheet" | "centered";
 }
 
-export function Modal({ isOpen, onClose, children, preventClose }: ModalProps) {
+export function Modal({
+	isOpen,
+	onClose,
+	children,
+	preventClose,
+	mobileVariant = "centered",
+}: ModalProps) {
 	const modalId = useId();
 	const [isVisible, setIsVisible] = useState(false);
 	const [shouldRender, setShouldRender] = useState(isOpen);
@@ -87,24 +95,38 @@ export function Modal({ isOpen, onClose, children, preventClose }: ModalProps) {
 
 	const content = (
 		<ModalContext.Provider
-			value={{ isOpen, onClose, isVisible, modalId, preventClose }}
+			value={{
+				isOpen,
+				onClose,
+				isVisible,
+				modalId,
+				preventClose,
+				mobileVariant,
+			}}
 		>
 			<div
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby={`modal-title-${modalId}`}
-				className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4"
+				className={`fixed inset-0 z-50 flex justify-center md:items-center md:p-4 pointer-events-auto ${
+					mobileVariant === "bottom-sheet" ? "items-end" : "items-center"
+				}`}
+				onPointerDown={(e) => e.stopPropagation()}
 			>
 				{/* Backdrop */}
 				<button
 					type="button"
 					data-testid="modal-backdrop"
-					className={`absolute inset-0 w-full h-full bg-neutral-950/60 border-none cursor-default focus:outline-none transition-all duration-300 ease-out ${
+					className={`absolute inset-0 w-full h-full bg-neutral-950/60 border-none cursor-default focus:outline-none transition-all duration-300 ease-out pointer-events-auto ${
 						isVisible
 							? "opacity-100 backdrop-blur-[3px]"
 							: "opacity-0 backdrop-blur-none"
 					}`}
-					onClick={() => !preventClose && onClose()}
+					onClick={(e) => {
+						e.stopPropagation();
+						if (!preventClose) onClose();
+					}}
+					onPointerDown={(e) => e.stopPropagation()}
 					tabIndex={-1}
 				/>
 				{children}
@@ -125,7 +147,7 @@ export function ModalContent({
 	width = "md",
 	...props
 }: ModalContentProps) {
-	const { isVisible } = useModal();
+	const { isVisible, mobileVariant } = useModal();
 
 	const widthClasses = {
 		sm: "md:max-w-md",
@@ -138,11 +160,19 @@ export function ModalContent({
 	return (
 		<div
 			role="document"
-			className={`relative w-full h-screen md:h-auto ${widthClasses[width]} max-h-[85vh] rounded-t-xl md:rounded-xl bg-neutral-900 md:border md:border-neutral-800 shadow-2xl z-10 overflow-hidden flex flex-col transition-all duration-300 ease-out ${
-				isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
-			} ${className}`}
+			className={`relative w-full z-10 overflow-hidden flex flex-col transition-all duration-300 ease-out pointer-events-auto
+				${widthClasses[width]} 
+				${
+					mobileVariant === "bottom-sheet"
+						? "h-screen md:h-auto max-h-[85vh] rounded-t-xl md:rounded-xl md:border md:border-neutral-800"
+						: "h-auto max-h-[90vh] rounded-xl m-4 border border-neutral-800"
+				} 
+				bg-neutral-900 shadow-2xl 
+				${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"} 
+				${className}`}
 			onClick={(e) => e.stopPropagation()}
 			onKeyDown={(e) => e.stopPropagation()}
+			onPointerDown={(e) => e.stopPropagation()}
 			{...props}
 		>
 			{children}
@@ -159,7 +189,7 @@ export function ModalHeader({
 }: ModalHeaderProps) {
 	return (
 		<div
-			className={`flex flex-col space-y-1.5 text-center sm:text-left p-6 border-b border-neutral-800 ${className}`}
+			className={`flex flex-col space-y-1.5 text-left p-6 border-b border-neutral-800 ${className}`}
 			{...props}
 		>
 			{children}

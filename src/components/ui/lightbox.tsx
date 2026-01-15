@@ -19,6 +19,7 @@ function LightboxContent({ src, alt }: { src: string; alt?: string }) {
 			}`}
 			onClick={(e) => e.stopPropagation()}
 			onKeyDown={(e) => e.stopPropagation()}
+			onPointerDown={(e) => e.stopPropagation()}
 		>
 			<button
 				type="button"
@@ -50,7 +51,7 @@ export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
 	// We render the Modal even if src is null, relying on isOpen to trigger entry/exit animations.
 	// We use displaySrc to ensure the image remains visible during the exit animation.
 	return (
-		<Modal isOpen={!!src} onClose={onClose}>
+		<Modal isOpen={!!src} onClose={onClose} mobileVariant="bottom-sheet">
 			{displaySrc && <LightboxContent src={displaySrc} alt={alt} />}
 		</Modal>
 	);

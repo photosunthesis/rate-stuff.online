@@ -16,7 +16,12 @@ export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
 	};
 
 	return (
-		<Modal isOpen={isOpen} onClose={onClose} preventClose={isPending}>
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			preventClose={isPending}
+			mobileVariant="bottom-sheet"
+		>
 			<ModalContent>
 				<div className="relative flex-1 flex flex-col min-h-0">
 					<CreateRatingForm
