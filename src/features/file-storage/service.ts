@@ -26,7 +26,7 @@ export const uploadFile = createServerOnlyFn(
 export const createPresignedUploadUrl = createServerOnlyFn(
 	async (key: string, expiresSeconds = 300) => {
 		const expires = String(Math.floor(Date.now() / 1000) + expiresSeconds);
-		const secret = process.env.SESSION_SECRET;
+		const secret = process.env.BETTER_AUTH_SECRET;
 		const encoder = new TextEncoder();
 		const keyMaterial = await crypto.subtle.importKey(
 			"raw",
@@ -59,7 +59,7 @@ export async function verifyPresignedUpload(
 		return { ok: false, reason: "expired" as const };
 	}
 
-	const secret = process.env.SESSION_SECRET;
+	const secret = process.env.BETTER_AUTH_SECRET;
 	const encoder = new TextEncoder();
 	const keyMaterial = await crypto.subtle.importKey(
 		"raw",
