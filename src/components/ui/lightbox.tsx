@@ -1,4 +1,5 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useState } from "react";
+import { Modal, useModal } from "~/components/ui/modal";
 import { X } from "lucide-react";
 
 interface LightboxProps {
@@ -7,84 +8,50 @@ interface LightboxProps {
 	onClose: () => void;
 }
 
-export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
-	const [isClosing, setIsClosing] = useState(false);
-	const EXIT_ANIMATION_MS = 250;
-
-	const handleClose = useCallback(() => {
-		if (isClosing) return;
-		setIsClosing(true);
-		setTimeout(() => {
-			onClose();
-			setIsClosing(false);
-		}, EXIT_ANIMATION_MS);
-	}, [isClosing, onClose]);
-
-	useEffect(() => {
-		function onKey(e: KeyboardEvent) {
-			if (e.key === "Escape") handleClose();
-		}
-
-		if (src) {
-			document.body.style.overflow = "hidden";
-			window.addEventListener("keydown", onKey);
-		}
-
-		return () => {
-			document.body.style.overflow = "";
-			window.removeEventListener("keydown", onKey);
-		};
-	}, [src, handleClose]);
-
-	useEffect(() => {
-		if (src) setIsClosing(false);
-	}, [src]);
-
-	if (!src) return null;
+function LightboxContent({ src, alt }: { src: string; alt?: string }) {
+	const { isVisible, onClose } = useModal();
 
 	return (
 		<div
-			role="dialog"
-			aria-modal="true"
-			className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
-				isClosing ? "animate-fade-out" : "animate-fade-in"
+			role="document"
+			className={`relative max-w-[96vw] max-h-[96vh] w-full z-10 transition-all duration-300 ease-out ${
+				isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
 			}`}
-			onClick={handleClose}
-			onKeyDown={(e) => {
-				if (e.key === "Escape") handleClose();
-			}}
+			onClick={(e) => e.stopPropagation()}
+			onKeyDown={(e) => e.stopPropagation()}
 		>
-			<div
-				className={`absolute inset-0 bg-neutral-950/70 ${
-					isClosing ? "animate-backdrop-out" : "animate-backdrop-in"
-				}`}
-			/>
-
-			<div
-				role="document"
-				className={`relative max-w-[96vw] max-h-[96vh] w-full z-10 ${
-					isClosing
-						? "animate-zoom-out animate-fade-out"
-						: "animate-zoom-in animate-fade-in"
-				}`}
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
+			<button
+				type="button"
+				aria-label="Close"
+				onClick={onClose}
+				className="absolute top-3 right-3 z-50 p-3 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm cursor-pointer"
 			>
-				<button
-					type="button"
-					aria-label="Close"
-					onClick={handleClose}
-					className="absolute top-3 right-3 z-50 p-3 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm cursor-pointer"
-				>
-					<X size={24} />
-				</button>
+				<X size={24} />
+			</button>
 
-				<img
-					src={src}
-					alt={alt}
-					className="w-full h-auto max-h-[92vh] object-contain"
-				/>
-			</div>
+			<img
+				src={src}
+				alt={alt}
+				className="w-full h-auto max-h-[92vh] object-contain"
+			/>
 		</div>
+	);
+}
+
+export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
+	const [displaySrc, setDisplaySrc] = useState(src);
+
+	useEffect(() => {
+		if (src) {
+			setDisplaySrc(src);
+		}
+	}, [src]);
+
+	// We render the Modal even if src is null, relying on isOpen to trigger entry/exit animations.
+	// We use displaySrc to ensure the image remains visible during the exit animation.
+	return (
+		<Modal isOpen={!!src} onClose={onClose}>
+			{displaySrc && <LightboxContent src={displaySrc} alt={alt} />}
+		</Modal>
 	);
 }

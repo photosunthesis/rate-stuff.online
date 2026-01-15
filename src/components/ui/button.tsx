@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-	variant?: "primary" | "secondary";
+	variant?: "primary" | "secondary" | "destructive";
 	isLoading?: boolean;
 	loadingLabel?: string;
 	size?: "sm" | "md";
@@ -30,6 +30,8 @@ export function Button({
 			"bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 text-white focus:ring-emerald-500",
 		secondary:
 			"bg-neutral-800 hover:bg-neutral-800/60 disabled:bg-neutral-800 text-white focus:ring-neutral-500",
+		destructive:
+			"bg-red-500/40 hover:bg-red-500/30 text-white focus:ring-red-500 disabled:bg-red-500/20",
 	};
 
 	return (
