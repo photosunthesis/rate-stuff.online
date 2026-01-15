@@ -8,8 +8,9 @@
 		"no_handle_cross_request_promise_resolution"
 	],
 	"main": "@tanstack/react-start/server-entry",
+	"upload_source_maps": true,
 	"observability": {
-		"enabled": false,
+		"enabled": true,
 		"head_sampling_rate": 1,
 		"logs": {
 			"enabled": true,
@@ -18,7 +19,7 @@
 			"invocation_logs": true
 		},
 		"traces": {
-			"enabled": false,
+			"enabled": true,
 			"persist": true,
 			"head_sampling_rate": 1
 		}
