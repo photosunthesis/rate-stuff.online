@@ -1,5 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import * as Sentry from "@sentry/tanstackstart-react";
 import { routeTree } from "~/routeTree.gen";
 import { NotFound } from "~/components/ui/not-found";
 import { QueryClient } from "@tanstack/react-query";
@@ -34,6 +35,16 @@ export function getRouter() {
 		handleRedirects: true,
 		wrapQueryClient: true,
 	});
+
+	if (!router.isServer) {
+		Sentry.init({
+			dsn: import.meta.env.DEV
+				? ""
+				: "https://dbf8d6e74b9a4e619283189ef0224289@ratestuffonline.bugsink.com/1",
+			integrations: [],
+			tracesSampleRate: 0,
+		});
+	}
 
 	return router;
 }

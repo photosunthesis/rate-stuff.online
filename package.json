@@ -25,6 +25,7 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",
     "@danielgtmn/umami-react": "^1.1.2",
+    "@sentry/tanstackstart-react": "^10.34.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-form": "^1.27.7",
