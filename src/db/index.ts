@@ -11,5 +11,3 @@ export const getDatabase = createServerOnlyFn(() => {
 		casing: "snake_case",
 	});
 });
-
-export const db: Database = getDatabase();

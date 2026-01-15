@@ -1,8 +1,8 @@
 import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, gte, sql, or, exists } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import { db } from "~/db";
 import type { RatingWithRelations } from "./types";
+import { getDatabase } from "~/db";
 
 function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
@@ -57,6 +57,8 @@ export const getUserRatings = createServerOnlyFn(
 				)
 			: undefined;
 
+		const db = getDatabase();
+
 		const results = await db
 			.select(getRatingsSelection())
 			.from(ratings)
@@ -95,6 +97,8 @@ export const getFeedRatings = createServerOnlyFn(
 				)
 			: undefined;
 
+		const db = getDatabase();
+
 		const tagFilter = filterTag
 			? exists(
 					db
@@ -127,6 +131,8 @@ export const getFeedRatings = createServerOnlyFn(
 );
 
 export const getRatingById = createServerOnlyFn(async (id: string) => {
+	const db = getDatabase();
+
 	const results = await db
 		.select(getRatingsSelection())
 		.from(ratings)
@@ -143,6 +149,7 @@ export const getRatingById = createServerOnlyFn(async (id: string) => {
 });
 
 export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
+	const db = getDatabase();
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 	const rows = await db
@@ -162,6 +169,7 @@ export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 });
 
 export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
+	const db = getDatabase();
 	const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 	const rows = await db
@@ -188,6 +196,8 @@ export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
 
 export const getUserRatingsCount = createServerOnlyFn(
 	async (userId: string) => {
+		const db = getDatabase();
+
 		const [row] = await db
 			.select({ count: sql<number>`count(*)` })
 			.from(ratings)

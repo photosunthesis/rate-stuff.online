@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { db } from "~/db";
 import { stuff, users, ratings } from "~/db/schema";
 import { isNull, desc, sql } from "drizzle-orm";
+import { getDatabase } from "~/db";
 
 export const Route = createFileRoute("/sitemap.xml")({
 	server: {
 		handlers: {
 			GET: async ({ request }) => {
 				const origin = new URL(request.url).origin;
+
+				const db = getDatabase();
 
 				// static pages
 				const pages = ["/", "/privacy", "/terms"];

@@ -1,16 +1,18 @@
-import { db } from "~/db";
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import { createPresignedUploadUrl } from "~/features/file-storage/service";
 import { generateSlug } from "~/lib/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { CreateRatingInput } from "./types";
+import { getDatabase } from "~/db";
 
 export const searchStuff = createServerOnlyFn(
 	async (query: string, limit = 10) => {
 		const q = query.toLowerCase().trim();
 
 		if (!q) return [];
+
+		const db = getDatabase();
 
 		return db
 			.select()
@@ -29,6 +31,8 @@ export const searchTags = createServerOnlyFn(
 
 		if (!q) return [];
 
+		const db = getDatabase();
+
 		return db
 			.select()
 			.from(tags)
@@ -39,8 +43,10 @@ export const searchTags = createServerOnlyFn(
 );
 
 export const getOrCreateStuff = createServerOnlyFn(
-	async (name: string, userId: string) =>
-		db.transaction(async (tx) => {
+	async (name: string, userId: string) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
 			const existing = await tx
 				.select()
 				.from(stuff)
@@ -72,12 +78,15 @@ export const getOrCreateStuff = createServerOnlyFn(
 			} catch {
 				return null;
 			}
-		}),
+		});
+	},
 );
 
 export const createRating = createServerOnlyFn(
-	async (userId: string, input: CreateRatingInput) =>
-		db.transaction(async (tx) => {
+	async (userId: string, input: CreateRatingInput) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
 			let resolvedStuffId = input.stuffId;
 
 			if (!resolvedStuffId && input.stuffName) {
@@ -182,7 +191,8 @@ export const createRating = createServerOnlyFn(
 			}
 
 			return rating;
-		}),
+		});
+	},
 );
 
 export const getUploadUrl = createServerOnlyFn(
@@ -201,6 +211,8 @@ export const getUploadUrl = createServerOnlyFn(
 
 export const updateRatingImages = createServerOnlyFn(
 	async (ratingId: string, images: string[]) => {
+		const db = getDatabase();
+
 		const updated = await db
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })

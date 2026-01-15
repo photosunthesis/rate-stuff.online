@@ -1,13 +1,14 @@
-import { db } from "~/db";
 import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/features/file-storage/service";
 import { numberWithCommas } from "~/lib/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { getDatabase } from "~/db";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
+		const db = getDatabase();
 		const updatedUser = await db
 			.update(users)
 			.set({ ...updates, updatedAt: new Date() })
@@ -30,6 +31,7 @@ export const updateUserProfile = createServerOnlyFn(
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
+		const db = getDatabase();
 		const ratingCountSq = db
 			.select({ count: sql`count(*)` })
 			.from(ratings)
@@ -80,6 +82,7 @@ export const uploadProfileImage = createServerOnlyFn(
 
 export const validateInviteCode = createServerOnlyFn(
 	async (inviteCode: string) => {
+		const db = getDatabase();
 		const code = await db
 			.select({ id: inviteCodes.id })
 			.from(inviteCodes)
@@ -98,6 +101,7 @@ export const validateInviteCode = createServerOnlyFn(
 
 export const markInviteCodeAsUsed = createServerOnlyFn(
 	async (inviteCode: string, userId: string) => {
+		const db = getDatabase();
 		await db
 			.update(inviteCodes)
 			.set({

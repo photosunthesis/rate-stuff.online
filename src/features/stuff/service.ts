@@ -1,4 +1,4 @@
-import { type Database, db } from "~/db";
+import { getDatabase, type Database } from "~/db";
 import {
 	ratings,
 	stuff as stuffTable,
@@ -101,7 +101,7 @@ async function extractImagesForStuff(
 }
 
 export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
-	const dbInstance = db;
+	const dbInstance = getDatabase();
 	const rows = await dbInstance
 		.select({
 			id: stuffTable.id,
@@ -148,7 +148,7 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 
 export const getStuffRatingsBySlug = createServerOnlyFn(
 	async (slug: string, limit = 10, cursor?: string) => {
-		const dbInstance = db;
+		const dbInstance = getDatabase();
 		const parsed = parseCursor(cursor);
 		const cursorFilter = parsed
 			? or(
@@ -163,30 +163,18 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 		const results = await dbInstance
 			.select(getRatingsSelection())
 			.from(ratings)
-			.innerJoin(stuffTable, eq(ratings.stuffId, stuffTable.id)) // innerJoin effectively filters by stuff existence if we also match slug
+			.innerJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
 			.leftJoin(users, eq(ratings.userId, users.id))
 			.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
 			.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
 			.where(
-				and(
-					eq(stuffTable.slug, slug), // Filter by slug here directly
-					isNull(ratings.deletedAt),
-					cursorFilter,
-				),
+				and(eq(stuffTable.slug, slug), isNull(ratings.deletedAt), cursorFilter),
 			)
 			.groupBy(ratings.id, stuffTable.id, users.id)
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
 		if (results.length === 0) {
-			// If no ratings, we don't know if the stuff exists or just has no ratings.
-			// However, the previous logic returned `null` if stuff didn't exist.
-			// To maintain similar behavior without the extra preliminary query:
-			// We can do a cheap check ONLY if results are empty.
-			// Or we can return empty array and let the consumer (page loader) handle 404 via getStuffBySlug.
-			// Given this is a dedicated "get ratings" function, it's safer to check existence if empty.
-
-			// Optimized existence check:
 			const stuffExists = await dbInstance
 				.select({ id: stuffTable.id })
 				.from(stuffTable)
