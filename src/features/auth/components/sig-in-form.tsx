@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
@@ -17,13 +18,19 @@ export function SignInForm({
 	errorMessage,
 	validationErrors,
 }: SignInFormProps) {
+	const [isSuccess, setIsSuccess] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			identifier: "",
 			password: "",
 		},
 		onSubmit: async ({ value }) => {
-			await onSubmit(value);
+			try {
+				await onSubmit(value);
+				setIsSuccess(true);
+			} catch {
+				// Error handled by parent
+			}
 		},
 	});
 
@@ -67,62 +74,67 @@ export function SignInForm({
 				className="space-y-4"
 				noValidate
 			>
-				<form.Field
-					name="identifier"
-					validators={{
-						onChange: ({ value }) => {
-							const result = loginSchema.shape.identifier.safeParse(value);
-							return result.success
-								? undefined
-								: result.error.issues[0].message;
-						},
-					}}
+				<fieldset
+					disabled={isPending || isSuccess}
+					className="space-y-4 border-none p-0 m-0"
 				>
-					{(field) => (
-						<TextField
-							label="Email or Username"
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-							placeholder="you@example.com or your-username"
-							error={
-								field.state.meta.errors[0]?.toString() ||
-								mergedValidationErrors.identifier
-							}
-							required
-						/>
-					)}
-				</form.Field>
+					<form.Field
+						name="identifier"
+						validators={{
+							onChange: ({ value }) => {
+								const result = loginSchema.shape.identifier.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<TextField
+								label="Email or Username"
+								name={field.name}
+								value={field.state.value}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.value)}
+								placeholder="you@example.com or your-username"
+								error={
+									field.state.meta.errors[0]?.toString() ||
+									mergedValidationErrors.identifier
+								}
+								required
+							/>
+						)}
+					</form.Field>
 
-				<form.Field
-					name="password"
-					validators={{
-						onChange: ({ value }) => {
-							const result = loginSchema.shape.password.safeParse(value);
-							return result.success
-								? undefined
-								: result.error.issues[0].message;
-						},
-					}}
-				>
-					{(field) => (
-						<TextField
-							label="Password"
-							type="password"
-							name={field.name}
-							value={field.state.value}
-							onBlur={field.handleBlur}
-							onChange={(e) => field.handleChange(e.target.value)}
-							placeholder="Your password"
-							error={
-								field.state.meta.errors[0]?.toString() ||
-								mergedValidationErrors.password
-							}
-							required
-						/>
-					)}
-				</form.Field>
+					<form.Field
+						name="password"
+						validators={{
+							onChange: ({ value }) => {
+								const result = loginSchema.shape.password.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<TextField
+								label="Password"
+								type="password"
+								name={field.name}
+								value={field.state.value}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.value)}
+								placeholder="Your password"
+								error={
+									field.state.meta.errors[0]?.toString() ||
+									mergedValidationErrors.password
+								}
+								required
+							/>
+						)}
+					</form.Field>
+				</fieldset>
 
 				<form.Subscribe
 					selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -130,12 +142,12 @@ export function SignInForm({
 					{([canSubmit, isSubmitting]) => (
 						<Button
 							type="submit"
-							disabled={!canSubmit || isPending || isSubmitting}
-							isLoading={isPending || isSubmitting}
+							disabled={!canSubmit || isPending || isSubmitting || isSuccess}
+							isLoading={isPending || isSubmitting || isSuccess}
 							className="mt-6"
 							loadingLabel="Signing in..."
 						>
-							Sign In
+							{isSuccess ? "Signed In" : "Sign In"}
 						</Button>
 					)}
 				</form.Subscribe>

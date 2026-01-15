@@ -39,7 +39,8 @@ export function CreateRatingForm({
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const [selectedImages, setSelectedImages] = useState<File[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const scrollableRef = useRef<HTMLDivElement>(null);
+	const [isSuccess, setIsSuccess] = useState(false);
+	const scrollableRef = useRef<HTMLFieldSetElement>(null);
 
 	const form = useForm({
 		defaultValues: {
@@ -62,7 +63,7 @@ export function CreateRatingForm({
 				};
 
 				await onSubmit(inputData);
-
+				setIsSuccess(true);
 				// If the submit promise resolves without throwing, treat it as success.
 				form.reset();
 				setSelectedStuff(null);
@@ -71,7 +72,6 @@ export function CreateRatingForm({
 				onSuccess?.();
 			} catch {
 				// Submission failed; errors are surfaced via props from the hook.
-			} finally {
 				setIsSubmitting(false);
 			}
 		},
@@ -133,8 +133,9 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
-			<div
-				className="flex-1 overflow-y-auto px-6 pt-14 pb-6 md:pt-6"
+			<fieldset
+				disabled={isPending || isSubmitting || isSuccess}
+				className="flex-1 overflow-y-auto px-6 pt-14 pb-6 md:pt-6 border-none p-0 m-0"
 				ref={scrollableRef}
 			>
 				{hasGlobalError && (
@@ -233,7 +234,7 @@ export function CreateRatingForm({
 						/>
 					</div>
 				</div>
-			</div>
+			</fieldset>
 
 			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
@@ -251,11 +252,11 @@ export function CreateRatingForm({
 							<Button
 								type="submit"
 								loadingLabel="Creating..."
-								disabled={!canSubmit || isPending || isSubmitting}
-								isLoading={isPending || isSubmitting}
+								disabled={!canSubmit || isPending || isSubmitting || isSuccess}
+								isLoading={isPending || isSubmitting || isSuccess}
 								className="w-auto! px-6 py-1.5 text-sm"
 							>
-								Create Rating
+								{isSuccess ? "Created!" : "Create Rating"}
 							</Button>
 						</div>
 					)}

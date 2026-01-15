@@ -15,6 +15,7 @@ interface ModalContextValue {
 	onClose: () => void;
 	isVisible: boolean;
 	modalId: string;
+	preventClose?: boolean;
 }
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -31,9 +32,10 @@ interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	children: ReactNode;
+	preventClose?: boolean;
 }
 
-export function Modal({ isOpen, onClose, children }: ModalProps) {
+export function Modal({ isOpen, onClose, children, preventClose }: ModalProps) {
 	const modalId = useId();
 	const [isVisible, setIsVisible] = useState(false);
 	const [shouldRender, setShouldRender] = useState(isOpen);
@@ -65,11 +67,11 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 	useEffect(() => {
 		if (!isOpen) return;
 		const handleEscape = (event: KeyboardEvent) => {
-			if (event.key === "Escape") onClose();
+			if (event.key === "Escape" && !preventClose) onClose();
 		};
 		document.addEventListener("keydown", handleEscape);
 		return () => document.removeEventListener("keydown", handleEscape);
-	}, [isOpen, onClose]);
+	}, [isOpen, onClose, preventClose]);
 
 	// Lock body scroll
 	useEffect(() => {
@@ -84,7 +86,9 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 	if (!shouldRender) return null;
 
 	const content = (
-		<ModalContext.Provider value={{ isOpen, onClose, isVisible, modalId }}>
+		<ModalContext.Provider
+			value={{ isOpen, onClose, isVisible, modalId, preventClose }}
+		>
 			<div
 				role="dialog"
 				aria-modal="true"
@@ -100,7 +104,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 							? "opacity-100 backdrop-blur-[3px]"
 							: "opacity-0 backdrop-blur-none"
 					}`}
-					onClick={onClose}
+					onClick={() => !preventClose && onClose()}
 					tabIndex={-1}
 				/>
 				{children}
@@ -216,11 +220,12 @@ export function ModalFooter({
 interface ModalCloseProps extends HTMLAttributes<HTMLButtonElement> {}
 
 export function ModalClose({ className = "", ...props }: ModalCloseProps) {
-	const { onClose } = useModal();
+	const { onClose, preventClose } = useModal();
 	return (
 		<button
 			type="button"
 			onClick={onClose}
+			disabled={preventClose}
 			className={`absolute right-4 top-4 z-50 rounded-sm opacity-70 ring-offset-neutral-950 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer ${className}`}
 			{...props}
 		>
