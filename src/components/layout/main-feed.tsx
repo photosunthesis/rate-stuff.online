@@ -6,6 +6,7 @@ import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import type { PublicUser } from "~/features/auth/types";
+import { Delete } from "lucide-react";
 
 export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const isAuthenticated = user != null;
@@ -64,20 +65,23 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-lg font-semibold text-white">
-								Ratings with the #{tag} tag
+								Ratings with the
+								<span className="inline-flex items-center px-1 py-0.2 bg-neutral-800/70 text-neutral-300 text-sm font-medium transition-colors rounded-md ml-1 font-sans">
+									#{tag}
+								</span>{" "}
+								tag
 							</h2>
-							<p className="text-sm text-neutral-400">
-								Showing results for #{tag}
-							</p>
 						</div>
 						<Button
 							variant="secondary"
-							className="w-auto! inline-flex px-3 py-1 text-sm"
+							size="sm"
+							className="w-auto! inline-flex items-center px-3 py-1 text-sm"
 							onClick={(e) => {
 								e.stopPropagation();
 								navigate({ to: "/" });
 							}}
 						>
+							<Delete className="mr-2 h-4 w-4 shrink-0" />
 							Clear
 						</Button>
 					</div>
