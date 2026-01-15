@@ -40,7 +40,7 @@ export function CreateRatingForm({
 	const [selectedImages, setSelectedImages] = useState<File[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
-	const scrollableRef = useRef<HTMLFieldSetElement>(null);
+	const scrollableRef = useRef<HTMLDivElement>(null);
 
 	const form = useForm({
 		defaultValues: {
@@ -133,18 +133,20 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
-			<fieldset
-				disabled={isPending || isSubmitting || isSuccess}
-				className="flex-1 overflow-y-auto px-6 pt-14 pb-6 md:pt-6 border-none p-0 m-0"
+			<div
+				className="flex-1 overflow-y-auto pt-14 pb-6 md:pt-6"
 				ref={scrollableRef}
 			>
-				{hasGlobalError && (
-					<div className="mb-6">
-						<FormError message={getErrorMessage(errorMessage)} />
-					</div>
-				)}
+				<fieldset
+					disabled={isPending || isSubmitting || isSuccess}
+					className="px-6 space-y-6 border-none p-0 m-0"
+				>
+					{hasGlobalError && (
+						<div className="mb-6">
+							<FormError message={getErrorMessage(errorMessage)} />
+						</div>
+					)}
 
-				<div className="space-y-6">
 					<div>
 						<StuffSelector
 							value={selectedStuff || undefined}
@@ -233,8 +235,8 @@ export function CreateRatingForm({
 							maxFiles={4}
 						/>
 					</div>
-				</div>
-			</fieldset>
+				</fieldset>
+			</div>
 
 			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
