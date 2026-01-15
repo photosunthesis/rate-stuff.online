@@ -71,7 +71,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					)}
 				</div>
 				{!isAuthenticated ? (
-					<div className="space-y-2">
+					<div className="space-y-2 px-3">
 						<Link
 							to="/sign-up"
 							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
