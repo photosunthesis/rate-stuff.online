@@ -7,7 +7,7 @@ import { getDatabase, type Database } from "~/db";
 
 const getAuthConfig = createServerOnlyFn((db: Database) =>
 	betterAuth({
-		baseURL: process.env.VITE_BASE_URL,
+		baseURL: process.env.BETTER_AUTH_URL,
 		telemetry: {
 			enabled: false,
 		},
