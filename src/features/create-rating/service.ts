@@ -4,6 +4,7 @@ import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import { createPresignedUploadUrl } from "~/features/file-storage/service";
 import { generateSlug } from "~/lib/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
+import type { CreateRatingInput } from "./types";
 
 export const searchStuff = createServerOnlyFn(
 	async (query: string, limit = 10) => {
@@ -75,17 +76,7 @@ export const getOrCreateStuff = createServerOnlyFn(
 );
 
 export const createRating = createServerOnlyFn(
-	async (
-		userId: string,
-		input: {
-			score: number;
-			content: string;
-			tags?: string[];
-			stuffId?: string;
-			stuffName?: string;
-			images?: string[];
-		},
-	) =>
+	async (userId: string, input: CreateRatingInput) =>
 		db.transaction(async (tx) => {
 			let resolvedStuffId = input.stuffId;
 

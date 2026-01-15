@@ -2,26 +2,24 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const imagesBucketUrl = "https://images.rate-stuff.online";
 
-export const uploadFile = createServerOnlyFn(
-	async (
-		r2Bucket: R2Bucket,
-		key: string,
-		file: File | Blob | string | ArrayBuffer | ArrayBufferView,
-		options?: { type?: string },
-	) => {
-		const bucket = r2Bucket;
+export const uploadFile = async (
+	r2Bucket: R2Bucket,
+	key: string,
+	file: File | Blob | string | ArrayBuffer | ArrayBufferView,
+	options?: { type?: string },
+) => {
+	const bucket = r2Bucket;
 
-		await bucket.put(key, file, {
-			httpMetadata: options?.type
-				? { contentType: options.type }
-				: file instanceof File
-					? { contentType: file.type }
-					: { contentType: "application/octet-stream" },
-		});
+	await bucket.put(key, file, {
+		httpMetadata: options?.type
+			? { contentType: options.type }
+			: file instanceof File
+				? { contentType: file.type }
+				: { contentType: "application/octet-stream" },
+	});
 
-		return `${imagesBucketUrl}/${key}`;
-	},
-);
+	return `${imagesBucketUrl}/${key}`;
+};
 
 export const createPresignedUploadUrl = createServerOnlyFn(
 	async (key: string, expiresSeconds = 300) => {

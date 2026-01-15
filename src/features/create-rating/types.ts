@@ -26,12 +26,17 @@ export const createRatingSchema = z
 		path: ["stuffId"],
 	});
 
+export type CreateRatingInput = z.infer<typeof createRatingSchema>;
+
 export const stuffSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
+export type StuffSearchInput = z.infer<typeof stuffSearchSchema>;
+
 export const tagSearchSchema = z.object({
 	query: z.string().min(1, "Search query is required"),
 });
+export type TagSearchInput = z.infer<typeof tagSearchSchema>;
 
 export const imageUploadSchema = z.object({
 	file: z
@@ -42,3 +47,4 @@ export const imageUploadSchema = z.object({
 		)
 		.refine((file) => file.type.startsWith("image/"), "File must be an image"),
 });
+export type ImageUploadInput = z.infer<typeof imageUploadSchema>;

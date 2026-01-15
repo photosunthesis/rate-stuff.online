@@ -14,19 +14,14 @@ import {
 	searchTagsFn,
 } from "./api";
 
+import type { CreateRatingInput } from "./types";
+
 export function useCreateRatingMutation() {
 	const createRatingMutationFn = useServerFn(createRatingFn);
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: {
-			score: number;
-			content: string;
-			tags?: string[];
-			stuffId?: string;
-			stuffName?: string;
-			images?: string[];
-		}) => createRatingMutationFn({ data }),
+		mutationFn: (data: CreateRatingInput) => createRatingMutationFn({ data }),
 		onSuccess: (data) => {
 			if (data && (data as { success?: boolean }).success) {
 				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
@@ -50,13 +45,11 @@ export function useUploadImageMutation() {
 			const presign = await getUploadUrl({
 				data: { ratingId, filename: file.name, contentType: file.type },
 			});
-			if (!presign || !(presign as { success?: boolean }).success) {
+			if (!presign || !presign.success) {
 				throw new Error("Failed to get upload url");
 			}
 
-			const payload = (
-				presign as { data: { key: string; putUrl: string; publicUrl: string } }
-			).data;
+			const payload = presign.data;
 			const putResp = await fetch(payload.putUrl, {
 				method: "PUT",
 				credentials: "include",
@@ -66,6 +59,7 @@ export function useUploadImageMutation() {
 
 			if (!putResp.ok) throw new Error("Upload failed");
 
+			// Sometimes the PUT response is XML or empty, not JSON
 			const jsonResp = (await putResp.json().catch(() => null)) as {
 				url?: string;
 			} | null;
