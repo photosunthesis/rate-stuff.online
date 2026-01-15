@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { getStuffBySlugFn, getPaginatedStuffRatingsFn } from "./api";
-import type { StuffWithAggregates } from "./types";
+import type { StuffWithAggregates, StuffRatingsPage } from "./types";
 
 export const stuffKeys = {
 	all: ["stuff"] as const,
@@ -41,7 +41,7 @@ export const stuffRatingsInfiniteQueryOptions = (slug: string, limit = 10) =>
 				data: { slug, limit, cursor: pageParam as string | undefined },
 			})) as {
 				success: boolean;
-				data?: unknown[];
+				data?: StuffRatingsPage["ratings"];
 				nextCursor?: string;
 				error?: string;
 			};

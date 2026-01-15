@@ -7,11 +7,11 @@ import {
 	users,
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
 import type { drizzle } from "drizzle-orm/postgres-js";
 import { createServerOnlyFn } from "@tanstack/react-start";
+import type { StuffRating } from "./types";
 
-type RatingQueryResult = {
+function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
 	stuff: typeof stuffTable.$inferSelect | null;
 	user: {
@@ -20,8 +20,32 @@ type RatingQueryResult = {
 		username: string | null;
 		image: string | null;
 	} | null;
-	tagName: string | null;
-};
+	tags: string[];
+}): StuffRating {
+	return {
+		...row.rating,
+		stuff: row.stuff,
+		user: row.user,
+		tags: row.tags,
+	};
+}
+
+function getRatingsSelection() {
+	return {
+		rating: ratings,
+		stuff: stuffTable,
+		user: {
+			id: users.id,
+			name: users.name,
+			username: users.username,
+			image: users.image,
+		},
+		tags: sql<string[]>`coalesce(
+      json_agg(${tags.name}) filter (where ${tags.name} is not null), 
+      '[]'
+    )`,
+	};
+}
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -34,39 +58,6 @@ function parseCursor(cursor?: string) {
 
 function makeCursor(createdAt: Date | string | number, id: string) {
 	return `${new Date(createdAt).toISOString()}|${id}`;
-}
-
-function groupAndMapRatings(
-	results: RatingQueryResult[],
-): RatingWithRelations[] {
-	const grouped = results.reduce(
-		(acc, row) => {
-			const ratingId = row.rating.id;
-			if (!acc[ratingId]) {
-				acc[ratingId] = {
-					...row.rating,
-					stuff: {
-						id: row.stuff?.id || "",
-						name: row.stuff?.name || "",
-						slug: row.stuff?.slug || "",
-					},
-					user: {
-						id: row.user?.id || "",
-						name: row.user?.name || null,
-						username: row.user?.username || "",
-						image: row.user?.image || null,
-					},
-					tags: [] as string[],
-				};
-			}
-			if (row.tagName) acc[ratingId].tags.push(row.tagName);
-
-			return acc;
-		},
-		{} as Record<string, RatingWithRelations>,
-	);
-
-	return Object.values(grouped);
 }
 
 async function extractImagesForStuff(
@@ -170,48 +161,47 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 				)
 			: undefined;
 
-		const stuffResult = await dbInstance
-			.select({ id: stuffTable.id })
-			.from(stuffTable)
-			.where(eq(stuffTable.slug, slug))
-			.limit(1);
-
-		if (stuffResult.length === 0) return null;
-
-		const stuffId = stuffResult[0].id;
-
 		const results = await dbInstance
-			.select({
-				rating: ratings,
-				stuff: stuffTable,
-				user: {
-					id: users.id,
-					name: users.name,
-					username: users.username,
-					image: users.image,
-				},
-				tagName: tags.name,
-			})
+			.select(getRatingsSelection())
 			.from(ratings)
-			.leftJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
+			.innerJoin(stuffTable, eq(ratings.stuffId, stuffTable.id)) // innerJoin effectively filters by stuff existence if we also match slug
 			.leftJoin(users, eq(ratings.userId, users.id))
 			.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
 			.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
 			.where(
 				and(
-					eq(ratings.stuffId, stuffId),
+					eq(stuffTable.slug, slug), // Filter by slug here directly
 					isNull(ratings.deletedAt),
 					cursorFilter,
 				),
 			)
+			.groupBy(ratings.id, stuffTable.id, users.id)
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
 		if (results.length === 0) {
+			// If no ratings, we don't know if the stuff exists or just has no ratings.
+			// However, the previous logic returned `null` if stuff didn't exist.
+			// To maintain similar behavior without the extra preliminary query:
+			// We can do a cheap check ONLY if results are empty.
+			// Or we can return empty array and let the consumer (page loader) handle 404 via getStuffBySlug.
+			// Given this is a dedicated "get ratings" function, it's safer to check existence if empty.
+
+			// Optimized existence check:
+			const stuffExists = await dbInstance
+				.select({ id: stuffTable.id })
+				.from(stuffTable)
+				.where(eq(stuffTable.slug, slug))
+				.limit(1)
+				.execute()
+				.then((rows) => rows.length > 0);
+
+			if (!stuffExists) return null;
+
 			return { ratings: [], nextCursor: undefined };
 		}
 
-		const mapped = groupAndMapRatings(results);
+		const mapped = results.map(transformToGroupedRating);
 
 		let nextCursor: string | undefined;
 		if (mapped.length === limit) {

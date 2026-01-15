@@ -2,12 +2,12 @@ import { useStuffRatingsInfinite } from "../hooks";
 import { StuffRatingCard } from "./stuff-rating-card";
 import { useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
-import type { PublicUser } from "../../auth/types";
+import type { StuffRating } from "../types";
+import type { PublicUser } from "~/features/auth/types";
 
 type Page = {
 	success: boolean;
-	data?: RatingWithRelations[];
+	data?: StuffRating[];
 	nextCursor?: string;
 	error?: string;
 };
@@ -156,7 +156,7 @@ export function StuffRatingsList({
 	return (
 		<>
 			<div>
-				{allRatings.map((rating: RatingWithRelations, idx) => (
+				{allRatings.map((rating: StuffRating, idx) => (
 					<div
 						key={rating.id}
 						className={

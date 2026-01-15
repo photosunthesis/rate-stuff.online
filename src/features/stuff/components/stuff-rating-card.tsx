@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Avatar } from "~/components/ui/avatar";
 import { getTimeAgo } from "~/lib/utils/datetime";
+import type { StuffRating } from "../types";
 
 interface Props {
-	rating: RatingWithRelations;
+	rating: StuffRating;
 }
 
 function MarkdownContent({
@@ -55,9 +55,9 @@ export function StuffRatingCard({ rating }: Props) {
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
-	const image = rating.user.image ?? null;
-	const usernameHandle = rating.user.username;
-	const name = rating.user.name;
+	const image = rating.user?.image ?? null;
+	const usernameHandle = rating.user?.username ?? "unknown";
+	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
 
@@ -107,21 +107,24 @@ export function StuffRatingCard({ rating }: Props) {
 						>
 							{displayText}
 						</Link>
+						<span className="text-neutral-500">rated</span>
+						<Link
+							to="/stuff/$stuffSlug"
+							params={{ stuffSlug: rating.stuff?.slug ?? "" }}
+							className="text-white hover:underline font-semibold"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{rating.stuff?.name ?? ""}
+						</Link>
 						<span className="text-neutral-500">•</span>
 						<span className="text-neutral-500">{timeAgo}</span>
 					</div>
 				</div>
 			</div>
 
-			<h3 className="text-lg md:text-xl font-semibold text-white mb-2 ml-11">
-				<Link
-					to="/rating/$ratingId"
-					params={{ ratingId: rating.id }}
-					className="hover:underline"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{rating.stuff.name} - {rating.score}/10
-				</Link>
+			{/* Rating */}
+			<h3 className={`text-xg md:text-2xl font-semibold text-white mb-2 `}>
+				{rating.score}/10
 			</h3>
 
 			{parsedImages && parsedImages.length > 0 && (

@@ -1,12 +1,6 @@
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import type { ratings, stuff } from "~/db/schema";
 
-export type Stuff = {
-	id: string;
-	name: string;
-	slug: string;
-	createdAt: Date;
-	updatedAt: Date;
-};
+export type Stuff = typeof stuff.$inferSelect;
 
 export type StuffWithAggregates = Stuff & {
 	averageRating: number;
@@ -14,7 +8,18 @@ export type StuffWithAggregates = Stuff & {
 	images: string[];
 };
 
+export type StuffRating = typeof ratings.$inferSelect & {
+	stuff: typeof stuff.$inferSelect | null;
+	user: {
+		id: string;
+		name: string | null;
+		username: string | null;
+		image: string | null;
+	} | null;
+	tags: string[];
+};
+
 export type StuffRatingsPage = {
-	ratings: RatingWithRelations[];
+	ratings: StuffRating[];
 	nextCursor?: string;
 };
