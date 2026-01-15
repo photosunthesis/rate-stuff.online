@@ -13,6 +13,20 @@
       "when": 1768397489528,
       "tag": "0001_amusing_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768449089420,
+      "tag": "0002_green_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768449753702,
+      "tag": "0003_marvelous_virginia_dare",
+      "breakpoints": true
     }
   ]
 }

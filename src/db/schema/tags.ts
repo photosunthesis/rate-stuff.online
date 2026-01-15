@@ -17,8 +17,10 @@ export const tags = pgTable("tags", {
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-	deletedAt: timestamp("deleted_at", { mode: "date" }),
+	createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({

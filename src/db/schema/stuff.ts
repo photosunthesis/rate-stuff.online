@@ -12,9 +12,13 @@ export const stuff = pgTable("stuff", {
 	createdBy: text("created_by")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-	updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-	deletedAt: timestamp("deleted_at", { mode: "date" }),
+	createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 });
 
 export const stuffRelations = relations(stuff, ({ many }) => ({

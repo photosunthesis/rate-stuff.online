@@ -16,8 +16,10 @@ export const inviteCodes = pgTable(
 		usedBy: text("used_by").references(() => users.id, {
 			onDelete: "set null",
 		}),
-		usedAt: timestamp("used_at", { mode: "date" }),
-		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+		usedAt: timestamp("used_at", { mode: "date", withTimezone: true }),
+		createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
+			.notNull()
+			.defaultNow(),
 	},
 	(table) => [
 		index("created_by_idx").on(table.createdBy),

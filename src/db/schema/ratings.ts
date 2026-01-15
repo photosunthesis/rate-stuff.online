@@ -19,9 +19,16 @@ export const ratings = pgTable(
 		score: real("score").notNull(),
 		content: text("content").notNull(),
 		images: text("images"),
-		createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-		updatedAt: timestamp("updated_at", { mode: "date" }).notNull().defaultNow(),
-		deletedAt: timestamp("deleted_at", { mode: "date" }),
+		createdAt: timestamp("created_at", {
+			mode: "date",
+			withTimezone: true,
+		})
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { mode: "date", withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
 	},
 	(table) => [
 		index("ratings_created_at_idx").on(table.createdAt),
