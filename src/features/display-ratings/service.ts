@@ -123,21 +123,48 @@ export const getFeedRatings = createServerOnlyFn(
 				)
 			: undefined;
 
-		const tagFilter = tag ? eq(tags.name, tag) : undefined;
+		// When a tag is provided, first find the rating IDs that match the tag
+		// (respecting cursor and limit). Then fetch full relations for those
+		// ratings so we return all tags for each rating.
+		if (tag) {
+			const matchingRows = await db
+				.select({ id: ratings.id })
+				.from(ratings)
+				.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
+				.leftJoin(tags, eq(tags.id, ratingsToTags.tagId))
+				.where(and(isNull(ratings.deletedAt), cursorFilter, eq(tags.name, tag)))
+				.orderBy(desc(ratings.createdAt), desc(ratings.id))
+				.limit(limit);
+
+			const ratingIds = matchingRows.map((r) => r.id);
+			if (ratingIds.length === 0) return [];
+
+			// build an OR filter for the selected ids
+			const idFilter = or(...ratingIds.map((id) => eq(ratings.id, id)));
+
+			const results = await queryRatingsWithRelations(
+				db,
+				and(isNull(ratings.deletedAt), idFilter),
+				limit * 10,
+			);
+
+			let grouped = groupRatingResults(results);
+
+			// preserve ordering based on the ids we selected earlier
+			grouped = ratingIds
+				.map((id) => grouped.find((g) => g.id === id))
+				.filter(Boolean) as GroupedRating[];
+
+			return grouped.slice(0, limit);
+		}
 
 		const results = await queryRatingsWithRelations(
 			db,
-			and(isNull(ratings.deletedAt), cursorFilter, tagFilter),
+			and(isNull(ratings.deletedAt), cursorFilter),
 			limit,
 		);
 
-		const grouped = groupRatingResults(results);
-
-		if (tag) {
-			return grouped.filter((r) => r.tags.includes(tag)).slice(0, limit);
-		}
-
-		return grouped;
+		return groupRatingResults(results);
 	},
 );
 
