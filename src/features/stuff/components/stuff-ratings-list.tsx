@@ -165,7 +165,10 @@ export function StuffRatingsList({
 								: "border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<StuffRatingCard rating={rating} />
+						<StuffRatingCard
+							rating={rating}
+							isAuthenticated={isAuthenticated}
+						/>
 					</div>
 				))}
 			</div>

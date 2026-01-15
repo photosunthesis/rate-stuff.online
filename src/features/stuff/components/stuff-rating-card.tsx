@@ -5,9 +5,11 @@ import remarkGfm from "remark-gfm";
 import { Avatar } from "~/components/ui/avatar";
 import { getTimeAgo } from "~/lib/utils/datetime";
 import type { StuffRating } from "../types";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
 interface Props {
 	rating: StuffRating;
+	isAuthenticated?: boolean;
 }
 
 function MarkdownContent({
@@ -49,9 +51,10 @@ function MarkdownContent({
 	);
 }
 
-export function StuffRatingCard({ rating }: Props) {
+export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
@@ -250,19 +253,38 @@ export function StuffRatingCard({ rating }: Props) {
 
 			{parsedTags && parsedTags.length > 0 && (
 				<div className="flex flex-wrap gap-2 mb-1 ml-11">
-					{parsedTags.map((tag: string) => (
-						<Link
-							key={tag}
-							to="/"
-							search={{ tag }}
-							onClick={(e) => e.stopPropagation()}
-							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-						>
-							#{tag}
-						</Link>
-					))}
+					{parsedTags.map((tag: string) =>
+						isAuthenticated ? (
+							<Link
+								key={tag}
+								to="/"
+								search={{ tag }}
+								onClick={(e) => e.stopPropagation()}
+								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+							>
+								#{tag}
+							</Link>
+						) : (
+							<button
+								key={tag}
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									setIsAuthModalOpen(true);
+								}}
+								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+							>
+								#{tag}
+							</button>
+						),
+					)}
 				</div>
 			)}
+			{/* Auth Modal */}
+			<AuthModal
+				isOpen={isAuthModalOpen}
+				onClose={() => setIsAuthModalOpen(false)}
+			/>
 		</div>
 	);
 }

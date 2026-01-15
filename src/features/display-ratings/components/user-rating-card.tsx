@@ -4,10 +4,12 @@ import type { RatingWithRelations } from "../types";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getTimeAgo } from "~/lib/utils/datetime";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
 interface UserRatingCardProps {
 	rating: RatingWithRelations;
 	noIndent?: boolean;
+	isAuthenticated?: boolean;
 }
 
 function MarkdownContent({
@@ -49,9 +51,14 @@ function MarkdownContent({
 	);
 }
 
-export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
+export function UserRatingCard({
+	rating,
+	noIndent,
+	isAuthenticated = false,
+}: UserRatingCardProps) {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 	const maxContentLength = 256;
 	const plainText = rating.content;
 	const shouldTruncate = plainText.length > maxContentLength;
@@ -245,19 +252,38 @@ export function UserRatingCard({ rating, noIndent }: UserRatingCardProps) {
 			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
 				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
-					{parsedTags.map((tag: string) => (
-						<Link
-							key={tag}
-							to="/"
-							search={{ tag }}
-							onClick={(e) => e.stopPropagation()}
-							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-						>
-							#{tag}
-						</Link>
-					))}
+					{parsedTags.map((tag: string) =>
+						isAuthenticated ? (
+							<Link
+								key={tag}
+								to="/"
+								search={{ tag }}
+								onClick={(e) => e.stopPropagation()}
+								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+							>
+								#{tag}
+							</Link>
+						) : (
+							<button
+								key={tag}
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									setIsAuthModalOpen(true);
+								}}
+								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+							>
+								#{tag}
+							</button>
+						),
+					)}
 				</div>
 			)}
+			{/* Auth Modal */}
+			<AuthModal
+				isOpen={isAuthModalOpen}
+				onClose={() => setIsAuthModalOpen(false)}
+			/>
 		</div>
 	);
 }

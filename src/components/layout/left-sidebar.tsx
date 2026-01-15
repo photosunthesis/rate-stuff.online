@@ -25,7 +25,14 @@ const getHeader = () => {
 		"Your opinion, now numbered.",
 	];
 
-	return headers[Math.floor(Math.random() * headers.length)];
+	const now = new Date();
+	const hourSeed =
+		now.getUTCFullYear() +
+		now.getUTCMonth() +
+		now.getUTCDate() +
+		now.getUTCHours();
+
+	return headers[hourSeed % headers.length];
 };
 
 export function LeftSidebar({ user }: { user?: PublicUser }) {
@@ -63,7 +70,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<AppLogo size={30} />
 					{!isAuthenticated && (
 						<h1
-							className="text-xl font-semibold text-white"
+							className="text-lg font-semibold text-white"
 							suppressHydrationWarning
 						>
 							{header}

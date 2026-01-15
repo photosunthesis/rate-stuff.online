@@ -103,7 +103,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 							}
 						>
 							<div className="px-4 -my-1">
-								<RatingCard rating={rating} />
+								<RatingCard rating={rating} isAuthenticated={isAuthenticated} />
 							</div>
 						</div>
 					);

@@ -6,6 +6,7 @@ import {
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
 import type { PublicUser } from "~/features/auth/types";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
 export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
@@ -24,13 +25,14 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	}, []);
 
 	const [isRoot, setIsRoot] = useState(false);
+	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 		setIsRoot(window.location.pathname === "/");
 	}, []);
 
-	if (!isAuthenticated || !isRoot) return null;
+	if (!isRoot) return null;
 
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">
@@ -75,20 +77,37 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 								className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded`}
 							/>
 						))
-					: (recentTags ?? []).map((tag) => (
-							<Link
-								key={tag.name}
-								to="/"
-								search={{ tag: tag.name }}
-								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-							>
-								#{tag.name}
-							</Link>
-						))}
+					: (recentTags ?? []).map((tag) =>
+							isAuthenticated ? (
+								<Link
+									key={tag.name}
+									to="/"
+									search={{ tag: tag.name }}
+									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+								>
+									#{tag.name}
+								</Link>
+							) : (
+								<button
+									key={tag.name}
+									type="button"
+									onClick={() => setIsAuthModalOpen(true)}
+									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+								>
+									#{tag.name}
+								</button>
+							),
+						)}
 			</div>
 
 			{/* Divider matching the app's section dividers */}
 			<div className="border-t border-neutral-800" />
+
+			{/* Auth Modal */}
+			<AuthModal
+				isOpen={isAuthModalOpen}
+				onClose={() => setIsAuthModalOpen(false)}
+			/>
 		</div>
 	);
 }

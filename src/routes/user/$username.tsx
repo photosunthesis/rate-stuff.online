@@ -190,7 +190,12 @@ function UserRatingsList({
 			<div className="-mx-4 divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
 					<div key={rating.id} className="px-4">
-						<UserRatingCard key={rating.id} rating={rating} noIndent />
+						<UserRatingCard
+							key={rating.id}
+							rating={rating}
+							noIndent
+							isAuthenticated={isAuthenticated}
+						/>
 					</div>
 				))}
 			</div>

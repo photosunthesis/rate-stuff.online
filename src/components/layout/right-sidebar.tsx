@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { TrendingUp } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/display-ratings/queries";
 import type { PublicUser } from "~/features/auth/types";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
 export function RightSidebar({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
@@ -23,6 +24,8 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 		const widths = ["w-8", "w-10", "w-12", "w-16", "w-20"];
 		return Array.from({ length: 6 }, (_, i) => widths[i % widths.length]);
 	}, []);
+
+	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
 	return (
 		<aside className="w-80 px-4 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
@@ -98,16 +101,27 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-md`}
 											/>
 										))
-									: (recentTags ?? []).map((tag) => (
-											<Link
-												key={tag.name}
-												to="/"
-												search={{ tag: tag.name }}
-												className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-											>
-												#{tag.name}
-											</Link>
-										))}
+									: (recentTags ?? []).map((tag) =>
+											isAuthenticated ? (
+												<Link
+													key={tag.name}
+													to="/"
+													search={{ tag: tag.name }}
+													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+												>
+													#{tag.name}
+												</Link>
+											) : (
+												<button
+													key={tag.name}
+													type="button"
+													onClick={() => setIsAuthModalOpen(true)}
+													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+												>
+													#{tag.name}
+												</button>
+											),
+										)}
 							</div>
 						</section>
 					</>
@@ -116,6 +130,12 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 				{/* Footer Links */}
 				<Footer />
 			</div>
+
+			{/* Auth Modal */}
+			<AuthModal
+				isOpen={isAuthModalOpen}
+				onClose={() => setIsAuthModalOpen(false)}
+			/>
 		</aside>
 	);
 }

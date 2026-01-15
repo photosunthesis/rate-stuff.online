@@ -17,6 +17,7 @@ import { getTimeAgo } from "~/lib/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { Button } from "~/components/ui/button";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
 function excerptFromMarkdown(md: string, max = 160) {
 	if (!md) return "";
@@ -423,21 +424,46 @@ function ImagesGallery({
 	);
 }
 
-function TagsList({ tags }: { tags?: string[] }) {
+function TagsList({
+	tags,
+	isAuthenticated = false,
+}: {
+	tags?: string[];
+	isAuthenticated?: boolean;
+}) {
+	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
 	if (!tags || tags.length === 0) return null;
 	return (
-		<div className="flex flex-wrap gap-2 mb-3 ml-11">
-			{tags.map((tag: string) => (
-				<Link
-					key={tag}
-					to="/"
-					search={{ tag }}
-					className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-				>
-					#{tag}
-				</Link>
-			))}
-		</div>
+		<>
+			<div className="flex flex-wrap gap-2 mb-3 ml-11">
+				{tags.map((tag: string) =>
+					isAuthenticated ? (
+						<Link
+							key={tag}
+							to="/"
+							search={{ tag }}
+							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+						>
+							#{tag}
+						</Link>
+					) : (
+						<button
+							key={tag}
+							type="button"
+							onClick={() => setIsAuthModalOpen(true)}
+							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+						>
+							#{tag}
+						</button>
+					),
+				)}
+			</div>
+			<AuthModal
+				isOpen={isAuthModalOpen}
+				onClose={() => setIsAuthModalOpen(false)}
+			/>
+		</>
 	);
 }
 
@@ -474,7 +500,7 @@ function RouteComponent() {
 	return (
 		<>
 			<MainLayout user={currentUser}>
-				<div className="p-4">
+				<div className="px-4 py-2.5">
 					<Button
 						size="sm"
 						variant="secondary"
@@ -494,7 +520,7 @@ function RouteComponent() {
 						onImageClick={handleImageClick}
 					/>
 					<ContentSection rating={ratingTyped} />
-					<TagsList tags={ratingTyped.tags} />
+					<TagsList tags={ratingTyped.tags} isAuthenticated={!!currentUser} />
 				</div>
 			</MainLayout>
 

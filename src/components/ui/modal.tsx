@@ -155,7 +155,7 @@ export function ModalHeader({
 }: ModalHeaderProps) {
 	return (
 		<div
-			className={`flex flex-col space-y-1.5 text-center sm:text-left px-6 py-4 border-b border-neutral-800 ${className}`}
+			className={`flex flex-col space-y-1.5 text-center sm:text-left p-6 border-b border-neutral-800 ${className}`}
 			{...props}
 		>
 			{children}
