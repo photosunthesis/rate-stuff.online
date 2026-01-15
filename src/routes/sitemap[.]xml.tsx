@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { db } from "~/lib/db";
+import { db } from "~/db";
 import { stuff, users, ratings } from "~/db/schema";
 import { isNull, desc, sql } from "drizzle-orm";
 
