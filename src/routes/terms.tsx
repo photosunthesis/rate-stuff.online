@@ -68,24 +68,77 @@ function RouteComponent() {
 			<h2 className="text-lg font-medium mt-4 mb-2">Accounts &amp; Content</h2>
 			<p className="mb-2">
 				You may create an account to post reviews, ratings, and images. You are
-				responsible for anything you post. You retain ownership of your content
-				but by posting it you grant the site a license to display and transmit
-				it as part of the service.
+				solely responsible for anything you post. You represent that you own or
+				have the necessary rights to share the content you post, including any
+				images. We do not claim ownership of your content, but by posting it you
+				grant the site a license to display and transmit it as part of the
+				service.
 			</p>
 
-			<h2 className="text-lg font-medium mt-4 mb-2">Prohibited conduct</h2>
+			<h2 className="text-lg font-medium mt-4 mb-2">Prohibited Conduct</h2>
+			<p className="mb-4">You agree not to use the service to:</p>
+			<ul className="list-disc pl-6 mb-4 space-y-1">
+				<li>Post illegal, infringing, defamatory, or abusive content.</li>
+				<li>Harass, threaten, or intimidate other users.</li>
+				<li>Spam, phish, or distribute malware.</li>
+				<li>
+					Attempt to bypass security measures or reverse engineer the site.
+				</li>
+			</ul>
 			<p className="mb-4">
-				Do not post illegal, infringing, or abusive content. The site may remove
-				content or restrict accounts that violate these terms.
+				We reserve the right to remove any content or terminate any account at
+				our sole discretion, without notice or liability, for violating these
+				terms or for any other reason.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">DMCA & Copyright Policy</h2>
+			<p className="mb-4">
+				We respect the intellectual property rights of others. If you believe
+				your copyright has been infringed, please notify our designated agent at{" "}
+				<a
+					className="text-emerald-400 underline"
+					href="mailto:hello@rate-stuff.online"
+				>
+					hello@rate-stuff.online
+				</a>
+				.
+			</p>
+			<p className="mb-4">
+				Your notice must include: (a) a description of the copyrighted work; (b)
+				the URL where the infringing material is located; and (c) your contact
+				information. We will respond to valid notices by removing the infringing
+				content.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Indemnification</h2>
+			<p className="mb-4">
+				You agree to indemnify and hold harmless Rate Stuff Online, its
+				maintainers, and affiliates from any claims, damages, liabilities, and
+				expenses (including legal fees) arising out of your use of the service
+				or your violation of these terms.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">
-				Disclaimer &amp; liability
+				Disclaimer, Liability & Copyright
 			</h2>
 			<p className="mb-4">
-				This site is provided for informational and entertainment purposes. To
-				the fullest extent permitted by law, we disclaim all warranties and will
-				not be liable for damages arising from use of the service.{" "}
+				This site is provided for informational and entertainment purposes. We
+				are not responsible for any user-generated content, including images,
+				text, or other media. The user who posted the content is solely liable
+				for any copyright infringement or other legal issues arising from it.
+			</p>
+			<p className="mb-4">
+				To the fullest extent permitted by law, we disclaim all warranties and
+				will not be liable for damages arising from use of the service. We
+				reserve the right to remove any content alleged to be infringing without
+				prior notice.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Governing Law</h2>
+			<p className="mb-4">
+				These terms are governed by the laws of the Republic of the Philippines,
+				without regard to its conflict of law principles. Any disputes shall be
+				resolved in the courts located in that jurisdiction.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Changes</h2>
@@ -107,7 +160,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-sm text-neutral-500">
-				Last updated: January 15, 2026
+				Last updated: January 16, 2026
 			</div>
 		</main>
 	);

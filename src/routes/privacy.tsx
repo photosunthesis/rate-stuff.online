@@ -63,8 +63,45 @@ function RouteComponent() {
 				<li>Account information (email, username).</li>
 				<li>Profile details you choose to provide.</li>
 				<li>Ratings, reviews, and images you upload.</li>
-				<li>Log data and technical information for security and debugging.</li>
+				<li>
+					Technical data (IP address, browser type) via our logs and error
+					tracking services.
+				</li>
 			</ul>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Your Rights</h2>
+			<p className="mb-2">
+				Depending on your location (e.g., GDPR, CCPA), you may have specific
+				rights regarding your data:
+			</p>
+			<ul className="list-disc pl-6 mb-4 space-y-1">
+				<li>
+					<strong>Access:</strong> Request a copy of the personal data we hold
+					about you.
+				</li>
+				<li>
+					<strong>Correction:</strong> Update inaccurate or incomplete data via
+					your profile settings.
+				</li>
+				<li>
+					<strong>Erasure:</strong> Request deletion of your account and
+					associated data ("Right to be Forgotten").
+				</li>
+				<li>
+					<strong>Portability:</strong> Request your data in a machine-readable
+					format.
+				</li>
+			</ul>
+			<p className="mb-4">
+				To exercise these rights, please email us at{" "}
+				<a
+					className="text-emerald-400 underline"
+					href="mailto:hello@rate-stuff.online"
+				>
+					hello@rate-stuff.online
+				</a>
+				.
+			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">How we use information</h2>
 			<p className="mb-4">
@@ -75,17 +112,39 @@ function RouteComponent() {
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Content ownership</h2>
 			<p className="mb-4">
-				You keep ownership of any content you post. By uploading content you
-				grant the site a non-exclusive license to host and display it as part of
-				the service.
+				You keep ownership of any content you post and are responsible for
+				ensuring you have the right to share it. By uploading content you grant
+				the site a non-exclusive license to host, display, and transmit it as
+				part of the service.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">
 				Sharing &amp; third parties
 			</h2>
 			<p className="mb-4">
-				We do not sell personal data. We may share data with service providers
-				for hosting, email, or analytics — only as needed to operate the site.
+				We do not sell personal data. We share data only with trusted service
+				providers necessary to operate the site:
+			</p>
+			<ul className="list-disc pl-6 mb-4 space-y-1">
+				<li>
+					<strong>Cloudflare:</strong> For hosting, security, and global content
+					delivery.
+				</li>
+				<li>
+					<strong>Umami:</strong> For privacy-focused, anonymous analytics (no
+					tracking cookies).
+				</li>
+				<li>
+					<strong>Bugsink:</strong> For error tracking and debugging (may
+					collect technical metadata).
+				</li>
+			</ul>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Children&#39;s Privacy</h2>
+			<p className="mb-4">
+				Our service is not intended for children under the age of 13. We do not
+				knowingly collect personal data from children. If we become aware that a
+				child has provided us with personal data, we will delete it.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Security</h2>
@@ -114,7 +173,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-sm text-neutral-500">
-				Last updated: January 15, 2026
+				Last updated: January 16, 2026
 			</div>
 		</main>
 	);
