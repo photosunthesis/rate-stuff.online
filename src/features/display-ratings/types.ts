@@ -18,6 +18,7 @@ export type RatingWithRelations = typeof ratings.$inferSelect & {
 		image: string | null;
 	} | null;
 	stuff: typeof stuff.$inferSelect | null;
+	userVote: "up" | "down" | null;
 };
 
 export const createRatingSchema = z

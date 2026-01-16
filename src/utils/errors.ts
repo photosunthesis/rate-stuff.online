@@ -1,6 +1,6 @@
-export function extractValidationErrors(
+export const extractValidationErrors = (
 	payload: unknown,
-): Record<string, string> {
+): Record<string, string> => {
 	if (!payload || typeof payload !== "object" || Array.isArray(payload))
 		return {};
 	const obj = payload as Record<string, unknown>;
@@ -10,12 +10,14 @@ export function extractValidationErrors(
 	const c = candidate as Record<string, unknown>;
 	const isStringMap = Object.values(c).every((v) => typeof v === "string");
 	return isStringMap ? (c as Record<string, string>) : {};
-}
+};
 
-export function normalizeError(err: unknown): {
+export const normalizeError = (
+	err: unknown,
+): {
 	errorMessage?: string;
 	errors?: Record<string, string>;
-} {
+} => {
 	if (!err) return {};
 	if (err instanceof Error) {
 		const msg = err.message ?? "";
@@ -51,11 +53,11 @@ export function normalizeError(err: unknown): {
 		};
 	}
 	return { errorMessage: String(err) };
-}
+};
 
-export function getErrorMessage(
+export const getErrorMessage = (
 	err: string | Error | null | undefined,
-): string {
+): string => {
 	if (!err) return "";
 	if (typeof err === "string") return err;
 	try {
@@ -65,4 +67,4 @@ export function getErrorMessage(
 	} catch {
 		return err.message;
 	}
-}
+};

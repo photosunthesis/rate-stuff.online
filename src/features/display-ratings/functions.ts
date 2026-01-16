@@ -14,6 +14,8 @@ import {
 } from "~/features/rate-limit/middleware";
 import { getUserByUsername } from "~/features/auth/service";
 import { rateLimitKeys } from "../rate-limit/middleware";
+import { getAuth } from "~/auth/auth.server";
+import { getRequest } from "@tanstack/react-start/server";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -26,6 +28,17 @@ function parseCursor(cursor?: string) {
 
 function makeCursor(createdAt: Date | string | number, id: string) {
 	return `${new Date(createdAt).toISOString()}|${id}`;
+}
+
+async function getUserId() {
+	try {
+		const session = await getAuth().api.getSession({
+			headers: getRequest().headers,
+		});
+		return session?.user?.id;
+	} catch {
+		return undefined;
+	}
 }
 
 export const getUserRatingsFn = createServerFn({ method: "GET" })
@@ -46,7 +59,13 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	.handler(async ({ data, context }) => {
 		try {
 			const cursor = parseCursor(data.cursor);
-			const ratings = await getUserRatings(context.user.id, data.limit, cursor);
+			// For getUserRatingsFn which is "my ratings", target user is same as viewer
+			const ratings = await getUserRatings(
+				context.user.id,
+				data.limit,
+				cursor,
+				context.user.id,
+			);
 
 			let nextCursor: string | undefined;
 
@@ -76,7 +95,8 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 	.inputValidator(z.object({ tag: z.string().optional() }))
 	.handler(async ({ data }) => {
 		try {
-			const ratings = await getFeedRatings(12, undefined, data.tag);
+			const userId = await getUserId();
+			const ratings = await getFeedRatings(12, undefined, data.tag, userId);
 
 			return { success: true, data: ratings, nextCursor: undefined };
 		} catch (error) {
@@ -103,10 +123,15 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 			tag: z.string().optional(),
 		}),
 	)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
 			const cursor = parseCursor(data.cursor);
-			const ratings = await getFeedRatings(data.limit, cursor, data.tag);
+			const ratings = await getFeedRatings(
+				data.limit,
+				cursor,
+				data.tag,
+				context.user.id,
+			);
 			let nextCursor: string | undefined;
 
 			if (ratings.length === data.limit) {
@@ -149,7 +174,10 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 			// client passes a capped `limit` based on auth state.
 			const limit = data.limit ?? 10;
 			const cursor = parseCursor(data.cursor);
-			const ratings = await getUserRatings(user.id, limit, cursor);
+
+			const viewerId = await getUserId();
+
+			const ratings = await getUserRatings(user.id, limit, cursor, viewerId);
 
 			let nextCursor: string | undefined;
 			if (ratings.length === limit) {
@@ -196,7 +224,8 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
-			const rating = await getRatingById(data.id);
+			const userId = await getUserId();
+			const rating = await getRatingById(data.id, userId);
 
 			if (!rating) throw new Error("Not found");
 

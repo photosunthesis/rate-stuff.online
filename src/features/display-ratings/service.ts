@@ -1,4 +1,11 @@
-import { ratings, ratingsToTags, tags, stuff, users } from "~/db/schema/";
+import {
+	ratings,
+	ratingsToTags,
+	tags,
+	stuff,
+	users,
+	ratingVotes,
+} from "~/db/schema/";
 import { and, isNull, desc, lt, eq, gte, sql, or, exists } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { RatingWithRelations } from "./types";
@@ -14,16 +21,18 @@ function transformToGroupedRating(row: {
 		image: string | null;
 	} | null;
 	tags: string[];
+	userVote: "up" | "down" | null;
 }): RatingWithRelations {
 	return {
 		...row.rating,
 		stuff: row.stuff,
 		user: row.user,
 		tags: row.tags,
+		userVote: row.userVote,
 	};
 }
 
-function getRatingsSelection() {
+function getRatingsSelection(viewerId?: string) {
 	return {
 		rating: ratings,
 		stuff: stuff,
@@ -33,11 +42,14 @@ function getRatingsSelection() {
 			username: users.username,
 			image: users.image,
 		},
-
-		tags: sql<string[]>`coalesce(
-      json_agg(${tags.name}) filter (where ${tags.name} is not null), 
-      '[]'
-    )`,
+		tags: sql<
+			string[]
+		>`coalesce(json_agg(${tags.name}) filter (where ${tags.name} is not null), '[]')`,
+		userVote: viewerId
+			? sql<
+					"up" | "down" | null
+				>`(select ${ratingVotes.type} from ${ratingVotes} where ${ratingVotes.ratingId} = ${ratings.id} and ${ratingVotes.userId} = ${viewerId})`
+			: sql<null>`null`,
 	};
 }
 
@@ -46,6 +58,7 @@ export const getUserRatings = createServerOnlyFn(
 		userId: string,
 		limit = 10,
 		cursor?: { createdAt: Date; id: string },
+		viewerId?: string,
 	) => {
 		const cursorFilter = cursor
 			? or(
@@ -60,7 +73,7 @@ export const getUserRatings = createServerOnlyFn(
 		const db = getDatabase();
 
 		const results = await db
-			.select(getRatingsSelection())
+			.select(getRatingsSelection(viewerId))
 			.from(ratings)
 			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
 			.leftJoin(users, eq(ratings.userId, users.id))
@@ -86,6 +99,7 @@ export const getFeedRatings = createServerOnlyFn(
 		limit = 10,
 		cursor?: { createdAt: Date; id: string },
 		filterTag?: string,
+		viewerId?: string,
 	) => {
 		const cursorFilter = cursor
 			? or(
@@ -115,7 +129,7 @@ export const getFeedRatings = createServerOnlyFn(
 			: undefined;
 
 		const results = await db
-			.select(getRatingsSelection())
+			.select(getRatingsSelection(viewerId))
 			.from(ratings)
 			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
 			.leftJoin(users, eq(ratings.userId, users.id))
@@ -130,23 +144,25 @@ export const getFeedRatings = createServerOnlyFn(
 	},
 );
 
-export const getRatingById = createServerOnlyFn(async (id: string) => {
-	const db = getDatabase();
+export const getRatingById = createServerOnlyFn(
+	async (id: string, viewerId?: string) => {
+		const db = getDatabase();
 
-	const results = await db
-		.select(getRatingsSelection())
-		.from(ratings)
-		.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
-		.leftJoin(users, eq(ratings.userId, users.id))
-		.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
-		.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
-		.where(eq(ratings.id, id))
-		.groupBy(ratings.id, stuff.id, users.id)
-		.limit(1);
+		const results = await db
+			.select(getRatingsSelection(viewerId))
+			.from(ratings)
+			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
+			.leftJoin(users, eq(ratings.userId, users.id))
+			.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
+			.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
+			.where(eq(ratings.id, id))
+			.groupBy(ratings.id, stuff.id, users.id)
+			.limit(1);
 
-	const row = results[0];
-	return row ? transformToGroupedRating(row) : null;
-});
+		const row = results[0];
+		return row ? transformToGroupedRating(row) : null;
+	},
+);
 
 export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
 	const db = getDatabase();

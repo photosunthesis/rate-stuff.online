@@ -1,0 +1,1 @@
+ALTER TABLE "rating_votes" ADD CONSTRAINT "rating_votes_rating_id_user_id_pk" PRIMARY KEY("rating_id","user_id");

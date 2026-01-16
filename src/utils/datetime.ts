@@ -1,4 +1,4 @@
-export function getTimeAgo(date: Date | number | string): string {
+export const getTimeAgo = (date: Date | number | string): string => {
 	const now = new Date();
 	let dateObj: Date;
 
@@ -54,4 +54,4 @@ export function getTimeAgo(date: Date | number | string): string {
 	}
 
 	return dateObj.toLocaleDateString();
-}
+};

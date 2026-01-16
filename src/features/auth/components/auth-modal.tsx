@@ -18,8 +18,8 @@ interface AuthModalProps {
 export function AuthModal({
 	isOpen,
 	onClose,
-	title = "Curious to see more?",
-	description = "Sign in or create an account to start exploring opinions on literally anything.",
+	title = "It's better inside",
+	description = "Join the swarm. We have opinions, ratings, and slightly better vibes.",
 }: AuthModalProps) {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>

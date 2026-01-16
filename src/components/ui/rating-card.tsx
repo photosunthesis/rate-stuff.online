@@ -2,11 +2,14 @@ import { useState, memo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../../features/display-ratings/types";
 import { Avatar } from "~/components/ui/avatar";
+import { ArrowBigUp, ArrowBigDown } from "lucide-react";
+import { useVoteRating } from "~/features/vote-rating/queries";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
 import { getTimeAgo } from "~/utils/datetime";
+import { formatCompactNumber } from "~/utils/numbers";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -85,6 +88,34 @@ export const RatingCard = memo(function RatingCard({
 	}
 
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
+
+	const { mutate: vote } = useVoteRating();
+
+	const handleVote = (type: "up" | "down") => {
+		if (!isAuthenticated) {
+			setIsAuthModalOpen(true);
+			return;
+		}
+
+		// We rely on React Query invalidation for UI updates for simplicity and safety.
+
+		const currentVote = rating.userVote;
+		let newVote: "up" | "down" | "none" = type;
+
+		if (currentVote === type) {
+			newVote = "none";
+		}
+
+		vote({ ratingId: rating.id, vote: newVote });
+	};
+
+	const voteScore = rating.upvotesCount - rating.downvotesCount;
+	const voteColor =
+		rating.userVote === "up"
+			? "text-emerald-400"
+			: rating.userVote === "down"
+				? "text-neutral-200"
+				: "text-neutral-400";
 
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
@@ -320,7 +351,7 @@ export const RatingCard = memo(function RatingCard({
 
 			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
-				<div className={`flex flex-wrap gap-2 ${noIndent ? "" : "ml-11"}`}>
+				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) =>
 						isAuthenticated ? (
 							<Link
@@ -348,6 +379,33 @@ export const RatingCard = memo(function RatingCard({
 					)}
 				</div>
 			)}
+
+			{/* Votes */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: interaction mainly for stopping propagation */}
+			<div
+				className={`flex items-center gap-1.5 rounded-lg py-1 w-fit ${
+					noIndent ? "" : "ml-11"
+				}`}
+				onClick={(e) => e.stopPropagation()}
+				onKeyDown={(e) => e.stopPropagation()}
+			>
+				<VoteButton
+					type="up"
+					isActive={rating.userVote === "up"}
+					onClick={() => handleVote("up")}
+				/>
+				<span
+					className={`text-sm font-bold min-w-[1.5ch] text-center ${voteColor}`}
+				>
+					{formatCompactNumber(voteScore)}
+				</span>
+				<VoteButton
+					type="down"
+					isActive={rating.userVote === "down"}
+					onClick={() => handleVote("down")}
+				/>
+			</div>
+
 			{/* Auth Modal */}
 			<AuthModal
 				isOpen={isAuthModalOpen}
@@ -356,3 +414,38 @@ export const RatingCard = memo(function RatingCard({
 		</div>
 	);
 });
+
+interface VoteButtonProps {
+	type: "up" | "down";
+	isActive: boolean;
+	onClick: () => void;
+}
+
+function VoteButton({ type, isActive, onClick }: VoteButtonProps) {
+	const Icon = type === "up" ? ArrowBigUp : ArrowBigDown;
+	const activeColor = type === "up" ? "text-emerald-400" : "text-neutral-200";
+	const hoverColor =
+		type === "up"
+			? "group-hover:text-emerald-300"
+			: "group-hover:text-neutral-300";
+
+	return (
+		<button
+			type="button"
+			onClick={(e) => {
+				e.stopPropagation();
+				onClick();
+			}}
+			className="group flex items-center justify-center p-1 rounded hover:bg-neutral-700/50 transition-colors"
+		>
+			<Icon
+				className={`w-5 h-5 transition-colors ${
+					isActive
+						? `${activeColor} fill-current`
+						: `text-neutral-500 ${hoverColor}`
+				}`}
+				strokeWidth={1.5}
+			/>
+		</button>
+	);
+}

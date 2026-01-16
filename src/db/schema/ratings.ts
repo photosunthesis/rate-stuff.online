@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, real, timestamp, index } from "drizzle-orm/pg-core";
+import {
+	pgTable,
+	text,
+	real,
+	timestamp,
+	index,
+	primaryKey,
+} from "drizzle-orm/pg-core";
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
 import { users } from "./auth";
@@ -29,6 +36,8 @@ export const ratings = pgTable(
 			.notNull()
 			.defaultNow(),
 		deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
+		upvotesCount: real("upvotes_count").default(0).notNull(),
+		downvotesCount: real("downvotes_count").default(0).notNull(),
 	},
 	(table) => [
 		index("ratings_created_at_idx").on(table.createdAt),
@@ -51,4 +60,41 @@ export const ratingsRelations = relations(ratings, ({ one, many }) => ({
 		references: [stuff.id],
 	}),
 	tags: many(ratingsToTags),
+	votes: many(ratingVotes),
+}));
+
+export const ratingVotes = pgTable(
+	"rating_votes",
+	{
+		ratingId: text("rating_id")
+			.notNull()
+			.references(() => ratings.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		type: text("type", { enum: ["up", "down"] }).notNull(),
+		createdAt: timestamp("created_at", {
+			mode: "date",
+			withTimezone: true,
+		})
+			.notNull()
+			.defaultNow(),
+	},
+	(table) => [
+		// Composite primary key to ensure one vote per user per rating
+		index("rating_votes_rating_id_idx").on(table.ratingId),
+		index("rating_votes_user_id_idx").on(table.userId),
+		primaryKey({ columns: [table.ratingId, table.userId] }),
+	],
+);
+
+export const ratingVotesRelations = relations(ratingVotes, ({ one }) => ({
+	rating: one(ratings, {
+		fields: [ratingVotes.ratingId],
+		references: [ratings.id],
+	}),
+	user: one(users, {
+		fields: [ratingVotes.userId],
+		references: [users.id],
+	}),
 }));

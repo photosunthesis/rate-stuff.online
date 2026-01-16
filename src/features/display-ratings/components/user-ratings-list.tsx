@@ -84,7 +84,7 @@ export function UserRatingsList() {
 		<>
 			<div className="divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
-					<RatingCard key={rating.id} rating={rating} />
+					<RatingCard key={rating.id} rating={rating} isAuthenticated={true} />
 				))}
 			</div>
 
