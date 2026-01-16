@@ -168,7 +168,7 @@ function RouteComponent() {
 		<MainLayout user={currentUser}>
 			<StuffHeader stuff={safeStuff} />{" "}
 			<div className="-mx-4 border-t border-neutral-800" />{" "}
-			<StuffRatingsList slug={slug} />
+			<StuffRatingsList slug={slug} user={currentUser} />
 		</MainLayout>
 	);
 }

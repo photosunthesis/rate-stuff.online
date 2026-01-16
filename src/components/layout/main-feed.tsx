@@ -66,7 +66,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 						<div>
 							<h2 className="text-lg font-semibold text-white">
 								Ratings with the
-								<span className="inline-flex items-center px-1 py-0.2 bg-neutral-800/70 text-neutral-300 text-sm font-medium transition-colors rounded-md ml-1 font-sans">
+								<span className="inline-flex items-center px-1 py-0.2 bg-neutral-800/70 text-neutral-300 text-base font-medium transition-colors rounded-md ml-1 font-sans">
 									#{tag}
 								</span>{" "}
 								tag
