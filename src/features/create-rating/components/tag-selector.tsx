@@ -1,6 +1,12 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus, X } from "lucide-react";
-import { useTagSearch } from "~/features/create-rating/hooks";
+import { useDebounce } from "~/hooks/use-debounce";
+import { useTagSearchQuery } from "../queries";
+
+const useTagSearch = (query: string) => {
+	const debouncedQuery = useDebounce(query, 300);
+	return useTagSearchQuery(debouncedQuery);
+};
 
 interface TagSelectorProps {
 	selectedTags: string[];

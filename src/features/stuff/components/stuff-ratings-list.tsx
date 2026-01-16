@@ -1,18 +1,57 @@
-import { useStuffRatingsInfinite } from "../hooks";
 import { StuffRatingCard } from "./stuff-rating-card";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import type { StuffRating } from "../types";
 import type { PublicUser } from "~/features/auth/types";
+import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getPaginatedStuffRatingsFn } from "../functions";
 
-type Page = {
+type PageResult = {
 	success: boolean;
 	data?: StuffRating[];
 	nextCursor?: string;
 	error?: string;
 };
 
-const LIMIT = 10;
+const useStuffRatingsInfinite = (slug: string, limit = 10, enabled = true) => {
+	const getPaginatedStuffRatings = useServerFn(getPaginatedStuffRatingsFn);
+
+	return useInfiniteQuery<
+		PageResult,
+		Error,
+		{ ratings: StuffRating[] },
+		readonly ["stuff", string, "ratings", number],
+		string | undefined
+	>({
+		queryKey: ["stuff", slug, "ratings", limit],
+		queryFn: async ({ pageParam }: { pageParam?: string }) => {
+			const res = (await getPaginatedStuffRatings({
+				data: { slug, limit, cursor: pageParam },
+			})) as PageResult;
+
+			if (!res.success) throw new Error(res.error ?? "Failed to load ratings");
+
+			return res;
+		},
+		getNextPageParam: (lastPage) => {
+			if (!lastPage?.success) return undefined;
+			return lastPage.nextCursor;
+		},
+		initialPageParam: undefined,
+		staleTime: 1000 * 60, // 1 minute
+		gcTime: 1000 * 60 * 10,
+		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		enabled,
+		select: useCallback(
+			(data: InfiniteData<PageResult>) => ({
+				ratings: data.pages.flatMap((page) => page.data ?? []),
+			}),
+			[],
+		),
+	});
+};
 
 export function StuffRatingsList({
 	slug,
@@ -21,28 +60,17 @@ export function StuffRatingsList({
 	slug: string;
 	user?: PublicUser;
 }) {
-	// Default placeholders for the various query values so we can handle
-	// both authenticated (infinite) and guest (single page) flows uniformly.
-	let data: unknown | undefined;
-	let isLoading = false;
-	let error: unknown = null;
-	let fetchNextPage: (() => void) | undefined;
-	let hasNextPage = false;
-	let isFetchingNextPage = false;
-
-	// Consolidate to a single infinite query for both guest and authenticated users.
-	// The hook fetches the first page for everyone; we only trigger loading more
-	// pages when the user is authenticated (avoids extra guest pagination).
 	const isAuthenticated = user != null;
-	const ratingsQuery = useStuffRatingsInfinite(slug, LIMIT, true);
+	const {
+		data,
+		isLoading,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useStuffRatingsInfinite(slug, 10, true);
 
-	data = ratingsQuery.data;
-	isLoading = ratingsQuery.isLoading;
-	error = ratingsQuery.error ?? null;
-	fetchNextPage = ratingsQuery.fetchNextPage;
-	hasNextPage = !!ratingsQuery.hasNextPage;
-	isFetchingNextPage = ratingsQuery.isFetchingNextPage;
-
+	const allRatings = data?.ratings ?? [];
 	const observerTarget = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -76,7 +104,6 @@ export function StuffRatingsList({
 	const [loadingSeenOnce, setLoadingSeenOnce] = useState(false);
 
 	useEffect(() => {
-		// If a load starts, ensure the skeleton is visible
 		if (isLoading) {
 			setLoadingSeenOnce(true);
 			setShowSkeleton(true);
@@ -85,7 +112,6 @@ export function StuffRatingsList({
 	}, [isLoading]);
 
 	useEffect(() => {
-		// When data arrives (but only after we've observed a load), fade out the skeleton and then remove it
 		if (!isLoading && showSkeleton && loadingSeenOnce) {
 			setSkeletonFading(true);
 			const t = setTimeout(() => {
@@ -96,21 +122,17 @@ export function StuffRatingsList({
 		}
 	}, [isLoading, showSkeleton, loadingSeenOnce]);
 
-	// If we already have rating data (e.g. navigating back to the page), hide the skeleton immediately.
 	useEffect(() => {
-		const pagesObj = data as { pages?: Page[] } | undefined;
-		const ratingsPresent =
-			(pagesObj?.pages?.flatMap((p) => p.data ?? []) ?? []).length > 0;
+		const ratingsPresent = allRatings.length > 0;
 		if (ratingsPresent) {
-			// Immediately remove skeleton when real data is present (prevents stuck skeleton after navigation)
 			setShowSkeleton(false);
 			setSkeletonFading(false);
 		}
-		// If there's no data and a load is in progress, ensure skeleton is visible
+
 		if (!ratingsPresent && isLoading) {
 			setShowSkeleton(true);
 		}
-	}, [data, isLoading]);
+	}, [allRatings, isLoading]);
 
 	if (showSkeleton) {
 		return (
@@ -141,10 +163,6 @@ export function StuffRatingsList({
 		);
 	}
 
-	const pages = data as unknown as { pages?: Page[] } | undefined;
-	const allRatings = pages?.pages?.flatMap((p) => p.data ?? []) ?? [];
-
-	// If no ratings yet (or response empty) still render an empty state but don't crash
 	if (allRatings.length === 0 && !isFetchingNextPage) {
 		return (
 			<div className="text-center py-12">

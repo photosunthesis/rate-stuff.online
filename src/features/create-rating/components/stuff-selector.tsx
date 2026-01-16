@@ -1,6 +1,12 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus } from "lucide-react";
-import { useStuffSearch } from "~/features/create-rating/hooks";
+import { useDebounce } from "~/hooks/use-debounce";
+import { useStuffSearchQuery } from "../queries";
+
+const useStuffSearch = (query: string) => {
+	const debouncedQuery = useDebounce(query, 300);
+	return useStuffSearchQuery(debouncedQuery);
+};
 
 interface StuffSelectorProps {
 	value?: { id?: string; name: string };
