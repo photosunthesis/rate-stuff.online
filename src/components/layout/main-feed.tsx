@@ -1,4 +1,3 @@
-import { useNavigate } from "@tanstack/react-router";
 import { RatingCard } from "~/components/ui/rating-card";
 import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
@@ -6,7 +5,8 @@ import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import type { PublicUser } from "~/features/auth/types";
-import { Delete } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
 
 export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const isAuthenticated = user != null;
@@ -20,7 +20,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	} = useFeedRatings(10, isAuthenticated, tag);
 
 	const { ref, inView } = useInView();
-	const navigate = useNavigate();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (inView && hasNextPage && isAuthenticated) {
@@ -78,17 +78,15 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 							className="w-auto! inline-flex items-center px-3 py-1 text-sm"
 							onClick={(e) => {
 								e.stopPropagation();
-								navigate({ to: "/" });
+								router.history.back();
 							}}
 						>
-							<Delete className="mr-2 h-4 w-4 shrink-0" />
-							Clear
+							<ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
+							Back
 						</Button>
 					</div>
 				</div>
 			)}
-
-			{/* Create rating trigger moved to sidebar (desktop) and a floating action button on mobile */}
 
 			<div>
 				{ratings.map((rating, idx) => {
