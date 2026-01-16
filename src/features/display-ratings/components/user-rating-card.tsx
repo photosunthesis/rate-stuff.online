@@ -119,7 +119,7 @@ export function UserRatingCard({
 
 			{/* Rating */}
 			<h3
-				className={`text-xg md:text-2xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
+				className={`text-2xl font-semibold text-white mb-2 ${noIndent ? "" : "ml-11"}`}
 			>
 				{rating.score}/10
 			</h3>

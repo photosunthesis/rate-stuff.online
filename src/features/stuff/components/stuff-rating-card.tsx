@@ -126,7 +126,7 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 			</div>
 
 			{/* Rating */}
-			<h3 className={`text-xg md:text-2xl font-semibold text-white mb-2 `}>
+			<h3 className={`text-2xl font-semibold text-white mb-2 ml-11`}>
 				{rating.score}/10
 			</h3>
 
