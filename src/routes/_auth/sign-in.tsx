@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import authClient from "~/auth/auth.client";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { SignInForm } from "~/features/auth/components/sig-in-form";
+import { SignInForm } from "~/features/auth/components/sign-in-form";
 import { authQueryOptions } from "~/features/auth/queries";
 import { normalizeError } from "~/utils/errors";
 import { isEmail } from "~/utils/strings";
@@ -56,12 +56,14 @@ function RouteComponent() {
 		mutationFn: async (data: {
 			identifier: string;
 			password: string;
+			rememberMe: boolean;
 			redirectUrl?: string;
 		}) => {
 			if (isEmail(data.identifier)) {
 				const payload = {
 					email: data.identifier,
 					password: data.password,
+					rememberMe: data.rememberMe,
 					callbackURL: data.redirectUrl,
 				};
 
@@ -73,6 +75,7 @@ function RouteComponent() {
 				const payload = {
 					username: data.identifier,
 					password: data.password,
+					rememberMe: data.rememberMe,
 				};
 
 				await authClient.signIn.username(payload, {
@@ -86,12 +89,14 @@ function RouteComponent() {
 	const handleSubmit = async (data: {
 		identifier: string;
 		password: string;
+		rememberMe: boolean;
 	}) => {
 		if (isPending) return;
 
 		signInMutate({
 			identifier: data.identifier,
 			password: data.password,
+			rememberMe: data.rememberMe,
 			redirectUrl,
 		});
 	};

@@ -2,11 +2,16 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { FormError } from "~/components/ui/form-error";
 import { loginSchema } from "../types";
 
 interface SignInFormProps {
-	onSubmit: (data: { identifier: string; password: string }) => Promise<void>;
+	onSubmit: (data: {
+		identifier: string;
+		password: string;
+		rememberMe: boolean;
+	}) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
@@ -23,15 +28,10 @@ export function SignInForm({
 		defaultValues: {
 			identifier: "",
 			password: "",
+			rememberMe: false,
 		},
-		onSubmit: async ({ value }) => {
-			try {
-				await onSubmit(value);
-				setIsSuccess(true);
-			} catch {
-				// Error handled by parent
-			}
-		},
+		onSubmit: async ({ value }) =>
+			await onSubmit(value).then(() => setIsSuccess(true)),
 	});
 
 	const inferredFieldErrors: Record<string, string> = {};
@@ -131,6 +131,17 @@ export function SignInForm({
 									mergedValidationErrors.password
 								}
 								required
+							/>
+						)}
+					</form.Field>
+					<form.Field name="rememberMe">
+						{(field) => (
+							<Checkbox
+								label="Remember me"
+								name={field.name}
+								checked={field.state.value}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.checked)}
 							/>
 						)}
 					</form.Field>
