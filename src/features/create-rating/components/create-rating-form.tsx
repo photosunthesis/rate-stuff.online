@@ -1,15 +1,21 @@
 import { useForm } from "@tanstack/react-form";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense, useId } from "react";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
+import { Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { createRatingSchema } from "~/features/create-rating/types";
 import { StuffSelector } from "~/features/create-rating/components/stuff-selector";
 import { TagSelector } from "~/features/create-rating/components/tag-selector";
-import { CompactMarkdownEditor } from "~/features/create-rating/components/compact-markdown-editor";
 import { ImageField } from "~/features/create-rating/components/image-field";
 import { getErrorMessage } from "~/utils/errors";
 import type { z } from "zod";
+
+const CompactMarkdownEditor = lazy(() =>
+	import("~/features/create-rating/components/compact-markdown-editor").then(
+		(module) => ({ default: module.CompactMarkdownEditor }),
+	),
+);
 
 interface CreateRatingFormProps {
 	onSubmit: (
@@ -41,6 +47,7 @@ export function CreateRatingForm({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const scrollableRef = useRef<HTMLDivElement>(null);
+	const contentEditorId = useId();
 
 	const form = useForm({
 		defaultValues: {
@@ -204,16 +211,27 @@ export function CreateRatingForm({
 							}}
 						>
 							{(field) => (
-								<CompactMarkdownEditor
-									label="Your thoughts"
-									value={field.state.value}
-									onChange={(value) => field.handleChange(value)}
-									error={
-										field.state.meta.errors[0] || mergedValidationErrors.content
-									}
-									charLimit={5000}
-									placeholder="Elaborate on your rating..."
-								/>
+								<>
+									<label
+										htmlFor={contentEditorId}
+										className="block text-sm font-medium text-neutral-300 mb-2"
+									>
+										Your thoughts
+									</label>
+									<Suspense fallback={<CompactMarkdownEditorSkeleton />}>
+										<CompactMarkdownEditor
+											id={contentEditorId}
+											value={field.state.value}
+											onChange={(value) => field.handleChange(value)}
+											error={
+												field.state.meta.errors[0] ||
+												mergedValidationErrors.content
+											}
+											charLimit={5000}
+											placeholder="Elaborate on your rating..."
+										/>
+									</Suspense>
+								</>
 							)}
 						</form.Field>
 					</div>
@@ -265,5 +283,32 @@ export function CreateRatingForm({
 				</form.Subscribe>
 			</div>
 		</form>
+	);
+}
+
+function CompactMarkdownEditorSkeleton() {
+	return (
+		<div className="animate-pulse">
+			<div className="border border-neutral-800 rounded-xl overflow-hidden">
+				{/* Toolbar Skeleton */}
+				<div className="flex items-center gap-1 px-3 py-2 bg-neutral-800 border-b border-neutral-800">
+					<div className="p-1.5 text-neutral-600">
+						<Bold className="w-4 h-4" />
+					</div>
+					<div className="p-1.5 text-neutral-600">
+						<Italic className="w-4 h-4" />
+					</div>
+					<div className="p-1.5 text-neutral-600">
+						<Strikethrough className="w-4 h-4" />
+					</div>
+					<div className="p-1.5 text-neutral-600">
+						<Underline className="w-4 h-4" />
+					</div>
+				</div>
+
+				{/* Content Skeleton */}
+				<div className="h-[150px] bg-neutral-900 w-full" />
+			</div>
+		</div>
 	);
 }

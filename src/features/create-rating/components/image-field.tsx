@@ -1,6 +1,5 @@
 import { useRef, useId, useState } from "react";
 import { X, Upload } from "lucide-react";
-import imageCompression from "browser-image-compression";
 
 interface ImageFieldProps {
 	images: File[];
@@ -40,6 +39,9 @@ export function ImageField({
 			}
 
 			try {
+				const { default: imageCompression } = await import(
+					"browser-image-compression"
+				);
 				const compressed = await imageCompression(file, compressionOptions);
 				compressedFiles.push(compressed);
 			} catch {
