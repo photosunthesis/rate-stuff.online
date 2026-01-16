@@ -14,3 +14,4 @@ todos.json
 dev.db
 .dev.vars
 .ai/*
+.idea/*
