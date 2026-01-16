@@ -150,7 +150,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-1.5 text-neutral-500 hover:text-red-400 hover:bg-red-700/20 rounded-xl transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-xl transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-5 h-5" />
 								<span className="font-medium">Sign Out</span>
