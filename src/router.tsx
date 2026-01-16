@@ -38,9 +38,7 @@ export function getRouter() {
 
 	if (!router.isServer) {
 		Sentry.init({
-			dsn: import.meta.env.DEV
-				? ""
-				: "https://dbf8d6e74b9a4e619283189ef0224289@ratestuffonline.bugsink.com/1",
+			dsn: import.meta.env.VITE_SENTRY_DSN,
 			integrations: [],
 			tracesSampleRate: 0,
 		});

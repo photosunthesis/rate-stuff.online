@@ -107,9 +107,9 @@ function RootComponent() {
 	return (
 		<RootDocument>
 			<UmamiAnalytics
-				url={process.env.UMAMI_URL}
-				websiteId={process.env.UMAMI_ID}
-				debug={process.env.DEV === "true"}
+				url={import.meta.env.VITE_UMAMI_URL}
+				websiteId={import.meta.env.VITE_UMAMI_ID}
+				debug={import.meta.env.DEV}
 				lazyLoad={true}
 			/>
 			<Outlet />
