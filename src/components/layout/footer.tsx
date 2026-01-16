@@ -10,6 +10,9 @@ export function Footer() {
 				<Link to="/privacy" className="hover:underline">
 					Privacy Policy
 				</Link>
+				<a href="mailto:hello@rate-stuff.online" className="hover:underline">
+					Contact Us
+				</a>
 				<span>
 					<a
 						href="https://github.com/photosunthesis/rate-stuff.online"
