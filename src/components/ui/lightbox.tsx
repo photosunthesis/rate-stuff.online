@@ -25,7 +25,7 @@ function LightboxContent({ src, alt }: { src: string; alt?: string }) {
 				type="button"
 				aria-label="Close"
 				onClick={onClose}
-				className="absolute top-3 right-3 z-50 p-3 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm cursor-pointer"
+				className="absolute top-3 right-3 z-50 p-1.5 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm cursor-pointer"
 			>
 				<X size={24} />
 			</button>
@@ -51,7 +51,7 @@ export function Lightbox({ src, alt = "", onClose }: LightboxProps) {
 	// We render the Modal even if src is null, relying on isOpen to trigger entry/exit animations.
 	// We use displaySrc to ensure the image remains visible during the exit animation.
 	return (
-		<Modal isOpen={!!src} onClose={onClose} mobileVariant="bottom-sheet">
+		<Modal isOpen={!!src} onClose={onClose} mobileVariant="centered">
 			{displaySrc && <LightboxContent src={displaySrc} alt={alt} />}
 		</Modal>
 	);
