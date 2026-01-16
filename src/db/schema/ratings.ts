@@ -36,7 +36,7 @@ export const ratings = pgTable(
 			.notNull()
 			.defaultNow(),
 		deletedAt: timestamp("deleted_at", { mode: "date", withTimezone: true }),
-		upvotesCount: real("upvotes_count").default(0).notNull(),
+		upvotesCount: real("upvotes_count").default(1).notNull(),
 		downvotesCount: real("downvotes_count").default(0).notNull(),
 	},
 	(table) => [
