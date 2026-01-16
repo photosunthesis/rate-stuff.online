@@ -5,7 +5,7 @@ import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
 import { useEffect, useRef } from "react";
-import { getTimeAgo } from "~/lib/utils/datetime";
+import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
 import { userQueryOptions } from "~/features/auth/queries";
 

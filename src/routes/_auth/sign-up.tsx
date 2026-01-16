@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import authClient from "~/lib/auth.client";
+import authClient from "~/auth/auth.client";
 import {
 	markInviteCodeAsUsedFn,
 	validateInviteCodeFn,
@@ -11,7 +11,7 @@ import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignUpForm } from "~/features/auth/components/sign-up-form";
 import { authQueryOptions } from "~/features/auth/queries";
 import { registerSchema } from "~/features/auth/types";
-import { extractValidationErrors } from "~/lib/utils/errors";
+import { extractValidationErrors } from "~/utils/errors";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,

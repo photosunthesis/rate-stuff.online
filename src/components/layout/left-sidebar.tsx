@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/confirm-modal";
-import authClient from "~/lib/auth.client";
+import authClient from "~/auth/auth.client";
 import type { PublicUser } from "~/features/auth/types";
 
 const getHeader = () => {

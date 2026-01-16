@@ -8,7 +8,7 @@ import { StuffSelector } from "~/features/create-rating/components/stuff-selecto
 import { TagSelector } from "~/features/create-rating/components/tag-selector";
 import { CompactMarkdownEditor } from "~/features/create-rating/components/compact-markdown-editor";
 import { ImageField } from "~/features/create-rating/components/image-field";
-import { getErrorMessage } from "~/lib/utils/errors";
+import { getErrorMessage } from "~/utils/errors";
 import type { z } from "zod";
 
 interface CreateRatingFormProps {

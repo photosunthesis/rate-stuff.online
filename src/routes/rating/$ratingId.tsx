@@ -13,7 +13,7 @@ import { ratingQueryOptions } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
-import { getTimeAgo } from "~/lib/utils/datetime";
+import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { Button } from "~/components/ui/button";

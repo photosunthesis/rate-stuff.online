@@ -1,7 +1,7 @@
 import { users, ratings, inviteCodes } from "~/db/schema/";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { uploadFile } from "~/features/file-storage/service";
-import { numberWithCommas } from "~/lib/utils/numbers";
+import { numberWithCommas } from "~/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { getDatabase } from "~/db";

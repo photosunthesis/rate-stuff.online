@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCreateRatingMutation, useUploadImageMutation } from "./queries";
 import { useStuffSearchQuery, useTagSearchQuery } from "./queries";
-import { extractValidationErrors, normalizeError } from "~/lib/utils/errors";
+import { extractValidationErrors, normalizeError } from "~/utils/errors";
 import type { createRatingSchema } from "./types";
 import type { z } from "zod";
 

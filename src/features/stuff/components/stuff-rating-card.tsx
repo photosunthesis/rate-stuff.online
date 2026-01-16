@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Avatar } from "~/components/ui/avatar";
-import { getTimeAgo } from "~/lib/utils/datetime";
+import { getTimeAgo } from "~/utils/datetime";
 import type { StuffRating } from "../types";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
