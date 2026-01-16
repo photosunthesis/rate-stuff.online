@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { RatingCard } from "~/features/display-ratings/components/rating-card";
+import { RatingCard } from "~/components/ui/rating-card";
 import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { useFeedRatings } from "~/features/display-ratings/queries";

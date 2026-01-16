@@ -1,24 +1,27 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import type { RatingWithRelations } from "../../features/display-ratings/types";
+import { Avatar } from "~/components/ui/avatar";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Avatar } from "~/components/ui/avatar";
-import { getTimeAgo } from "~/utils/datetime";
-import type { StuffRating } from "../types";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
-interface Props {
-	rating: StuffRating;
+import { getTimeAgo } from "~/utils/datetime";
+
+interface RatingCardProps {
+	rating: RatingWithRelations;
+	hideAvatar?: boolean;
+	noIndent?: boolean;
 	isAuthenticated?: boolean;
+	variant?: "default" | "userProfile";
 }
 
-function MarkdownContent({
-	content,
-	inlineParagraphs = false,
-}: {
+interface MarkdownContentProps {
 	content: string;
 	inlineParagraphs?: boolean;
-}) {
+}
+
+function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	const safe = content.replace(/<[^>]*>/g, "");
 
 	return (
@@ -51,7 +54,13 @@ function MarkdownContent({
 	);
 }
 
-export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
+export function RatingCard({
+	rating,
+	hideAvatar,
+	noIndent,
+	isAuthenticated = false,
+	variant = "default",
+}: RatingCardProps) {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -80,7 +89,11 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className="block cursor-pointer p-4"
+			className={`block cursor-pointer ${
+				variant === "userProfile"
+					? "hover:bg-neutral-800/50 transition-colors px-5 pt-3 pb-2"
+					: "p-4"
+			}`}
 			role="link"
 			tabIndex={0}
 			onClick={() =>
@@ -98,40 +111,86 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 				}
 			}}
 		>
-			<div className="flex items-center gap-3">
-				<Avatar src={image} alt={displayText} size="sm" className="shrink-0" />
-				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-1 flex-wrap text-sm">
-						<Link
-							to="/user/$username"
-							params={{ username: usernameHandle }}
-							className="font-medium text-white hover:underline"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{displayText}
-						</Link>
-						<span className="text-neutral-500">rated</span>
+			{/* Header */}
+			{variant === "default" ? (
+				<div className="flex items-center gap-3">
+					{!hideAvatar && (
+						<Avatar
+							src={image ?? null}
+							alt={displayText}
+							size="sm"
+							className="shrink-0"
+						/>
+					)}
+					<div className="flex-1 min-w-0">
+						<div className="flex items-center gap-1 flex-wrap text-sm">
+							{rating.user ? (
+								<Link
+									to="/user/$username"
+									params={{ username: usernameHandle }}
+									className="font-medium text-white hover:underline"
+									onClick={(e) => e.stopPropagation()}
+								>
+									{displayText}
+								</Link>
+							) : (
+								<span className="font-medium text-neutral-400">
+									{displayText}
+								</span>
+							)}
+							<span className="text-neutral-500">rated</span>
+							{rating.stuff ? (
+								<Link
+									to="/stuff/$stuffSlug"
+									params={{ stuffSlug: rating.stuff.slug }}
+									className="text-white hover:underline font-semibold"
+									onClick={(e) => e.stopPropagation()}
+								>
+									{rating.stuff.name}
+								</Link>
+							) : (
+								<span className="text-neutral-400 font-semibold">
+									Unknown Item
+								</span>
+							)}
+							<span className="text-neutral-500">•</span>
+							<span className="text-neutral-500">{timeAgo}</span>
+						</div>
+					</div>
+				</div>
+			) : (
+				// User Profile Header
+				<div className="flex items-center gap-1 text-sm text-neutral-500 mb-2">
+					<span className="text-neutral-400">A rating of</span>
+					{rating.stuff ? (
 						<Link
 							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff?.slug ?? "" }}
+							params={{ stuffSlug: rating.stuff.slug }}
 							className="text-white hover:underline font-semibold"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{rating.stuff?.name ?? ""}
+							{rating.stuff.name}
 						</Link>
-						<span className="text-neutral-500">•</span>
-						<span className="text-neutral-500">{timeAgo}</span>
-					</div>
+					) : (
+						<span className="text-neutral-400 font-semibold">Unknown Item</span>
+					)}
+					<span>•</span>
+					<span>{timeAgo}</span>
 				</div>
-			</div>
+			)}
 
 			{/* Rating */}
-			<h3 className={`text-2xl font-semibold text-white mb-2 ml-11`}>
+			<h3
+				className={`text-2xl font-semibold text-white mb-2 ${
+					noIndent ? "" : "ml-11"
+				}`}
+			>
 				{rating.score}/10
 			</h3>
 
+			{/* Images */}
 			{parsedImages && parsedImages.length > 0 && (
-				<div className="ml-11 mb-3">
+				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 					{parsedImages.length === 1 ? (
 						<img
 							src={parsedImages[0]}
@@ -159,6 +218,7 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 						</div>
 					) : parsedImages.length === 3 ? (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+							{/* Left: large image spanning both rows */}
 							<div className="row-span-2 h-full overflow-hidden">
 								<img
 									src={parsedImages[0]}
@@ -166,6 +226,7 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
 								/>
 							</div>
+							{/* Right: two stacked images (equal height, center-cropped) */}
 							<div className="h-full overflow-hidden">
 								<img
 									src={parsedImages[1]}
@@ -182,21 +243,22 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 							</div>
 						</div>
 					) : (
+						/* 4 or more: show a 2x2 grid using first 4 images */
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
 							{parsedImages.slice(0, 4).map((image, idx) => {
 								let cornerClass = "rounded-xl";
 								switch (idx) {
 									case 0:
-										cornerClass = "rounded-xl rounded-br-sm";
+										cornerClass = "rounded-xl rounded-br-sm"; // top-left: inner bottom-right small
 										break;
 									case 1:
-										cornerClass = "rounded-xl rounded-bl-sm";
+										cornerClass = "rounded-xl rounded-bl-sm"; // top-right: inner bottom-left small
 										break;
 									case 2:
-										cornerClass = "rounded-xl rounded-tr-sm";
+										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left: inner top-right small
 										break;
 									case 3:
-										cornerClass = "rounded-xl rounded-tl-sm";
+										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right: inner top-left small
 										break;
 								}
 								return (
@@ -214,11 +276,16 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 				</div>
 			)}
 
-			<div className="ml-11 mb-3">
+			{/* Content */}
+			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 				{shouldTruncate && !isExpanded ? (
 					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
 						<MarkdownContent
-							content={`${plainText.replace(/\\+/g, "").replace(/\s+/g, " ").trim().slice(0, maxContentLength)}...`}
+							content={`${plainText
+								.replace(/\\+/g, "")
+								.replace(/\s+/g, " ")
+								.trim()
+								.slice(0, maxContentLength)}...`}
 							inlineParagraphs={true}
 						/>
 						<button
@@ -251,8 +318,9 @@ export function StuffRatingCard({ rating, isAuthenticated = false }: Props) {
 				)}
 			</div>
 
+			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
-				<div className="flex flex-wrap gap-2 mb-1 ml-11">
+				<div className={`flex flex-wrap gap-2 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) =>
 						isAuthenticated ? (
 							<Link

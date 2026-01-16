@@ -1,5 +1,5 @@
 import { useUserRatings } from "../queries";
-import { RatingCard } from "./rating-card";
+import { RatingCard } from "../../../components/ui/rating-card";
 import { useEffect, useRef } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 
@@ -47,7 +47,11 @@ export function UserRatingsList() {
 							idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
 						}
 					>
-						<RatingCardSkeleton variant="user" noIndent showImage={idx % 2 === 0} />
+						<RatingCardSkeleton
+							variant="user"
+							noIndent
+							showImage={idx % 2 === 0}
+						/>
 					</div>
 				))}
 			</div>

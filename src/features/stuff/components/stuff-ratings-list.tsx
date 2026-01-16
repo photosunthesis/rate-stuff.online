@@ -1,4 +1,4 @@
-import { StuffRatingCard } from "./stuff-rating-card";
+import { RatingCard } from "~/components/ui/rating-card";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import type { StuffRating } from "../types";
@@ -183,10 +183,7 @@ export function StuffRatingsList({
 								: "border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<StuffRatingCard
-							rating={rating}
-							isAuthenticated={isAuthenticated}
-						/>
+						<RatingCard rating={rating} isAuthenticated={isAuthenticated} />
 					</div>
 				))}
 			</div>

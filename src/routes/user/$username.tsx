@@ -3,7 +3,7 @@ import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
-import { UserRatingCard } from "~/features/display-ratings/components/user-rating-card";
+import { RatingCard } from "~/components/ui/rating-card";
 import { useEffect, useRef } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
@@ -190,11 +190,12 @@ function UserRatingsList({
 			<div className="-mx-4 divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
 					<div key={rating.id} className="px-4">
-						<UserRatingCard
+						<RatingCard
 							key={rating.id}
 							rating={rating}
 							noIndent
 							isAuthenticated={isAuthenticated}
+							variant="userProfile"
 						/>
 					</div>
 				))}
