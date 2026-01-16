@@ -20,8 +20,9 @@ import { Button } from "~/components/ui/button";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 import { useVoteRating } from "~/features/vote-rating/queries";
 import { formatCompactNumber } from "~/utils/numbers";
+import { useUmami } from "@danielgtmn/umami-react";
 
-function excerptFromMarkdown(md: string, max = 160) {
+const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
 	const text = md
 		.replace(/!\[.*?\]\(.*?\)/g, "")
@@ -32,7 +33,7 @@ function excerptFromMarkdown(md: string, max = 160) {
 		.trim();
 
 	return text.length > max ? `${text.slice(0, max - 1).trim()}…` : text;
-}
+};
 
 export const Route = createFileRoute("/rating/$ratingId")({
 	beforeLoad: async ({ params, context }) => {
@@ -182,7 +183,7 @@ export const Route = createFileRoute("/rating/$ratingId")({
 	},
 });
 
-function MarkdownContent({ content }: { content: string }) {
+const MarkdownContent = ({ content }: { content: string }) => {
 	const safe = content.replace(/<[^>]*>/g, "");
 
 	return (
@@ -211,9 +212,9 @@ function MarkdownContent({ content }: { content: string }) {
 			{safe}
 		</ReactMarkdown>
 	);
-}
+};
 
-function RatingHeader({ rating }: { rating: RatingWithRelations }) {
+const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
@@ -258,31 +259,31 @@ function RatingHeader({ rating }: { rating: RatingWithRelations }) {
 			</div>
 		</div>
 	);
-}
+};
 
-function TitleBlock({ rating }: { rating: RatingWithRelations }) {
+const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
 		<h3 className={`text-2xl font-semibold text-white mb-2 ml-11`}>
 			{rating.score}/10
 		</h3>
 	);
-}
+};
 
-function ContentSection({ rating }: { rating: RatingWithRelations }) {
+const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
 		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal">
 			<MarkdownContent content={rating.content} />
 		</div>
 	);
-}
+};
 
-function ImagesGallery({
+const ImagesGallery = ({
 	images,
 	onImageClick,
 }: {
 	images: string[];
 	onImageClick: (src: string) => void;
-}) {
+}) => {
 	if (!images || images.length === 0) return null;
 	if (images.length === 1) {
 		return (
@@ -424,15 +425,15 @@ function ImagesGallery({
 			})}
 		</div>
 	);
-}
+};
 
-function TagsList({
+const TagsList = ({
 	tags,
 	isAuthenticated = false,
 }: {
 	tags?: string[];
 	isAuthenticated?: boolean;
-}) {
+}) => {
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
 	if (!tags || tags.length === 0) return null;
@@ -467,7 +468,7 @@ function TagsList({
 			/>
 		</>
 	);
-}
+};
 
 interface VoteButtonProps {
 	type: "up" | "down";
@@ -475,7 +476,7 @@ interface VoteButtonProps {
 	onClick: () => void;
 }
 
-function VoteButton({ type, isActive, onClick }: VoteButtonProps) {
+const VoteButton = ({ type, isActive, onClick }: VoteButtonProps) => {
 	const Icon = type === "up" ? ArrowBigUp : ArrowBigDown;
 	const activeColor = type === "up" ? "text-emerald-400" : "text-neutral-200";
 	const hoverColor =
@@ -502,7 +503,7 @@ function VoteButton({ type, isActive, onClick }: VoteButtonProps) {
 			/>
 		</button>
 	);
-}
+};
 
 function VoteSection({
 	rating,
@@ -511,6 +512,7 @@ function VoteSection({
 	rating: RatingWithRelations;
 	isAuthenticated: boolean;
 }) {
+	const umami = useUmami();
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 	const { mutate: vote } = useVoteRating();
 
@@ -528,6 +530,13 @@ function VoteSection({
 		}
 
 		vote({ ratingId: rating.id, vote: newVote });
+
+		if (umami) {
+			umami.track("vote", {
+				type: newVote,
+				ratingId: rating.id,
+			});
+		}
 	};
 
 	const voteScore = rating.upvotesCount - rating.downvotesCount;

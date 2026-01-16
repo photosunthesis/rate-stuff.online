@@ -10,6 +10,7 @@ import { TagSelector } from "~/features/create-rating/components/tag-selector";
 import { ImageField } from "~/features/create-rating/components/image-field";
 import { getErrorMessage } from "~/utils/errors";
 import type { z } from "zod";
+import { useUmami } from "@danielgtmn/umami-react";
 
 const CompactMarkdownEditor = lazy(() =>
 	import("~/features/create-rating/components/compact-markdown-editor").then(
@@ -48,6 +49,7 @@ export function CreateRatingForm({
 	const [isSuccess, setIsSuccess] = useState(false);
 	const scrollableRef = useRef<HTMLDivElement>(null);
 	const contentEditorId = useId();
+	const umami = useUmami();
 
 	const form = useForm({
 		defaultValues: {
@@ -70,6 +72,15 @@ export function CreateRatingForm({
 				};
 
 				await onSubmit(inputData);
+
+				// Track successful rating creation
+				if (umami) {
+					umami.track("create_rating", {
+						hasImages: selectedImages.length > 0,
+						hasTags: selectedTags.length > 0,
+					});
+				}
+
 				setIsSuccess(true);
 				// If the submit promise resolves without throwing, treat it as success.
 				form.reset();

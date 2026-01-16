@@ -10,6 +10,7 @@ import { AuthModal } from "~/features/auth/components/auth-modal";
 
 import { getTimeAgo } from "~/utils/datetime";
 import { formatCompactNumber } from "~/utils/numbers";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -102,6 +103,7 @@ export const RatingCard = memo(function RatingCard({
 	isAuthenticated = false,
 	variant = "default",
 }: RatingCardProps) {
+	const umami = useUmami();
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -125,7 +127,6 @@ export const RatingCard = memo(function RatingCard({
 	}
 
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
-
 	const { mutate: vote } = useVoteRating();
 
 	const handleVote = (type: "up" | "down") => {
@@ -144,6 +145,14 @@ export const RatingCard = memo(function RatingCard({
 		}
 
 		vote({ ratingId: rating.id, vote: newVote });
+
+		// Track vote
+		if (umami) {
+			umami.track("vote", {
+				type: newVote,
+				ratingId: rating.id,
+			});
+		}
 	};
 
 	const voteScore = rating.upvotesCount - rating.downvotesCount;
