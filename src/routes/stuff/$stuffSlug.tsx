@@ -2,7 +2,14 @@ import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/ui/not-found";
 import { StuffHeader } from "~/features/stuff/components/stuff-header";
-import { StuffRatingsList } from "~/features/stuff/components/stuff-ratings-list";
+import { Suspense, lazy } from "react";
+import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+
+const StuffRatingsList = lazy(() =>
+	import("~/features/stuff/components/stuff-ratings-list").then((module) => ({
+		default: module.StuffRatingsList,
+	})),
+);
 import { stuffQueryOptions } from "~/features/stuff/queries";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
@@ -168,7 +175,24 @@ function RouteComponent() {
 		<MainLayout user={currentUser}>
 			<StuffHeader stuff={safeStuff} />{" "}
 			<div className="-mx-4 border-t border-neutral-800" />{" "}
-			<StuffRatingsList slug={slug} user={currentUser} />
+			<Suspense
+				fallback={
+					<div className="py-2">
+						{[0, 1, 2, 3, 4, 5].map((n, idx) => (
+							<div
+								key={n}
+								className={
+									idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
+								}
+							>
+								<RatingCardSkeleton variant="stuff" showImage={idx % 2 === 0} />
+							</div>
+						))}
+					</div>
+				}
+			>
+				<StuffRatingsList slug={slug} user={currentUser} />
+			</Suspense>
 		</MainLayout>
 	);
 }

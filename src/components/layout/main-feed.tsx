@@ -2,7 +2,7 @@ import { RatingCard } from "~/components/ui/rating-card";
 import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { useFeedRatings } from "~/features/display-ratings/queries";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import type { PublicUser } from "~/features/auth/types";
 import { ArrowLeft } from "lucide-react";
@@ -28,8 +28,10 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 		}
 	}, [inView, hasNextPage, isAuthenticated, fetchNextPage]);
 
-	const ratings =
-		data?.pages.flatMap((page) => (page.success ? page.data : [])) || [];
+	const ratings = useMemo(
+		() => data?.pages.flatMap((page) => (page.success ? page.data : [])) || [],
+		[data?.pages],
+	);
 
 	if (isLoading) {
 		return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../../features/display-ratings/types";
 import { Avatar } from "~/components/ui/avatar";
@@ -54,7 +54,7 @@ function MarkdownContent({ content, inlineParagraphs }: MarkdownContentProps) {
 	);
 }
 
-export function RatingCard({
+export const RatingCard = memo(function RatingCard({
 	rating,
 	hideAvatar,
 	noIndent,
@@ -355,4 +355,4 @@ export function RatingCard({
 			/>
 		</div>
 	);
-}
+});

@@ -4,7 +4,7 @@ import { Avatar } from "~/components/ui/avatar";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { usePublicUserRatings } from "~/features/display-ratings/queries";
 import { RatingCard } from "~/components/ui/rating-card";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
 import { userQueryOptions } from "~/features/auth/queries";
@@ -150,6 +150,11 @@ function UserRatingsList({
 		};
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
 
+	const allRatings = useMemo(
+		() => data?.pages.flatMap((p) => p.data || []) || [],
+		[data?.pages],
+	);
+
 	if (isLoading) {
 		return (
 			<div className="-mx-2">
@@ -174,8 +179,6 @@ function UserRatingsList({
 			</div>
 		);
 	}
-
-	const allRatings = data?.pages.flatMap((p) => p.data || []) || [];
 
 	if (allRatings.length === 0) {
 		return (

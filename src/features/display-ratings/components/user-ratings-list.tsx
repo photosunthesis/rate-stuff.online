@@ -1,6 +1,6 @@
 import { useUserRatings } from "../queries";
 import { RatingCard } from "../../../components/ui/rating-card";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 
 export function UserRatingsList() {
@@ -37,6 +37,12 @@ export function UserRatingsList() {
 		};
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+	// Flatten all pages into a single array
+	const allRatings = useMemo(
+		() => data?.pages.flatMap((page) => page.data || []) || [],
+		[data?.pages],
+	);
+
 	if (isLoading) {
 		return (
 			<div>
@@ -65,9 +71,6 @@ export function UserRatingsList() {
 			</div>
 		);
 	}
-
-	// Flatten all pages into a single array
-	const allRatings = data?.pages.flatMap((page) => page.data || []) || [];
 
 	if (allRatings.length === 0) {
 		return (

@@ -3,7 +3,16 @@ import {
 	type SearchSchemaInput,
 	useSearch,
 } from "@tanstack/react-router";
-import { MainFeed } from "~/components/layout/main-feed";
+import { Suspense, lazy } from "react";
+import { RouteError } from "~/components/ui/route-error";
+import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+
+const MainFeed = lazy(() =>
+	import("~/components/layout/main-feed").then((module) => ({
+		default: module.MainFeed,
+	})),
+);
+
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/features/auth/queries";
 
@@ -22,6 +31,7 @@ export const Route = createFileRoute("/")({
 		tag: search.tag as string | undefined,
 	}),
 	component: App,
+	errorComponent: RouteError,
 	head: ({ match }) => {
 		const tag = match.search?.tag as string | undefined;
 		const title = tag
@@ -104,7 +114,29 @@ function App() {
 
 	return (
 		<MainLayout user={currentUser} showDiscoverStrip={tag === undefined}>
-			<MainFeed tag={tag} user={currentUser} />
+			<Suspense
+				fallback={
+					<div>
+						{[0, 1, 2, 3, 4, 5].map((n, idx) => (
+							<div
+								key={n}
+								className={
+									idx === 0
+										? "-mx-4 hover:bg-neutral-800/50 transition-colors"
+										: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+								}
+							>
+								<RatingCardSkeleton
+									variant="rating"
+									showImage={idx % 2 === 0}
+								/>
+							</div>
+						))}
+					</div>
+				}
+			>
+				<MainFeed tag={tag} user={currentUser} />
+			</Suspense>
 		</MainLayout>
 	);
 }
