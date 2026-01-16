@@ -101,8 +101,8 @@ async function extractImagesForStuff(
 }
 
 export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
-	const dbInstance = getDatabase();
-	const rows = await dbInstance
+	const db = getDatabase();
+	const rows = await db
 		.select({
 			id: stuffTable.id,
 			name: stuffTable.name,
@@ -132,7 +132,7 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 	const row = rows[0];
 	const ratingCount = Number(row.ratingCount ?? 0);
 	const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
-	const images = await extractImagesForStuff(dbInstance, row.id);
+	const images = await extractImagesForStuff(db, row.id);
 
 	return {
 		id: row.id,
@@ -148,7 +148,7 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 
 export const getStuffRatingsBySlug = createServerOnlyFn(
 	async (slug: string, limit = 10, cursor?: string) => {
-		const dbInstance = getDatabase();
+		const db = getDatabase();
 		const parsed = parseCursor(cursor);
 		const cursorFilter = parsed
 			? or(
@@ -160,7 +160,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 				)
 			: undefined;
 
-		const results = await dbInstance
+		const results = await db
 			.select(getRatingsSelection())
 			.from(ratings)
 			.innerJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
@@ -175,7 +175,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 			.limit(limit);
 
 		if (results.length === 0) {
-			const stuffExists = await dbInstance
+			const stuffExists = await db
 				.select({ id: stuffTable.id })
 				.from(stuffTable)
 				.where(eq(stuffTable.slug, slug))
