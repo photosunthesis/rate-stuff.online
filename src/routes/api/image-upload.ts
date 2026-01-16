@@ -3,15 +3,26 @@ import {
 	imagesBucketUrl,
 	verifyPresignedUpload,
 	uploadFile,
+	MAX_FILE_SIZE,
+	ALLOWED_CONTENT_TYPES,
 } from "~/features/file-storage/service";
 import { env } from "cloudflare:workers";
 import { getAuth } from "~/lib/auth.server";
 
-export const Route = createFileRoute("/api/r2-upload")({
+export const Route = createFileRoute("/api/image-upload")({
 	server: {
 		handlers: {
+			/**
+			 * Uploads use an internal presigned URL flow to bypass server function
+			 * overhead and gain direct control over the request body stream.
+			 *
+			 * Flow:
+			 * 1. User requests a signature via a server function (getUploadUrlFn).
+			 * 2. Client uses that signature to PUT the binary data directly to this route.
+			 * 3. This handler verifies the HMAC signature, confirms the user's session,
+			 *    enforces constraints (size/type), and streams the file to R2.
+			 */
 			PUT: async ({ request }) => {
-				// Authenticate the request using cookies/headers
 				const session = await getAuth().api.getSession({
 					headers: request.headers,
 					query: { disableCookieCache: true },
@@ -19,11 +30,6 @@ export const Route = createFileRoute("/api/r2-upload")({
 				});
 
 				if (!session) {
-					console.warn(
-						"r2-upload: session not found; headers:",
-						Array.from(request.headers.entries()),
-					);
-
 					return new Response(
 						JSON.stringify({ success: false, error: "Unauthorized" }),
 						{
@@ -78,13 +84,64 @@ export const Route = createFileRoute("/api/r2-upload")({
 
 					const contentType =
 						request.headers.get("content-type") || "application/octet-stream";
+					const baseType = contentType.split(";")[0].toLowerCase().trim();
+
+					if (!ALLOWED_CONTENT_TYPES.includes(baseType)) {
+						return new Response(
+							JSON.stringify({
+								success: false,
+								error: `Unsupported content type: ${baseType}. Allowed types: ${ALLOWED_CONTENT_TYPES.join(", ")}`,
+							}),
+							{
+								status: 415,
+								headers: { "Content-Type": "application/json" },
+							},
+						);
+					}
+
+					const contentLength = request.headers.get("content-length");
+					if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE) {
+						return new Response(
+							JSON.stringify({
+								success: false,
+								error: "File too large. Maximum size is 10MB",
+							}),
+							{
+								status: 413,
+								headers: { "Content-Type": "application/json" },
+							},
+						);
+					}
+
 					const body = await request.arrayBuffer();
+
+					if (body.byteLength > MAX_FILE_SIZE) {
+						return new Response(
+							JSON.stringify({
+								success: false,
+								error: "File too large. Maximum size is 10MB",
+							}),
+							{
+								status: 413,
+								headers: { "Content-Type": "application/json" },
+							},
+						);
+					}
+
+					if (body.byteLength === 0) {
+						return new Response(
+							JSON.stringify({ success: false, error: "File is empty" }),
+							{
+								status: 400,
+								headers: { "Content-Type": "application/json" },
+							},
+						);
+					}
 
 					try {
 						await uploadFile(env.R2_BUCKET, key, body, { type: contentType });
 					} catch (err) {
 						const msg = err instanceof Error ? err.message : String(err);
-						console.error("R2 put failed:", msg);
 						return new Response(
 							JSON.stringify({ success: false, error: msg }),
 							{
@@ -101,7 +158,6 @@ export const Route = createFileRoute("/api/r2-upload")({
 					});
 				} catch (e: unknown) {
 					const msg = e instanceof Error ? e.message : String(e);
-					console.error("r2-upload handler error:", msg);
 					return new Response(JSON.stringify({ success: false, error: msg }), {
 						status: 500,
 						headers: { "Content-Type": "application/json" },

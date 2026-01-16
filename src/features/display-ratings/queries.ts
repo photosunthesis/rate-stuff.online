@@ -11,9 +11,9 @@ import {
 	getRatingsByUsernameFn,
 	getUserRatingsCountFn,
 	getRatingByIdFn,
-} from "./api";
+} from "./functions";
 import type { RatingWithRelations } from "./types";
-import { getRecentTagsFn, getRecentStuffFn } from "./api";
+import { getRecentTagsFn, getRecentStuffFn } from "./functions";
 
 type PageResult = {
 	success: boolean;

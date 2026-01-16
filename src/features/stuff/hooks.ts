@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getPaginatedStuffRatingsFn } from "./api";
+import { getPaginatedStuffRatingsFn } from "./functions";
 import type { StuffRating } from "./types";
 
 type PageResult = {

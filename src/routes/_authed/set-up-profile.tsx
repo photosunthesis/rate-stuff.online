@@ -5,7 +5,7 @@ import { useState } from "react";
 import { extractValidationErrors } from "~/lib/utils/errors";
 import authClient from "~/lib/auth.client";
 import { useServerFn } from "@tanstack/react-start";
-import { uploadAvatarFn } from "~/features/auth/api";
+import { uploadAvatarFn } from "~/features/auth/functions";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,

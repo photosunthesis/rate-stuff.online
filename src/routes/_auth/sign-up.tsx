@@ -6,7 +6,7 @@ import authClient from "~/lib/auth.client";
 import {
 	markInviteCodeAsUsedFn,
 	validateInviteCodeFn,
-} from "~/features/auth/api";
+} from "~/features/auth/functions";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignUpForm } from "~/features/auth/components/sign-up-form";
 import { authQueryOptions } from "~/features/auth/queries";

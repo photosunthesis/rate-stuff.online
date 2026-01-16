@@ -12,7 +12,11 @@ import {
 	updateRatingImagesFn,
 	searchStuffFn,
 	searchTagsFn,
-} from "./api";
+} from "./functions";
+import {
+	MAX_FILE_SIZE,
+	ALLOWED_CONTENT_TYPES,
+} from "~/features/file-storage/service";
 
 import type { CreateRatingInput } from "./types";
 
@@ -42,6 +46,18 @@ export function useUploadImageMutation() {
 			file: File;
 			ratingId: string;
 		}) => {
+			if (file.size > MAX_FILE_SIZE) {
+				throw new Error(
+					`File "${file.name}" is too large. Max size is ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+				);
+			}
+
+			if (!ALLOWED_CONTENT_TYPES.includes(file.type.toLowerCase())) {
+				throw new Error(
+					`File "${file.name}" has an unsupported type: ${file.type}`,
+				);
+			}
+
 			const presign = await getUploadUrl({
 				data: { ratingId, filename: file.name, contentType: file.type },
 			});

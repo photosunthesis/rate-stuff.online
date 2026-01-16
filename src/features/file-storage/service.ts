@@ -1,6 +1,14 @@
 import { createServerOnlyFn } from "@tanstack/react-start";
 
 export const imagesBucketUrl = "https://images.rate-stuff.online";
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const ALLOWED_CONTENT_TYPES = [
+	"image/jpeg",
+	"image/png",
+	"image/webp",
+	"image/gif",
+	"image/avif",
+];
 
 export const uploadFile = async (
 	r2Bucket: R2Bucket,
@@ -39,7 +47,7 @@ export const createPresignedUploadUrl = createServerOnlyFn(
 			.map((b) => b.toString(16).padStart(2, "0"))
 			.join("");
 
-		const putUrl = `/api/r2-upload?key=${encodeURIComponent(key)}&expires=${expires}&sig=${sig}`;
+		const putUrl = `/api/image-upload?key=${encodeURIComponent(key)}&expires=${expires}&sig=${sig}`;
 		const publicUrl = `${imagesBucketUrl}/${key}`;
 
 		return { key, putUrl, publicUrl };

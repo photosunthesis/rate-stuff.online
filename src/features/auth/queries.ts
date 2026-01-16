@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getCurrentUserFn, getUserByUsernameFn } from "./api";
+import { getCurrentUserFn, getUserByUsernameFn } from "./functions";
 import type { PublicUser } from "./types";
 
 export const userQueryOptions = (username: string) =>

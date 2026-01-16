@@ -21,7 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserUsernameRouteImport } from './routes/user/$username'
 import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
 import { Route as RatingRatingIdRouteImport } from './routes/rating/$ratingId'
-import { Route as ApiR2UploadRouteImport } from './routes/api/r2-upload'
+import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
@@ -85,9 +85,9 @@ const RatingRatingIdRoute = RatingRatingIdRouteImport.update({
   path: '/$ratingId',
   getParentRoute: () => RatingRouteRoute,
 } as any)
-const ApiR2UploadRoute = ApiR2UploadRouteImport.update({
-  id: '/api/r2-upload',
-  path: '/api/r2-upload',
+const ApiImageUploadRoute = ApiImageUploadRouteImport.update({
+  id: '/api/image-upload',
+  path: '/api/image-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
@@ -122,7 +122,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/api/r2-upload': typeof ApiR2UploadRoute
+  '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -139,7 +139,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/api/r2-upload': typeof ApiR2UploadRoute
+  '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -159,7 +159,7 @@ export interface FileRoutesById {
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/api/r2-upload': typeof ApiR2UploadRoute
+  '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
   '/user/$username': typeof UserUsernameRoute
@@ -178,7 +178,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/set-up-profile'
-    | '/api/r2-upload'
+    | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -195,7 +195,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/set-up-profile'
-    | '/api/r2-upload'
+    | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -214,7 +214,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authed/set-up-profile'
-    | '/api/r2-upload'
+    | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
     | '/user/$username'
@@ -231,7 +231,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  ApiR2UploadRoute: typeof ApiR2UploadRoute
+  ApiImageUploadRoute: typeof ApiImageUploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -321,11 +321,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RatingRatingIdRouteImport
       parentRoute: typeof RatingRouteRoute
     }
-    '/api/r2-upload': {
-      id: '/api/r2-upload'
-      path: '/api/r2-upload'
-      fullPath: '/api/r2-upload'
-      preLoaderRoute: typeof ApiR2UploadRouteImport
+    '/api/image-upload': {
+      id: '/api/image-upload'
+      path: '/api/image-upload'
+      fullPath: '/api/image-upload'
+      preLoaderRoute: typeof ApiImageUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed/set-up-profile': {
@@ -431,7 +431,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  ApiR2UploadRoute: ApiR2UploadRoute,
+  ApiImageUploadRoute: ApiImageUploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

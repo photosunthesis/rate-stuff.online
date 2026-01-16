@@ -8,6 +8,7 @@ import {
 	searchTags,
 	updateRatingImages,
 } from "./service";
+import { ALLOWED_CONTENT_TYPES } from "~/features/file-storage/service";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
@@ -95,6 +96,13 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		try {
 			const { ratingId, filename, contentType } = data;
+
+			if (!ALLOWED_CONTENT_TYPES.includes(contentType.toLowerCase())) {
+				throw new Error(
+					`Unsupported content type: ${contentType}. Allowed: ${ALLOWED_CONTENT_TYPES.join(", ")}`,
+				);
+			}
+
 			const result = await getUploadUrl(ratingId, filename, contentType);
 			return { success: true, data: result };
 		} catch (error) {

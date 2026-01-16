@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getStuffBySlugFn, getPaginatedStuffRatingsFn } from "./api";
+import { getStuffBySlugFn, getPaginatedStuffRatingsFn } from "./functions";
 import type { StuffWithAggregates, StuffRatingsPage } from "./types";
 
 export const stuffKeys = {
