@@ -24,48 +24,49 @@ A tiny corner to rate stuff — quickly create, browse, and score things you fin
 - Database: **PostgreSQL (via Hyperdrive)** + **Drizzle ORM** + SQL migrations
 - Storage: **Cloudflare R2** (object storage for uploads)
 - State & Data: **TanStack Query** (data fetching & caching)
- - Authentication: Better Auth (https://www.better-auth.com/)
+- Authentication: Better Auth (https://www.better-auth.com/)
 - Build & package: **pnpm**
 
 ## Project layout 🗂️
 
-A quick tour of the repo and where to look for important pieces.
+A quick tour of the repo and the modular feature-based structure.
 
 ```
-/                      # repo root
+/                         # repo root
 ├─ src/
-│  ├─ assets/           # static assets (images, icons, etc.)
-│  ├─ components/
-│  │  ├─ layout/        # layout components (main-layout, sidebars, headers)
-│  │  └─ ui/            # small reusable UI pieces (button, avatar, text-field)
-│  ├─ db/               # Drizzle client and schema (client.ts, schema/*)
-│  ├─ features/         # feature modules (auth, create-rating, display-ratings, stuff, rate-limit, file-storage)
-│  ├─ integrations/     # integration helpers/providers (e.g., TanStack Query)
-│  ├─ lib/              # app-level helpers and clients (auth client, server helpers, utils)
-│  ├─ routes/           # app routes and API handlers (see __root.tsx, api/r2-upload.ts)
-│  ├─ router.tsx
-│  ├─ routeTree.gen.ts
-│  └─ styles.css
-├─ drizzle/             # SQL migrations and snapshots
-├─ public/              # static assets
-├─ wrangler.jsonc       # Cloudflare Workers config
-├─ package.json
-└─ README.md
+│  ├─ auth/               # Better Auth client & server config
+│  ├─ components/         # global shared UI & layout primitives
+│  ├─ db/                 # Drizzle schema & database client
+│  ├─ features/           # modular feature directories
+│  │  ├─ create-rating/   # [example feature]
+│  │  │  ├─ components/   # feature-specific UI
+│  │  │  ├─ functions.ts  # server functions (RPC layer)
+│  │  │  ├─ service.ts    # backend business logic & DB calls
+│  │  │  ├─ queries.ts    # client data fetching & mutations
+│  │  │  └─ types.ts      # feature-specific types & Zod schemas
+│  │  └─ ...              # display-ratings, stuff, file-storage, etc.
+│  ├─ routes/             # TanStack Router file-based routes
+│  ├─ lib/                # core client/server helpers
+│  ├─ utils/              # global utility functions
+│  ├─ styles.css          # global styles & design system
+│  └─ router.tsx          # TanStack Router config
+├─ drizzle/               # SQL migrations and snapshots
+└─ wrangler.jsonc         # Cloudflare Workers config
 ```
 
-Key files:
-- `src/db/client.ts` (Hyperdrive connection + Drizzle client)
-- `src/db/schema/*` (table definitions)
-- `src/lib/auth.client.ts` and `src/lib/auth.server.ts` (Better Auth integration & helpers)
-- `src/features/*` (feature-scoped API, UI, middleware — e.g., `src/features/auth`, `src/features/create-rating`)
+### Modular Guidelines
+- **Features**: Everything related to a specific domain (API, UI, State) stays inside its `features/` folder.
+- **Server Functions**: Use `functions.ts` to bridge the client and server with Zod validation.
+- **Backend**: Put heavy business logic and database interactions in `service.ts`.
+- **Reusable UI**: If a component is used by >1 feature, move it to `src/components/ui/`.
 
 ---
 
 ## Local development 🧭
 
-1. Install dependencies: `pnpm install`
-2. Run locally: `pnpm dev`
-3. Database migrations: `pnpm db:migrate`
+1. **Install dependencies:** `pnpm install`
+2. **Run locally:** `pnpm dev`
+3. **Database migrations:** `pnpm db:migrate`
 
 ## License 📄
 
