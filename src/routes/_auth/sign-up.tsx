@@ -53,7 +53,7 @@ function RouteComponent() {
 	const validateInviteCode = useServerFn(validateInviteCodeFn);
 	const markInviteCodeAsUsed = useServerFn(markInviteCodeAsUsedFn);
 
-	const { mutate: signUpMutate, isPending } = useMutation({
+	const { mutateAsync: signUpMutate, isPending } = useMutation({
 		mutationFn: async (data: {
 			username: string;
 			email: string;
@@ -82,7 +82,7 @@ function RouteComponent() {
 				return;
 			}
 
-			await authClient.signUp.email(
+			const { error } = await authClient.signUp.email(
 				{
 					name: data.username, //  We'll let the user change this later
 					username: data.username,
@@ -106,6 +106,8 @@ function RouteComponent() {
 					},
 				},
 			);
+
+			if (error) throw error;
 		},
 	});
 
@@ -116,7 +118,7 @@ function RouteComponent() {
 		inviteCode: string;
 	}) => {
 		if (isPending) return;
-		signUpMutate(data);
+		await signUpMutate(data);
 	};
 
 	return (

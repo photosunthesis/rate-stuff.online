@@ -52,7 +52,7 @@ function RouteComponent() {
 		setErrorMessage(info.errorMessage ?? "Failed to sign in");
 	};
 
-	const { mutate: signInMutate, isPending } = useMutation({
+	const { mutateAsync: signInMutate, isPending } = useMutation({
 		mutationFn: async (data: {
 			identifier: string;
 			password: string;
@@ -67,10 +67,12 @@ function RouteComponent() {
 					callbackURL: data.redirectUrl,
 				};
 
-				await authClient.signIn.email(payload, {
+				const { error } = await authClient.signIn.email(payload, {
 					onSuccess: () => handleSuccess(data.redirectUrl),
 					onError: handleError,
 				});
+
+				if (error) throw error;
 			} else {
 				const payload = {
 					username: data.identifier,
@@ -78,10 +80,12 @@ function RouteComponent() {
 					rememberMe: data.rememberMe,
 				};
 
-				await authClient.signIn.username(payload, {
+				const { error } = await authClient.signIn.username(payload, {
 					onSuccess: () => handleSuccess(data.redirectUrl),
 					onError: handleError,
 				});
+
+				if (error) throw error;
 			}
 		},
 	});
@@ -93,7 +97,7 @@ function RouteComponent() {
 	}) => {
 		if (isPending) return;
 
-		signInMutate({
+		await signInMutate({
 			identifier: data.identifier,
 			password: data.password,
 			rememberMe: data.rememberMe,

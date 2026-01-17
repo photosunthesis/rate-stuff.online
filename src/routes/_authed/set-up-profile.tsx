@@ -76,7 +76,7 @@ function RouteComponent() {
 				payload.image = data.image === "" ? null : (data.image ?? undefined);
 			}
 
-			await authClient.updateUser(payload, {
+			const { error } = await authClient.updateUser(payload, {
 				onSuccess: async () => {
 					await queryClient.invalidateQueries({
 						queryKey: authQueryOptions().queryKey,
@@ -90,10 +90,13 @@ function RouteComponent() {
 					throw err;
 				},
 			});
+
+			if (error) throw error;
 		} catch (error) {
 			const { errorMessage, errors } = normalizeError(error);
 			setErrorMessage(errorMessage ?? "Failed to set up profile");
 			if (errors) setValidationErrors(errors);
+			throw error;
 		} finally {
 			setIsPending(false);
 		}
