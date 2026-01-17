@@ -224,11 +224,11 @@ const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 	const image = rating.user?.image ?? null;
 
 	return (
-		<div className="flex items-center gap-3">
+		<div className="flex items-start gap-3">
 			<Avatar src={image} alt={displayText} size="sm" className="shrink-0" />
 
 			<div className="flex-1 min-w-0">
-				<div className="flex items-center gap-1 flex-wrap text-sm">
+				<div className="text-sm leading-normal py-1.5">
 					{rating.user ? (
 						<Link
 							to="/user/$username"
@@ -241,7 +241,7 @@ const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 					) : (
 						<span className="font-medium text-neutral-400">{displayText}</span>
 					)}
-					<span className="text-neutral-500">rated</span>
+					<span className="text-neutral-500"> rated </span>
 					{rating.stuff ? (
 						<Link
 							to="/stuff/$stuffSlug"
@@ -254,7 +254,7 @@ const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 					) : (
 						<span className="text-neutral-400 font-semibold">Unknown Item</span>
 					)}
-					<span className="text-neutral-500">•</span>
+					<span className="text-neutral-500"> • </span>
 					<span className="text-neutral-500">
 						{getTimeAgo(rating.createdAt)}
 					</span>
@@ -316,30 +316,15 @@ const ImagesGallery = ({
 							onClick={() => onImageClick(src)}
 							className="w-full h-full"
 						>
-							{(() => {
-								let cornerClass = "rounded-xl";
-								switch (idx) {
-									case 0:
-										cornerClass = "rounded-xl rounded-br-sm";
-										break;
-									case 1:
-										cornerClass = "rounded-xl rounded-bl-sm";
-										break;
-									case 2:
-										cornerClass = "rounded-xl rounded-tr-sm";
-										break;
-									case 3:
-										cornerClass = "rounded-xl rounded-tl-sm";
-										break;
+							<img
+								src={src}
+								alt="Rating"
+								className={
+									idx === 0
+										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer"
 								}
-								return (
-									<img
-										src={src}
-										alt="Rating"
-										className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
-									/>
-								);
-							})()}
+							/>
 						</button>
 					</div>
 				))}
@@ -630,7 +615,7 @@ function RouteComponent() {
 						<h2 className="text-lg font-semibold text-white">Rating</h2>
 					</div>
 				</div>
-				<div className="px-4">
+				<div className="px-4 pt-4">
 					<RatingHeader rating={ratingTyped} />
 					<TitleBlock rating={ratingTyped} />
 					<ImagesGallery

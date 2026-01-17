@@ -190,7 +190,7 @@ export const RatingCard = memo(function RatingCard({
 		>
 			{/* Header */}
 			{variant === "default" ? (
-				<div className="flex items-center gap-3">
+				<div className="flex items-start gap-3">
 					{!hideAvatar && (
 						<Avatar
 							src={image ?? null}
@@ -200,7 +200,7 @@ export const RatingCard = memo(function RatingCard({
 						/>
 					)}
 					<div className="flex-1 min-w-0">
-						<div className="flex items-center gap-1 flex-wrap text-sm">
+						<div className="text-sm leading-normal py-1.5">
 							{rating.user ? (
 								<Link
 									to="/user/$username"
@@ -215,7 +215,7 @@ export const RatingCard = memo(function RatingCard({
 									{displayText}
 								</span>
 							)}
-							<span className="text-neutral-500">rated</span>
+							<span className="text-neutral-500"> rated </span>
 							{rating.stuff ? (
 								<Link
 									to="/stuff/$stuffSlug"
@@ -230,7 +230,7 @@ export const RatingCard = memo(function RatingCard({
 									Unknown Item
 								</span>
 							)}
-							<span className="text-neutral-500">•</span>
+							<span className="text-neutral-500"> • </span>
 							<span className="text-neutral-500">{timeAgo}</span>
 						</div>
 					</div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/app-logo";
 import {
 	Home,
@@ -40,11 +40,15 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const isAuthenticated = user != null;
 	const [header] = useState(() => getHeader());
+	const location = useLocation();
 
 	const handleSignOut = async () => {
 		await authClient.signOut();
 		window.location.href = "/"; // Using useNavigate doesn't work for some reason 🤷🏻
 	};
+
+	const showFloatingButton =
+		location.pathname === "/" || location.pathname === "/explore";
 
 	return (
 		<>
@@ -197,15 +201,17 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 				</div>
 
 				<div className="mb-4">
-					<button
-						type="button"
-						onClick={() => setIsCreateOpen(true)}
-						aria-label="New Post"
-						title="New Post"
-						className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
-					>
-						<PencilLine className="w-4 h-4" />
-					</button>
+					{showFloatingButton && (
+						<button
+							type="button"
+							onClick={() => setIsCreateOpen(true)}
+							aria-label="New Post"
+							title="New Post"
+							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+						>
+							<PencilLine className="w-4 h-4" />
+						</button>
+					)}
 				</div>
 
 				{isAuthenticated && (
@@ -231,15 +237,17 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						<span className="text-[10px] font-medium">Home</span>
 					</Link>
 
-					<button
-						type="button"
-						onClick={() => setIsCreateOpen(true)}
-						aria-label="New Post"
-						title="New Post"
-						className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
-					>
-						<PencilLine className="w-5 h-5" />
-					</button>
+					{showFloatingButton && (
+						<button
+							type="button"
+							onClick={() => setIsCreateOpen(true)}
+							aria-label="New Post"
+							title="New Post"
+							className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
+						>
+							<PencilLine className="w-5 h-5" />
+						</button>
+					)}
 					<Link
 						to="/explore"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
