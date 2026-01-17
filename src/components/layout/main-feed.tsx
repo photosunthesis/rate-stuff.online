@@ -63,9 +63,9 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	return (
 		<>
 			{tag && (
-				<div className="border-b border-neutral-800 px-4 py-2">
+				<div className="border-b border-neutral-800 px-3 py-2">
 					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-4">
+						<div className="flex items-center gap-3">
 							<button
 								type="button"
 								className="flex items-center justify-center p-2 rounded-xl text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
