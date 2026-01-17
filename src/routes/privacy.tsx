@@ -31,7 +31,7 @@ export const Route = createFileRoute("/privacy")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/privacy",
-						dateModified: "2026-01-15",
+						dateModified: "2026-01-17",
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",
@@ -100,7 +100,8 @@ function RouteComponent() {
 				>
 					hello@rate-stuff.online
 				</a>
-				.
+				. We will respond to data requests within 30 days of receipt. Please
+				allow additional time for technical processing of deletions.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">How we use information</h2>
@@ -128,15 +129,27 @@ function RouteComponent() {
 			<ul className="list-disc pl-6 mb-4 space-y-1">
 				<li>
 					<strong>Cloudflare:</strong> For hosting, security, and global content
-					delivery.
+					delivery. Cloudflare may set cookies for DDoS protection and
+					performance optimization. See{" "}
+					<a
+						className="text-emerald-400 underline"
+						href="https://www.cloudflare.com/privacypolicy/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Cloudflare's privacy policy
+					</a>{" "}
+					for details.
 				</li>
 				<li>
 					<strong>Umami:</strong> For privacy-focused, anonymous analytics (no
-					tracking cookies).
+					tracking cookies or personal identifiers).
 				</li>
 				<li>
-					<strong>Bugsink:</strong> For error tracking and debugging (may
-					collect technical metadata).
+					<strong>Bugsink:</strong> For error tracking and debugging. Bugsink
+					collects error traces and technical logs to help us fix bugs. We
+					exclude sensitive user data from these reports, but error messages may
+					contain URLs or form field names for debugging purposes.
 				</li>
 			</ul>
 
@@ -152,6 +165,15 @@ function RouteComponent() {
 				We take reasonable steps to secure data, but no internet service can be
 				perfectly secure. Use strong passwords and contact the site maintainers
 				if you have concerns.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">
+				Data Breach Notification
+			</h2>
+			<p className="mb-4">
+				In the event of a data breach affecting personal information, we will
+				notify affected users within 72 hours via email (or as required by
+				applicable law).
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Changes</h2>
@@ -173,7 +195,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-sm text-neutral-500">
-				Last updated: January 16, 2026
+				Last updated: January 17, 2026
 			</div>
 		</main>
 	);

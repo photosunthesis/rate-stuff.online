@@ -31,7 +31,7 @@ export const Route = createFileRoute("/terms")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/terms",
-						dateModified: "2026-01-15",
+						dateModified: "2026-01-17",
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",
@@ -86,9 +86,10 @@ function RouteComponent() {
 				</li>
 			</ul>
 			<p className="mb-4">
-				We reserve the right to remove any content or terminate any account at
-				our sole discretion, without notice or liability, for violating these
-				terms or for any other reason.
+				We reserve the right to remove content or terminate accounts that
+				violate these terms, or for technical/security reasons, at our
+				discretion. We will make reasonable efforts to provide notice when
+				possible.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">DMCA & Copyright Policy</h2>
@@ -160,7 +161,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-sm text-neutral-500">
-				Last updated: January 16, 2026
+				Last updated: January 17, 2026
 			</div>
 		</main>
 	);
