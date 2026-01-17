@@ -45,7 +45,33 @@ export const normalizeError = (
 					? o.error
 					: typeof o.message === "string"
 						? o.message
-						: undefined;
+						: o.error &&
+								typeof o.error === "object" &&
+								"message" in o.error &&
+								typeof (o.error as Record<string, unknown>).message === "string"
+							? ((o.error as Record<string, unknown>).message as string)
+							: o.body &&
+									typeof o.body === "object" &&
+									"message" in o.body &&
+									typeof (o.body as Record<string, unknown>).message ===
+										"string"
+								? ((o.body as Record<string, unknown>).message as string)
+								: o.body &&
+										typeof o.body === "object" &&
+										"error" in o.body &&
+										typeof (o.body as Record<string, unknown>).error ===
+											"string"
+									? ((o.body as Record<string, unknown>).error as string)
+									: o.body && typeof o.body === "string"
+										? (() => {
+												try {
+													const parsed = JSON.parse(o.body as string);
+													return parsed.message || parsed.error || o.body;
+												} catch {
+													return o.body;
+												}
+											})()
+										: undefined;
 		const errors = extractValidationErrors(o);
 		return {
 			errorMessage: message,

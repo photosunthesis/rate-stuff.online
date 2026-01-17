@@ -30,8 +30,14 @@ export function SignInForm({
 			password: "",
 			rememberMe: false,
 		},
-		onSubmit: async ({ value }) =>
-			await onSubmit(value).then(() => setIsSuccess(true)),
+		onSubmit: async ({ value }) => {
+			try {
+				await onSubmit(value);
+				setIsSuccess(true);
+			} catch {
+				// Error is handled by parent component
+			}
+		},
 	});
 
 	const inferredFieldErrors: Record<string, string> = {};
@@ -46,7 +52,7 @@ export function SignInForm({
 		if (msg.includes("password") && !validationErrors.password)
 			inferredFieldErrors.password = errorMessage;
 
-		if (msg.includes("invalid credentials")) {
+		if (msg.includes("invalid credentials") || msg.includes("invalid")) {
 			inferredFieldErrors.identifier = errorMessage;
 			inferredFieldErrors.password = errorMessage;
 		}
