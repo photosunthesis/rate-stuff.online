@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SetUpProfileForm } from "~/features/auth/components/set-up-profile-form";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { useState } from "react";
-import { extractValidationErrors } from "~/utils/errors";
+import { normalizeError } from "~/utils/errors";
 import authClient from "~/auth/auth.client";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadAvatarFn } from "~/features/auth/functions";
@@ -50,6 +50,7 @@ function RouteComponent() {
 	}) => {
 		setIsPending(true);
 		setValidationErrors({});
+		setErrorMessage(undefined);
 
 		let uploadedUrl: string | undefined;
 
@@ -59,12 +60,7 @@ function RouteComponent() {
 				formData.append("file", data.avatar);
 				const result = await uploadAvatarMutationFn({ data: formData });
 
-				if (!result.success) {
-					const errors = extractValidationErrors(result);
-					setValidationErrors(errors);
-					setIsPending(false);
-					return;
-				}
+				if (!result.success) throw result;
 
 				uploadedUrl = result.url;
 			}
@@ -90,12 +86,14 @@ function RouteComponent() {
 
 					navigate({ to: redirect || "/" });
 				},
-				onError: (err) => setErrorMessage(err.error.message),
+				onError: (err) => {
+					throw err;
+				},
 			});
 		} catch (error) {
-			setErrorMessage(
-				error instanceof Error ? error.message : "Failed to set up profile",
-			);
+			const { errorMessage, errors } = normalizeError(error);
+			setErrorMessage(errorMessage ?? "Failed to set up profile");
+			if (errors) setValidationErrors(errors);
 		} finally {
 			setIsPending(false);
 		}

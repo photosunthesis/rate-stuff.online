@@ -17,8 +17,14 @@ export const uploadFile = async (
 	options?: { type?: string },
 ) => {
 	const bucket = r2Bucket;
+	let body = file;
 
-	await bucket.put(key, file, {
+	// Convert File or Blob to ArrayBuffer to ensure compatibility
+	if (file instanceof File || file instanceof Blob) {
+		body = await file.arrayBuffer();
+	}
+
+	await bucket.put(key, body, {
 		httpMetadata: options?.type
 			? { contentType: options.type }
 			: file instanceof File
