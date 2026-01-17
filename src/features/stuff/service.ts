@@ -5,6 +5,7 @@ import {
 	ratingsToTags,
 	tags,
 	users,
+	ratingVotes,
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
@@ -20,16 +21,18 @@ function transformToGroupedRating(row: {
 		image: string | null;
 	} | null;
 	tags: string[];
+	userVote: "up" | "down" | null;
 }): StuffRating {
 	return {
 		...row.rating,
 		stuff: row.stuff,
 		user: row.user,
 		tags: row.tags,
+		userVote: row.userVote,
 	};
 }
 
-function getRatingsSelection() {
+function getRatingsSelection(viewerId?: string) {
 	return {
 		rating: ratings,
 		stuff: stuffTable,
@@ -43,6 +46,11 @@ function getRatingsSelection() {
       json_agg(${tags.name}) filter (where ${tags.name} is not null), 
       '[]'
     )`,
+		userVote: viewerId
+			? sql<
+					"up" | "down" | null
+				>`(select ${ratingVotes.type} from ${ratingVotes} where ${ratingVotes.ratingId} = ${ratings.id} and ${ratingVotes.userId} = ${viewerId})`
+			: sql<null>`null`,
 	};
 }
 
@@ -147,7 +155,7 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 });
 
 export const getStuffRatingsBySlug = createServerOnlyFn(
-	async (slug: string, limit = 10, cursor?: string) => {
+	async (slug: string, limit = 10, cursor?: string, viewerId?: string) => {
 		const db = getDatabase();
 		const parsed = parseCursor(cursor);
 		const cursorFilter = parsed
@@ -161,7 +169,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 			: undefined;
 
 		const results = await db
-			.select(getRatingsSelection())
+			.select(getRatingsSelection(viewerId))
 			.from(ratings)
 			.innerJoin(stuffTable, eq(ratings.stuffId, stuffTable.id))
 			.leftJoin(users, eq(ratings.userId, users.id))

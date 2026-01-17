@@ -12,10 +12,9 @@ export function useVoteRating() {
 			return result;
 		},
 		onSettled: (_data, _error, variables) => {
-			// Invalidate ratings queries to refresh the list and show updated scores/votes
 			queryClient.invalidateQueries({ queryKey: ["ratings"] });
 			queryClient.invalidateQueries({ queryKey: ["feed"] });
-			// Invalidate specific rating if being viewed individually
+			queryClient.invalidateQueries({ queryKey: ["stuff"] });
 			queryClient.invalidateQueries({
 				queryKey: ["rating", variables.ratingId],
 			});

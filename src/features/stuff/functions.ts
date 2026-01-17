@@ -6,6 +6,19 @@ import {
 	RATE_LIMITER_BINDING,
 	rateLimitKeys,
 } from "~/features/rate-limit/middleware";
+import { getAuth } from "~/auth/auth.server";
+import { getRequest } from "@tanstack/react-start/server";
+
+async function getUserId() {
+	try {
+		const session = await getAuth().api.getSession({
+			headers: getRequest().headers,
+		});
+		return session?.user?.id;
+	} catch {
+		return undefined;
+	}
+}
 
 export const getStuffBySlugFn = createServerFn({ method: "GET" })
 	.inputValidator(
@@ -43,10 +56,12 @@ export const getPaginatedStuffRatingsFn = createServerFn({ method: "GET" })
 	)
 	.handler(async ({ data }) => {
 		try {
+			const viewerId = await getUserId();
 			const page = await getStuffRatingsBySlug(
 				data.slug,
 				data.limit,
 				data.cursor,
+				viewerId,
 			);
 			if (!page) return { success: false, error: "Not found" };
 
