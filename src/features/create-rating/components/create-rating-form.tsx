@@ -152,7 +152,7 @@ export function CreateRatingForm({
 			noValidate
 		>
 			<div
-				className="flex-1 overflow-y-auto pt-14 pb-6 md:pt-6"
+				className="flex-1 overflow-y-auto py-6"
 				ref={scrollableRef}
 			>
 				<fieldset
