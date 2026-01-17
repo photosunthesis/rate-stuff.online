@@ -17,6 +17,7 @@ export type StuffRating = typeof ratings.$inferSelect & {
 		image: string | null;
 	} | null;
 	tags: string[];
+	userVote: "up" | "down" | null;
 };
 
 export type StuffRatingsPage = {

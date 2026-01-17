@@ -143,9 +143,7 @@ export function StuffRatingsList({
 				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
-						className={
-							idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
-						}
+						className={idx === 0 ? "" : "border-t border-neutral-800"}
 						data-skel-item
 					>
 						<RatingCardSkeleton variant="stuff" showImage={idx % 2 === 0} />
@@ -189,7 +187,7 @@ export function StuffRatingsList({
 			</div>
 
 			{isFetchingNextPage ? (
-				<div className="-mx-4 border-t border-neutral-800">
+				<div className="border-t border-neutral-800">
 					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
 						Loading more...
 					</div>
@@ -199,7 +197,7 @@ export function StuffRatingsList({
 					<p className="text-neutral-500 text-sm">Scroll for more...</p>
 				</div>
 			) : (
-				<div className="-mx-4 border-t border-neutral-800">
+				<div className="border-t border-neutral-800">
 					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
 						All caught up! \(￣▽￣)/
 					</div>

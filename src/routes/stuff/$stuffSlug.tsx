@@ -171,16 +171,14 @@ function RouteComponent() {
 	return (
 		<MainLayout user={currentUser}>
 			<StuffHeader stuff={safeStuff} />{" "}
-			<div className="-mx-4 border-t border-neutral-800" />{" "}
+			<div className="border-t border-neutral-800" />
 			<Suspense
 				fallback={
 					<div className="py-2">
 						{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 							<div
 								key={n}
-								className={
-									idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
-								}
+								className={idx === 0 ? "" : "border-t border-neutral-800"}
 							>
 								<RatingCardSkeleton variant="stuff" showImage={idx % 2 === 0} />
 							</div>

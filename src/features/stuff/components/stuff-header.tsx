@@ -1,151 +1,123 @@
 import { useState } from "react";
 import type { StuffWithAggregates } from "../types";
 import { Lightbox } from "~/components/ui/lightbox";
+import { MessageSquare } from "lucide-react";
+
+const getRatingEmoji = (rating: number) => {
+	if (rating >= 9.5) return "🤩";
+	if (rating >= 9) return "😍";
+	if (rating >= 8) return "😊";
+	if (rating >= 7) return "🙂";
+	if (rating >= 6) return "🙂";
+	if (rating >= 5) return "🤔";
+	if (rating >= 3) return "🫢";
+	return "😑";
+};
 
 export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
-
 	const images = Array.isArray(stuff.images) ? stuff.images.slice(0, 4) : [];
 
 	return (
-		<div className="m-4">
-			{/* Gallery: 1-4 images using same layout as RatingCard */}
-			{images.length === 0 ? null : images.length === 1 ? (
-				<div className="mb-4">
-					<button
-						type="button"
-						className="block w-full"
-						onClick={() => setLightboxSrc(images[0])}
-					>
-						<img
-							src={images[0]}
-							alt={stuff.name}
-							className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
-						/>
-					</button>
-				</div>
-			) : images.length === 2 ? (
-				<div className="mb-4 flex gap-2">
-					{images.map((src, idx) => (
-						<div key={src} className="flex-1 aspect-square overflow-hidden">
-							<button
-								type="button"
-								onClick={() => setLightboxSrc(src)}
-								className="w-full h-full"
-							>
-								<img
-									src={src}
+		<div className="w-full max-w-4xl mx-auto px-4 pt-4 pb-6">
+			<div className="flex flex-col gap-3 mb-6">
+				{images.length > 0 && (
+					<div className="rounded-2xl overflow-hidden ring-1 ring-white/10 bg-neutral-900/50">
+						{images.length === 1 ? (
+							<div className="aspect-video w-full">
+								<GalleryButton
+									src={images[0]}
 									alt={stuff.name}
-									className={
-										idx === 0
-											? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
-											: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer"
-									}
+									onClick={() => setLightboxSrc(images[0])}
 								/>
-							</button>
-						</div>
-					))}
-				</div>
-			) : images.length === 3 ? (
-				<div className="mb-4 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
-					<div className="row-span-2 h-full overflow-hidden">
-						<button
-							type="button"
-							onClick={() => setLightboxSrc(images[0])}
-							className="w-full h-full"
-						>
-							<img
-								src={images[0]}
-								alt={stuff.name}
-								className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
-							/>
-						</button>
-					</div>
-					<div className="h-full overflow-hidden">
-						<button
-							type="button"
-							onClick={() => setLightboxSrc(images[1])}
-							className="w-full h-full"
-						>
-							<img
-								src={images[1]}
-								alt={stuff.name}
-								className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
-							/>
-						</button>
-					</div>
-					<div className="h-full overflow-hidden">
-						<button
-							type="button"
-							onClick={() => setLightboxSrc(images[2])}
-							className="w-full h-full"
-						>
-							<img
-								src={images[2]}
-								alt={stuff.name}
-								className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
-							/>
-						</button>
-					</div>
-				</div>
-			) : (
-				<div className="mb-4 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
-					{images.slice(0, 4).map((src, idx) => {
-						let cornerClass = "rounded-xl";
-						switch (idx) {
-							case 0:
-								cornerClass = "rounded-xl rounded-br-sm";
-								break;
-							case 1:
-								cornerClass = "rounded-xl rounded-bl-sm";
-								break;
-							case 2:
-								cornerClass = "rounded-xl rounded-tr-sm";
-								break;
-							case 3:
-								cornerClass = "rounded-xl rounded-tl-sm";
-								break;
-						}
-						return (
-							<button
-								key={src}
-								type="button"
-								onClick={() => setLightboxSrc(src)}
-								className="w-full h-full"
-							>
-								<img
-									src={src}
+							</div>
+						) : images.length === 2 ? (
+							<div className="aspect-2/1 grid grid-cols-2 gap-px bg-neutral-900">
+								<GalleryButton
+									src={images[0]}
 									alt={stuff.name}
-									className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
+									onClick={() => setLightboxSrc(images[0])}
 								/>
-							</button>
-						);
-					})}
-				</div>
-			)}
+								<GalleryButton
+									src={images[1]}
+									alt={stuff.name}
+									onClick={() => setLightboxSrc(images[1])}
+								/>
+							</div>
+						) : images.length === 3 ? (
+							<div className="aspect-2/1 grid grid-cols-2 gap-px bg-neutral-900">
+								<GalleryButton
+									src={images[0]}
+									alt={stuff.name}
+									onClick={() => setLightboxSrc(images[0])}
+								/>
+								<div className="grid grid-rows-2 gap-px">
+									<GalleryButton
+										src={images[1]}
+										alt={stuff.name}
+										onClick={() => setLightboxSrc(images[1])}
+									/>
+									<GalleryButton
+										src={images[2]}
+										alt={stuff.name}
+										onClick={() => setLightboxSrc(images[2])}
+									/>
+								</div>
+							</div>
+						) : (
+							<div className="aspect-2/1 grid grid-cols-2 gap-px bg-neutral-900">
+								<GalleryButton
+									src={images[0]}
+									alt={stuff.name}
+									onClick={() => setLightboxSrc(images[0])}
+								/>
+								<div className="grid grid-rows-2 gap-px">
+									<GalleryButton
+										src={images[1]}
+										alt={stuff.name}
+										onClick={() => setLightboxSrc(images[1])}
+									/>
+									<div className="grid grid-cols-2 gap-px">
+										<GalleryButton
+											src={images[2]}
+											alt={stuff.name}
+											onClick={() => setLightboxSrc(images[2])}
+										/>
+										<GalleryButton
+											src={images[3]}
+											alt={stuff.name}
+											onClick={() => setLightboxSrc(images[3])}
+										/>
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+				)}
 
-			<div className="flex items-start justify-between gap-4 mt-3">
-				<div className="min-w-0">
-					<h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-white truncate">
+				<div className="flex items-baseline justify-between gap-6">
+					<h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-[1.1]">
 						{stuff.name}
 					</h1>
-					<div className="flex items-center gap-4 text-sm text-neutral-400">
-						<div className="text-neutral-500">
-							{stuff.ratingCount}{" "}
-							{stuff.ratingCount === 1 ? "rating" : "ratings"}
+					<div className="shrink-0 flex items-baseline gap-2 bg-neutral-900/50 px-3 py-2 rounded-xl border border-neutral-800/50 backdrop-blur-sm">
+						<span className="text-xl md:text-3xl grayscale-[0.2] -mt-1 select-none">
+							{getRatingEmoji(Number(stuff.averageRating))}
+						</span>
+						<div className="flex items-baseline gap-1">
+							<span className="text-xl md:text-3xl font-bold text-white tabular-nums">
+								{Number(stuff.averageRating).toFixed(1)}
+							</span>
+							<span className="text-base text-neutral-500 font-medium">
+								/ 10
+							</span>
 						</div>
 					</div>
 				</div>
-				<div className="shrink-0 text-right">
-					<div className="text-2xl md:text-3xl font-semibold text-white mb-1">
-						<span className="align-baseline">
-							{Number(stuff.averageRating).toFixed(1)}
-						</span>
-						<span className="text-sm md:text-md text-neutral-400 ml-1">
-							/ 10
-						</span>
-					</div>
-					<div className="text-sm text-neutral-400">Avg. Rating</div>
+				<div className="flex items-center gap-2 text-base font-medium text-neutral-400">
+					<MessageSquare className="w-4 h-4" />
+					<span>
+						{stuff.ratingCount} {stuff.ratingCount === 1 ? "rating" : "ratings"}
+					</span>
 				</div>
 			</div>
 
@@ -157,5 +129,30 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 				/>
 			)}
 		</div>
+	);
+}
+
+function GalleryButton({
+	src,
+	alt,
+	onClick,
+}: {
+	src: string;
+	alt: string;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className="w-full h-full relative group overflow-hidden cursor-pointer"
+		>
+			<img
+				src={src}
+				alt={alt}
+				className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+			/>
+			<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+		</button>
 	);
 }
