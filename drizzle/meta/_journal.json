@@ -3,50 +3,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1768228902477,
-      "tag": "0000_short_marten_broadcloak",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1768397489528,
-      "tag": "0001_amusing_azazel",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1768449089420,
-      "tag": "0002_green_master_chief",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1768449753702,
-      "tag": "0003_marvelous_virginia_dare",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1768541789469,
-      "tag": "0004_mixed_jigsaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1768542443985,
-      "tag": "0005_curvy_ironclad",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1768548534594,
-      "tag": "0006_flaky_redwing",
+      "when": 1768666204168,
+      "tag": "0000_even_vision",
       "breakpoints": true
     }
   ]

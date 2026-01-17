@@ -5,14 +5,16 @@ import {
 	primaryKey,
 	timestamp,
 	index,
+	uuid,
 } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
 import { users } from "./auth";
+import { v7 as uuidv7 } from "uuid";
 
 export const tags = pgTable("tags", {
-	id: text("id")
+	id: uuid("id")
 		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+		.$defaultFn(() => uuidv7()),
 	name: text("name").notNull().unique(),
 	createdBy: text("created_by")
 		.notNull()
@@ -30,10 +32,10 @@ export const tagsRelations = relations(tags, ({ many }) => ({
 export const ratingsToTags = pgTable(
 	"ratings_to_tags",
 	{
-		ratingId: text("rating_id")
+		ratingId: uuid("rating_id")
 			.notNull()
 			.references(() => ratings.id, { onDelete: "cascade" }),
-		tagId: text("tag_id")
+		tagId: uuid("tag_id")
 			.notNull()
 			.references(() => tags.id, { onDelete: "cascade" }),
 	},

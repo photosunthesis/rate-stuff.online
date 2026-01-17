@@ -1,8 +1,9 @@
 import { relations } from "drizzle-orm";
 import {
 	pgTable,
-	text,
+	uuid,
 	real,
+	text,
 	timestamp,
 	index,
 	primaryKey,
@@ -10,17 +11,18 @@ import {
 import { stuff } from "./stuff";
 import { ratingsToTags } from "./tags";
 import { users } from "./auth";
+import { v7 as uuidv7 } from "uuid";
 
 export const ratings = pgTable(
 	"ratings",
 	{
-		id: text("id")
+		id: uuid("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => uuidv7()),
 		userId: text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		stuffId: text("stuff_id")
+		stuffId: uuid("stuff_id")
 			.notNull()
 			.references(() => stuff.id, { onDelete: "cascade" }),
 		score: real("score").notNull(),
@@ -66,7 +68,7 @@ export const ratingsRelations = relations(ratings, ({ one, many }) => ({
 export const ratingVotes = pgTable(
 	"rating_votes",
 	{
-		ratingId: text("rating_id")
+		ratingId: uuid("rating_id")
 			.notNull()
 			.references(() => ratings.id, { onDelete: "cascade" }),
 		userId: text("user_id")

@@ -1,13 +1,14 @@
-import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, index, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 import { type Role, ROLES } from "./user_roles";
+import { v7 as uuidv7 } from "uuid"; // v10+ required
 
 export const inviteCodes = pgTable(
 	"invite_codes",
 	{
-		id: text("id")
+		id: uuid("id")
 			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
+			.$defaultFn(() => uuidv7()),
 		code: text("code").notNull().unique(),
 		createdBy: text("created_by")
 			.notNull()

@@ -5,6 +5,7 @@ import { useCreateRatingMutation, useUploadImageMutation } from "../queries";
 import { extractValidationErrors, normalizeError } from "~/utils/errors";
 import type { createRatingSchema } from "../types";
 import type { z } from "zod";
+import { v7 as uuidv7 } from "uuid";
 
 const normalizeParagraphBreaks = (md: string) => {
 	if (!md) return "";
@@ -34,7 +35,7 @@ const useCreateRating = () => {
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 
-			const ratingId = crypto.randomUUID();
+			const ratingId = uuidv7();
 			const ratingInput = {
 				...input,
 				content: normalizeParagraphBreaks(input.content),

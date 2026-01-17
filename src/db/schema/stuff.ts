@@ -1,12 +1,13 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
 import { ratings } from "./ratings";
 import { users } from "./auth";
+import { v7 as uuidv7 } from "uuid";
 
 export const stuff = pgTable("stuff", {
-	id: text("id")
+	id: uuid("id")
 		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
+		.$defaultFn(() => uuidv7()),
 	name: text("name").notNull().unique(),
 	slug: text("slug").notNull().unique(),
 	createdBy: text("created_by")

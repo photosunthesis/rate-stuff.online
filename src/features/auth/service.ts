@@ -5,6 +5,7 @@ import { numberWithCommas } from "~/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { getDatabase } from "~/db";
+import { v7 as uuidv7 } from "uuid";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
@@ -73,7 +74,7 @@ export const uploadProfileImage = createServerOnlyFn(
 			file.type === "image/webp" || origExt.toLowerCase() === "webp"
 				? "webp"
 				: origExt;
-		const key = `avatars/${userId}/${crypto.randomUUID()}.${extension}`;
+		const key = `avatars/${userId}/${uuidv7()}.${extension}`;
 		const url = await uploadFile(env.R2_BUCKET, key, file);
 
 		return { key, url };

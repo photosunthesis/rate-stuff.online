@@ -1,1 +1,0 @@
-ALTER TABLE "ratings" ALTER COLUMN "upvotes_count" SET DEFAULT 1;

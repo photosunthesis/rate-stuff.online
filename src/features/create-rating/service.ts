@@ -5,6 +5,7 @@ import { generateSlug } from "~/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { CreateRatingInput } from "./types";
 import { getDatabase } from "~/db";
+import { v7 as uuidv7 } from "uuid";
 
 export const searchStuff = createServerOnlyFn(
 	async (query: string, limit = 10) => {
@@ -210,7 +211,7 @@ export const getUploadUrl = createServerOnlyFn(
 			contentType === "image/webp" || origExt.toLowerCase() === "webp"
 				? "webp"
 				: origExt;
-		const key = `ratings/${ratingId}/${crypto.randomUUID()}.${extension}`;
+		const key = `ratings/${ratingId}/${uuidv7()}.${extension}`;
 
 		const presign = await createPresignedUploadUrl(key);
 		return presign;
