@@ -1,4 +1,4 @@
-import { stuff, ratings, tags, ratingsToTags, ratingVotes } from "~/db/schema/";
+import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
 import { createPresignedUploadUrl } from "~/features/file-storage/service";
 import { generateSlug } from "~/utils/strings";
@@ -181,13 +181,6 @@ export const createRating = createServerOnlyFn(
 				.returning();
 
 			if (!rating) throw new Error("Failed to create rating");
-
-			// Automatically upvote by the creator
-			await tx.insert(ratingVotes).values({
-				ratingId: rating.id,
-				userId,
-				type: "up",
-			});
 
 			if (tagObjects.length > 0) {
 				await tx

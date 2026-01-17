@@ -11,6 +11,20 @@ export const voteRating = createServerOnlyFn(
 		return db.transaction(async (tx) => {
 			const { ratingId, vote } = input;
 
+			// Get rating to check owner
+			const existingRating = await tx
+				.select()
+				.from(ratings)
+				.where(eq(ratings.id, ratingId))
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!existingRating) throw new Error("Rating not found");
+
+			if (existingRating.userId === userId) {
+				throw new Error("You cannot vote on your own rating");
+			}
+
 			// Check current vote
 			const existingVote = await tx
 				.select()
