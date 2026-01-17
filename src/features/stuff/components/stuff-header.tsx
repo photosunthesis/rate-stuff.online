@@ -47,7 +47,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 									className="rounded-xl rounded-tl-sm rounded-bl-sm"
 								/>
 							</div>
-						) : images.length === 3 ? (
+						) : (
 							<div className="aspect-2/1 grid grid-cols-2 gap-1.5">
 								<GalleryButton
 									src={images[0]}
@@ -69,33 +69,6 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 										className="rounded-xl rounded-tl-sm rounded-bl-sm"
 									/>
 								</div>
-							</div>
-						) : (
-							<div className="aspect-2/1 grid grid-cols-2 grid-rows-2 gap-1.5">
-								<GalleryButton
-									src={images[0]}
-									alt={stuff.name}
-									onClick={() => setLightboxSrc(images[0])}
-									className="rounded-xl rounded-br-sm"
-								/>
-								<GalleryButton
-									src={images[1]}
-									alt={stuff.name}
-									onClick={() => setLightboxSrc(images[1])}
-									className="rounded-xl rounded-bl-sm"
-								/>
-								<GalleryButton
-									src={images[2]}
-									alt={stuff.name}
-									onClick={() => setLightboxSrc(images[2])}
-									className="rounded-xl rounded-tr-sm"
-								/>
-								<GalleryButton
-									src={images[3]}
-									alt={stuff.name}
-									onClick={() => setLightboxSrc(images[3])}
-									className="rounded-xl rounded-tl-sm"
-								/>
 							</div>
 						)}
 					</div>
