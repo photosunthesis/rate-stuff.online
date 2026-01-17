@@ -97,12 +97,16 @@ function RouteComponent() {
 	}) => {
 		if (isPending) return;
 
-		await signInMutate({
-			identifier: data.identifier,
-			password: data.password,
-			rememberMe: data.rememberMe,
-			redirectUrl,
-		});
+		try {
+			await signInMutate({
+				identifier: data.identifier,
+				password: data.password,
+				rememberMe: data.rememberMe,
+				redirectUrl,
+			});
+		} catch {
+			// error is handled in mutation callbacks
+		}
 	};
 
 	return (
