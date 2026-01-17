@@ -4,9 +4,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "NODE_OPTIONS='--import ./instrument.server.mjs' vite dev --port 3000",
     "dev:wrangler": "wrangler dev",
-    "build": "vite build",
+    "build": "vite build && cp instrument.server.mjs dist/server",
     "preview": "vite preview",
     "test": "vitest run",
     "format": "biome format",
@@ -20,7 +20,8 @@
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --config ./src/lib/auth/auth.ts -y --output ./src/db/schema/auth.ts",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "start": "node --import ./dist/server/instrument.server.mjs dist/server/index.js"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",

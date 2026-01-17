@@ -2,7 +2,6 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
-	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
@@ -100,22 +99,8 @@ export const Route = createRootRouteWithContext<{
 		],
 	}),
 
-	shellComponent: RootComponent,
+	shellComponent: RootDocument,
 });
-
-function RootComponent() {
-	return (
-		<RootDocument>
-			<UmamiAnalytics
-				url={import.meta.env.VITE_UMAMI_URL}
-				websiteId={import.meta.env.VITE_UMAMI_ID}
-				debug={import.meta.env.DEV}
-				lazyLoad={true}
-			/>
-			<Outlet />
-		</RootDocument>
-	);
-}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
@@ -125,6 +110,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
+				<UmamiAnalytics
+					url="https://umami.sun-envidiado.com"
+					websiteId="fff12b95-c8ad-43db-968d-587824b26d74"
+				/>
 				<Scripts />
 			</body>
 		</html>
