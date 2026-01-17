@@ -18,7 +18,7 @@ export const createRatingSchema = z
 		stuffName: z.string().optional(),
 		images: z
 			.array(z.string())
-			.max(4, "You can upload at most 4 images")
+			.max(3, "You can upload at most 3 images")
 			.default([]),
 	})
 	.refine((data) => data.stuffId || data.stuffName, {

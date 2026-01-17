@@ -13,7 +13,7 @@ export function ImageField({
 	images,
 	onChange,
 	error,
-	maxFiles = 4,
+	maxFiles = 3,
 	maxSizeInMB = 10,
 }: ImageFieldProps) {
 	const inputId = useId();

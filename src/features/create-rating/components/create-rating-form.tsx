@@ -151,10 +151,7 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
-			<div
-				className="flex-1 overflow-y-auto py-6"
-				ref={scrollableRef}
-			>
+			<div className="flex-1 overflow-y-auto py-6" ref={scrollableRef}>
 				<fieldset
 					disabled={isPending || isSubmitting || isSuccess}
 					className="px-6 space-y-6 border-none p-0 m-0"
@@ -261,7 +258,7 @@ export function CreateRatingForm({
 							images={selectedImages}
 							onChange={setSelectedImages}
 							error={mergedValidationErrors.images}
-							maxFiles={4}
+							maxFiles={3}
 						/>
 					</div>
 				</fieldset>

@@ -119,7 +119,7 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 	.inputValidator(
 		z.object({
 			ratingId: z.string().min(1),
-			images: z.array(z.string()).max(4, "You can upload at most 4 images"),
+			images: z.array(z.string()).max(3, "You can upload at most 3 images"),
 		}),
 	)
 	.handler(async ({ data }) => {
