@@ -161,60 +161,60 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 			</aside>
 
 			{/* Tablet icon-only sidebar */}
-			<aside className="hidden md:flex lg:hidden flex-col items-center sticky top-0 h-screen w-20 px-2 py-6">
-				<div className="flex flex-col gap-4 items-center mb-4">
-					<AppLogo size={26} />
-				</div>
-				<div className="flex-1 flex flex-col items-center justify-start space-y-2">
-					<Link
-						to="/"
-						activeOptions={{ exact: true }}
-						title="Home"
-						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
-						activeProps={{ className: "text-white" }}
-					>
-						<Home className="w-6 h-6" />
-					</Link>
-					<Link
-						to="/explore"
-						title="Explore"
-						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
-						activeProps={{ className: "text-white" }}
-					>
-						<Compass className="w-6 h-6" />
-					</Link>
-					<Link
-						to="/activity"
-						title="Activity"
-						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
-						activeProps={{ className: "text-white" }}
-					>
-						<Bell className="w-6 h-6" />
-					</Link>
-					<Link
-						to="/settings"
-						title="Settings"
-						className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
-					>
-						<Settings className="w-6 h-6" />
-					</Link>
-				</div>
-
-				<div className="mb-4">
-					{showFloatingButton && (
-						<button
-							type="button"
-							onClick={() => setIsCreateOpen(true)}
-							aria-label="New Post"
-							title="New Post"
-							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+			{isAuthenticated && (
+				<aside className="hidden md:flex lg:hidden flex-col items-center sticky top-0 h-screen w-20 px-2 py-6">
+					<div className="flex flex-col gap-4 items-center mb-4">
+						<AppLogo size={26} />
+					</div>
+					<div className="flex-1 flex flex-col items-center justify-start space-y-2">
+						<Link
+							to="/"
+							activeOptions={{ exact: true }}
+							title="Home"
+							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							activeProps={{ className: "text-white" }}
 						>
-							<PencilLine className="w-4 h-4" />
-						</button>
-					)}
-				</div>
+							<Home className="w-6 h-6" />
+						</Link>
+						<Link
+							to="/explore"
+							title="Explore"
+							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							activeProps={{ className: "text-white" }}
+						>
+							<Compass className="w-6 h-6" />
+						</Link>
+						<Link
+							to="/activity"
+							title="Activity"
+							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							activeProps={{ className: "text-white" }}
+						>
+							<Bell className="w-6 h-6" />
+						</Link>
+						<Link
+							to="/settings"
+							title="Settings"
+							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+						>
+							<Settings className="w-6 h-6" />
+						</Link>
+					</div>
 
-				{isAuthenticated && (
+					<div className="mb-4">
+						{showFloatingButton && (
+							<button
+								type="button"
+								onClick={() => setIsCreateOpen(true)}
+								aria-label="New Post"
+								title="New Post"
+								className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+							>
+								<PencilLine className="w-4 h-4" />
+							</button>
+						)}
+					</div>
+
 					<button
 						type="button"
 						onClick={() => setIsSignOutOpen(true)}
@@ -222,8 +222,8 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					>
 						<LogOut className="w-5 h-5" />
 					</button>
-				)}
-			</aside>
+				</aside>
+			)}
 
 			{isAuthenticated && (
 				<nav className="md:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">

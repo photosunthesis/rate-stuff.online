@@ -6,8 +6,8 @@ export function MobileHeader({ user }: { user?: PublicUser }) {
 	if (user != null) return null;
 
 	return (
-		<div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-neutral-950/60 backdrop-blur-md">
-			<div className="w-full max-w-2xl mx-auto px-4 py-3 border-t border-neutral-800/40 flex items-center justify-between">
+		<div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-neutral-950/60 backdrop-blur-md border-t border-neutral-800/40">
+			<div className="w-full max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<AppLogo size={30} />
 				</div>
