@@ -308,7 +308,7 @@ const ImagesGallery = ({
 
 	if (images.length === 2) {
 		return (
-			<div className="ml-11 mb-3 flex gap-2">
+			<div className="ml-11 mb-3 flex gap-1.5">
 				{images.map((src, idx) => (
 					<div key={src} className="flex-1 aspect-square overflow-hidden">
 						<button
@@ -349,7 +349,7 @@ const ImagesGallery = ({
 
 	if (images.length === 3) {
 		return (
-			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 				<div className="row-span-2 h-full overflow-hidden">
 					<button
 						type="button"
@@ -394,7 +394,7 @@ const ImagesGallery = ({
 	}
 
 	return (
-		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 			{images.slice(0, 4).map((src, idx) => {
 				let cornerClass = "rounded-xl";
 				switch (idx) {

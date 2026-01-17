@@ -275,7 +275,7 @@ export const RatingCard = memo(function RatingCard({
 							className="block aspect-video object-cover rounded-xl"
 						/>
 					) : parsedImages.length === 2 ? (
-						<div className="flex gap-2">
+						<div className="flex gap-1.5">
 							{parsedImages.map((image, idx) => (
 								<div
 									key={image}
@@ -294,7 +294,7 @@ export const RatingCard = memo(function RatingCard({
 							))}
 						</div>
 					) : parsedImages.length === 3 ? (
-						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							{/* Left: large image spanning both rows */}
 							<div className="row-span-2 h-full overflow-hidden">
 								<img
@@ -321,7 +321,7 @@ export const RatingCard = memo(function RatingCard({
 						</div>
 					) : (
 						/* 4 or more: show a 2x2 grid using first 4 images */
-						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-2">
+						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							{parsedImages.slice(0, 4).map((image, idx) => {
 								let cornerClass = "rounded-xl";
 								switch (idx) {
