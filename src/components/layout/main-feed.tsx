@@ -1,12 +1,11 @@
 import { RatingCard } from "~/components/ui/rating-card";
-import { Button } from "~/components/ui/button";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 import { useFeedRatings } from "~/features/display-ratings/queries";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import type { PublicUser } from "~/features/auth/types";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "@tanstack/react-router";
+import { useCanGoBack, useRouter } from "@tanstack/react-router";
 
 export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const isAuthenticated = user != null;
@@ -21,6 +20,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 
 	const { ref, inView } = useInView();
 	const router = useRouter();
+	const canGoBack = useCanGoBack();
 
 	useEffect(() => {
 		if (inView && hasNextPage && isAuthenticated) {
@@ -65,7 +65,21 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 			{tag && (
 				<div className="border-b border-neutral-800 px-4 py-2">
 					<div className="flex items-center justify-between">
-						<div>
+						<div className="flex items-center gap-4">
+							<button
+								type="button"
+								className="flex items-center justify-center p-2 rounded-xl text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+								onClick={(e) => {
+									e.stopPropagation();
+									if (canGoBack) {
+										router.history.back();
+									} else {
+										router.navigate({ to: "/" });
+									}
+								}}
+							>
+								<ArrowLeft className="h-5 w-5 shrink-0" />
+							</button>
 							<h2 className="text-lg font-semibold text-white">
 								Ratings with the
 								<span className="inline-flex items-center px-1 py-0.2 bg-neutral-800/70 text-neutral-300 text-base font-medium transition-colors rounded-md ml-1 font-sans">
@@ -74,18 +88,6 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 								tag
 							</h2>
 						</div>
-						<Button
-							variant="secondary"
-							size="sm"
-							className="w-auto! inline-flex items-center px-3 py-1 text-sm"
-							onClick={(e) => {
-								e.stopPropagation();
-								router.history.back();
-							}}
-						>
-							<ArrowLeft className="mr-2 h-4 w-4 shrink-0" />
-							Back
-						</Button>
 					</div>
 				</div>
 			)}

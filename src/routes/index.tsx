@@ -6,17 +6,16 @@ import {
 import { Suspense, lazy } from "react";
 import { RouteError } from "~/components/ui/route-error";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { MainLayout } from "~/components/layout/main-layout";
+import { authQueryOptions } from "~/features/auth/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { mapToCurrentUser } from "~/utils/user-mapping";
 
 const MainFeed = lazy(() =>
 	import("~/components/layout/main-feed").then((module) => ({
 		default: module.MainFeed,
 	})),
 );
-
-import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/features/auth/queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { mapToCurrentUser } from "~/utils/user-mapping";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {

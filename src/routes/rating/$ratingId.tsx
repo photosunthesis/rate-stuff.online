@@ -3,6 +3,7 @@ import {
 	redirect,
 	Link,
 	useRouter,
+	useCanGoBack,
 	notFound,
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
@@ -16,7 +17,6 @@ import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft, ArrowBigUp, ArrowBigDown } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
-import { Button } from "~/components/ui/button";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 import { useVoteRating } from "~/features/vote-rating/queries";
 import { formatCompactNumber } from "~/utils/numbers";
@@ -583,7 +583,8 @@ function VoteSection({
 }
 
 function RouteComponent() {
-	const navigate = useRouter();
+	const router = useRouter();
+	const canGoBack = useCanGoBack();
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 	// const { user, rating } = Route.useRouteContext();
 	const { rating } = Route.useRouteContext();
@@ -610,18 +611,25 @@ function RouteComponent() {
 	return (
 		<>
 			<MainLayout user={currentUser}>
-				<div className="px-4 py-2.5">
-					<Button
-						size="sm"
-						variant="secondary"
-						className="w-auto! inline-flex items-center"
-						onClick={() => navigate.history.back()}
-					>
-						<ArrowLeft className="w-4 h-4 mr-1.5" />
-						<span>Back</span>
-					</Button>
+				<div className="border-b border-neutral-800 px-4 py-2">
+					<div className="flex items-center gap-4">
+						<button
+							type="button"
+							className="flex items-center justify-center p-2 rounded-xl text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+							onClick={(e) => {
+								e.stopPropagation();
+								if (canGoBack) {
+									router.history.back();
+								} else {
+									router.navigate({ to: "/" });
+								}
+							}}
+						>
+							<ArrowLeft className="h-5 w-5 shrink-0" />
+						</button>
+						<h2 className="text-lg font-semibold text-white">Rating</h2>
+					</div>
 				</div>
-				<div className="-mx-4 border-t border-neutral-800 mb-4" />
 				<div className="px-4">
 					<RatingHeader rating={ratingTyped} />
 					<TitleBlock rating={ratingTyped} />
