@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { StuffWithAggregates } from "../types";
 import { Lightbox } from "~/components/ui/lightbox";
-import { MessageSquare } from "lucide-react";
+import { MessageSquareQuote } from "lucide-react";
 
 const getRatingEmoji = (rating: number) => {
 	if (rating >= 9.5) return "🤩";
@@ -20,7 +20,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 
 	return (
 		<div className="w-full max-w-4xl mx-auto px-4 pt-4 pb-6">
-			<div className="flex flex-col gap-1">
+			<div className="flex flex-col gap-3">
 				{images.length > 0 && (
 					<div className="bg-neutral-900/50">
 						{images.length === 1 ? (
@@ -74,11 +74,11 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 					</div>
 				)}
 
-				<div className="flex items-baseline justify-between gap-6">
+				<div className="flex items-end justify-between gap-6">
 					<h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-[1.1]">
 						{stuff.name}
 					</h1>
-					<div className="shrink-0 flex items-baseline gap-2 px-3 py-2 rounded-xl">
+					<div className="shrink-0 flex items-baseline gap-2">
 						<span className="text-xl md:text-3xl grayscale-[0.2] -mt-1 select-none">
 							{getRatingEmoji(Number(stuff.averageRating))}
 						</span>
@@ -92,8 +92,8 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						</div>
 					</div>
 				</div>
-				<div className="flex items-center gap-2 text-base font-medium text-neutral-400">
-					<MessageSquare className="w-4 h-4" />
+				<div className="flex items-center gap-1.5 text-base font-medium text-neutral-400">
+					<MessageSquareQuote className="w-4 h-4" />
 					<span>
 						{stuff.ratingCount} {stuff.ratingCount === 1 ? "rating" : "ratings"}
 					</span>
