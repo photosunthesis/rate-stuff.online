@@ -11,6 +11,9 @@ const StuffRatingsList = lazy(() =>
 	})),
 );
 import { stuffQueryOptions } from "~/features/stuff/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { authQueryOptions } from "~/features/auth/queries";
+import { mapToCurrentUser } from "~/utils/user-mapping";
 
 export const Route = createFileRoute("/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {
@@ -146,15 +149,9 @@ export const Route = createFileRoute("/stuff/$stuffSlug")({
 
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
-	const { user, stuff } = Route.useRouteContext();
-	const currentUser = user
-		? {
-				id: user.id ?? "",
-				username: user.username ?? "",
-				name: user.name === user.username ? null : (user.name ?? null),
-				image: user.image ?? "",
-			}
-		: undefined;
+	const { stuff } = Route.useRouteContext();
+	const { data: user } = useSuspenseQuery(authQueryOptions());
+	const currentUser = mapToCurrentUser(user);
 
 	// Normalize to safe shape to avoid runtime errors
 	const imagesForSafe = Array.isArray(

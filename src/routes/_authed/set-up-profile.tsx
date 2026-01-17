@@ -6,9 +6,18 @@ import { extractValidationErrors } from "~/utils/errors";
 import authClient from "~/auth/auth.client";
 import { useServerFn } from "@tanstack/react-start";
 import { uploadAvatarFn } from "~/features/auth/functions";
+import { z } from "zod";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { authQueryOptions } from "~/features/auth/queries";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,
+	validateSearch: (search) =>
+		z
+			.object({
+				redirect: z.string().optional(),
+			})
+			.parse(search),
 	head: () => ({
 		meta: [
 			{ title: "Setup Your Profile - Rate Stuff Online" },
@@ -18,9 +27,14 @@ export const Route = createFileRoute("/_authed/set-up-profile")({
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
+	const { data: user } = useSuspenseQuery(authQueryOptions());
+	const { redirect } = Route.useSearch();
+	const { refetch } = authClient.useSession();
+
+	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const uploadAvatarMutationFn = useServerFn(uploadAvatarFn);
+
 	const [isPending, setIsPending] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>(
 		undefined,
@@ -67,12 +81,16 @@ function RouteComponent() {
 			}
 
 			await authClient.updateUser(payload, {
-				onSuccess: () => {
-					navigate({ to: "/" });
+				onSuccess: async () => {
+					await queryClient.invalidateQueries({
+						queryKey: authQueryOptions().queryKey,
+					});
+
+					await refetch();
+
+					navigate({ to: redirect || "/" });
 				},
-				onError: (err) => {
-					setErrorMessage(err.error.message);
-				},
+				onError: (err) => setErrorMessage(err.error.message),
 			});
 		} catch (error) {
 			setErrorMessage(
@@ -90,7 +108,7 @@ function RouteComponent() {
 		>
 			<SetUpProfileForm
 				onSubmit={handleSubmit}
-				onSkip={() => navigate({ to: "/" })}
+				onSkip={() => navigate({ to: redirect || "/" })}
 				isPending={isPending}
 				errorMessage={errorMessage}
 				validationErrors={validationErrors}

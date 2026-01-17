@@ -21,6 +21,9 @@ import { AuthModal } from "~/features/auth/components/auth-modal";
 import { useVoteRating } from "~/features/vote-rating/queries";
 import { formatCompactNumber } from "~/utils/numbers";
 import { useUmami } from "@danielgtmn/umami-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { authQueryOptions } from "~/features/auth/queries";
+import { mapToCurrentUser } from "~/utils/user-mapping";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
@@ -582,15 +585,10 @@ function VoteSection({
 function RouteComponent() {
 	const navigate = useRouter();
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
-	const { user, rating } = Route.useRouteContext();
-	const currentUser = user
-		? {
-				id: user.id ?? "",
-				username: user.username ?? "",
-				name: user.name === user.username ? null : (user.name ?? null),
-				image: user.image ?? "",
-			}
-		: undefined;
+	// const { user, rating } = Route.useRouteContext();
+	const { rating } = Route.useRouteContext();
+	const { data: user } = useSuspenseQuery(authQueryOptions());
+	const currentUser = mapToCurrentUser(user);
 
 	if (!rating) return <NotFound />;
 

@@ -22,7 +22,10 @@ import { Route as UserUsernameRouteImport } from './routes/user/$username'
 import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
 import { Route as RatingRatingIdRouteImport } from './routes/rating/$ratingId'
 import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
+import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
+import { Route as AuthedExploreRouteImport } from './routes/_authed/explore'
+import { Route as AuthedActivityRouteImport } from './routes/_authed/activity'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -90,9 +93,24 @@ const ApiImageUploadRoute = ApiImageUploadRouteImport.update({
   path: '/api/image-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
 const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
   id: '/set-up-profile',
   path: '/set-up-profile',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedExploreRoute = AuthedExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedActivityRoute = AuthedActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
@@ -121,7 +139,10 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/activity': typeof AuthedActivityRoute
+  '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
@@ -138,7 +159,10 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/activity': typeof AuthedActivityRoute
+  '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
@@ -158,7 +182,10 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
+  '/_authed/activity': typeof AuthedActivityRoute
+  '/_authed/explore': typeof AuthedExploreRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
+  '/_authed/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof RatingRatingIdRoute
   '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
@@ -177,7 +204,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/sign-in'
     | '/sign-up'
+    | '/activity'
+    | '/explore'
     | '/set-up-profile'
+    | '/settings'
     | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
@@ -194,7 +224,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/sign-in'
     | '/sign-up'
+    | '/activity'
+    | '/explore'
     | '/set-up-profile'
+    | '/settings'
     | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
@@ -213,7 +246,10 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
+    | '/_authed/activity'
+    | '/_authed/explore'
     | '/_authed/set-up-profile'
+    | '/_authed/settings'
     | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
@@ -328,11 +364,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiImageUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authed/settings': {
+      id: '/_authed/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthedSettingsRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
     '/_authed/set-up-profile': {
       id: '/_authed/set-up-profile'
       path: '/set-up-profile'
       fullPath: '/set-up-profile'
       preLoaderRoute: typeof AuthedSetUpProfileRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/explore': {
+      id: '/_authed/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AuthedExploreRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/activity': {
+      id: '/_authed/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof AuthedActivityRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
     '/_auth/sign-up': {
@@ -374,11 +431,17 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface AuthedRouteRouteChildren {
+  AuthedActivityRoute: typeof AuthedActivityRoute
+  AuthedExploreRoute: typeof AuthedExploreRoute
   AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
+  AuthedSettingsRoute: typeof AuthedSettingsRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedActivityRoute: AuthedActivityRoute,
+  AuthedExploreRoute: AuthedExploreRoute,
   AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
+  AuthedSettingsRoute: AuthedSettingsRoute,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(

@@ -7,7 +7,9 @@ import { RatingCard } from "~/components/ui/rating-card";
 import { useEffect, useRef, useMemo } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
-import { userQueryOptions } from "~/features/auth/queries";
+import { userQueryOptions, authQueryOptions } from "~/features/auth/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { mapToCurrentUser } from "~/utils/user-mapping";
 
 export const Route = createFileRoute("/user/$username")({
 	beforeLoad: async ({ params, context }) => {
@@ -226,15 +228,9 @@ function UserRatingsList({
 }
 
 function RouteComponent() {
-	const { user, publicUser } = Route.useRouteContext();
-	const currentUser = user
-		? {
-				id: user.id ?? "",
-				username: user.username ?? "",
-				name: user.name === user.username ? null : (user.name ?? null),
-				image: user.image ?? "",
-			}
-		: undefined;
+	const { publicUser } = Route.useRouteContext();
+	const { data: user } = useSuspenseQuery(authQueryOptions());
+	const currentUser = mapToCurrentUser(user);
 
 	if (!publicUser) return <NotFound />;
 

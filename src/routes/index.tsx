@@ -15,6 +15,8 @@ const MainFeed = lazy(() =>
 
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/features/auth/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { mapToCurrentUser } from "~/utils/user-mapping";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ context }) => {
@@ -102,15 +104,8 @@ export const Route = createFileRoute("/")({
 function App() {
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
-	const { user } = Route.useRouteContext();
-	const currentUser = user
-		? {
-				id: user.id ?? "",
-				username: user.username ?? "",
-				name: user.name === user.username ? null : (user.name ?? null),
-				image: user.image ?? undefined,
-			}
-		: undefined;
+	const { data: user } = useSuspenseQuery(authQueryOptions());
+	const currentUser = mapToCurrentUser(user);
 
 	return (
 		<MainLayout user={currentUser} showDiscoverStrip={tag === undefined}>
