@@ -48,12 +48,12 @@ export function ConfirmModal({
 					<div className="mb-2" />
 					{description && <ModalDescription>{description}</ModalDescription>}
 				</ModalHeader>
-				<ModalFooter>
+				<ModalFooter className="flex-row! justify-end! space-x-2!">
 					<Button
 						type="button"
 						onClick={() => onClose()}
 						variant="secondary"
-						className="w-full sm:w-auto"
+						className="w-auto!"
 						disabled={isPending}
 					>
 						Cancel
@@ -62,7 +62,7 @@ export function ConfirmModal({
 						type="button"
 						onClick={handleConfirm}
 						variant={destructive ? "destructive" : "primary"}
-						className="w-full sm:w-auto"
+						className="w-auto!"
 						isLoading={isPending}
 						disabled={isPending}
 					>
