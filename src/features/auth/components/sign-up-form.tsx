@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { FormError } from "~/components/ui/form-error";
 import { registerSchema } from "../types";
 
@@ -12,6 +13,7 @@ interface SignUpFormProps {
 		password: string;
 		confirmPassword: string;
 		inviteCode: string;
+		terms: boolean;
 	}) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
@@ -32,6 +34,7 @@ export function SignUpForm({
 			password: "",
 			confirmPassword: "",
 			inviteCode: "",
+			terms: false,
 		},
 		onSubmit: async ({ value }) => {
 			try {
@@ -240,6 +243,55 @@ export function SignUpForm({
 									mergedValidationErrors.confirmPassword
 								}
 								required
+							/>
+						)}
+					</form.Field>
+
+					<form.Field
+						name="terms"
+						validators={{
+							onChange: ({ value }) => {
+								const result = registerSchema.shape.terms.safeParse(value);
+								return result.success
+									? undefined
+									: result.error.issues[0].message;
+							},
+						}}
+					>
+						{(field) => (
+							<Checkbox
+								id={field.name}
+								name={field.name}
+								checked={field.state.value}
+								onBlur={field.handleBlur}
+								onChange={(e) => field.handleChange(e.target.checked)}
+								error={
+									field.state.meta.errors[0]?.toString() ||
+									mergedValidationErrors.terms
+								}
+								label={
+									<span className="text-neutral-400">
+										I agree to the{" "}
+										<a
+											href="/terms"
+											className="underline underline-offset-2 hover:text-neutral-200"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Terms of Service
+										</a>{" "}
+										and{" "}
+										<a
+											href="/privacy"
+											className="underline underline-offset-2 hover:text-neutral-200"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											Privacy Policy
+										</a>
+										.
+									</span>
+								}
 							/>
 						)}
 					</form.Field>

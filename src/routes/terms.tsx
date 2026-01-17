@@ -4,9 +4,9 @@ import AppLogo from "~/components/ui/app-logo";
 export const Route = createFileRoute("/terms")({
 	component: RouteComponent,
 	head: () => {
-		const title = "Terms & Conditions - Rate Stuff Online";
+		const title = "Terms of Service - Rate Stuff Online";
 		const description =
-			"Terms and conditions for using Rate Stuff Online, a small hobby project.";
+			"Terms of Service for using Rate Stuff Online, a small hobby project.";
 
 		return {
 			meta: [
@@ -50,12 +50,12 @@ function RouteComponent() {
 			<div className="flex justify-start mb-6">
 				<AppLogo size={48} />
 			</div>
-			<h1 className="text-2xl font-semibold mb-4">Terms &amp; Conditions</h1>
+			<h1 className="text-2xl font-semibold mb-4">Terms of Service</h1>
 
 			<p className="mb-4">
-				Welcome to Rate Stuff Online. These Terms &amp; Conditions govern your
-				use of this website. By using the site you agree to these terms, so
-				please read them carefully.
+				Welcome to Rate Stuff Online. These Terms of Service govern your use of
+				this website. By using the site you agree to these terms, so please read
+				them carefully.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">About this project</h2>

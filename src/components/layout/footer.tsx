@@ -5,7 +5,7 @@ export function Footer() {
 		<footer className="px-1 pt-4">
 			<div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-neutral-500">
 				<Link to="/terms" className="hover:underline">
-					Terms & Conditions
+					Terms of Service
 				</Link>
 				<Link to="/privacy" className="hover:underline">
 					Privacy Policy

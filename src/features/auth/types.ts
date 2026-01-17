@@ -22,6 +22,9 @@ export const registerBaseSchema = z.object({
 export const registerSchema = registerBaseSchema
 	.extend({
 		confirmPassword: z.string().min(1, "Please confirm your password"),
+		terms: z.boolean().refine((val) => val === true, {
+			message: "You must agree to the terms and privacy policy",
+		}),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
 		message: "Passwords do not match",

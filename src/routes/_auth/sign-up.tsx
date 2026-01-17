@@ -59,6 +59,7 @@ function RouteComponent() {
 			email: string;
 			password: string;
 			inviteCode: string;
+			terms: boolean;
 		}) => {
 			setErrorMessage(null);
 			setValidationErrors({});
@@ -116,6 +117,7 @@ function RouteComponent() {
 		email: string;
 		password: string;
 		inviteCode: string;
+		terms: boolean;
 	}) => {
 		if (isPending) return;
 		await signUpMutate(data);
