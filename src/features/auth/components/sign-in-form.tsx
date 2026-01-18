@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
 import { FormError } from "~/components/ui/form-error";
 import { loginSchema } from "../types";
 
@@ -10,7 +9,6 @@ interface SignInFormProps {
 	onSubmit: (data: {
 		identifier: string;
 		password: string;
-		rememberMe: boolean;
 	}) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
@@ -28,7 +26,7 @@ export function SignInForm({
 		defaultValues: {
 			identifier: "",
 			password: "",
-			rememberMe: false,
+			rememberMe: true,
 		},
 		onSubmit: async ({ value }) => {
 			try {
@@ -148,17 +146,6 @@ export function SignInForm({
 									</a>
 								</div>
 							</div>
-						)}
-					</form.Field>
-					<form.Field name="rememberMe">
-						{(field) => (
-							<Checkbox
-								label="Remember me"
-								name={field.name}
-								checked={field.state.value}
-								onBlur={field.handleBlur}
-								onChange={(e) => field.handleChange(e.target.checked)}
-							/>
 						)}
 					</form.Field>
 				</fieldset>

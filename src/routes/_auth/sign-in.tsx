@@ -56,15 +56,14 @@ function RouteComponent() {
 		mutationFn: async (data: {
 			identifier: string;
 			password: string;
-			rememberMe: boolean;
 			redirectUrl?: string;
 		}) => {
 			if (isEmail(data.identifier)) {
 				const payload = {
 					email: data.identifier,
 					password: data.password,
-					rememberMe: data.rememberMe,
 					callbackURL: data.redirectUrl,
+					rememberMe: true,
 				};
 
 				const { error } = await authClient.signIn.email(payload, {
@@ -77,7 +76,7 @@ function RouteComponent() {
 				const payload = {
 					username: data.identifier,
 					password: data.password,
-					rememberMe: data.rememberMe,
+					rememberMe: true,
 				};
 
 				const { error } = await authClient.signIn.username(payload, {
@@ -93,7 +92,6 @@ function RouteComponent() {
 	const handleSubmit = async (data: {
 		identifier: string;
 		password: string;
-		rememberMe: boolean;
 	}) => {
 		if (isPending) return;
 
@@ -103,7 +101,6 @@ function RouteComponent() {
 		await signInMutate({
 			identifier: data.identifier,
 			password: data.password,
-			rememberMe: data.rememberMe,
 			redirectUrl,
 		});
 	};
