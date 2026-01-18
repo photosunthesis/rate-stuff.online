@@ -124,20 +124,30 @@ export function SignInForm({
 						}}
 					>
 						{(field) => (
-							<TextField
-								label="Password"
-								type="password"
-								name={field.name}
-								value={field.state.value}
-								onBlur={field.handleBlur}
-								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="Your password"
-								error={
-									field.state.meta.errors[0]?.toString() ||
-									mergedValidationErrors.password
-								}
-								required
-							/>
+							<div>
+								<TextField
+									label="Password"
+									type="password"
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="Your password"
+									error={
+										field.state.meta.errors[0]?.toString() ||
+										mergedValidationErrors.password
+									}
+									required
+								/>
+								<div className="flex justify-end mt-1">
+									<a
+										href="/forget-password"
+										className="text-xs text-neutral-400 hover:text-white transition-colors"
+									>
+										Forgot password?
+									</a>
+								</div>
+							</div>
 						)}
 					</form.Field>
 					<form.Field name="rememberMe">
