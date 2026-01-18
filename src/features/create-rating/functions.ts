@@ -26,7 +26,7 @@ function formatZodError(error: ZodError): Record<string, string> {
 
 const rateLimitMiddleware = createRateLimitMiddleware({
 	binding: "GENERAL",
-	keyFn: rateLimitKeys.bySession,
+	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
 	errorMessage: "Too many requests. Please try again after a short while.",
 });
 

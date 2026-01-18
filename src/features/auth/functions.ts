@@ -19,7 +19,7 @@ export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.middleware([
 		createRateLimitMiddleware({
 			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.byIp,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
 			errorMessage: "Too many requests. Please try again later.",
 		}),
 	])
@@ -42,7 +42,7 @@ export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
 		authMiddleware,
 		createRateLimitMiddleware({
 			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySession,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
 			errorMessage: "Too many requests. Please try again later.",
 		}),
 	])
@@ -65,7 +65,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 		authMiddleware,
 		createRateLimitMiddleware({
 			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySession,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
 			errorMessage: "Too many requests. Please try again later.",
 		}),
 	])

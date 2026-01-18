@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createMiddleware } from "@tanstack/react-start";
 import { getRequest, setResponseStatus } from "@tanstack/react-start/server";
-import authClient from "~/auth/auth.client";
+import { getAuth } from "~/auth/auth.server";
 
 export const RATE_LIMITER_BINDING = {
 	GENERAL: "GENERAL",
@@ -16,7 +16,7 @@ export const createRateLimitMiddleware = (config: {
 	keyFn: (request: Request) => string | Promise<string>;
 	errorMessage?: string;
 }) =>
-	createMiddleware({ type: "function" }).server(async ({ next }) => {
+	createMiddleware().server(async ({ next }) => {
 		if (import.meta.env.DEV) return next();
 
 		const request = getRequest();
@@ -41,9 +41,6 @@ export const createRateLimitMiddleware = (config: {
 	});
 
 export const rateLimitKeys = {
-	byIp: (request: Request) =>
-		request.headers.get("CF-Connecting-IP") || "unknown",
-
 	byIpAndEndpoint: (request: Request) => {
 		const ip = request.headers.get("CF-Connecting-IP") || "unknown";
 		const path = new URL(request.url).pathname;
@@ -52,44 +49,18 @@ export const rateLimitKeys = {
 
 	bySession: async (request: Request) => {
 		try {
-			const session = await authClient.getSession({
-				query: { disableCookieCache: true },
+			const auth = await getAuth().api.getSession({
+				headers: request.headers,
 			});
 
-			// The getSession response can have multiple shapes depending on how it's called.
-			// Narrow into possible structures without using `any`.
-			const maybeResponse = (session as unknown as { response?: unknown })
-				.response as
-				| {
-						user?: { id?: string };
-						session?: { id?: string };
-						sessionId?: string;
-				  }
-				| undefined;
-
-			if (maybeResponse?.user?.id) return `user:${maybeResponse.user.id}`;
-			if (maybeResponse?.session?.id)
-				return `session:${maybeResponse.session.id}`;
-			if (maybeResponse?.sessionId) return `session:${maybeResponse.sessionId}`;
-
-			const maybeTop = session as unknown as {
-				user?: { id?: string };
-				session?: { id?: string; userId?: string };
-			};
-			if (maybeTop.user?.id) return `user:${maybeTop.user.id}`;
-			if (maybeTop.session?.id) return `session:${maybeTop.session.id}`;
-			if (maybeTop.session?.userId) return `user:${maybeTop.session.userId}`;
+			if (auth?.user?.id) return `user:${auth.user.id}`;
+			if (auth?.session?.id) return `session:${auth.session.id}`;
 		} catch {
-			// If anything goes wrong, fall back to cookie parsing below
+			// ignore
 		}
 
-		const cookies = request.headers.get("Cookie") || "";
-		const sessionMatch = cookies.match(/session=([^;]+)/);
-		return sessionMatch ? `session:${sessionMatch[1]}` : "anonymous";
+		return "anonymous";
 	},
-
-	byHeader: (headerName: string) => (request: Request) =>
-		request.headers.get(headerName) || "unknown",
 
 	bySessionThenIpAndEndpoint: async (request: Request) => {
 		const sessionKey = await rateLimitKeys.bySession(request);

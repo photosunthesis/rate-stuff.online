@@ -12,7 +12,7 @@ export const voteRatingFn = createServerFn({ method: "POST" })
 		authMiddleware,
 		createRateLimitMiddleware({
 			binding: "GENERAL",
-			keyFn: rateLimitKeys.bySession,
+			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
 			errorMessage: "Too many requests. Please try again after a short while.",
 		}),
 	])

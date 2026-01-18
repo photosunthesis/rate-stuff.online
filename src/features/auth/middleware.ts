@@ -9,11 +9,6 @@ import { getAuth } from "~/auth/auth.server";
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
 	const session = await getAuth().api.getSession({
 		headers: getRequest().headers,
-		query: {
-			// ensure session is fresh
-			// https://www.better-auth.com/docs/concepts/session-management#session-caching
-			disableCookieCache: true,
-		},
 		returnHeaders: true,
 	});
 
