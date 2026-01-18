@@ -137,7 +137,7 @@ export function SignInForm({
 									}
 									required
 								/>
-								<div className="flex justify-end mt-1">
+								<div className="flex mt-2">
 									<a
 										href="/forget-password"
 										className="text-xs text-neutral-400 hover:text-white transition-colors"
