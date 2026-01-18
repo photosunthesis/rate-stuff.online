@@ -9,6 +9,7 @@ import { uploadAvatarFn } from "~/features/auth/functions";
 import { z } from "zod";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/features/auth/queries";
+import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,
@@ -58,7 +59,10 @@ function RouteComponent() {
 			if (data.avatar instanceof File) {
 				const formData = new FormData();
 				formData.append("file", data.avatar);
-				const result = await uploadAvatarMutationFn({ data: formData });
+				const result = await withTimeout(
+					uploadAvatarMutationFn({ data: formData }),
+					{ context: "profile-upload-avatar" },
+				);
 
 				if (!result.success) throw result;
 
@@ -76,20 +80,23 @@ function RouteComponent() {
 				payload.image = data.image === "" ? null : (data.image ?? undefined);
 			}
 
-			const { error } = await authClient.updateUser(payload, {
-				onSuccess: async () => {
-					await queryClient.invalidateQueries({
-						queryKey: authQueryOptions().queryKey,
-					});
+			const { error } = await withTimeout(
+				authClient.updateUser(payload, {
+					onSuccess: async () => {
+						await queryClient.invalidateQueries({
+							queryKey: authQueryOptions().queryKey,
+						});
 
-					await refetch();
+						await refetch();
 
-					navigate({ to: redirect || "/" });
-				},
-				onError: (err) => {
-					throw err;
-				},
-			});
+						navigate({ to: redirect || "/" });
+					},
+					onError: (err) => {
+						throw err;
+					},
+				}),
+				{ context: "profile-update-user" },
+			);
 
 			if (error) throw error;
 		} catch (error) {

@@ -12,6 +12,7 @@ import { SignUpForm } from "~/features/auth/components/sign-up-form";
 import { authQueryOptions } from "~/features/auth/queries";
 import { registerSchema } from "~/features/auth/types";
 import { extractValidationErrors } from "~/utils/errors";
+import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
@@ -83,29 +84,32 @@ function RouteComponent() {
 				return;
 			}
 
-			const { error } = await authClient.signUp.email(
-				{
-					name: data.username, //  We'll let the user change this later
-					username: data.username,
-					email: data.email,
-					password: data.password,
-				},
-				{
-					onSuccess: async () => {
-						queryClient.removeQueries({
-							queryKey: authQueryOptions().queryKey,
-						});
-
-						await markInviteCodeAsUsed({
-							data: { inviteCode: data.inviteCode },
-						});
-
-						navigate({ to: "/set-up-profile" });
+			const { error } = await withTimeout(
+				authClient.signUp.email(
+					{
+						name: data.username, //  We'll let the user change this later
+						username: data.username,
+						email: data.email,
+						password: data.password,
 					},
-					onError: (error) => {
-						setErrorMessage(error.error.message ?? "Failed to sign up");
+					{
+						onSuccess: async () => {
+							queryClient.removeQueries({
+								queryKey: authQueryOptions().queryKey,
+							});
+
+							await markInviteCodeAsUsed({
+								data: { inviteCode: data.inviteCode },
+							});
+
+							navigate({ to: "/set-up-profile" });
+						},
+						onError: (error) => {
+							setErrorMessage(error.error.message ?? "Failed to sign up");
+						},
 					},
-				},
+				),
+				{ context: "sign-up" },
 			);
 
 			if (error) throw error;

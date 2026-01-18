@@ -6,6 +6,7 @@ import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { ForgotPasswordForm } from "~/features/auth/components/forget-password-form";
 import { forgotPasswordSchema } from "~/features/auth/types";
 import { normalizeError } from "~/utils/errors";
+import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/forget-password")({
 	component: RouteComponent,
@@ -50,10 +51,27 @@ function RouteComponent() {
 				return;
 			}
 
-			const { error } = await authClient.requestPasswordReset({
-				email,
-				redirectTo: "/reset-password",
-			});
+			const { error } = await withTimeout(
+				authClient.requestPasswordReset(
+					{
+						email,
+						redirectTo: "/reset-password",
+					},
+					{
+						onError: (err: unknown) => {
+							const info = normalizeError(err);
+							if (info.errors) {
+								setValidationErrors(info.errors);
+							} else {
+								setErrorMessage(
+									info.errorMessage ?? "Failed to send reset link",
+								);
+							}
+							throw new Error(info.errorMessage ?? "Failed to reset password");
+						},
+					},
+				),
+			);
 
 			if (error) throw error;
 		},

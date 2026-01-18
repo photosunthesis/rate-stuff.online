@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import authClient from "~/auth/auth.client";
+import { withTimeout } from "~/utils/timeout";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignInForm } from "~/features/auth/components/sign-in-form";
 import { authQueryOptions } from "~/features/auth/queries";
@@ -66,10 +67,13 @@ function RouteComponent() {
 					rememberMe: true,
 				};
 
-				const { error } = await authClient.signIn.email(payload, {
-					onSuccess: () => handleSuccess(data.redirectUrl),
-					onError: handleError,
-				});
+				const { error } = await withTimeout(
+					authClient.signIn.email(payload, {
+						onSuccess: () => handleSuccess(data.redirectUrl),
+						onError: handleError,
+					}),
+					{ context: "sign-in-email" },
+				);
 
 				if (error) throw error;
 			} else {
@@ -79,10 +83,13 @@ function RouteComponent() {
 					rememberMe: true,
 				};
 
-				const { error } = await authClient.signIn.username(payload, {
-					onSuccess: () => handleSuccess(data.redirectUrl),
-					onError: handleError,
-				});
+				const { error } = await withTimeout(
+					authClient.signIn.username(payload, {
+						onSuccess: () => handleSuccess(data.redirectUrl),
+						onError: handleError,
+					}),
+					{ context: "sign-in-username" },
+				);
 
 				if (error) throw error;
 			}

@@ -6,10 +6,7 @@ import { FormError } from "~/components/ui/form-error";
 import { loginSchema } from "../types";
 
 interface SignInFormProps {
-	onSubmit: (data: {
-		identifier: string;
-		password: string;
-	}) => Promise<void>;
+	onSubmit: (data: { identifier: string; password: string }) => Promise<void>;
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;

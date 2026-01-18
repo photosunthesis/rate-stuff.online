@@ -6,6 +6,7 @@ import { extractValidationErrors, normalizeError } from "~/utils/errors";
 import type { createRatingSchema } from "../types";
 import type { z } from "zod";
 import { v7 as uuidv7 } from "uuid";
+import { withTimeout } from "~/utils/timeout";
 
 const normalizeParagraphBreaks = (md: string) => {
 	if (!md) return "";
@@ -48,7 +49,9 @@ const useCreateRating = () => {
 			try {
 				if (input.images && input.images.length > 0) {
 					const uploads = input.images.map((file) =>
-						uploadMutation.mutateAsync({ file, ratingId }).then(
+						withTimeout(uploadMutation.mutateAsync({ file, ratingId }), {
+							context: "create-rating-upload-image",
+						}).then(
 							(result) => result.url,
 							(e) => {
 								const info = normalizeError(e);
@@ -71,7 +74,10 @@ const useCreateRating = () => {
 				}
 
 				const finalInput = { ...ratingInput, images: imageUrls };
-				const result = (await createMutation.mutateAsync(finalInput)) as {
+				const result = (await withTimeout(
+					createMutation.mutateAsync(finalInput),
+					{ context: "create-rating" },
+				)) as {
 					success?: boolean;
 					data?: { id: string } | null;
 					errorMessage?: string;

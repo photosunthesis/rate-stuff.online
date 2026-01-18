@@ -1,14 +1,21 @@
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import authClient from "~/auth/auth.client";
+import { NotFound } from "~/components/ui/not-found";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { ResetPasswordForm } from "~/features/auth/components/reset-password-form";
 import { resetPasswordSchema } from "~/features/auth/types";
 import { normalizeError } from "~/utils/errors";
+import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/reset-password")({
 	component: RouteComponent,
+	notFoundComponent: NotFound,
+	beforeLoad: ({ search }) => {
+		const { token } = search as { token?: string };
+		if (!token) throw notFound();
+	},
 	head: () => {
 		return {
 			meta: [
@@ -29,28 +36,17 @@ export const Route = createFileRoute("/_auth/reset-password")({
 });
 
 function RouteComponent() {
-	const { token } = Route.useSearch() as { token: string };
+	const { token } = Route.useSearch() as { token?: string };
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState<
 		Record<string, string>
 	>({});
-
-	if (!token) {
-		// Ideally we should redirect or show an error state if no token
-		// But for now let's just render the layout with an error
-		// Or we can let the authClient handle the error when we try to submit
-	}
 
 	const { mutateAsync: resetPasswordMutate, isPending } = useMutation({
 		mutationFn: async (password: string) => {
 			setErrorMessage(null);
 			setValidationErrors({});
 
-			// We do not need to check for confirmPassword here because it is checked in the form logic
-			// and the schema validation below only checks password strength if we used the partial schema
-			// but we can re-use the full schema if we mock confirmPassword
-
-			// Let's just validate the password strength
 			const passwordSchema = resetPasswordSchema.shape.password;
 			const result = passwordSchema.safeParse(password);
 
@@ -64,10 +60,27 @@ function RouteComponent() {
 				return;
 			}
 
-			const { error } = await authClient.resetPassword({
-				newPassword: password,
-				token,
-			});
+			const { error } = await withTimeout(
+				authClient.resetPassword(
+					{
+						newPassword: password,
+						token,
+					},
+					{
+						onError: (err: unknown) => {
+							const info = normalizeError(err);
+							if (info.errors) {
+								setValidationErrors(info.errors);
+							} else {
+								setErrorMessage(
+									info.errorMessage ?? "Failed to reset password",
+								);
+							}
+							throw new Error(info.errorMessage ?? "Failed to reset password");
+						},
+					},
+				),
+			);
 
 			if (error) throw error;
 		},
