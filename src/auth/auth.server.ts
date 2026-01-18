@@ -126,8 +126,7 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 					to: user.email,
 					subject: "Reset your password - Rate Stuff Online",
 					html: `
-						<h1>Let's get you back in</h1>
-						<p>It happens to the best of us. Click the link below to set a new password and get back to rating stuff.</p>
+						<p>It happens to the best of us. Click the link below to set a new password and get back to rating anything.</p>
 						<a href="${resetLink}">${resetLink}</a>
 						<p>If you didn't ask for this, you can safely ignore this email.</p>
 					`,
