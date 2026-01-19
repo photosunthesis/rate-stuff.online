@@ -4,7 +4,8 @@ import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { username } from "better-auth/plugins";
 import { getDatabase, type Database } from "~/db";
-import { sendEmail } from "~/utils/email";
+import { sendResetPassword } from "~/utils/email";
+import { hashPassword, verifyPassword } from "~/utils/passwords";
 
 const getAuthConfig = createServerOnlyFn((db: Database) =>
 	betterAuth({
@@ -42,95 +43,9 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 		emailAndPassword: {
 			enabled: true,
 			password: {
-				hash: async (password: string) => {
-					const encoder = new TextEncoder();
-					const salt = crypto.getRandomValues(new Uint8Array(16));
-					const keyMaterial = await crypto.subtle.importKey(
-						"raw",
-						encoder.encode(password),
-						{ name: "PBKDF2" },
-						false,
-						["deriveBits", "deriveKey"],
-					);
-					const key = await crypto.subtle.deriveKey(
-						{
-							name: "PBKDF2",
-							salt,
-							iterations: 100000,
-							hash: "SHA-256",
-						},
-						keyMaterial,
-						{ name: "AES-GCM", length: 256 },
-						true,
-						["encrypt", "decrypt"],
-					);
-					const exportedKey = (await crypto.subtle.exportKey(
-						"raw",
-						key,
-					)) as ArrayBuffer;
-					const hashBuffer = new Uint8Array(exportedKey);
-					const saltHex = Array.from(salt)
-						.map((b) => b.toString(16).padStart(2, "0"))
-						.join("");
-					const hashHex = Array.from(hashBuffer)
-						.map((b) => b.toString(16).padStart(2, "0"))
-						.join("");
-					return `${saltHex}:${hashHex}`;
-				},
-				verify: async ({
-					hash: storedHash,
-					password,
-				}: {
-					hash: string;
-					password: string;
-				}) => {
-					const [saltHex, hashHex] = storedHash.split(":");
-					const match = saltHex.match(/.{1,2}/g);
-					if (!match) return false;
-					const salt = new Uint8Array(match.map((byte) => parseInt(byte, 16)));
-					const encoder = new TextEncoder();
-					const keyMaterial = await crypto.subtle.importKey(
-						"raw",
-						encoder.encode(password),
-						{ name: "PBKDF2" },
-						false,
-						["deriveBits", "deriveKey"],
-					);
-					const key = await crypto.subtle.deriveKey(
-						{
-							name: "PBKDF2",
-							salt,
-							iterations: 100000,
-							hash: "SHA-256",
-						},
-						keyMaterial,
-						{ name: "AES-GCM", length: 256 },
-						true,
-						["encrypt", "decrypt"],
-					);
-					const exportedKey = (await crypto.subtle.exportKey(
-						"raw",
-						key,
-					)) as ArrayBuffer;
-					const hashBuffer = new Uint8Array(exportedKey);
-					const currentHashHex = Array.from(hashBuffer)
-						.map((b) => b.toString(16).padStart(2, "0"))
-						.join("");
-					return currentHashHex === hashHex;
-				},
-			},
-			sendResetPassword: async ({ user, token }) => {
-				const resetLink = `${process.env.BETTER_AUTH_URL}/reset-password?token=${token}`;
-
-				await sendEmail({
-					to: user.email,
-					subject: "Reset your password - Rate Stuff Online",
-					html: `
-						<p>It happens to the best of us. Click the link below to set a new password and get back to rating anything.</p>
-						<a href="${resetLink}">${resetLink}</a>
-						<p>If you didn't ask for this, you can safely ignore this email.</p>
-					`,
-				});
+				hash: hashPassword,
+				verify: verifyPassword,
+				sendResetPassword,
 			},
 		},
 

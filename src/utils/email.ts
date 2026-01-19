@@ -9,12 +9,7 @@ interface SendEmailParams {
 	text?: string;
 }
 
-export const sendEmail = async ({
-	to,
-	subject,
-	html,
-	text,
-}: SendEmailParams) => {
+const sendEmail = async ({ to, subject, html, text }: SendEmailParams) => {
 	const from = "Rate Stuff Online <no-reply@rate-stuff.online>";
 
 	if (!process.env.RESEND_API_KEY) {
@@ -35,4 +30,31 @@ export const sendEmail = async ({
 		console.error("Failed to send email:", error);
 		return { success: false, error };
 	}
+};
+
+interface SendResetPasswordParams {
+	user: { email: string };
+	token: string;
+}
+
+export const sendResetPassword = async ({
+	user,
+	token,
+}: SendResetPasswordParams) => {
+	const resetLink = `${process.env.BETTER_AUTH_URL}/reset-password?token=${token}`;
+
+	await sendEmail({
+		to: user.email,
+		subject: "Reset your password - Rate Stuff Online",
+		html: `
+		<p>It happens to the best of us. Click the link below to set a new password and get back to rating anything.</p>
+		<a href="${resetLink}">${resetLink}</a>
+		<p>If you didn't ask for this, you can safely ignore this email.</p>
+		<div style="margin-top: 24px;">
+			<a href="${process.env.BETTER_AUTH_URL}">
+				<img src="https://rate-stuff.online/favicon-96x96.png" width="32" height="32" alt="Rate Stuff Online" />
+			</a>
+		</div>
+	`,
+	});
 };
