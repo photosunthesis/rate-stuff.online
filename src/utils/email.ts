@@ -37,7 +37,7 @@ interface SendResetPasswordParams {
 	token: string;
 }
 
-export const sendResetPassword = async ({
+export const sendResetPasswordEmail = async ({
 	user,
 	token,
 }: SendResetPasswordParams) => {

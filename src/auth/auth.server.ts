@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { username } from "better-auth/plugins";
 import { getDatabase, type Database } from "~/db";
-import { sendResetPassword } from "~/utils/email";
+import { sendResetPasswordEmail } from "~/utils/email";
 import { hashPassword, verifyPassword } from "~/utils/passwords";
 
 const getAuthConfig = createServerOnlyFn((db: Database) =>
@@ -45,8 +45,8 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 			password: {
 				hash: hashPassword,
 				verify: verifyPassword,
-				sendResetPassword,
 			},
+			sendResetPassword: sendResetPasswordEmail,
 		},
 
 		experimental: {
