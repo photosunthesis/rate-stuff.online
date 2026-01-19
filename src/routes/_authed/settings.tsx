@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/features/auth/queries";
 import { mapToCurrentUser } from "~/utils/user-mapping";
 import authClient from "~/auth/auth.client";
-import { LogOut, ChevronRight } from "lucide-react";
+import { LogOut, UserPen } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "~/components/ui/confirm-modal";
 import { MainLayout } from "~/components/layout/main-layout";
@@ -46,8 +46,8 @@ function SettingsPage() {
 
 			<div className="w-full flex flex-col h-full">
 				<div className="px-4 py-6 space-y-6 flex-1 max-w-3xl mx-auto w-full">
-					{/* Profile Card */}
 					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
+						{/* Edit Profile Section */}
 						<Link
 							to="/set-up-profile"
 							search={{ redirect: "/settings" }}
@@ -67,13 +67,12 @@ function SettingsPage() {
 										@{user.username}
 									</p>
 								</div>
-								<ChevronRight className="w-5 h-5 text-neutral-500" />
+								<UserPen className="w-5 h-5 text-neutral-500" />
 							</div>
 						</Link>
-					</div>
 
-					{/* Settings List Card */}
-					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
+						<div className="border-t border-neutral-800" />
+
 						{/* Sign Out Item */}
 						<button
 							type="button"
@@ -94,24 +93,24 @@ function SettingsPage() {
 				</div>
 
 				{/* Links Section */}
-				<div className="mt-8 border-t border-neutral-800">
-					<div className="p-6">
-						<div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-3 text-sm text-neutral-500">
+				<div className="mt-2 lg:hidden">
+					<div className="px-1 pb-4">
+						<div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-[10px] font-medium text-neutral-500">
 							<Link
 								to="/terms"
-								className="text-xs text-neutral-500 hover:underline transition-colors"
+								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
 							>
 								Terms & Conditions
 							</Link>
 							<Link
 								to="/privacy"
-								className="text-xs text-neutral-500 hover:underline transition-colors"
+								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
 							>
 								Privacy Policy
 							</Link>
 							<a
 								href="mailto:hello@rate-stuff.online"
-								className="text-xs text-neutral-500 hover:underline transition-colors"
+								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
 							>
 								Contact Us
 							</a>
@@ -119,13 +118,11 @@ function SettingsPage() {
 								href="https://github.com/photosunthesis/rate-stuff.online"
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-xs text-neutral-500 hover:underline transition-colors"
+								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
 							>
 								GitHub
 							</a>
-							<div className="text-xs text-neutral-500">
-								{`© 2025-${new Date().getFullYear()} Rate Stuff Online`}
-							</div>
+							<span>{`© 2025-${new Date().getFullYear()} Rate Stuff Online`}</span>
 						</div>
 					</div>
 				</div>
