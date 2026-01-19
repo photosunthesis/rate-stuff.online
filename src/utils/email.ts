@@ -41,7 +41,8 @@ export const sendResetPassword = async ({
 	user,
 	token,
 }: SendResetPasswordParams) => {
-	const resetLink = `${process.env.BETTER_AUTH_URL}/reset-password?token=${token}`;
+	const baseUrl = process.env.BETTER_AUTH_URL;
+	const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
 	await sendEmail({
 		to: user.email,
@@ -51,8 +52,8 @@ export const sendResetPassword = async ({
 		<a href="${resetLink}">${resetLink}</a>
 		<p>If you didn't ask for this, you can safely ignore this email.</p>
 		<div style="margin-top: 24px;">
-			<a href="${process.env.BETTER_AUTH_URL}">
-				<img src="https://rate-stuff.online/favicon-96x96.png" width="32" height="32" alt="Rate Stuff Online" />
+			<a href="${baseUrl}">
+				<img src="${baseUrl}/favicon-96x96.png" width="32" height="32" alt="Rate Stuff Online" />
 			</a>
 		</div>
 	`,
