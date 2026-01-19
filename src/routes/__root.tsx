@@ -11,6 +11,7 @@ import {
 	authQueryOptions,
 	type AuthQueryResult,
 } from "~/features/auth/queries";
+import { IKContext } from "imagekitio-react";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -122,7 +123,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				{children}
+				<IKContext urlEndpoint="https://ik.imagekit.io/ratestuffonline/">
+					{children}
+				</IKContext>
 				<UmamiAnalytics
 					url="https://umami.sun-envidiado.com"
 					websiteId="fff12b95-c8ad-43db-968d-587824b26d74"

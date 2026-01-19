@@ -13,6 +13,7 @@ import remarkGfm from "remark-gfm";
 import { ratingQueryOptions } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
+import { Image } from "~/components/ui/image";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft } from "lucide-react";
@@ -402,9 +403,10 @@ const ImagesGallery = ({
 						onClick={() => onImageClick(src)}
 						className="w-full h-full"
 					>
-						<img
+						<Image
 							src={src}
 							alt="Rating"
+							variant="card"
 							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
 						/>
 					</button>

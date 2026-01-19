@@ -1,4 +1,5 @@
 import { User as UserIcon } from "lucide-react";
+import { Image } from "./image";
 
 interface AvatarProps {
 	src: string | null;
@@ -24,9 +25,10 @@ export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
 
 	if (src) {
 		return (
-			<img
+			<Image
 				src={src}
 				alt={alt}
+				variant="avatar"
 				className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
 			/>
 		);

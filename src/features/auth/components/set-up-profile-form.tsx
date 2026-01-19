@@ -150,9 +150,10 @@ export function SetUpProfileForm({
 									try {
 										setIsCompressing(true);
 										const compressedBlob = await imageCompression(file, {
-											maxSizeMB: 1,
-											maxWidthOrHeight: 640,
+											maxSizeMB: 5,
+											maxWidthOrHeight: 3840,
 											useWebWorker: true,
+											initialQuality: 0.8,
 											fileType: "image/webp",
 										});
 										const baseName = file.name.replace(/\.[^/.]+$/, "");

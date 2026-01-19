@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { StuffWithAggregates } from "../types";
 import { Lightbox } from "~/components/ui/lightbox";
 import { MessageSquareQuote } from "lucide-react";
+import { Image } from "~/components/ui/image";
 
 const getRatingEmoji = (rating: number) => {
 	if (rating >= 9.5) return "🤩";
@@ -128,9 +129,10 @@ function GalleryButton({
 			onClick={onClick}
 			className={`w-full h-full relative group overflow-hidden cursor-pointer ${className}`}
 		>
-			<img
+			<Image
 				src={src}
 				alt={alt}
+				variant="card"
 				className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
 			/>
 			<div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />

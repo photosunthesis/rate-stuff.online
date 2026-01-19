@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal, useModal } from "~/components/ui/modal";
 import { X } from "lucide-react";
+import { Image } from "~/components/ui/image";
 
 interface LightboxProps {
 	src: string | null;
@@ -30,9 +31,10 @@ function LightboxContent({ src, alt }: { src: string; alt?: string }) {
 				<X size={24} />
 			</button>
 
-			<img
+			<Image
 				src={src}
 				alt={alt}
+				variant="lightbox"
 				className="w-full h-auto max-h-[92vh] object-contain"
 			/>
 		</div>

@@ -23,11 +23,20 @@ export function ImageField({
 	const handleFiles = async (files: FileList | null) => {
 		if (!files) return;
 
-		const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+		const validTypes = [
+			"image/jpeg",
+			"image/png",
+			"image/webp",
+			"image/gif",
+			"image/avif",
+			"image/heic",
+			"image/heif",
+		];
 		const compressionOptions = {
-			maxSizeMB: 1,
-			maxWidthOrHeight: 640,
+			maxSizeMB: 5,
+			maxWidthOrHeight: 3840,
 			useWebWorker: true,
+			initialQuality: 0.8,
 			fileType: "image/webp" as const,
 		};
 
@@ -151,7 +160,7 @@ export function ImageField({
 							id={inputId}
 							className="hidden"
 							multiple
-							accept="image/jpeg,image/png,image/webp,image/gif"
+							accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
 							onChange={handleChange}
 							onClick={(e) => e.stopPropagation()}
 						/>

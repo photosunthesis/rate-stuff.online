@@ -46,6 +46,7 @@
     "better-auth": "^1.4.10",
     "browser-image-compression": "^2.0.2",
     "drizzle-orm": "^0.41.0",
+    "imagekitio-react": "^4.3.0",
     "jose": "^6.1.3",
     "lucide-react": "^0.544.0",
     "pg": "^8.16.3",

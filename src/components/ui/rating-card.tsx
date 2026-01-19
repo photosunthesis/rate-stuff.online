@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "../../features/display-ratings/types";
 import { Avatar } from "~/components/ui/avatar";
 import { VoteSection } from "~/components/ui/vote-section";
+import { Image } from "~/components/ui/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AuthModal } from "~/features/auth/components/auth-modal";
@@ -229,9 +230,10 @@ export const RatingCard = memo(function RatingCard({
 			{parsedImages && parsedImages.length > 0 && (
 				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 					{parsedImages.length === 1 ? (
-						<img
+						<Image
 							src={parsedImages[0]}
 							alt="Rating"
+							variant="card"
 							className="block aspect-video object-cover rounded-xl"
 						/>
 					) : parsedImages.length === 2 ? (
@@ -241,9 +243,10 @@ export const RatingCard = memo(function RatingCard({
 									key={image}
 									className="flex-1 aspect-square overflow-hidden"
 								>
-									<img
+									<Image
 										src={image}
 										alt="Rating"
+										variant="card"
 										className={
 											idx === 0
 												? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
@@ -257,24 +260,27 @@ export const RatingCard = memo(function RatingCard({
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							{/* Left: large image spanning both rows */}
 							<div className="row-span-2 h-full overflow-hidden">
-								<img
+								<Image
 									src={parsedImages[0]}
 									alt="Rating"
+									variant="card"
 									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
 								/>
 							</div>
 							{/* Right: two stacked images (equal height, center-cropped) */}
 							<div className="h-full overflow-hidden">
-								<img
+								<Image
 									src={parsedImages[1]}
 									alt="Rating"
+									variant="card"
 									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
 								/>
 							</div>
 							<div className="h-full overflow-hidden">
-								<img
+								<Image
 									src={parsedImages[2]}
 									alt="Rating"
+									variant="card"
 									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
 								/>
 							</div>
@@ -300,9 +306,10 @@ export const RatingCard = memo(function RatingCard({
 								}
 								return (
 									<div key={image} className="w-full h-full overflow-hidden">
-										<img
+										<Image
 											src={image}
 											alt="Rating"
+											variant="card"
 											className={`w-full h-full object-cover object-center ${cornerClass}`}
 										/>
 									</div>
