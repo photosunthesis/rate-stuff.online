@@ -6,7 +6,6 @@ import { NotFound } from "~/components/ui/not-found";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { ResetPasswordForm } from "~/features/auth/components/reset-password-form";
 import { resetPasswordSchema } from "~/features/auth/types";
-import { normalizeError } from "~/utils/errors";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/reset-password")({
@@ -61,35 +60,15 @@ function RouteComponent() {
 			}
 
 			const { error } = await withTimeout(
-				authClient.resetPassword(
-					{
-						newPassword: password,
-						token,
-					},
-					{
-						onError: (err: unknown) => {
-							const info = normalizeError(err);
-							if (info.errors) {
-								setValidationErrors(info.errors);
-							} else {
-								setErrorMessage(
-									info.errorMessage ?? "Failed to reset password",
-								);
-							}
-							throw new Error(info.errorMessage ?? "Failed to reset password");
-						},
-					},
-				),
+				authClient.resetPassword({
+					newPassword: password,
+					token,
+				}),
 			);
 
-			if (error) throw error;
-		},
-		onError: (err: unknown) => {
-			const info = normalizeError(err);
-			if (info.errors) {
-				setValidationErrors(info.errors);
-			} else {
-				setErrorMessage(info.errorMessage ?? "Failed to reset password");
+			if (error) {
+				setErrorMessage(error.message ?? `Failed to reset password due to an error: ${error}`);
+				throw new Error(error.message ?? `Failed to reset password due to an error: ${error}`);
 			}
 		},
 	});

@@ -2,7 +2,6 @@ import { Modal, ModalContent } from "~/components/ui/modal";
 import { CreateRatingForm } from "~/features/create-rating/components/create-rating-form";
 import { useState } from "react";
 import { useCreateRatingMutation, useUploadImageMutation } from "../queries";
-import { extractValidationErrors, normalizeError } from "~/utils/errors";
 import type { createRatingSchema } from "../types";
 import type { z } from "zod";
 import { v7 as uuidv7 } from "uuid";
@@ -14,6 +13,23 @@ const normalizeParagraphBreaks = (md: string) => {
 	s = s.replace(/\n{3,}/g, "\n\n");
 	s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
 	return s;
+};
+
+const parseZodError = (msg: string): Record<string, string> | null => {
+	try {
+		const parsed = JSON.parse(msg);
+		if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].code) {
+			const formattedErrors: Record<string, string> = {};
+			for (const issue of parsed) {
+				const key = issue.path?.length ? String(issue.path[0]) : "form";
+				if (!formattedErrors[key]) formattedErrors[key] = issue.message;
+			}
+			return formattedErrors;
+		}
+	} catch {
+		// Not a JSON string
+	}
+	return null;
 };
 
 const useCreateRating = () => {
@@ -53,18 +69,23 @@ const useCreateRating = () => {
 							context: "create-rating-upload-image",
 						}).then(
 							(result) => result.url,
-							(e) => {
-								const info = normalizeError(e);
-								if (info.errors)
+							(error) => {
+								const msg =
+									error instanceof Error
+										? error.message
+										: `An unexpected error occurred: ${error}`;
+
+								const zodErrors = parseZodError(msg);
+								if (zodErrors) {
 									setLocalValidationErrors((prev) => ({
 										...prev,
-										...info.errors,
+										...zodErrors,
 									}));
-								const msg =
-									info.errorMessage ??
-									(e instanceof Error ? e.message : String(e));
-								setLocalErrorMessage(msg);
-								throw e;
+									setLocalErrorMessage(null);
+								} else {
+									setLocalErrorMessage(msg);
+								}
+								throw error;
 							},
 						),
 					);
@@ -85,32 +106,38 @@ const useCreateRating = () => {
 				};
 
 				if (!result.success || !result.data) {
-					const validationErrors = extractValidationErrors(result);
-					setLocalValidationErrors(validationErrors);
+					if (result.errors) {
+						setLocalValidationErrors(result.errors);
+					}
 					const msg = result.errorMessage ?? "Failed to create rating";
 					setLocalErrorMessage(msg);
 					throw new Error(msg);
 				}
-			} catch (e) {
-				const info = normalizeError(e);
-				if (info.errors) setLocalValidationErrors(info.errors);
+			} catch (error) {
 				const msg =
-					info.errorMessage ?? (e instanceof Error ? e.message : String(e));
-				setLocalErrorMessage(msg);
+					error instanceof Error
+						? error.message
+						: `An unexpected error occurred: ${error}`;
+
+				const zodErrors = parseZodError(msg);
+				if (zodErrors) {
+					setLocalValidationErrors(zodErrors);
+					setLocalErrorMessage(null);
+				} else {
+					setLocalErrorMessage(msg);
+				}
 				throw new Error(msg);
 			}
 		},
 		isPending: createMutation.isPending || uploadMutation.isPending,
 		errorMessage:
 			localErrorMessage ??
-			(createMutation.data &&
-			!(createMutation.data as { success?: boolean }).success
-				? (createMutation.data as unknown as { errorMessage?: string })
-						.errorMessage
+			(createMutation.data && !createMutation.data.success
+				? createMutation.data.errorMessage
 				: undefined),
 		validationErrors:
-			(createMutation.data
-				? extractValidationErrors(createMutation.data)
+			(createMutation.data && !createMutation.data.success
+				? createMutation.data.errors
 				: localValidationErrors) || {},
 		reset: () => {
 			createMutation.reset();

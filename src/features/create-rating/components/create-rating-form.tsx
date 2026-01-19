@@ -8,7 +8,6 @@ import { createRatingSchema } from "~/features/create-rating/types";
 import { StuffSelector } from "~/features/create-rating/components/stuff-selector";
 import { TagSelector } from "~/features/create-rating/components/tag-selector";
 import { ImageField } from "~/features/create-rating/components/image-field";
-import { getErrorMessage } from "~/utils/errors";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
 
@@ -158,7 +157,7 @@ export function CreateRatingForm({
 				>
 					{hasGlobalError && (
 						<div className="mb-6">
-							<FormError message={getErrorMessage(errorMessage)} />
+							<FormError message={errorMessage ?? "Something went wrong"} />
 						</div>
 					)}
 

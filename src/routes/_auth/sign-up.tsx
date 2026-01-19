@@ -11,7 +11,6 @@ import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignUpForm } from "~/features/auth/components/sign-up-form";
 import { authQueryOptions } from "~/features/auth/queries";
 import { registerSchema } from "~/features/auth/types";
-import { extractValidationErrors } from "~/utils/errors";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/sign-up")({
@@ -68,7 +67,10 @@ function RouteComponent() {
 			const parseResult = registerSchema.safeParse(data);
 
 			if (!parseResult.success) {
-				const errors = extractValidationErrors(parseResult.error);
+				const errors: Record<string, string> = {};
+				for (const issue of parseResult.error.issues) {
+					errors[issue.path[0] as string] = issue.message;
+				}
 				setValidationErrors(errors);
 				return;
 			}
@@ -85,32 +87,29 @@ function RouteComponent() {
 			}
 
 			const { error } = await withTimeout(
-				authClient.signUp.email(
-					{
-						name: data.username, //  We'll let the user change this later
-						username: data.username,
-						email: data.email,
-						password: data.password,
-					},
-					{
-						onSuccess: async () => {
-							queryClient.removeQueries({
-								queryKey: authQueryOptions().queryKey,
-							});
-
-							await markInviteCodeAsUsed({
-								data: { inviteCode: data.inviteCode },
-							});
-
-							navigate({ to: "/set-up-profile" });
-						},
-						onError: (error) => {
-							setErrorMessage(error.error.message ?? "Failed to sign up");
-						},
-					},
-				),
+				authClient.signUp.email({
+					name: data.username, //  We'll let the user change this later
+					username: data.username,
+					email: data.email,
+					password: data.password,
+				}),
 				{ context: "sign-up" },
 			);
+
+			if (error) {
+				setErrorMessage(error.message ?? `Failed to sign up due to an error: ${error}`);
+				return;
+			}
+
+			queryClient.removeQueries({
+				queryKey: authQueryOptions().queryKey,
+			});
+
+			await markInviteCodeAsUsed({
+				data: { inviteCode: data.inviteCode },
+			});
+
+			navigate({ to: "/set-up-profile" });
 
 			if (error) throw error;
 		},

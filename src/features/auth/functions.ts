@@ -27,12 +27,20 @@ export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		try {
 			const isValid = await validateInviteCode(data.inviteCode);
-			return { success: isValid };
+			if (!isValid) {
+				return {
+					success: false,
+					errors: { inviteCode: "Invalid invite code" },
+				};
+			}
+			return { success: true };
 		} catch (error) {
 			return {
 				success: false,
-				errorMessage:
-					error instanceof Error ? error.message : "Validation failed",
+				errors: {
+					inviteCode:
+						error instanceof Error ? error.message : "Validation failed",
+				},
 			};
 		}
 	});

@@ -1,13 +1,12 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { SetUpProfileForm } from "~/features/auth/components/set-up-profile-form";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { useState } from "react";
-import { normalizeError } from "~/utils/errors";
-import authClient from "~/auth/auth.client";
-import { useServerFn } from "@tanstack/react-start";
-import { uploadAvatarFn } from "~/features/auth/functions";
-import { z } from "zod";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import { z } from "zod";
+import authClient from "~/auth/auth.client";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { SetUpProfileForm } from "~/features/auth/components/set-up-profile-form";
+import { uploadAvatarFn } from "~/features/auth/functions";
 import { authQueryOptions } from "~/features/auth/queries";
 import { withTimeout } from "~/utils/timeout";
 
@@ -80,30 +79,23 @@ function RouteComponent() {
 				payload.image = data.image === "" ? null : (data.image ?? undefined);
 			}
 
-			const { error } = await withTimeout(
-				authClient.updateUser(payload, {
-					onSuccess: async () => {
-						await queryClient.invalidateQueries({
-							queryKey: authQueryOptions().queryKey,
-						});
-
-						await refetch();
-
-						navigate({ to: redirect || "/" });
-					},
-					onError: (err) => {
-						throw err;
-					},
-				}),
-				{ context: "profile-update-user" },
-			);
+			const { error } = await withTimeout(authClient.updateUser(payload), {
+				context: "profile-update-user",
+			});
 
 			if (error) throw error;
+
+			await queryClient.invalidateQueries({
+				queryKey: authQueryOptions().queryKey,
+			});
+
+			await refetch();
+
+			navigate({ to: redirect || "/" });
 		} catch (error) {
-			const { errorMessage, errors } = normalizeError(error);
-			setErrorMessage(errorMessage ?? "Failed to set up profile");
-			if (errors) setValidationErrors(errors);
-			throw error;
+			setErrorMessage(
+				error instanceof Error ? error.message : `An error occured while setting up your profile: ${error}`,
+			);
 		} finally {
 			setIsPending(false);
 		}

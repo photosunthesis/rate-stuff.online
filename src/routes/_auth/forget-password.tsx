@@ -5,7 +5,6 @@ import authClient from "~/auth/auth.client";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { ForgotPasswordForm } from "~/features/auth/components/forget-password-form";
 import { forgotPasswordSchema } from "~/features/auth/types";
-import { normalizeError } from "~/utils/errors";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/forget-password")({
@@ -52,35 +51,15 @@ function RouteComponent() {
 			}
 
 			const { error } = await withTimeout(
-				authClient.requestPasswordReset(
-					{
-						email,
-						redirectTo: "/reset-password",
-					},
-					{
-						onError: (err: unknown) => {
-							const info = normalizeError(err);
-							if (info.errors) {
-								setValidationErrors(info.errors);
-							} else {
-								setErrorMessage(
-									info.errorMessage ?? "Failed to send reset link",
-								);
-							}
-							throw new Error(info.errorMessage ?? "Failed to reset password");
-						},
-					},
-				),
+				authClient.requestPasswordReset({
+					email,
+					redirectTo: "/reset-password",
+				}),
 			);
 
-			if (error) throw error;
-		},
-		onError: (err: unknown) => {
-			const info = normalizeError(err);
-			if (info.errors) {
-				setValidationErrors(info.errors);
-			} else {
-				setErrorMessage(info.errorMessage ?? "Failed to send reset link");
+			if (error) {
+				setErrorMessage(error.message ?? `Failed to send reset link due to an error: ${error}`);
+				throw new Error(error.message ?? `Failed to send reset link due to an error: ${error}`);
 			}
 		},
 	});

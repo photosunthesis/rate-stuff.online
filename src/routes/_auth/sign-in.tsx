@@ -6,7 +6,6 @@ import { withTimeout } from "~/utils/timeout";
 import { AuthLayout } from "~/features/auth/components/auth-layout";
 import { SignInForm } from "~/features/auth/components/sign-in-form";
 import { authQueryOptions } from "~/features/auth/queries";
-import { normalizeError } from "~/utils/errors";
 import { isEmail } from "~/utils/strings";
 
 export const Route = createFileRoute("/_auth/sign-in")({
@@ -44,15 +43,6 @@ function RouteComponent() {
 		navigate({ to: redirect ?? "/" });
 	};
 
-	const handleError = (err: unknown) => {
-		const info = normalizeError(err);
-		if (info.errors) {
-			setValidationErrors(info.errors);
-			return;
-		}
-		setErrorMessage(info.errorMessage ?? "Failed to sign in");
-	};
-
 	const { mutateAsync: signInMutate, isPending } = useMutation({
 		mutationFn: async (data: {
 			identifier: string;
@@ -67,15 +57,18 @@ function RouteComponent() {
 					rememberMe: true,
 				};
 
-				const { error } = await withTimeout(
-					authClient.signIn.email(payload, {
-						onSuccess: () => handleSuccess(data.redirectUrl),
-						onError: handleError,
-					}),
-					{ context: "sign-in-email" },
-				);
+				const { error } = await withTimeout(authClient.signIn.email(payload), {
+					context: "sign-in-email",
+				});
 
-				if (error) throw error;
+				if (error) {
+					setErrorMessage(
+						error.message ?? `Failed to sign in due to an error: ${error}`,
+					);
+					return;
+				}
+
+				handleSuccess(data.redirectUrl);
 			} else {
 				const payload = {
 					username: data.identifier,
@@ -84,14 +77,18 @@ function RouteComponent() {
 				};
 
 				const { error } = await withTimeout(
-					authClient.signIn.username(payload, {
-						onSuccess: () => handleSuccess(data.redirectUrl),
-						onError: handleError,
-					}),
+					authClient.signIn.username(payload),
 					{ context: "sign-in-username" },
 				);
 
-				if (error) throw error;
+				if (error) {
+					setErrorMessage(
+						error.message ?? `Failed to sign in due to an error: ${error}`,
+					);
+					return;
+				}
+
+				handleSuccess(data.redirectUrl);
 			}
 		},
 	});
