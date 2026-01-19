@@ -36,7 +36,7 @@ export function AuthLayout({
 							{footerText}{" "}
 							<Link
 								to={footerLinkTo}
-								className="text-emerald-600 hover:text-emerald-500 font-semibold transition-colors hover:underline"
+								className="hover:text-neutral-200 transition-colors underline underline-offset-2"
 							>
 								{footerLinkText}
 							</Link>
