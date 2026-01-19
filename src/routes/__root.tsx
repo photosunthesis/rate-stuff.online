@@ -64,7 +64,7 @@ export const Route = createRootRouteWithContext<{
 			},
 			{
 				name: "msapplication-TileColor",
-				content: "#111827",
+				content: "#0a0a0a",
 			},
 			{
 				property: "og:title",
