@@ -1,0 +1,1 @@
+CREATE INDEX "ratings_stuff_created_idx" ON "ratings" USING btree ("stuff_id","created_at","id");

@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, index, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth";
-import { type Role, ROLES } from "./user_roles";
+import { type Role, ROLES } from "./user-roles";
 import { v7 as uuidv7 } from "uuid"; // v10+ required
 
 export const inviteCodes = pgTable(

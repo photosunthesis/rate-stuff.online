@@ -45,6 +45,11 @@ export const ratings = pgTable(
 		index("ratings_created_at_idx").on(table.createdAt),
 		index("ratings_user_created_idx").on(table.userId, table.createdAt),
 		index("ratings_deleted_at_idx").on(table.deletedAt),
+		index("ratings_stuff_created_idx").on(
+			table.stuffId,
+			table.createdAt,
+			table.id,
+		),
 	],
 );
 
