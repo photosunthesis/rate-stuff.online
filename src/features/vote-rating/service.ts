@@ -11,35 +11,33 @@ export const voteRating = createServerOnlyFn(
 		return db.transaction(async (tx) => {
 			const { ratingId, vote } = input;
 
-			// Get rating to check owner
-			const existingRating = await tx
-				.select()
+			const existing = await tx
+				.select({
+					ownerId: ratings.userId,
+					currentVote: ratingVotes.type,
+				})
 				.from(ratings)
-				.where(eq(ratings.id, ratingId))
-				.limit(1)
-				.then((rows) => rows[0]);
-
-			if (!existingRating) throw new Error("Rating not found");
-
-			if (existingRating.userId === userId) {
-				throw new Error("You cannot vote on your own rating");
-			}
-
-			// Check current vote
-			const existingVote = await tx
-				.select()
-				.from(ratingVotes)
-				.where(
+				.leftJoin(
+					ratingVotes,
 					and(
 						eq(ratingVotes.ratingId, ratingId),
 						eq(ratingVotes.userId, userId),
 					),
 				)
+				.where(eq(ratings.id, ratingId))
 				.limit(1)
 				.then((rows) => rows[0]);
 
+			if (!existing) throw new Error("Rating not found");
+
+			if (existing.ownerId === userId) {
+				throw new Error("You cannot vote on your own rating");
+			}
+
+			const currentVoteType = existing.currentVote;
+
 			if (vote === "none") {
-				if (existingVote) {
+				if (currentVoteType) {
 					// Remove vote
 					await tx
 						.delete(ratingVotes)
@@ -51,7 +49,7 @@ export const voteRating = createServerOnlyFn(
 						);
 
 					// Decrement count
-					if (existingVote.type === "up") {
+					if (currentVoteType === "up") {
 						await tx
 							.update(ratings)
 							.set({
@@ -68,8 +66,8 @@ export const voteRating = createServerOnlyFn(
 					}
 				}
 			} else {
-				if (existingVote) {
-					if (existingVote.type !== vote) {
+				if (currentVoteType) {
+					if (currentVoteType !== vote) {
 						// Change vote
 						await tx
 							.update(ratingVotes)
@@ -83,7 +81,6 @@ export const voteRating = createServerOnlyFn(
 
 						// Update counts (decrement old type, increment new type)
 						if (vote === "up") {
-							// switched from down to up
 							await tx
 								.update(ratings)
 								.set({
@@ -92,11 +89,10 @@ export const voteRating = createServerOnlyFn(
 								})
 								.where(eq(ratings.id, ratingId));
 						} else {
-							// switched from up to down
 							await tx
 								.update(ratings)
 								.set({
-									upvotesCount: sql`greatest(0, ${ratings.upvotesCount} - 1)`,
+									upvotesCount: sql`greatest(0, ${ratings.upvotesCount} - 1`,
 									downvotesCount: sql`${ratings.downvotesCount} + 1`,
 								})
 								.where(eq(ratings.id, ratingId));
@@ -104,14 +100,12 @@ export const voteRating = createServerOnlyFn(
 					}
 					// If type matches, do nothing
 				} else {
-					// New vote
 					await tx.insert(ratingVotes).values({
 						ratingId,
 						userId,
 						type: vote,
 					});
 
-					// Increment count
 					if (vote === "up") {
 						await tx
 							.update(ratings)
@@ -125,14 +119,6 @@ export const voteRating = createServerOnlyFn(
 					}
 				}
 			}
-
-			// Return updated rating
-			const [updatedRating] = await tx
-				.select()
-				.from(ratings)
-				.where(eq(ratings.id, ratingId));
-
-			return updatedRating;
 		});
 	},
 );
