@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@cf-wasm/photon':
-        specifier: ^0.3.4
-        version: 0.3.4
       '@cloudflare/vite-plugin':
         specifier: ^1.13.8
         version: 1.18.0(vite@7.3.0(@types/node@22.19.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))(workerd@1.20251213.0)(wrangler@4.55.0)
@@ -426,12 +423,6 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [x64]
     os: [win32]
-
-  '@cf-wasm/internals@0.1.1':
-    resolution: {integrity: sha512-zyl5ThQx3XJhGXbBI6DVsw9dSb7edAHB71goURMg1grGeIso9d0V9oa6HtOd7/9ggYGqTmLvBS/EYJByCrs3Yw==}
-
-  '@cf-wasm/photon@0.3.4':
-    resolution: {integrity: sha512-yCYykIZKU+3Q1Vi/QlBOa7RRF2+w/qaHpjrRcnLJ0WHkkILJt71nDNCVb4hHRwZVGVpqOJX3gORWIQ4/XuzXPQ==}
 
   '@cloudflare/kv-asset-handler@0.4.1':
     resolution: {integrity: sha512-Nu8ahitGFFJztxUml9oD/DLb7Z28C8cd8F46IVQ7y5Btz575pvMY8AqZsXkX7Gds29eCKdMgIHjIvzskHgPSFg==}
@@ -4553,12 +4544,6 @@ snapshots:
 
   '@biomejs/cli-win32-x64@2.2.4':
     optional: true
-
-  '@cf-wasm/internals@0.1.1': {}
-
-  '@cf-wasm/photon@0.3.4':
-    dependencies:
-      '@cf-wasm/internals': 0.1.1
 
   '@cloudflare/kv-asset-handler@0.4.1':
     dependencies:

@@ -205,7 +205,8 @@ export const RatingCard = memo(function RatingCard({
 							{parsedImages.map((image, idx) => (
 								<div
 									key={image}
-									className="flex-1 aspect-square overflow-hidden"
+									className="flex-1 overflow-hidden"
+									style={{ aspectRatio: "1 / 1" }}
 								>
 									<Image
 										src={image}
@@ -222,7 +223,10 @@ export const RatingCard = memo(function RatingCard({
 						</div>
 					) : parsedImages.length === 3 ? (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-							<div className="row-span-2 h-full overflow-hidden">
+							<div
+								className="row-span-2 overflow-hidden"
+								style={{ aspectRatio: "1 / 1" }}
+							>
 								<Image
 									src={parsedImages[0]}
 									alt="Rating"
@@ -231,7 +235,7 @@ export const RatingCard = memo(function RatingCard({
 								/>
 							</div>
 
-							<div className="h-full overflow-hidden">
+							<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
 								<Image
 									src={parsedImages[1]}
 									alt="Rating"
@@ -239,7 +243,7 @@ export const RatingCard = memo(function RatingCard({
 									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
 								/>
 							</div>
-							<div className="h-full overflow-hidden">
+							<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
 								<Image
 									src={parsedImages[2]}
 									alt="Rating"
@@ -267,7 +271,11 @@ export const RatingCard = memo(function RatingCard({
 										break;
 								}
 								return (
-									<div key={image} className="w-full h-full overflow-hidden">
+									<div
+										key={image}
+										className="overflow-hidden"
+										style={{ aspectRatio: "1 / 1" }}
+									>
 										<Image
 											src={image}
 											alt="Rating"

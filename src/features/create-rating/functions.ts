@@ -161,9 +161,8 @@ export const uploadRatingImageFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		try {
 			const { file, ratingId } = data;
-			const { compressImage } = await import("~/utils/image-utils");
-			const { buffer, contentType } = await compressImage(file);
-			const result = await uploadRatingImage(ratingId, buffer, contentType);
+			const buffer = new Uint8Array(await file.arrayBuffer());
+			const result = await uploadRatingImage(ratingId, buffer, file.type);
 
 			return { success: true, url: result.url, key: result.key };
 		} catch (error) {

@@ -23,7 +23,6 @@
     "start": "node --import ./dist/server/instrument.server.mjs dist/server/index.js"
   },
   "dependencies": {
-    "@cf-wasm/photon": "^0.3.4",
     "@cloudflare/vite-plugin": "^1.13.8",
     "@danielgtmn/umami-react": "^1.1.2",
     "@sentry/tanstackstart-react": "^10.34.0",

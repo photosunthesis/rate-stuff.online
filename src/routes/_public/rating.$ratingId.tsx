@@ -319,7 +319,11 @@ const ImagesGallery = ({
 		return (
 			<div className="ml-11 mb-3 flex gap-1.5">
 				{images.map((src, idx) => (
-					<div key={src} className="flex-1 aspect-square overflow-hidden">
+					<div
+						key={src}
+						className="flex-1 overflow-hidden"
+						style={{ aspectRatio: "1 / 1" }}
+					>
 						<button
 							type="button"
 							onClick={() => onImageClick(src)}
@@ -344,7 +348,10 @@ const ImagesGallery = ({
 	if (images.length === 3) {
 		return (
 			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-				<div className="row-span-2 h-full overflow-hidden">
+				<div
+					className="row-span-2 overflow-hidden"
+					style={{ aspectRatio: "1 / 1" }}
+				>
 					<button
 						type="button"
 						onClick={() => onImageClick(images[0])}
@@ -357,7 +364,7 @@ const ImagesGallery = ({
 						/>
 					</button>
 				</div>
-				<div className="h-full overflow-hidden">
+				<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
 					<button
 						type="button"
 						onClick={() => onImageClick(images[1])}
@@ -370,7 +377,7 @@ const ImagesGallery = ({
 						/>
 					</button>
 				</div>
-				<div className="h-full overflow-hidden">
+				<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
 					<button
 						type="button"
 						onClick={() => onImageClick(images[2])}
