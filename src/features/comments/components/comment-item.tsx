@@ -68,7 +68,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const shouldTruncate = comment.content.length > maxContentLength;
 
 	return (
-		<div className="flex gap-3 py-1.5 hover:bg-neutral-900/20 transition-colors px-2 rounded-lg -mx-2 items-start">
+		<div className="flex gap-3 py-1.5 px-2 rounded-lg -mx-2 items-start">
 			<Avatar
 				src={image}
 				alt={displayText}

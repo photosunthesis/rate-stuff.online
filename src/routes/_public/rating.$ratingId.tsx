@@ -41,7 +41,7 @@ const excerptFromMarkdown = (md: string, max = 160) => {
 	return text.length > max ? `${text.slice(0, max - 1).trim()}…` : text;
 };
 
-export const Route = createFileRoute("/rating/$ratingId")({
+export const Route = createFileRoute("/_public/rating/$ratingId")({
 	beforeLoad: async ({ params, context }) => {
 		const ratingId = params.ratingId;
 
@@ -550,7 +550,7 @@ function RouteComponent() {
 						</button>
 					</div>
 					<div className="-mx-4 border-t border-neutral-800 my-4" />
-					<div id={commentsSectionId}>
+					<div id={commentsSectionId} className="mb-4">
 						<CommentsSection ratingId={rating.id} currentUser={currentUser} />
 					</div>
 				</div>

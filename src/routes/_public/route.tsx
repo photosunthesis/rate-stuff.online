@@ -1,13 +1,13 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { authQueryOptions } from "~/features/auth/queries";
 
-export const Route = createFileRoute("/user")({
+export const Route = createFileRoute("/_public")({
 	component: RouteComponent,
 	beforeLoad: async ({ context }) => {
 		const user = await context.queryClient.ensureQueryData({
 			...authQueryOptions(),
 			revalidateIfStale: true,
-		});
+		})
 
 		return { user };
 	},

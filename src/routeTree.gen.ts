@@ -12,15 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as UserRouteRouteImport } from './routes/user/route'
-import { Route as StuffRouteRouteImport } from './routes/stuff/route'
-import { Route as RatingRouteRouteImport } from './routes/rating/route'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as UserUsernameRouteImport } from './routes/user/$username'
-import { Route as StuffStuffSlugRouteImport } from './routes/stuff/$stuffSlug'
-import { Route as RatingRatingIdRouteImport } from './routes/rating/$ratingId'
 import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
@@ -31,6 +26,9 @@ import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as PublicUserUsernameRouteImport } from './routes/_public/user.$username'
+import { Route as PublicStuffStuffSlugRouteImport } from './routes/_public/stuff.$stuffSlug'
+import { Route as PublicRatingRatingIdRouteImport } from './routes/_public/rating.$ratingId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -47,19 +45,8 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserRouteRoute = UserRouteRouteImport.update({
-  id: '/user',
-  path: '/user',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StuffRouteRoute = StuffRouteRouteImport.update({
-  id: '/stuff',
-  path: '/stuff',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RatingRouteRoute = RatingRouteRouteImport.update({
-  id: '/rating',
-  path: '/rating',
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedRouteRoute = AuthedRouteRouteImport.update({
@@ -74,21 +61,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const UserUsernameRoute = UserUsernameRouteImport.update({
-  id: '/$username',
-  path: '/$username',
-  getParentRoute: () => UserRouteRoute,
-} as any)
-const StuffStuffSlugRoute = StuffStuffSlugRouteImport.update({
-  id: '/$stuffSlug',
-  path: '/$stuffSlug',
-  getParentRoute: () => StuffRouteRoute,
-} as any)
-const RatingRatingIdRoute = RatingRatingIdRouteImport.update({
-  id: '/$ratingId',
-  path: '/$ratingId',
-  getParentRoute: () => RatingRouteRoute,
 } as any)
 const ApiImageUploadRoute = ApiImageUploadRouteImport.update({
   id: '/api/image-upload',
@@ -140,12 +112,24 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicUserUsernameRoute = PublicUserUsernameRouteImport.update({
+  id: '/user/$username',
+  path: '/user/$username',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicStuffStuffSlugRoute = PublicStuffStuffSlugRouteImport.update({
+  id: '/stuff/$stuffSlug',
+  path: '/stuff/$stuffSlug',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicRatingRatingIdRoute = PublicRatingRatingIdRouteImport.update({
+  id: '/rating/$ratingId',
+  path: '/rating/$ratingId',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/rating': typeof RatingRouteRouteWithChildren
-  '/stuff': typeof StuffRouteRouteWithChildren
-  '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -158,16 +142,13 @@ export interface FileRoutesByFullPath {
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
-  '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
-  '/user/$username': typeof UserUsernameRoute
+  '/rating/$ratingId': typeof PublicRatingRatingIdRoute
+  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
+  '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/rating': typeof RatingRouteRouteWithChildren
-  '/stuff': typeof StuffRouteRouteWithChildren
-  '/user': typeof UserRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -180,9 +161,9 @@ export interface FileRoutesByTo {
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
-  '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
-  '/user/$username': typeof UserUsernameRoute
+  '/rating/$ratingId': typeof PublicRatingRatingIdRoute
+  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
+  '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -190,9 +171,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_authed': typeof AuthedRouteRouteWithChildren
-  '/rating': typeof RatingRouteRouteWithChildren
-  '/stuff': typeof StuffRouteRouteWithChildren
-  '/user': typeof UserRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -205,18 +184,15 @@ export interface FileRoutesById {
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_authed/settings': typeof AuthedSettingsRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/rating/$ratingId': typeof RatingRatingIdRoute
-  '/stuff/$stuffSlug': typeof StuffStuffSlugRoute
-  '/user/$username': typeof UserUsernameRoute
+  '/_public/rating/$ratingId': typeof PublicRatingRatingIdRoute
+  '/_public/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
+  '/_public/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/rating'
-    | '/stuff'
-    | '/user'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -236,9 +212,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/rating'
-    | '/stuff'
-    | '/user'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -260,9 +233,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/_authed'
-    | '/rating'
-    | '/stuff'
-    | '/user'
+    | '/_public'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -275,9 +246,9 @@ export interface FileRouteTypes {
     | '/_authed/set-up-profile'
     | '/_authed/settings'
     | '/api/image-upload'
-    | '/rating/$ratingId'
-    | '/stuff/$stuffSlug'
-    | '/user/$username'
+    | '/_public/rating/$ratingId'
+    | '/_public/stuff/$stuffSlug'
+    | '/_public/user/$username'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -285,9 +256,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
-  RatingRouteRoute: typeof RatingRouteRouteWithChildren
-  StuffRouteRoute: typeof StuffRouteRouteWithChildren
-  UserRouteRoute: typeof UserRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -318,25 +287,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/user': {
-      id: '/user'
-      path: '/user'
-      fullPath: '/user'
-      preLoaderRoute: typeof UserRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stuff': {
-      id: '/stuff'
-      path: '/stuff'
-      fullPath: '/stuff'
-      preLoaderRoute: typeof StuffRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rating': {
-      id: '/rating'
-      path: '/rating'
-      fullPath: '/rating'
-      preLoaderRoute: typeof RatingRouteRouteImport
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed': {
@@ -359,27 +314,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/user/$username': {
-      id: '/user/$username'
-      path: '/$username'
-      fullPath: '/user/$username'
-      preLoaderRoute: typeof UserUsernameRouteImport
-      parentRoute: typeof UserRouteRoute
-    }
-    '/stuff/$stuffSlug': {
-      id: '/stuff/$stuffSlug'
-      path: '/$stuffSlug'
-      fullPath: '/stuff/$stuffSlug'
-      preLoaderRoute: typeof StuffStuffSlugRouteImport
-      parentRoute: typeof StuffRouteRoute
-    }
-    '/rating/$ratingId': {
-      id: '/rating/$ratingId'
-      path: '/$ratingId'
-      fullPath: '/rating/$ratingId'
-      preLoaderRoute: typeof RatingRatingIdRouteImport
-      parentRoute: typeof RatingRouteRoute
     }
     '/api/image-upload': {
       id: '/api/image-upload'
@@ -451,6 +385,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_public/user/$username': {
+      id: '/_public/user/$username'
+      path: '/user/$username'
+      fullPath: '/user/$username'
+      preLoaderRoute: typeof PublicUserUsernameRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/stuff/$stuffSlug': {
+      id: '/_public/stuff/$stuffSlug'
+      path: '/stuff/$stuffSlug'
+      fullPath: '/stuff/$stuffSlug'
+      preLoaderRoute: typeof PublicStuffStuffSlugRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/rating/$ratingId': {
+      id: '/_public/rating/$ratingId'
+      path: '/rating/$ratingId'
+      fullPath: '/rating/$ratingId'
+      preLoaderRoute: typeof PublicRatingRatingIdRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
   }
 }
 
@@ -490,49 +445,27 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
   AuthedRouteRouteChildren,
 )
 
-interface RatingRouteRouteChildren {
-  RatingRatingIdRoute: typeof RatingRatingIdRoute
+interface PublicRouteRouteChildren {
+  PublicRatingRatingIdRoute: typeof PublicRatingRatingIdRoute
+  PublicStuffStuffSlugRoute: typeof PublicStuffStuffSlugRoute
+  PublicUserUsernameRoute: typeof PublicUserUsernameRoute
 }
 
-const RatingRouteRouteChildren: RatingRouteRouteChildren = {
-  RatingRatingIdRoute: RatingRatingIdRoute,
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicRatingRatingIdRoute: PublicRatingRatingIdRoute,
+  PublicStuffStuffSlugRoute: PublicStuffStuffSlugRoute,
+  PublicUserUsernameRoute: PublicUserUsernameRoute,
 }
 
-const RatingRouteRouteWithChildren = RatingRouteRoute._addFileChildren(
-  RatingRouteRouteChildren,
-)
-
-interface StuffRouteRouteChildren {
-  StuffStuffSlugRoute: typeof StuffStuffSlugRoute
-}
-
-const StuffRouteRouteChildren: StuffRouteRouteChildren = {
-  StuffStuffSlugRoute: StuffStuffSlugRoute,
-}
-
-const StuffRouteRouteWithChildren = StuffRouteRoute._addFileChildren(
-  StuffRouteRouteChildren,
-)
-
-interface UserRouteRouteChildren {
-  UserUsernameRoute: typeof UserUsernameRoute
-}
-
-const UserRouteRouteChildren: UserRouteRouteChildren = {
-  UserUsernameRoute: UserUsernameRoute,
-}
-
-const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
-  UserRouteRouteChildren,
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AuthedRouteRoute: AuthedRouteRouteWithChildren,
-  RatingRouteRoute: RatingRouteRouteWithChildren,
-  StuffRouteRoute: StuffRouteRouteWithChildren,
-  UserRouteRoute: UserRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
