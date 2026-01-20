@@ -67,8 +67,12 @@ function RouteComponent() {
 			);
 
 			if (error) {
-				setErrorMessage(error.message ?? `Failed to reset password due to an error: ${error}`);
-				throw new Error(error.message ?? `Failed to reset password due to an error: ${error}`);
+				setErrorMessage(
+					error.message ?? `Failed to reset password due to an error: ${error}`,
+				);
+				throw new Error(
+					error.message ?? `Failed to reset password due to an error: ${error}`,
+				);
 			}
 		},
 	});

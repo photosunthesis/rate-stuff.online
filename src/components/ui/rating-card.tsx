@@ -373,10 +373,7 @@ export const RatingCard = memo(function RatingCard({
 					}}
 				>
 					<div className="relative">
-						<MessageSquare
-							className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
-							strokeWidth={1.5}
-						/>
+						<MessageSquare className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
 						{rating.commentsCount === 0 && (
 							<div className="absolute top-0 right-0 w-1.5 h-1.5 bg-neutral-500 rounded-full border-2 border-neutral-900 translate-x-[2px] -translate-y-[2px] opacity-0" />
 						)}

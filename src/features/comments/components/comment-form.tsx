@@ -1,13 +1,6 @@
 import { useState, lazy, Suspense } from "react";
 import { useCreateComment } from "../queries";
-import {
-	Loader2,
-	ArrowUp,
-	Bold,
-	Italic,
-	Strikethrough,
-	Underline,
-} from "lucide-react";
+import { ArrowUp, Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
 const CompactMarkdownEditor = lazy(() =>
@@ -85,11 +78,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 							disabled={!content.trim() || isPending}
 							className="bg-neutral-800 hover:bg-emerald-500 disabled:opacity-0 text-white p-2 rounded-lg transition-all flex items-center justify-center shadow-sm"
 						>
-							{isPending ? (
-								<Loader2 className="w-4 h-4 animate-spin" />
-							) : (
-								<ArrowUp className="w-4 h-4" strokeWidth={2.5} />
-							)}
+							<ArrowUp className="w-4 h-4" strokeWidth={2.5} />
 						</button>
 					</div>
 				</div>

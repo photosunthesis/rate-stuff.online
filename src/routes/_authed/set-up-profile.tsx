@@ -94,7 +94,9 @@ function RouteComponent() {
 			navigate({ to: redirect || "/" });
 		} catch (error) {
 			setErrorMessage(
-				error instanceof Error ? error.message : `An error occured while setting up your profile: ${error}`,
+				error instanceof Error
+					? error.message
+					: `An error occured while setting up your profile: ${error}`,
 			);
 		} finally {
 			setIsPending(false);

@@ -538,10 +538,7 @@ function RouteComponent() {
 									?.scrollIntoView({ behavior: "smooth" });
 							}}
 						>
-							<MessageSquare
-								className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
-								strokeWidth={1.5}
-							/>
+							<MessageSquare className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
 							{rating.commentsCount > 0 && (
 								<span className="text-sm font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
 									{formatCompactNumber(rating.commentsCount)}

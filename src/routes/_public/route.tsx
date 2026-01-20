@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_public")({
 		const user = await context.queryClient.ensureQueryData({
 			...authQueryOptions(),
 			revalidateIfStale: true,
-		})
+		});
 
 		return { user };
 	},

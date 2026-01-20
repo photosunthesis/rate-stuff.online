@@ -51,7 +51,6 @@ function VoteButton({
 						? `${activeColor} fill-current`
 						: `text-neutral-500 ${!disabled && hoverStyles}`
 				}`}
-				strokeWidth={1.5}
 			/>
 		</button>
 	);

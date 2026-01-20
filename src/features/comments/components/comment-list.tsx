@@ -2,7 +2,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { commentsQueryOptions } from "../queries";
 import { CommentItem } from "./comment-item";
 import { CommentSkeleton } from "./comment-skeleton";
-import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 interface CommentListProps {
@@ -78,11 +77,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 			{hasNextPage && (
 				<div ref={loadMoreRef} className="flex justify-center py-4">
-					{isFetchingNextPage ? (
-						<Loader2 className="w-5 h-5 animate-spin text-neutral-600" />
-					) : (
-						<div className="h-4" />
-					)}
+					<div className="h-4" />
 				</div>
 			)}
 		</div>

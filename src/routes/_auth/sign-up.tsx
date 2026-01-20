@@ -97,7 +97,9 @@ function RouteComponent() {
 			);
 
 			if (error) {
-				setErrorMessage(error.message ?? `Failed to sign up due to an error: ${error}`);
+				setErrorMessage(
+					error.message ?? `Failed to sign up due to an error: ${error}`,
+				);
 				return;
 			}
 

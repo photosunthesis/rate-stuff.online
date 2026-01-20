@@ -58,8 +58,14 @@ function RouteComponent() {
 			);
 
 			if (error) {
-				setErrorMessage(error.message ?? `Failed to send reset link due to an error: ${error}`);
-				throw new Error(error.message ?? `Failed to send reset link due to an error: ${error}`);
+				setErrorMessage(
+					error.message ??
+						`Failed to send reset link due to an error: ${error}`,
+				);
+				throw new Error(
+					error.message ??
+						`Failed to send reset link due to an error: ${error}`,
+				);
 			}
 		},
 	});
