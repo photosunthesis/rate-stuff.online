@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useState, useRef, useEffect, lazy, Suspense, useId } from "react";
+import { useLocalStorage } from "~/hooks/use-local-storage";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
@@ -38,22 +39,34 @@ export function CreateRatingForm({
 	onSuccess,
 	onCancel,
 }: CreateRatingFormProps) {
-	const [selectedStuff, setSelectedStuff] = useState<{
+	const [selectedStuff, setSelectedStuff] = useLocalStorage<{
 		id?: string;
 		name: string;
-	} | null>(null);
-	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	} | null>("create-rating-stuff", null);
+	const [selectedTags, setSelectedTags] = useLocalStorage<string[]>(
+		"create-rating-tags",
+		[],
+	);
 	const [selectedImages, setSelectedImages] = useState<File[]>([]);
+	const [storedScore, setStoredScore] = useLocalStorage<string>(
+		"create-rating-score",
+		"",
+	);
+	const [storedContent, setStoredContent] = useLocalStorage<string>(
+		"create-rating-content",
+		"",
+	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
+	const [showCacheNotification, setShowCacheNotification] = useState(false);
 	const scrollableRef = useRef<HTMLDivElement>(null);
 	const contentEditorId = useId();
 	const umami = useUmami();
 
 	const form = useForm({
 		defaultValues: {
-			score: "",
-			content: "",
+			score: storedScore,
+			content: storedContent,
 		},
 		onSubmit: async ({ value }) => {
 			if (isSubmitting || isPending) return;
@@ -82,6 +95,8 @@ export function CreateRatingForm({
 				setIsSuccess(true);
 
 				form.reset();
+				setStoredScore("");
+				setStoredContent("");
 				setSelectedStuff(null);
 				setSelectedTags([]);
 				setSelectedImages([]);
@@ -138,6 +153,22 @@ export function CreateRatingForm({
 		}
 	}, [hasGlobalError]);
 
+	const hasCachedData = useRef(
+		Boolean(
+			storedScore || storedContent || selectedStuff || selectedTags.length > 0,
+		),
+	).current;
+
+	useEffect(() => {
+		if (hasCachedData) {
+			setShowCacheNotification(true);
+			const timer = setTimeout(() => {
+				setShowCacheNotification(false);
+			}, 5000); // 5 seconds
+			return () => clearTimeout(timer);
+		}
+	}, [hasCachedData]);
+
 	return (
 		<form
 			onSubmit={(e) => {
@@ -148,6 +179,18 @@ export function CreateRatingForm({
 			className="flex flex-col h-full min-h-0"
 			noValidate
 		>
+			<form.Subscribe
+				selector={(state) => [state.values.score, state.values.content]}
+			>
+				{([score, content]) => (
+					<LocalStorageSyncer
+						score={String(score)}
+						content={content}
+						setScore={setStoredScore}
+						setContent={setStoredContent}
+					/>
+				)}
+			</form.Subscribe>
 			<div className="flex-1 overflow-y-auto py-6" ref={scrollableRef}>
 				<fieldset
 					disabled={isPending || isSubmitting || isSuccess}
@@ -265,7 +308,12 @@ export function CreateRatingForm({
 			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
 					{([canSubmit]) => (
-						<div className="flex justify-end gap-3">
+						<div className="flex justify-end gap-3 items-center">
+							{showCacheNotification && (
+								<span className="text-xs text-neutral-500 animate-in fade-in slide-in-from-bottom-1 duration-300 mr-auto">
+									Data loaded from cache (・_・)ノ
+								</span>
+							)}
 							<Button
 								type="button"
 								onClick={onCancel}
@@ -292,7 +340,7 @@ export function CreateRatingForm({
 	);
 }
 
-function CompactMarkdownEditorSkeleton() {
+const CompactMarkdownEditorSkeleton = () => {
 	return (
 		<div className="animate-pulse">
 			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-900">
@@ -317,4 +365,26 @@ function CompactMarkdownEditorSkeleton() {
 			</div>
 		</div>
 	);
-}
+};
+
+const LocalStorageSyncer = ({
+	score,
+	content,
+	setScore,
+	setContent,
+}: {
+	score: string;
+	content: string;
+	setScore: (v: string) => void;
+	setContent: (v: string) => void;
+}) => {
+	useEffect(() => {
+		setScore(score);
+	}, [score, setScore]);
+
+	useEffect(() => {
+		setContent(content);
+	}, [content, setContent]);
+
+	return null;
+};
