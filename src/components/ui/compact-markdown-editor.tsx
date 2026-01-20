@@ -108,21 +108,10 @@ export function CompactMarkdownEditor({
 				const markdown = (
 					editor as EditorWithMarkdown
 				).storage.markdown.getMarkdown();
-				onChangeRef.current?.(normalizeParagraphBreaks(markdown));
+				onChangeRef.current?.(markdown);
 			}, 300);
 		},
 	});
-
-	function normalizeParagraphBreaks(md: string) {
-		if (!md) return md;
-		// Normalize CRLF to LF
-		let s = md.replace(/\r\n/g, "\n");
-		// Collapse 3+ newlines into 2
-		s = s.replace(/\n{3,}/g, "\n\n");
-		// Convert single newlines between non-empty lines into paragraph breaks
-		s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
-		return s;
-	}
 
 	useEffect(() => {
 		if (
@@ -162,25 +151,25 @@ export function CompactMarkdownEditor({
 			>
 				<div className="flex items-center gap-1.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm rounded-t-[11px]">
 					<ToolbarButton
-						onClick={() => editor?.chain().focus().toggleBold().run()}
+						onClick={() => editor?.chain().toggleBold().run()}
 						isActive={editor?.isActive("bold")}
 						icon={<Bold className="w-3.5 h-3.5" />}
 						title="Bold"
 					/>
 					<ToolbarButton
-						onClick={() => editor?.chain().focus().toggleItalic().run()}
+						onClick={() => editor?.chain().toggleItalic().run()}
 						isActive={editor?.isActive("italic")}
 						icon={<Italic className="w-3.5 h-3.5" />}
 						title="Italic"
 					/>
 					<ToolbarButton
-						onClick={() => editor?.chain().focus().toggleStrike().run()}
+						onClick={() => editor?.chain().toggleStrike().run()}
 						isActive={editor?.isActive("strike")}
 						icon={<Strikethrough className="w-3.5 h-3.5" />}
 						title="Strikethrough"
 					/>
 					<ToolbarButton
-						onClick={() => editor?.chain().focus().toggleUnderline().run()}
+						onClick={() => editor?.chain().toggleUnderline().run()}
 						isActive={editor?.isActive("underline")}
 						icon={<UnderlineIcon className="w-3.5 h-3.5" />}
 						title="Underline"

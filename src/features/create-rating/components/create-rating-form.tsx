@@ -203,6 +203,11 @@ export function CreateRatingForm({
 					)}
 
 					<div>
+						{showCacheNotification && (
+							<div className="text-xs text-neutral-500 animate-in fade-in slide-in-from-bottom-1 duration-300 mb-3">
+								Data loaded from cache (・_・)ノ
+							</div>
+						)}
 						<StuffSelector
 							value={selectedStuff || undefined}
 							onChange={setSelectedStuff}
@@ -309,11 +314,6 @@ export function CreateRatingForm({
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
 					{([canSubmit]) => (
 						<div className="flex justify-end gap-3 items-center">
-							{showCacheNotification && (
-								<span className="text-xs text-neutral-500 animate-in fade-in slide-in-from-bottom-1 duration-300 mr-auto">
-									Data loaded from cache (・_・)ノ
-								</span>
-							)}
 							<Button
 								type="button"
 								onClick={onCancel}
