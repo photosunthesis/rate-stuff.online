@@ -61,7 +61,7 @@ export function RatingCardSkeleton({
 				<div className="h-6 w-12 bg-neutral-800/40 rounded-md" />
 			</div>
 
-			<div className={`${noIndent ? "" : "ml-9.5"} flex items-center gap-3`}>
+			<div className={`${noIndent ? "" : "ml-11"} flex items-center gap-3`}>
 				<div className="h-6 w-24 bg-neutral-800/40 rounded-md" />
 				<div className="h-6 w-16 bg-neutral-800/40 rounded-md" />
 			</div>

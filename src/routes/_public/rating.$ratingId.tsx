@@ -527,7 +527,7 @@ function RouteComponent() {
 					/>
 					<ContentSection rating={ratingTyped} />
 					<TagsList tags={ratingTyped.tags} isAuthenticated={!!currentUser} />
-					<div className="ml-9.5 mb-2 flex items-center gap-3">
+					<div className="ml-11 mb-2 flex items-center gap-3">
 						<VoteSection rating={ratingTyped} isAuthenticated={!!currentUser} />
 						<button
 							type="button"

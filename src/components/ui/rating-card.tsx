@@ -349,7 +349,7 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			<div className={`${noIndent ? "" : "ml-9.5"} flex items-center gap-3`}>
+			<div className={`${noIndent ? "" : "ml-11"} flex items-center gap-3`}>
 				<VoteSection rating={rating} isAuthenticated={isAuthenticated} />
 
 				<button
