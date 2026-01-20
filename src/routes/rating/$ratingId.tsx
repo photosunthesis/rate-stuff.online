@@ -7,7 +7,7 @@ import {
 	notFound,
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
-import { useState } from "react";
+import { useState, useId } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ratingQueryOptions } from "~/features/display-ratings/queries";
@@ -24,6 +24,9 @@ import { VoteSection } from "~/components/ui/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/features/auth/queries";
 import { mapToCurrentUser } from "~/utils/user-mapping";
+import { CommentsSection } from "~/features/comments/components/comments-section";
+import { MessageSquare } from "lucide-react";
+import { formatCompactNumber } from "~/utils/numbers";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
@@ -466,6 +469,7 @@ const TagsList = ({
 };
 
 function RouteComponent() {
+	const commentsSectionId = useId();
 	const router = useRouter();
 	const canGoBack = useCanGoBack();
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -523,12 +527,32 @@ function RouteComponent() {
 					/>
 					<ContentSection rating={ratingTyped} />
 					<TagsList tags={ratingTyped.tags} isAuthenticated={!!currentUser} />
-					<VoteSection
-						rating={ratingTyped}
-						isAuthenticated={!!currentUser}
-						className="ml-11 mb-2"
-					/>
+					<div className="ml-9.5 mb-2 flex items-center gap-3">
+						<VoteSection rating={ratingTyped} isAuthenticated={!!currentUser} />
+						<button
+							type="button"
+							className="flex items-center gap-2 text-neutral-400 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+							onClick={() => {
+								document
+									.getElementById(commentsSectionId)
+									?.scrollIntoView({ behavior: "smooth" });
+							}}
+						>
+							<MessageSquare
+								className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
+								strokeWidth={1.5}
+							/>
+							{rating.commentsCount > 0 && (
+								<span className="text-sm font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+									{formatCompactNumber(rating.commentsCount)}
+								</span>
+							)}
+						</button>
+					</div>
 					<div className="-mx-4 border-t border-neutral-800 my-4" />
+					<div id={commentsSectionId}>
+						<CommentsSection ratingId={rating.id} currentUser={currentUser} />
+					</div>
 				</div>
 			</MainLayout>
 

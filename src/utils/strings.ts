@@ -32,3 +32,38 @@ export const randomSuffix = (bytes = 3) => {
 
 export const isEmail = (value: string) =>
 	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+export const truncateMarkdown = (content: string, limit: number): string => {
+	if (content.length <= limit) return content;
+
+	// Slice the string
+	let truncated = content.slice(0, limit);
+
+	// Try to avoid cutting in the middle of a word
+	const lastSpace = truncated.lastIndexOf(" ");
+	if (lastSpace > limit * 0.8) {
+		truncated = truncated.slice(0, lastSpace);
+	}
+
+	// Close basic markdown tags to prevent broken rendering
+	const stars = (truncated.match(/\*/g) || []).length;
+	const doubleStars = (truncated.match(/\*\*/g) || []).length;
+	const singleStars = stars - doubleStars * 2;
+
+	const underscores = (truncated.match(/_/g) || []).length;
+	const doubleUnderscores = (truncated.match(/__/g) || []).length;
+	const singleUnderscores = underscores - doubleUnderscores * 2;
+
+	const codeCount = (truncated.match(/`/g) || []).length;
+	const strikeCount = (truncated.match(/~~/g) || []).length;
+
+	let suffix = "";
+	if (codeCount % 2 !== 0) suffix += "`";
+	if (doubleStars % 2 !== 0) suffix += "**";
+	if (singleStars % 2 !== 0) suffix += "*";
+	if (doubleUnderscores % 2 !== 0) suffix += "__";
+	if (singleUnderscores % 2 !== 0) suffix += "_";
+	if (strikeCount % 2 !== 0) suffix += "~~";
+
+	return `${truncated + suffix}...`;
+};

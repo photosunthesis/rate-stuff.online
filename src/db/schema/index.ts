@@ -3,3 +3,4 @@ export * from "./invite-codes";
 export * from "./ratings";
 export * from "./stuff";
 export * from "./tags";
+export * from "./comments";

@@ -44,7 +44,7 @@ function getRatingsSelection(viewerId?: string) {
 		},
 		tags: sql<
 			string[]
-		>`coalesce(json_agg(${tags.name}) filter (where ${tags.name} is not null), '[]')`,
+		>`coalesce(json_agg(${tags.name} order by ${tags.name}) filter (where ${tags.name} is not null), '[]')`,
 		userVote: viewerId
 			? sql<
 					"up" | "down" | null

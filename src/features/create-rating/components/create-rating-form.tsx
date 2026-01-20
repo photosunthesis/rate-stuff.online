@@ -12,9 +12,9 @@ import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
 
 const CompactMarkdownEditor = lazy(() =>
-	import("~/features/create-rating/components/compact-markdown-editor").then(
-		(module) => ({ default: module.CompactMarkdownEditor }),
-	),
+	import("~/components/ui/compact-markdown-editor").then((module) => ({
+		default: module.CompactMarkdownEditor,
+	})),
 );
 
 interface CreateRatingFormProps {
@@ -236,6 +236,7 @@ export function CreateRatingForm({
 											}
 											charLimit={5000}
 											placeholder="Elaborate on your rating..."
+											minHeightClass="min-h-[160px]"
 										/>
 									</Suspense>
 								</>
@@ -296,25 +297,25 @@ export function CreateRatingForm({
 function CompactMarkdownEditorSkeleton() {
 	return (
 		<div className="animate-pulse">
-			<div className="border border-neutral-800 rounded-xl overflow-hidden">
+			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-900">
 				{/* Toolbar Skeleton */}
-				<div className="flex items-center gap-1 px-3 py-2 bg-neutral-800 border-b border-neutral-800">
-					<div className="p-1.5 text-neutral-600">
-						<Bold className="w-4 h-4" />
+				<div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm">
+					<div className="p-1 text-neutral-600/50">
+						<Bold className="w-3.5 h-3.5" />
 					</div>
-					<div className="p-1.5 text-neutral-600">
-						<Italic className="w-4 h-4" />
+					<div className="p-1 text-neutral-600/50">
+						<Italic className="w-3.5 h-3.5" />
 					</div>
-					<div className="p-1.5 text-neutral-600">
-						<Strikethrough className="w-4 h-4" />
+					<div className="p-1 text-neutral-600/50">
+						<Strikethrough className="w-3.5 h-3.5" />
 					</div>
-					<div className="p-1.5 text-neutral-600">
-						<Underline className="w-4 h-4" />
+					<div className="p-1 text-neutral-600/50">
+						<Underline className="w-3.5 h-3.5" />
 					</div>
 				</div>
 
 				{/* Content Skeleton */}
-				<div className="h-[150px] bg-neutral-900 w-full" />
+				<div className="h-[160px] bg-neutral-900 w-full" />
 			</div>
 		</div>
 	);

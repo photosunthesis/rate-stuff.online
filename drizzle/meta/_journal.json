@@ -13,6 +13,27 @@
       "when": 1768820367036,
       "tag": "0001_whole_red_wolf",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768884352776,
+      "tag": "0002_striped_thunderball",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1768886432252,
+      "tag": "0003_youthful_secret_warriors",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1768892405319,
+      "tag": "0004_overrated_silver_sable",
+      "breakpoints": true
     }
   ]
 }

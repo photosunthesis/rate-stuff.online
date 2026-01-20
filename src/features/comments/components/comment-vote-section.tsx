@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { ArrowBigUp, ArrowBigDown } from "lucide-react";
-import { useVoteRating } from "~/features/vote-rating/queries";
+import { useVoteComment } from "../queries";
 import { formatCompactNumber } from "~/utils/numbers";
-import { useUmami } from "@danielgtmn/umami-react";
 import { AuthModal } from "~/features/auth/components/auth-modal";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
 
-interface VoteSectionProps {
-	rating: RatingWithRelations;
+interface CommentVoteSectionProps {
+	commentId: string;
+	initialUpvotes: number;
+	initialDownvotes: number;
+	initialUserVote: "up" | "down" | null;
+	isOwner: boolean;
 	isAuthenticated?: boolean;
 	className?: string;
-	onVote?: () => void;
 }
 
 interface VoteButtonProps {
@@ -57,27 +58,21 @@ function VoteButton({
 	);
 }
 
-import { useQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/queries";
-
-export function VoteSection({
-	rating,
+export function CommentVoteSection({
+	commentId,
+	initialUpvotes,
+	initialDownvotes,
+	initialUserVote,
+	isOwner,
 	isAuthenticated = false,
 	className = "",
-	onVote,
-}: VoteSectionProps) {
-	const umami = useUmami();
+}: CommentVoteSectionProps) {
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-	const { mutate: vote } = useVoteRating();
-	const { data: user } = useQuery(authQueryOptions());
-
-	const isOwner = user?.id === rating.userId;
+	const { mutate: vote } = useVoteComment();
 
 	// Local state for optimistic updates
-	const [userVote, setUserVote] = useState(rating.userVote);
-	const [voteScore, setVoteScore] = useState(
-		rating.upvotesCount - rating.downvotesCount,
-	);
+	const [userVote, setUserVote] = useState(initialUserVote);
+	const [voteScore, setVoteScore] = useState(initialUpvotes - initialDownvotes);
 
 	const handleVote = (type: "up" | "down") => {
 		if (isOwner) return;
@@ -97,7 +92,7 @@ export function VoteSection({
 		// Calculate new score locally
 		let newScore = voteScore;
 		if (currentVote === "up") newScore--;
-		else if (currentVote === "down") newScore++; // Removing a downvote adds 1 to score
+		else if (currentVote === "down") newScore++;
 
 		if (newVote === "up") newScore++;
 		else if (newVote === "down") newScore--;
@@ -107,27 +102,22 @@ export function VoteSection({
 		setVoteScore(newScore);
 
 		// Fire in background
-		vote({ ratingId: rating.id, vote: newVote });
-
-		if (onVote) {
-			onVote();
-		}
-
-		if (umami) {
-			umami.track("vote", {
-				type: newVote,
-				ratingId: rating.id,
-			});
-		}
+		vote({ commentId, type: newVote === "none" ? type : newVote }); // API handles toggle if we send same type?
+		// Wait, my API implementation for voteOnComment handles toggling?
+		// Let's check api implementation.
+		// API impl: if (existingVote.type === type) { remove vote }
+		// So if I send 'up' and it is 'up', it removes.
+		// So I should send the 'type' that was clicked.
+		vote({ commentId, type });
 	};
 
 	return (
 		<>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: interaction mainly for stopping propagation */}
-			<div
-				className={`relative group flex items-center gap-2.5 rounded-full w-fit ${className}`}
+			<fieldset
+				className={`relative group flex items-center gap-2.5 rounded-full w-fit border-none m-0 p-0 ${className}`}
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
+				tabIndex={-1}
 			>
 				<VoteButton
 					type="up"
@@ -144,12 +134,7 @@ export function VoteSection({
 					onClick={() => handleVote("down")}
 					disabled={isOwner}
 				/>
-			</div>
-			{isOwner && (
-				<div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-					You cannot vote on your own rating
-				</div>
-			)}
+			</fieldset>
 			<AuthModal
 				isOpen={isAuthModalOpen}
 				onClose={() => setIsAuthModalOpen(false)}

@@ -26,3 +26,20 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
 
 	return next({ context: { user: session.response.user } });
 });
+
+export const optionalAuthMiddleware = createMiddleware().server(
+	async ({ next }) => {
+		const session = await getAuth().api.getSession({
+			headers: getRequest().headers,
+			returnHeaders: true,
+		});
+
+		const cookies = session?.headers?.getSetCookie();
+
+		if (cookies?.length) {
+			setResponseHeader("Set-Cookie", cookies);
+		}
+
+		return next({ context: { user: session?.response?.user ?? null } });
+	},
+);

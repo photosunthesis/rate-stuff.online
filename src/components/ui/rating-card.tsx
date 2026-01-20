@@ -7,7 +7,10 @@ import { Image } from "~/components/ui/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AuthModal } from "~/features/auth/components/auth-modal";
+import { formatCompactNumber } from "~/utils/numbers";
+import { MessageSquare } from "lucide-react";
 import { getTimeAgo } from "~/utils/datetime";
+import { truncateMarkdown } from "~/utils/strings";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -56,41 +59,6 @@ const MarkdownContent = ({
 			{safe}
 		</ReactMarkdown>
 	);
-};
-
-const truncateMarkdown = (content: string, limit: number): string => {
-	if (content.length <= limit) return content;
-
-	// Slice the string
-	let truncated = content.slice(0, limit);
-
-	// Try to avoid cutting in the middle of a word
-	const lastSpace = truncated.lastIndexOf(" ");
-	if (lastSpace > limit * 0.8) {
-		truncated = truncated.slice(0, lastSpace);
-	}
-
-	// Close basic markdown tags to prevent broken rendering
-	const stars = (truncated.match(/\*/g) || []).length;
-	const doubleStars = (truncated.match(/\*\*/g) || []).length;
-	const singleStars = stars - doubleStars * 2;
-
-	const underscores = (truncated.match(/_/g) || []).length;
-	const doubleUnderscores = (truncated.match(/__/g) || []).length;
-	const singleUnderscores = underscores - doubleUnderscores * 2;
-
-	const codeCount = (truncated.match(/`/g) || []).length;
-	const strikeCount = (truncated.match(/~~/g) || []).length;
-
-	let suffix = "";
-	if (codeCount % 2 !== 0) suffix += "`";
-	if (doubleStars % 2 !== 0) suffix += "**";
-	if (singleStars % 2 !== 0) suffix += "*";
-	if (doubleUnderscores % 2 !== 0) suffix += "__";
-	if (singleUnderscores % 2 !== 0) suffix += "_";
-	if (strikeCount % 2 !== 0) suffix += "~~";
-
-	return `${truncated + suffix}...`;
 };
 
 export const RatingCard = memo(function RatingCard({
@@ -389,12 +357,37 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			{/* Votes */}
-			<VoteSection
-				rating={rating}
-				isAuthenticated={isAuthenticated}
-				className={noIndent ? "" : "ml-11"}
-			/>
+			{/* Footer Actions */}
+			<div className={`${noIndent ? "" : "ml-9.5"} flex items-center gap-3`}>
+				<VoteSection rating={rating} isAuthenticated={isAuthenticated} />
+
+				<button
+					type="button"
+					className="flex items-center gap-2 text-neutral-400 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+					onClick={(e) => {
+						e.stopPropagation();
+						navigate({
+							to: "/rating/$ratingId",
+							params: { ratingId: rating.id },
+						});
+					}}
+				>
+					<div className="relative">
+						<MessageSquare
+							className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors"
+							strokeWidth={1.5}
+						/>
+						{rating.commentsCount === 0 && (
+							<div className="absolute top-0 right-0 w-1.5 h-1.5 bg-neutral-500 rounded-full border-2 border-neutral-900 translate-x-[2px] -translate-y-[2px] opacity-0" />
+						)}
+					</div>
+					{rating.commentsCount > 0 && (
+						<span className="text-sm font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+							{formatCompactNumber(rating.commentsCount)}
+						</span>
+					)}
+				</button>
+			</div>
 
 			{/* Auth Modal */}
 			<AuthModal

@@ -1,4 +1,4 @@
-import { useId, useEffect } from "react";
+import { useId, useEffect, useRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import type { Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -29,6 +29,7 @@ interface CompactMarkdownEditorProps {
 	value?: string;
 	onChange?: (value: string) => void;
 	charLimit?: number;
+	minHeightClass?: string;
 	placeholder?: string;
 }
 
@@ -39,12 +40,31 @@ export function CompactMarkdownEditor({
 	value = "",
 	onChange,
 	charLimit = 5000,
+	minHeightClass = "min-h-[80px]",
 	placeholder = "Share your thoughts...",
 }: CompactMarkdownEditorProps) {
 	const generatedId = useId();
 	const inputId = id || generatedId;
 
+	// Refs for debounce and latest callback to avoid re-creating editor
+	const debounceTimeoutRef = useRef<NodeJS.Timeout>(null);
+	const onChangeRef = useRef(onChange);
+
+	useEffect(() => {
+		onChangeRef.current = onChange;
+	});
+
+	// Cleanup timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceTimeoutRef.current) {
+				clearTimeout(debounceTimeoutRef.current);
+			}
+		};
+	}, []);
+
 	const editor = useEditor({
+		immediatelyRender: false,
 		extensions: [
 			StarterKit.configure({
 				blockquote: false,
@@ -56,7 +76,6 @@ export function CompactMarkdownEditor({
 				listItem: false,
 				orderedList: false,
 			}),
-			// Use namespaced/renamed extensions to avoid duplicate-extension warnings
 			Link.extend({ name: "customLink" }).configure({
 				openOnClick: false,
 				autolink: true,
@@ -77,15 +96,20 @@ export function CompactMarkdownEditor({
 		content: value,
 		editorProps: {
 			attributes: {
-				class:
-					"w-full px-4 py-3 bg-neutral-900 text-md text-white focus:outline-none prose prose-invert prose-sm max-w-none min-h-[150px] [&_.tiptap.ProseMirror]:min-h-[150px] [&_.tiptap.ProseMirror]:outline-none resize-y",
+				class: `w-full px-3 py-2 bg-neutral-900 text-sm text-neutral-200 focus:outline-none prose prose-invert prose-sm max-w-none ${minHeightClass} [&_.tiptap.ProseMirror]:${minHeightClass} [&_.tiptap.ProseMirror]:outline-none resize-y placeholder:text-neutral-500`,
 			},
 		},
 		onUpdate: ({ editor }) => {
-			const markdown = (
-				editor as EditorWithMarkdown
-			).storage.markdown.getMarkdown();
-			onChange?.(normalizeParagraphBreaks(markdown));
+			if (debounceTimeoutRef.current) {
+				clearTimeout(debounceTimeoutRef.current);
+			}
+
+			debounceTimeoutRef.current = setTimeout(() => {
+				const markdown = (
+					editor as EditorWithMarkdown
+				).storage.markdown.getMarkdown();
+				onChangeRef.current?.(normalizeParagraphBreaks(markdown));
+			}, 300);
 		},
 	});
 
@@ -105,6 +129,12 @@ export function CompactMarkdownEditor({
 			editor &&
 			value !== (editor as EditorWithMarkdown).storage.markdown.getMarkdown()
 		) {
+			// Only update if the content is truly different.
+			// However, since we debounce onChange, 'value' might be stale.
+			// We risk overwriting user input if we are not careful.
+			// But since parent 'value' usually only changes via OUR onChange,
+			// and onChange is delayed, 'value' stays effectively constant during typing.
+			// So this effect shouldn't fire during typing.
 			editor.commands.setContent(value);
 		}
 	}, [editor, value]);
@@ -127,71 +157,77 @@ export function CompactMarkdownEditor({
 			{label && (
 				<label
 					htmlFor={inputId}
-					className="block text-sm font-medium text-neutral-300 mb-2"
+					className="block text-xs font-medium text-neutral-400 mb-1.5"
 				>
 					{label}
 				</label>
 			)}
 
 			<div
-				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl overflow-hidden focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600 focus-within:border-emerald-600"} transition-colors`}
+				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-900 group`}
 			>
-				<div className="flex items-center gap-1 px-3 py-2 bg-neutral-800 border-b border-neutral-800">
-					<button
-						type="button"
+				{/* Compact Toolbar */}
+				<div className="flex items-center gap-1.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm rounded-t-[11px]">
+					<ToolbarButton
 						onClick={() => editor?.chain().focus().toggleBold().run()}
-						className={`p-1.5 rounded transition-colors ${
-							editor?.isActive("bold")
-								? "text-white bg-neutral-700"
-								: "text-neutral-400 hover:text-white hover:bg-neutral-700"
-						}`}
-						title="Bold (Ctrl+B)"
-					>
-						<Bold className="w-4 h-4" />
-					</button>
-					<button
-						type="button"
+						isActive={editor?.isActive("bold")}
+						icon={<Bold className="w-3.5 h-3.5" />}
+						title="Bold"
+					/>
+					<ToolbarButton
 						onClick={() => editor?.chain().focus().toggleItalic().run()}
-						className={`p-1.5 rounded transition-colors ${
-							editor?.isActive("italic")
-								? "text-white bg-neutral-700"
-								: "text-neutral-400 hover:text-white hover:bg-neutral-700"
-						}`}
-						title="Italic (Ctrl+I)"
-					>
-						<Italic className="w-4 h-4" />
-					</button>
-					<button
-						type="button"
+						isActive={editor?.isActive("italic")}
+						icon={<Italic className="w-3.5 h-3.5" />}
+						title="Italic"
+					/>
+					<ToolbarButton
 						onClick={() => editor?.chain().focus().toggleStrike().run()}
-						className={`p-1.5 rounded transition-colors ${
-							editor?.isActive("strike")
-								? "text-white bg-neutral-700"
-								: "text-neutral-400 hover:text-white hover:bg-neutral-700"
-						}`}
+						isActive={editor?.isActive("strike")}
+						icon={<Strikethrough className="w-3.5 h-3.5" />}
 						title="Strikethrough"
-					>
-						<Strikethrough className="w-4 h-4" />
-					</button>
-					<button
-						type="button"
+					/>
+					<ToolbarButton
 						onClick={() => editor?.chain().focus().toggleUnderline().run()}
-						className={`p-1.5 rounded transition-colors ${
-							editor?.isActive("underline")
-								? "text-white bg-neutral-700"
-								: "text-neutral-400 hover:text-white hover:bg-neutral-700"
-						}`}
+						isActive={editor?.isActive("underline")}
+						icon={<UnderlineIcon className="w-3.5 h-3.5" />}
 						title="Underline"
-					>
-						<UnderlineIcon className="w-4 h-4" />
-					</button>
-					<div className="ml-auto text-xs text-neutral-500">
+					/>
+					<div className="ml-auto text-[10px] sm:text-xs text-neutral-500 font-mono">
 						{charCount}/{charLimit}
 					</div>
 				</div>
-				<EditorContent editor={editor} />
+				<div className="rounded-b-[11px] overflow-hidden">
+					<EditorContent editor={editor} />
+				</div>
 			</div>
-			{error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+			{error && <p className="text-red-400 text-xs mt-1.5">{error}</p>}
 		</div>
 	);
 }
+
+const ToolbarButton = ({
+	onClick,
+	isActive,
+	icon,
+	title,
+}: {
+	onClick: () => void;
+	isActive?: boolean;
+	icon: React.ReactNode;
+	title: string;
+}) => {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={`p-1 rounded transition-all duration-200 ${
+				isActive
+					? "text-emerald-400 bg-neutral-700/50"
+					: "text-neutral-400 hover:text-neutral-200 hover:bg-neutral-700/30"
+			}`}
+			title={title}
+		>
+			{icon}
+		</button>
+	);
+};

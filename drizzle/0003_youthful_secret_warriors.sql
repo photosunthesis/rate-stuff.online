@@ -1,0 +1,1 @@
+ALTER TABLE "comments" ALTER COLUMN "upvotes_count" SET DEFAULT 1;
