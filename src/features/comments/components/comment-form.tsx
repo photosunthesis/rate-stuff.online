@@ -45,7 +45,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 	};
 
 	return (
-		<div className="mb-6 flex gap-3">
+		<div className="mb-4 flex gap-3">
 			<div className="flex-1 relative group">
 				<div className="relative">
 					{!isAuthenticated && (
