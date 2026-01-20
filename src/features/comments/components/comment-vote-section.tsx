@@ -102,19 +102,13 @@ export function CommentVoteSection({
 		setVoteScore(newScore);
 
 		// Fire in background
-		vote({ commentId, type: newVote === "none" ? type : newVote }); // API handles toggle if we send same type?
-		// Wait, my API implementation for voteOnComment handles toggling?
-		// Let's check api implementation.
-		// API impl: if (existingVote.type === type) { remove vote }
-		// So if I send 'up' and it is 'up', it removes.
-		// So I should send the 'type' that was clicked.
 		vote({ commentId, type });
 	};
 
 	return (
 		<>
 			<fieldset
-				className={`relative group flex items-center gap-2.5 rounded-full w-fit border-none m-0 p-0 ${className}`}
+				className={`relative group flex items-center gap-2.5 rounded-full w-fit border-none m-0 p-0 -ml-1.5 ${className}`}
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
 				tabIndex={-1}

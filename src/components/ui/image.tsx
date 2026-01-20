@@ -9,7 +9,7 @@ const PRESETS = {
 		],
 	},
 	card: {
-		transformation: [{ width: 800, quality: 60, format: "webp" as const }],
+		transformation: [{ width: 640, quality: 80, format: "webp" as const }],
 	},
 	lightbox: {
 		transformation: [{ quality: 90, format: "webp" as const }],

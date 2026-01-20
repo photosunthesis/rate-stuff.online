@@ -49,11 +49,12 @@ export const useCreateComment = () => {
 			});
 			// Invalidate rating to update comment count
 			queryClient.invalidateQueries({
-				queryKey: ["ratings", variables.ratingId],
+				queryKey: ["rating", variables.ratingId],
 			});
-			// Also invalidate list of ratings where this rating might appear,
-			// though that's harder to target precisely.
-			// For now, updating the specific rating view is most important.
+			// Invalidate all rating lists to update comment counts
+			queryClient.invalidateQueries({
+				queryKey: ["ratings"],
+			});
 		},
 	});
 };

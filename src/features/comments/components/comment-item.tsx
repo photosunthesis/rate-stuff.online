@@ -68,7 +68,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const shouldTruncate = comment.content.length > maxContentLength;
 
 	return (
-		<div className="flex gap-3 py-1.5 hover:bg-neutral-900/20 transition-colors px-2 rounded-lg -mx-2">
+		<div className="flex gap-3 py-1.5 hover:bg-neutral-900/20 transition-colors px-2 rounded-lg -mx-2 items-start">
 			<Avatar
 				src={image}
 				alt={displayText}
@@ -77,7 +77,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 				username={comment.user?.username ?? undefined}
 			/>
 			<div className="flex-1 min-w-0">
-				<div className="flex items-center gap-2 mb-0.5">
+				<div className="flex items-center gap-2 h-8">
 					{comment.user ? (
 						<Link
 							to="/user/$username"
