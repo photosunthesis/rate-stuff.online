@@ -30,6 +30,7 @@ interface CompactMarkdownEditorProps {
 	onChange?: (value: string) => void;
 	charLimit?: number;
 	minHeightClass?: string;
+	maxHeightClass?: string;
 	placeholder?: string;
 }
 
@@ -41,6 +42,7 @@ export function CompactMarkdownEditor({
 	onChange,
 	charLimit = 5000,
 	minHeightClass = "min-h-[80px]",
+	maxHeightClass = "max-h-[300px]",
 	placeholder = "Share your thoughts...",
 }: CompactMarkdownEditorProps) {
 	const generatedId = useId();
@@ -96,7 +98,7 @@ export function CompactMarkdownEditor({
 		content: value,
 		editorProps: {
 			attributes: {
-				class: `w-full px-3 py-2 bg-neutral-900 text-sm text-neutral-200 focus:outline-none prose prose-invert prose-sm max-w-none ${minHeightClass} [&_.tiptap.ProseMirror]:${minHeightClass} [&_.tiptap.ProseMirror]:outline-none resize-y placeholder:text-neutral-500`,
+				class: `w-full px-3 py-2 bg-neutral-900 text-sm text-neutral-200 focus:outline-none prose prose-invert prose-sm max-w-none ${minHeightClass} ${maxHeightClass} overflow-y-auto [&_.tiptap.ProseMirror]:${minHeightClass} [&_.tiptap.ProseMirror]:outline-none resize-y placeholder:text-neutral-500`,
 			},
 		},
 		onUpdate: ({ editor }) => {
