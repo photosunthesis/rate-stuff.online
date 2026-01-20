@@ -37,17 +37,38 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">
 			{/* Single horizontal line with stuff items followed by tags */}
-			<div className="overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3">
-				{loadingStuff
-					? skeletonStuffKeys.map((sKey) => (
+			<div
+				className="overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3"
+				style={{
+					maskImage: "linear-gradient(to right, black 80%, transparent 100%)",
+					WebkitMaskImage:
+						"linear-gradient(to right, black 80%, transparent 100%)",
+				}}
+			>
+				{loadingStuff || loadingTags ? (
+					<>
+						{/* Merged loading state for a smoother feel */}
+						{skeletonStuffKeys.map((sKey) => (
 							<div
 								key={sKey}
-								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800 text-white text-sm font-medium rounded-md"
+								className="inline-flex items-center bg-neutral-800/40 rounded-md animate-pulse"
 							>
-								<div className="h-3 bg-neutral-800 rounded w-16" />
+								<div className="h-6 w-24" />
 							</div>
-						))
-					: (recentStuff ?? []).map((stuff) => (
+						))}
+						{skeletonTagWidths.map((w, i) => (
+							<div
+								key={`t_${
+									// biome-ignore lint/suspicious/noArrayIndexKey: safe
+									i
+								}`}
+								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-md animate-pulse`}
+							/>
+						))}
+					</>
+				) : (
+					<>
+						{(recentStuff ?? []).map((stuff) => (
 							<Link
 								key={stuff.id}
 								to="/stuff/$stuffSlug"
@@ -67,17 +88,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 							</Link>
 						))}
 
-				{loadingTags
-					? skeletonTagWidths.map((w, i) => (
-							<div
-								key={`${w}-${
-									// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
-									i
-								}`}
-								className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded`}
-							/>
-						))
-					: (recentTags ?? []).map((tag) =>
+						{(recentTags ?? []).map((tag) =>
 							isAuthenticated ? (
 								<Link
 									key={tag.name}
@@ -98,6 +109,8 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 								</button>
 							),
 						)}
+					</>
+				)}
 			</div>
 
 			{/* Divider matching the app's section dividers */}

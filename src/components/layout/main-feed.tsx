@@ -44,6 +44,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
 								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
+						style={{ opacity: Math.max(0.05, 1 - idx * 0.15) }}
 					>
 						<RatingCardSkeleton variant="rating" showImage={idx % 2 === 0} />
 					</div>

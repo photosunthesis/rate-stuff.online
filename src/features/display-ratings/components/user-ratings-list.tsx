@@ -52,6 +52,7 @@ export function UserRatingsList() {
 						className={
 							idx === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"
 						}
+						style={{ opacity: Math.max(0.05, 1 - idx * 0.15) }}
 					>
 						<RatingCardSkeleton
 							variant="user"

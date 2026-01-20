@@ -145,6 +145,7 @@ export function StuffRatingsList({
 						key={n}
 						className={idx === 0 ? "" : "border-t border-neutral-800"}
 						data-skel-item
+						style={{ opacity: Math.max(0.05, 1 - idx * 0.15) }}
 					>
 						<RatingCardSkeleton variant="stuff" showImage={idx % 2 === 0} />
 					</div>
