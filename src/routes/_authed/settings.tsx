@@ -98,19 +98,19 @@ function SettingsPage() {
 						<div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-[10px] font-medium text-neutral-500">
 							<Link
 								to="/terms"
-								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
+								className="hover:underline underline-offset-2 hover:text-neutral-200 transition-colors"
 							>
 								Terms & Conditions
 							</Link>
 							<Link
 								to="/privacy"
-								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
+								className="hover:underline underline-offset-2 hover:text-neutral-200 transition-colors"
 							>
 								Privacy Policy
 							</Link>
 							<a
 								href="mailto:hello@rate-stuff.online"
-								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
+								className="hover:underline underline-offset-2 hover:text-neutral-200 transition-colors"
 							>
 								Contact Us
 							</a>
@@ -118,7 +118,7 @@ function SettingsPage() {
 								href="https://github.com/photosunthesis/rate-stuff.online"
 								target="_blank"
 								rel="noopener noreferrer"
-								className="hover:text-neutral-300 hover:underline underline-offset-2 transition-colors"
+								className="hover:underline underline-offset-2 hover:text-neutral-200 transition-colors"
 							>
 								GitHub
 							</a>

@@ -83,7 +83,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 							type="button"
 							onClick={handleSubmit}
 							disabled={!content.trim() || isPending}
-							className="bg-neutral-800 hover:bg-emerald-500 hover:text-black disabled:opacity-0 text-white p-1.5 rounded-lg transition-all flex items-center justify-center shadow-sm"
+							className="bg-neutral-800 hover:bg-emerald-500 disabled:opacity-0 text-white p-2 rounded-lg transition-all flex items-center justify-center shadow-sm"
 						>
 							{isPending ? (
 								<Loader2 className="w-4 h-4 animate-spin" />

@@ -46,7 +46,7 @@ const MarkdownContent = ({
 				a: ({ href, children }) => (
 					<a
 						href={href}
-						className="text-emerald-400 underline hover:text-emerald-300"
+						className="underline underline-offset-2 hover:text-neutral-200"
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={(e) => e.stopPropagation()}
