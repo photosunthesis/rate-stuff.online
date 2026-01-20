@@ -100,7 +100,7 @@ function SettingsPage() {
 								to="/terms"
 								className="hover:underline underline-offset-2 hover:text-neutral-200 transition-colors"
 							>
-								Terms & Conditions
+								Terms of Service
 							</Link>
 							<Link
 								to="/privacy"
