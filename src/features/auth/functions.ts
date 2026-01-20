@@ -87,8 +87,8 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 				file: z
 					.instanceof(File)
 					.refine(
-						(f) => f.size <= 5 * 1024 * 1024,
-						"File size must be less than 5MB",
+						(f) => f.size <= 10 * 1024 * 1024,
+						"File size must be less than 10MB",
 					)
 					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
 			}),

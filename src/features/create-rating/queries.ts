@@ -8,10 +8,10 @@ import {
 import { useServerFn } from "@tanstack/react-start";
 import {
 	createRatingFn,
-	getUploadUrlFn,
 	updateRatingImagesFn,
 	searchStuffFn,
 	searchTagsFn,
+	uploadRatingImageFn,
 } from "./functions";
 import {
 	MAX_FILE_SIZE,
@@ -37,7 +37,7 @@ export function useCreateRatingMutation() {
 }
 
 export function useUploadImageMutation() {
-	const getUploadUrl = useServerFn(getUploadUrlFn);
+	const uploadImageFn = useServerFn(uploadRatingImageFn);
 	return useMutation({
 		mutationFn: async ({
 			file,
@@ -58,29 +58,17 @@ export function useUploadImageMutation() {
 				);
 			}
 
-			const presign = await getUploadUrl({
-				data: { ratingId, filename: file.name, contentType: file.type },
-			});
-			if (!presign || !presign.success) {
-				throw new Error("Failed to get upload url");
+			const formData = new FormData();
+			formData.append("file", file);
+			formData.append("ratingId", ratingId);
+
+			const result = await uploadImageFn({ data: formData });
+
+			if (!result.success || !result.url) {
+				throw new Error(result.errorMessage || "Upload failed");
 			}
 
-			const payload = presign.data;
-			const putResp = await fetch(payload.putUrl, {
-				method: "PUT",
-				credentials: "include",
-				body: file,
-				headers: { "Content-Type": file.type },
-			});
-
-			if (!putResp.ok) throw new Error("Upload failed");
-
-			// Sometimes the PUT response is XML or empty, not JSON
-			const jsonResp = (await putResp.json().catch(() => null)) as {
-				url?: string;
-			} | null;
-			const publicUrl = jsonResp?.url ?? payload.publicUrl;
-			return { key: payload.key, url: publicUrl };
+			return { key: result.key, url: result.url };
 		},
 	});
 }

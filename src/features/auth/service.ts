@@ -69,13 +69,14 @@ export const getUserByUsername = createServerOnlyFn(
 
 export const uploadProfileImage = createServerOnlyFn(
 	async (file: File, userId: string) => {
-		const origExt = file.name?.split(".").pop() ?? "webp";
-		const extension =
-			file.type === "image/webp" || origExt.toLowerCase() === "webp"
-				? "webp"
-				: origExt;
+		const { compressImage } = await import("~/utils/image-utils");
+		const { buffer, contentType } = await compressImage(file);
+
+		const extension = contentType.split("/")[1] ?? "webp";
 		const key = `avatars/${userId}/${uuidv7()}.${extension}`;
-		const url = await uploadFile(env.R2_BUCKET, key, file);
+		const url = await uploadFile(env.R2_BUCKET, key, buffer, {
+			type: contentType,
+		});
 
 		return { key, url };
 	},

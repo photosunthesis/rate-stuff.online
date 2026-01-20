@@ -1,5 +1,5 @@
 import { useState, useId, useEffect, useRef } from "react";
-import imageCompression from "browser-image-compression";
+
 import { useForm } from "@tanstack/react-form";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
@@ -28,7 +28,7 @@ export function SetUpProfileForm({
 	const avatarId = useId();
 	const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 	const [avatarFile, setAvatarFile] = useState<File | null>(null);
-	const [isCompressing, setIsCompressing] = useState(false);
+
 	const [fileError, setFileError] = useState<string | null>(null);
 	const [nameValue, setDisplayNameValue] = useState<string>("");
 	const [hasValues, setHasValues] = useState<boolean>(false);
@@ -109,7 +109,7 @@ export function SetUpProfileForm({
 				noValidate
 			>
 				<fieldset
-					disabled={isPending || isSuccess || isCompressing}
+					disabled={isPending || isSuccess}
 					className="space-y-6 w-full border-none p-0 m-0"
 				>
 					{/* Avatar Upload Section */}
@@ -142,47 +142,19 @@ export function SetUpProfileForm({
 									const maxClientSize = 10 * 1024 * 1024;
 									if (file.size > maxClientSize) {
 										setFileError(
-											"Selected file is too large. Maximum allowed is 10MB before compression.",
+											"Selected file is too large. Maximum allowed is 10MB.",
 										);
 										return;
 									}
 
-									try {
-										setIsCompressing(true);
-										const compressedBlob = await imageCompression(file, {
-											maxSizeMB: 5,
-											maxWidthOrHeight: 3840,
-											useWebWorker: true,
-											initialQuality: 0.8,
-											fileType: "image/webp",
-										});
-										const baseName = file.name.replace(/\.[^/.]+$/, "");
-										const compressedFile = new File(
-											[compressedBlob],
-											`${baseName}.webp`,
-											{ type: "image/webp" },
-										);
-
-										if (previewRef.current) {
-											URL.revokeObjectURL(previewRef.current);
-										}
-
-										const url = URL.createObjectURL(compressedFile);
-										previewRef.current = url;
-										setAvatarFile(compressedFile);
-										setAvatarPreview(url);
-									} catch {
-										if (previewRef.current) {
-											URL.revokeObjectURL(previewRef.current);
-										}
-
-										const url = URL.createObjectURL(file);
-										previewRef.current = url;
-										setAvatarFile(file);
-										setAvatarPreview(url);
-									} finally {
-										setIsCompressing(false);
+									if (previewRef.current) {
+										URL.revokeObjectURL(previewRef.current);
 									}
+
+									const url = URL.createObjectURL(file);
+									previewRef.current = url;
+									setAvatarFile(file);
+									setAvatarPreview(url);
 								}}
 							/>
 							<div className="w-32 h-32 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden border-2 border-neutral-700 group-hover:border-neutral-600 transition-colors">
@@ -207,22 +179,10 @@ export function SetUpProfileForm({
 									e.preventDefault();
 									clearAvatar();
 								}}
-								aria-hidden={!avatarPreview || isCompressing}
-								className={`absolute top-1 right-1 bg-black/60 rounded-full p-1 text-white hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 transition-opacity duration-200 ease-in-out ${avatarPreview && !isCompressing ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+								className={`absolute top-1 right-1 bg-black/60 rounded-full p-1 text-white hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500 transition-opacity duration-200 ease-in-out ${avatarPreview ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
 							>
 								<X className="w-4 h-4" aria-hidden="true" />
 							</button>
-							<div
-								className={`absolute inset-0 rounded-full bg-black/40 flex items-center justify-center z-10 transition-opacity duration-200 ease-in-out ${isCompressing ? "opacity-100 pointer-events-auto cursor-not-allowed" : "opacity-0 pointer-events-none"}`}
-							>
-								<div
-									className="w-8 h-8 border-2 border-t-transparent border-white rounded-full animate-spin"
-									aria-hidden="true"
-								/>
-								<span className="sr-only" aria-live="polite">
-									Compressing image
-								</span>
-							</div>{" "}
 							{/* Camera overlay */}
 							<div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/60 transition-all flex items-center justify-center">
 								<Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -284,7 +244,7 @@ export function SetUpProfileForm({
 						type="button"
 						variant="secondary"
 						onClick={() => onSkip()}
-						disabled={isPending || isSuccess || isCompressing}
+						disabled={isPending || isSuccess}
 					>
 						Skip for now
 					</Button>
@@ -298,13 +258,10 @@ export function SetUpProfileForm({
 									!canSubmit ||
 									isPending ||
 									isSubmitting ||
-									isCompressing ||
 									isSuccess ||
 									!!fileError
 								}
-								isLoading={
-									isPending || isSubmitting || isCompressing || isSuccess
-								}
+								isLoading={isPending || isSubmitting || isSuccess}
 							>
 								{isSuccess ? "Profile Ready!" : "Set Up Profile"}
 							</Button>

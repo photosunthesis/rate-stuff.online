@@ -7,6 +7,7 @@ import {
 	searchStuff,
 	searchTags,
 	updateRatingImages,
+	uploadRatingImage,
 } from "./service";
 import { ALLOWED_CONTENT_TYPES } from "~/features/file-storage/service";
 import {
@@ -133,6 +134,43 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 					error instanceof Error
 						? error.message
 						: "Failed to update rating images",
+			};
+		}
+	});
+
+export const uploadRatingImageFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(
+		z.preprocess(
+			(val) => {
+				if (!(val instanceof FormData)) return val;
+				return { file: val.get("file"), ratingId: val.get("ratingId") };
+			},
+			z.object({
+				file: z
+					.instanceof(File)
+					.refine(
+						(f) => f.size <= 10 * 1024 * 1024,
+						"File size must be less than 10MB",
+					)
+					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
+				ratingId: z.string().min(1),
+			}),
+		),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const { file, ratingId } = data;
+			const { compressImage } = await import("~/utils/image-utils");
+			const { buffer, contentType } = await compressImage(file);
+			const result = await uploadRatingImage(ratingId, buffer, contentType);
+
+			return { success: true, url: result.url, key: result.key };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to upload image",
 			};
 		}
 	});

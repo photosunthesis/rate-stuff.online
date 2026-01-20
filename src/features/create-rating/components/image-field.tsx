@@ -32,41 +32,27 @@ export function ImageField({
 			"image/heic",
 			"image/heif",
 		];
-		const compressionOptions = {
-			maxSizeMB: 5,
-			maxWidthOrHeight: 3840,
-			useWebWorker: true,
-			initialQuality: 0.8,
-			fileType: "image/webp" as const,
-		};
 
-		const compressedFiles: File[] = [];
+		const newFiles: File[] = [];
 
 		for (const file of Array.from(files)) {
 			if (!validTypes.includes(file.type)) {
 				continue;
 			}
 
-			try {
-				const { default: imageCompression } = await import(
-					"browser-image-compression"
-				);
-				const compressed = await imageCompression(file, compressionOptions);
-				compressedFiles.push(compressed);
-			} catch {
-				if (file.size <= maxSizeInMB * 1024 * 1024) {
-					compressedFiles.push(file);
-				}
+			if (file.size > maxSizeInMB * 1024 * 1024) {
+				continue;
 			}
+			newFiles.push(file);
 		}
 
-		if (images.length + compressedFiles.length > maxFiles) {
+		if (images.length + newFiles.length > maxFiles) {
 			const spacesLeft = maxFiles - images.length;
 			if (spacesLeft > 0) {
-				onChange([...images, ...compressedFiles.slice(0, spacesLeft)]);
+				onChange([...images, ...newFiles.slice(0, spacesLeft)]);
 			}
 		} else {
-			onChange([...images, ...compressedFiles]);
+			onChange([...images, ...newFiles]);
 		}
 	};
 

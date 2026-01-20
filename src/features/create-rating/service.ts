@@ -1,8 +1,12 @@
 import { stuff, ratings, tags, ratingsToTags } from "~/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
-import { createPresignedUploadUrl } from "~/features/file-storage/service";
+import {
+	createPresignedUploadUrl,
+	uploadFile,
+} from "~/features/file-storage/service";
 import { generateSlug } from "~/utils/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
 import type { CreateRatingInput } from "./types";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
@@ -229,5 +233,19 @@ export const updateRatingImages = createServerOnlyFn(
 			images:
 				typeof row.images === "string" ? JSON.parse(row.images) : row.images,
 		};
+	},
+);
+
+export const uploadRatingImage = createServerOnlyFn(
+	async (ratingId: string, buffer: Uint8Array, contentType: string) => {
+		const extension = contentType.split("/")[1] ?? "webp";
+		const key = `ratings/${ratingId}/${uuidv7()}.${extension}`;
+
+		// Pass buffer directly as uploadFile handles ArrayBuffer/Uint8Array
+		const url = await uploadFile(env.R2_BUCKET, key, buffer, {
+			type: contentType,
+		});
+
+		return { key, url };
 	},
 );
