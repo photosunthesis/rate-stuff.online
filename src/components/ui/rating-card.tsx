@@ -158,6 +158,7 @@ export const RatingCard = memo(function RatingCard({
 							alt={displayText}
 							size="sm"
 							className="shrink-0"
+							username={rating.user?.username ?? undefined}
 						/>
 					)}
 					<div className="flex-1 min-w-0">

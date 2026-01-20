@@ -1,4 +1,5 @@
 import { User as UserIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Image } from "./image";
 
 interface AvatarProps {
@@ -6,9 +7,16 @@ interface AvatarProps {
 	alt: string;
 	size?: "sm" | "md" | "lg" | "xl";
 	className?: string;
+	username?: string;
 }
 
-export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
+export function Avatar({
+	src,
+	alt,
+	size = "md",
+	className = "",
+	username,
+}: AvatarProps) {
 	const sizeClasses = {
 		sm: "w-8 h-8",
 		md: "w-10 h-10",
@@ -23,22 +31,33 @@ export function Avatar({ src, alt, size = "md", className = "" }: AvatarProps) {
 		xl: "w-12 h-12",
 	} as const;
 
-	if (src) {
-		return (
-			<Image
-				src={src}
-				alt={alt}
-				variant="avatar"
-				className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
-			/>
-		);
-	}
-
-	return (
+	const content = src ? (
+		<Image
+			src={src}
+			alt={alt}
+			variant="avatar"
+			className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
+		/>
+	) : (
 		<div
 			className={`${sizeClasses[size]} rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-500 ${className}`}
 		>
 			<UserIcon className={iconSizes[size]} />
 		</div>
 	);
+
+	if (username) {
+		return (
+			<Link
+				to="/user/$username"
+				params={{ username }}
+				className="block shrink-0"
+				onClick={(e) => e.stopPropagation()}
+			>
+				{content}
+			</Link>
+		);
+	}
+
+	return content;
 }

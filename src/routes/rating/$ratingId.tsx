@@ -225,7 +225,13 @@ const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 
 	return (
 		<div className="flex items-start gap-3">
-			<Avatar src={image} alt={displayText} size="sm" className="shrink-0" />
+			<Avatar
+				src={image}
+				alt={displayText}
+				size="sm"
+				className="shrink-0"
+				username={rating.user?.username ?? undefined}
+			/>
 
 			<div className="flex-1 min-w-0">
 				<div className="text-sm leading-normal py-1.5">
