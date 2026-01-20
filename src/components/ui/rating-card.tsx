@@ -198,8 +198,8 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			) : (
 				// User Profile Header
-				<div className="flex items-center gap-1 text-sm text-neutral-500 mb-2">
-					<span className="text-neutral-400">A rating of</span>
+				<div className="text-sm text-neutral-500 mb-2 leading-relaxed">
+					<span className="text-neutral-400">A rating of</span>{" "}
 					{rating.stuff ? (
 						<Link
 							to="/stuff/$stuffSlug"
@@ -211,9 +211,8 @@ export const RatingCard = memo(function RatingCard({
 						</Link>
 					) : (
 						<span className="text-neutral-400 font-semibold">Unknown Item</span>
-					)}
-					<span>•</span>
-					<span>{timeAgo}</span>
+					)}{" "}
+					<span>•</span> <span>{timeAgo}</span>
 				</div>
 			)}
 

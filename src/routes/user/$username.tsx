@@ -243,14 +243,15 @@ function RouteComponent() {
 					<Avatar
 						src={publicUser.image ?? null}
 						alt={publicUser.name ?? `@${publicUser.username}`}
-						size="xl"
+						size="lg"
+						className="md:w-24 md:h-24"
 					/>
 					{publicUser.name ? (
 						<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
 							<span className="text-white font-semibold text-lg">
 								{publicUser.name}
 							</span>
-							<span className="text-neutral-500 text-md font-medium">
+							<span className="text-neutral-500 text-md font-normal">
 								(@{publicUser.username})
 							</span>
 						</div>
