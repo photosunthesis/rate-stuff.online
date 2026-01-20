@@ -96,7 +96,7 @@ export function CompactMarkdownEditor({
 		content: value,
 		editorProps: {
 			attributes: {
-				class: `w-full px-3 py-2 bg-neutral-900 text-sm text-neutral-200 focus:outline-none prose prose-invert prose-sm max-w-none ${minHeightClass} ${maxHeightClass} overflow-y-auto [&_.tiptap.ProseMirror]:${minHeightClass} [&_.tiptap.ProseMirror]:outline-none resize-y placeholder:text-neutral-500`,
+				class: `w-full px-3 py-2 bg-neutral-950 text-sm text-neutral-200 focus:outline-none prose prose-invert prose-sm max-w-none ${minHeightClass} ${maxHeightClass} overflow-y-auto [&_.tiptap.ProseMirror]:${minHeightClass} [&_.tiptap.ProseMirror]:outline-none resize-y placeholder:text-neutral-500`,
 			},
 		},
 		onUpdate: ({ editor }) => {
@@ -147,7 +147,7 @@ export function CompactMarkdownEditor({
 			)}
 
 			<div
-				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-900 group`}
+				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-950 group`}
 			>
 				<div className="flex items-center gap-1.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm rounded-t-[11px]">
 					<ToolbarButton

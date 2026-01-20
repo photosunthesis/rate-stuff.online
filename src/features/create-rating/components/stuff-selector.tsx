@@ -148,7 +148,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			</label>
 
 			<div
-				className={`relative px-4 py-3 bg-neutral-900 border ${
+				className={`relative px-4 py-3 bg-neutral-950 border ${
 					error ? "border-red-400" : "border-neutral-800"
 				} rounded-xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 			>
@@ -185,7 +185,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
 
 			{isOpen && searchInput.trim().length > 0 && (
-				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60">
+				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60">
 					<div className="overflow-y-auto max-h-52">
 						{results.length > 0 &&
 							results.map((stuff: { id: string; name: string }) => (

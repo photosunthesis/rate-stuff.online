@@ -163,7 +163,7 @@ export function ModalContent({
 						? "h-dvh md:h-auto md:max-h-[85vh] rounded-t-xl md:rounded-xl md:border md:border-neutral-800"
 						: "h-auto max-h-[90vh] rounded-xl m-4 border border-neutral-800"
 				} 
-				bg-neutral-900 shadow-2xl 
+				bg-neutral-950 shadow-2xl 
 				${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"} 
 				${className}`}
 			onClick={(e) => e.stopPropagation()}

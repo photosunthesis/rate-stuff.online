@@ -310,7 +310,7 @@ export function CreateRatingForm({
 				</fieldset>
 			</div>
 
-			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-900/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
+			<div className="shrink-0 sticky bottom-0 z-20 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800/50 px-6 py-4">
 				<form.Subscribe selector={(state) => [state.canSubmit]}>
 					{([canSubmit]) => (
 						<div className="flex justify-end gap-3 items-center">
@@ -343,7 +343,7 @@ export function CreateRatingForm({
 const CompactMarkdownEditorSkeleton = () => {
 	return (
 		<div className="animate-pulse">
-			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-900">
+			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
 				{/* Toolbar Skeleton */}
 				<div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm">
 					<div className="p-1 text-neutral-600/50">
@@ -361,7 +361,7 @@ const CompactMarkdownEditorSkeleton = () => {
 				</div>
 
 				{/* Content Skeleton */}
-				<div className="h-[160px] bg-neutral-900 w-full" />
+				<div className="h-[160px] bg-neutral-950 w-full" />
 			</div>
 		</div>
 	);

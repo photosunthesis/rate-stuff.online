@@ -20,7 +20,7 @@ export function TextField({ label, error, id, ...props }: TextFieldProps) {
 			</label>
 			<input
 				id={inputId}
-				className={`w-full px-4 py-2 bg-neutral-900 border ${
+				className={`w-full px-4 py-2 bg-neutral-950 border ${
 					error ? "border-red-400" : "border-neutral-800"
 				} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
 					error
