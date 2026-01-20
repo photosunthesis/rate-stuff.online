@@ -20,7 +20,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const images = Array.isArray(stuff.images) ? stuff.images.slice(0, 4) : [];
 
 	return (
-		<div className="w-full max-w-4xl mx-auto px-4 pt-4 pb-6">
+		<div className="w-full max-w-4xl mx-auto p-4">
 			<div className="flex flex-col gap-3">
 				{images.length > 0 && (
 					<div className="bg-neutral-900/50">
@@ -75,7 +75,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 					</div>
 				)}
 
-				<div className="flex items-end justify-between gap-6">
+				<div className="flex items-start justify-between gap-4">
 					<h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight leading-[1.1]">
 						{stuff.name}
 					</h1>
@@ -84,7 +84,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 							{getRatingEmoji(Number(stuff.averageRating))}
 						</span>
 						<div className="flex items-baseline gap-1">
-							<span className="text-xl md:text-3xl font-bold text-white tabular-nums">
+							<span className="text-2xl md:text-3xl font-bold text-white tabular-nums">
 								{Number(stuff.averageRating).toFixed(1)}
 							</span>
 							<span className="text-base text-neutral-500 font-medium">
@@ -93,7 +93,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						</div>
 					</div>
 				</div>
-				<div className="flex items-center gap-1.5 text-base font-medium text-neutral-400">
+				<div className="flex items-center gap-1.5 text-sm md:text-base font-medium text-neutral-400">
 					<MessageSquareQuote className="w-4 h-4" />
 					<span>
 						{stuff.ratingCount} {stuff.ratingCount === 1 ? "rating" : "ratings"}
