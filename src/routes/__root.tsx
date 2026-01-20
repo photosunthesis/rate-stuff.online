@@ -123,12 +123,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<IKContext urlEndpoint="https://ik.imagekit.io/ratestuffonline/">
+				<IKContext urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}>
 					{children}
 				</IKContext>
 				<UmamiAnalytics
-					url="https://umami.sun-envidiado.com"
-					websiteId="fff12b95-c8ad-43db-968d-587824b26d74"
+					url={import.meta.env.VITE_UMAMI_URL}
+					websiteId={import.meta.env.VITE_UMAMI_WEBSITE_ID}
 				/>
 				<Scripts />
 			</body>
