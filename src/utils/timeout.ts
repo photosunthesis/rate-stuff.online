@@ -16,7 +16,7 @@ interface TimeoutOptions {
 	context?: string;
 }
 
-const DEFAULT_TIMEOUT_MS = 8000;
+const DEFAULT_TIMEOUT_MS = 16000; // 16 seconds
 
 export async function withTimeout<T>(
 	promise: Promise<T>,
