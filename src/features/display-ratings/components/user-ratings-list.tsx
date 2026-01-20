@@ -15,7 +15,6 @@ export function UserRatingsList() {
 
 	const observerTarget = useRef<HTMLDivElement>(null);
 
-	// Intersection Observer for infinite scroll
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
@@ -37,7 +36,6 @@ export function UserRatingsList() {
 		};
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-	// Flatten all pages into a single array
 	const allRatings = useMemo(
 		() => data?.pages.flatMap((page) => page.data || []) || [],
 		[data?.pages],
@@ -89,7 +87,6 @@ export function UserRatingsList() {
 				))}
 			</div>
 
-			{/* Intersection observer target for infinite scroll */}
 			{hasNextPage && (
 				<div ref={observerTarget} className="py-4 text-center">
 					{isFetchingNextPage ? (

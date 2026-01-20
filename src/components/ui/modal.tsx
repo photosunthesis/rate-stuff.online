@@ -55,14 +55,13 @@ export function Modal({
 			setIsVisible(false);
 			const timer = setTimeout(() => {
 				setShouldRender(false);
-			}, 300); // Match transition duration
+			}, 300);
 			return () => clearTimeout(timer);
 		}
 	}, [isOpen]);
 
 	useEffect(() => {
 		if (shouldRender && isOpen) {
-			// Double rAF ensures the browser paints the initial state (opacity-0) before transitioning
 			requestAnimationFrame(() => {
 				requestAnimationFrame(() => {
 					setIsVisible(true);
@@ -71,7 +70,6 @@ export function Modal({
 		}
 	}, [shouldRender, isOpen]);
 
-	// Handle Escape key
 	useEffect(() => {
 		if (!isOpen) return;
 		const handleEscape = (event: KeyboardEvent) => {
@@ -81,7 +79,6 @@ export function Modal({
 		return () => document.removeEventListener("keydown", handleEscape);
 	}, [isOpen, onClose, preventClose]);
 
-	// Lock body scroll
 	useEffect(() => {
 		if (isOpen) {
 			document.body.style.overflow = "hidden";
@@ -113,7 +110,6 @@ export function Modal({
 				}`}
 				onPointerDown={(e) => e.stopPropagation()}
 			>
-				{/* Backdrop */}
 				<button
 					type="button"
 					data-testid="modal-backdrop"

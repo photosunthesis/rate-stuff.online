@@ -20,7 +20,6 @@ export const createComment = createServerOnlyFn(
 
 			if (!comment) throw new Error("Failed to create comment");
 
-			// Increment comments count on rating
 			await tx
 				.update(ratings)
 				.set({
@@ -28,7 +27,6 @@ export const createComment = createServerOnlyFn(
 				})
 				.where(eq(ratings.id, input.ratingId));
 
-			// Fetch user details for display
 			const user = await tx
 				.select()
 				.from(users)
@@ -51,7 +49,6 @@ export const voteOnComment = createServerOnlyFn(
 		return db.transaction(async (tx) => {
 			const { commentId, type } = input;
 
-			// Check if user owns the comment
 			const comment = await tx
 				.select()
 				.from(comments)
@@ -81,7 +78,6 @@ export const voteOnComment = createServerOnlyFn(
 
 			if (existingVote) {
 				if (existingVote.type === type) {
-					// Remove vote
 					await tx
 						.delete(commentVotes)
 						.where(
@@ -94,7 +90,6 @@ export const voteOnComment = createServerOnlyFn(
 					if (type === "up") upvoteChange = -1;
 					else downvoteChange = -1;
 				} else {
-					// Change vote
 					await tx
 						.update(commentVotes)
 						.set({ type })
@@ -114,7 +109,6 @@ export const voteOnComment = createServerOnlyFn(
 					}
 				}
 			} else {
-				// New vote
 				await tx.insert(commentVotes).values({
 					commentId,
 					userId,
@@ -125,7 +119,6 @@ export const voteOnComment = createServerOnlyFn(
 				else downvoteChange = 1;
 			}
 
-			// Update counts on comment
 			const [updatedComment] = await tx
 				.update(comments)
 				.set({

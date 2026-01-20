@@ -48,7 +48,6 @@ export function CompactMarkdownEditor({
 	const generatedId = useId();
 	const inputId = id || generatedId;
 
-	// Refs for debounce and latest callback to avoid re-creating editor
 	const debounceTimeoutRef = useRef<NodeJS.Timeout>(null);
 	const onChangeRef = useRef(onChange);
 
@@ -56,7 +55,6 @@ export function CompactMarkdownEditor({
 		onChangeRef.current = onChange;
 	});
 
-	// Cleanup timeout on unmount
 	useEffect(() => {
 		return () => {
 			if (debounceTimeoutRef.current) {
@@ -131,12 +129,6 @@ export function CompactMarkdownEditor({
 			editor &&
 			value !== (editor as EditorWithMarkdown).storage.markdown.getMarkdown()
 		) {
-			// Only update if the content is truly different.
-			// However, since we debounce onChange, 'value' might be stale.
-			// We risk overwriting user input if we are not careful.
-			// But since parent 'value' usually only changes via OUR onChange,
-			// and onChange is delayed, 'value' stays effectively constant during typing.
-			// So this effect shouldn't fire during typing.
 			editor.commands.setContent(value);
 		}
 	}, [editor, value]);
@@ -168,7 +160,6 @@ export function CompactMarkdownEditor({
 			<div
 				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-900 group`}
 			>
-				{/* Compact Toolbar */}
 				<div className="flex items-center gap-1.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm rounded-t-[11px]">
 					<ToolbarButton
 						onClick={() => editor?.chain().focus().toggleBold().run()}

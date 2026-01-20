@@ -32,7 +32,6 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 			<div className="space-y-4">
 				{isAuthenticated && (
 					<>
-						{/* Recent Ratings */}
 						<section>
 							<div className="flex items-center justify-between mb-2 px-1">
 								<p className="text-md font-semibold text-white">
@@ -85,7 +84,6 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 							</div>
 						</section>
 
-						{/* Recent Tags */}
 						<section>
 							<p className="text-md font-semibold text-white mb-2 px-1">
 								Popular Tags
@@ -127,11 +125,9 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 					</>
 				)}
 
-				{/* Footer Links */}
 				<Footer />
 			</div>
 
-			{/* Auth Modal */}
 			<AuthModal
 				isOpen={isAuthModalOpen}
 				onClose={() => setIsAuthModalOpen(false)}

@@ -112,7 +112,6 @@ export function SetUpProfileForm({
 					disabled={isPending || isSuccess}
 					className="space-y-6 w-full border-none p-0 m-0"
 				>
-					{/* Avatar Upload Section */}
 					<div className="flex flex-col items-start">
 						<label
 							htmlFor={avatarId}
@@ -183,14 +182,12 @@ export function SetUpProfileForm({
 							>
 								<X className="w-4 h-4" aria-hidden="true" />
 							</button>
-							{/* Camera overlay */}
 							<div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/60 transition-all flex items-center justify-center">
 								<Camera className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
 							</div>
 						</label>
 					</div>
 
-					{/* Display name field */}
 					<form.Field
 						name="name"
 						validators={{
@@ -226,7 +223,6 @@ export function SetUpProfileForm({
 					</form.Field>
 				</fieldset>
 
-				{/* Errors & status */}
 				{fileError && (
 					<div className="bg-red-950/50 border border-red-800 rounded-lg p-3">
 						<p className="text-red-400 text-sm">{fileError}</p>
@@ -238,7 +234,6 @@ export function SetUpProfileForm({
 					</div>
 				)}
 
-				{/* Actions */}
 				<div className="flex justify-start gap-3 pt-2">
 					<Button
 						type="button"

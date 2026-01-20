@@ -72,7 +72,6 @@ export function VoteSection({
 
 	const isOwner = user?.id === rating.userId;
 
-	// Local state for optimistic updates
 	const [userVote, setUserVote] = useState(rating.userVote);
 	const [voteScore, setVoteScore] = useState(
 		rating.upvotesCount - rating.downvotesCount,
@@ -93,7 +92,6 @@ export function VoteSection({
 			newVote = "none";
 		}
 
-		// Calculate new score locally
 		let newScore = voteScore;
 		if (currentVote === "up") newScore--;
 		else if (currentVote === "down") newScore++; // Removing a downvote adds 1 to score
@@ -101,11 +99,9 @@ export function VoteSection({
 		if (newVote === "up") newScore++;
 		else if (newVote === "down") newScore--;
 
-		// Apply optimistic update
 		setUserVote(newVote === "none" ? null : newVote);
 		setVoteScore(newScore);
 
-		// Fire in background
 		vote({ ratingId: rating.id, vote: newVote });
 
 		if (onVote) {

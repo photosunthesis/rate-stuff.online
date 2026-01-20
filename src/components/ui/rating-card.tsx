@@ -117,7 +117,6 @@ export const RatingCard = memo(function RatingCard({
 				}
 			}}
 		>
-			{/* Header */}
 			{variant === "default" ? (
 				<div className="flex items-start gap-3">
 					{!hideAvatar && (
@@ -166,7 +165,6 @@ export const RatingCard = memo(function RatingCard({
 					</div>
 				</div>
 			) : (
-				// User Profile Header
 				<div className="text-sm text-neutral-500 mb-2 leading-relaxed">
 					<span className="text-neutral-400">A rating of</span>{" "}
 					{rating.stuff ? (
@@ -185,7 +183,6 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			{/* Rating */}
 			<h3
 				className={`text-2xl font-semibold text-white mb-2 ${
 					noIndent ? "" : "ml-11"
@@ -194,7 +191,6 @@ export const RatingCard = memo(function RatingCard({
 				{rating.score}/10
 			</h3>
 
-			{/* Images */}
 			{parsedImages && parsedImages.length > 0 && (
 				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 					{parsedImages.length === 1 ? (
@@ -226,7 +222,6 @@ export const RatingCard = memo(function RatingCard({
 						</div>
 					) : parsedImages.length === 3 ? (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-							{/* Left: large image spanning both rows */}
 							<div className="row-span-2 h-full overflow-hidden">
 								<Image
 									src={parsedImages[0]}
@@ -235,7 +230,7 @@ export const RatingCard = memo(function RatingCard({
 									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
 								/>
 							</div>
-							{/* Right: two stacked images (equal height, center-cropped) */}
+
 							<div className="h-full overflow-hidden">
 								<Image
 									src={parsedImages[1]}
@@ -254,7 +249,6 @@ export const RatingCard = memo(function RatingCard({
 							</div>
 						</div>
 					) : (
-						/* 4 or more: show a 2x2 grid using first 4 images */
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							{parsedImages.slice(0, 4).map((image, idx) => {
 								let cornerClass = "rounded-xl";
@@ -288,7 +282,6 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			{/* Content */}
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
 				{shouldTruncate && !isExpanded ? (
 					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
@@ -326,7 +319,6 @@ export const RatingCard = memo(function RatingCard({
 				)}
 			</div>
 
-			{/* Tags */}
 			{parsedTags && parsedTags.length > 0 && (
 				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>
 					{parsedTags.map((tag: string) =>
@@ -357,7 +349,6 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			{/* Footer Actions */}
 			<div className={`${noIndent ? "" : "ml-9.5"} flex items-center gap-3`}>
 				<VoteSection rating={rating} isAuthenticated={isAuthenticated} />
 
@@ -386,7 +377,6 @@ export const RatingCard = memo(function RatingCard({
 				</button>
 			</div>
 
-			{/* Auth Modal */}
 			<AuthModal
 				isOpen={isAuthModalOpen}
 				onClose={() => setIsAuthModalOpen(false)}

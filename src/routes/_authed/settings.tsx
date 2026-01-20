@@ -47,7 +47,6 @@ function SettingsPage() {
 			<div className="w-full flex flex-col h-full">
 				<div className="px-4 py-6 space-y-6 flex-1 max-w-3xl mx-auto w-full">
 					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden">
-						{/* Edit Profile Section */}
 						<Link
 							to="/set-up-profile"
 							search={{ redirect: "/settings" }}
@@ -73,7 +72,6 @@ function SettingsPage() {
 
 						<div className="border-t border-neutral-800" />
 
-						{/* Sign Out Item */}
 						<button
 							type="button"
 							onClick={() => setIsSignOutOpen(true)}
@@ -92,7 +90,6 @@ function SettingsPage() {
 					</div>
 				</div>
 
-				{/* Links Section */}
 				<div className="mt-2 lg:hidden">
 					<div className="px-1 pb-4">
 						<div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-[10px] font-medium text-neutral-500">

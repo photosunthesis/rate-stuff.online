@@ -45,7 +45,7 @@
   .animate-backdrop-in { animation: backdropIn 300ms cubic-bezier(.4, 0, .2, 1) forwards !important; }
   .animate-backdrop-out { animation: backdropOut 300ms cubic-bezier(.4, 0, .2, 1) forwards !important; }
 
-  /* Hide native scrollbars while keeping scroll behavior */
+
   .hide-scrollbar::-webkit-scrollbar { display: none; }
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
@@ -55,7 +55,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0a0a0a; /* neutral-950 */
+  background-color: #0a0a0a;
   color: white;
 }
 

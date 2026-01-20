@@ -36,7 +36,6 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">
-			{/* Single horizontal line with stuff items followed by tags */}
 			<div
 				className="overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3"
 				style={{
@@ -47,7 +46,6 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 			>
 				{loadingStuff || loadingTags ? (
 					<>
-						{/* Merged loading state for a smoother feel */}
 						{skeletonStuffKeys.map((sKey) => (
 							<div
 								key={sKey}
@@ -75,7 +73,6 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 								params={{ stuffSlug: stuff.slug }}
 								className="inline-flex items-center py-0.5 pl-0.5 pr-2 bg-neutral-800 text-white text-sm font-medium rounded-md"
 							>
-								{/* small thumbnail/icon to differentiate stuff */}
 								<div className="flex items-center mr-0.5">
 									<div className="w-5 h-5 bg-neutral-800 rounded-sm shrink-0 flex items-center justify-center">
 										<TrendingUp
@@ -113,10 +110,8 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 				)}
 			</div>
 
-			{/* Divider matching the app's section dividers */}
 			<div className="border-t border-neutral-800" />
 
-			{/* Auth Modal */}
 			<AuthModal
 				isOpen={isAuthModalOpen}
 				onClose={() => setIsAuthModalOpen(false)}

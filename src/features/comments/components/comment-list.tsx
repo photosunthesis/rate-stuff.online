@@ -20,8 +20,6 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 	} = useInfiniteQuery(commentsQueryOptions(ratingId));
 
 	const loadMoreRef = useRef<HTMLDivElement>(null);
-	// Simple intersection observer implementation since I don't recall precise hook path/signature
-	// Actually, let's use standard IntersectionObserver
 
 	useEffect(() => {
 		const element = loadMoreRef.current;

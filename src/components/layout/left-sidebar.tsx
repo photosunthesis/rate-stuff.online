@@ -160,7 +160,6 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 				)}
 			</aside>
 
-			{/* Tablet icon-only sidebar */}
 			{isAuthenticated && (
 				<aside className="hidden md:flex lg:hidden flex-col items-center sticky top-0 h-screen w-20 px-2 py-6">
 					<div className="flex flex-col gap-4 items-center mb-4">

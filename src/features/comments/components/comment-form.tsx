@@ -95,7 +95,6 @@ function CompactMarkdownEditorSkeleton() {
 	return (
 		<div className="animate-pulse">
 			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-900">
-				{/* Toolbar Skeleton */}
 				<div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm">
 					<div className="p-1 text-neutral-600/50">
 						<Bold className="w-3.5 h-3.5" />
@@ -111,7 +110,6 @@ function CompactMarkdownEditorSkeleton() {
 					</div>
 				</div>
 
-				{/* Content Skeleton */}
 				<div className="h-[80px] bg-neutral-900 w-full" />
 			</div>
 		</div>

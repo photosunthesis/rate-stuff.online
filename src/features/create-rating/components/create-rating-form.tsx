@@ -72,7 +72,6 @@ export function CreateRatingForm({
 
 				await onSubmit(inputData);
 
-				// Track successful rating creation
 				if (umami) {
 					umami.track("create_rating", {
 						hasImages: selectedImages.length > 0,
@@ -81,14 +80,13 @@ export function CreateRatingForm({
 				}
 
 				setIsSuccess(true);
-				// If the submit promise resolves without throwing, treat it as success.
+
 				form.reset();
 				setSelectedStuff(null);
 				setSelectedTags([]);
 				setSelectedImages([]);
 				onSuccess?.();
 			} catch {
-				// Submission failed; errors are surfaced via props from the hook.
 				setIsSubmitting(false);
 			}
 		},
