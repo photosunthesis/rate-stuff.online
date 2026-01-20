@@ -55,10 +55,22 @@ export function RatingCardSkeleton({
 			{imagePlaceholder}
 
 			{/* Content lines */}
-			<div className={`${indent}`}>
+			<div className={`${indent} mb-3`}>
 				<div className="h-3 bg-neutral-800/40 rounded w-full mb-2" />
 				<div className="h-3 bg-neutral-800/40 rounded w-5/6 mb-2" />
 				<div className="h-3 bg-neutral-800/40 rounded w-3/4" />
+			</div>
+
+			{/* Tags */}
+			<div className={`flex flex-wrap gap-2 mb-3 ${indent}`}>
+				<div className="h-6 w-16 bg-neutral-800/40 rounded-md" />
+				<div className="h-6 w-12 bg-neutral-800/40 rounded-md" />
+			</div>
+
+			{/* Footer Actions */}
+			<div className={`${noIndent ? "" : "ml-9.5"} flex items-center gap-3`}>
+				<div className="h-8 w-24 bg-neutral-800/40 rounded-md" />
+				<div className="h-8 w-16 bg-neutral-800/40 rounded-md" />
 			</div>
 		</div>
 	);

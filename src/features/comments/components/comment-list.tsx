@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { commentsQueryOptions } from "../queries";
 import { CommentItem } from "./comment-item";
+import { CommentSkeleton } from "./comment-skeleton";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 
@@ -39,8 +40,10 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	if (isLoading) {
 		return (
-			<div className="flex justify-center py-8">
-				<Loader2 className="w-6 h-6 animate-spin text-neutral-600" />
+			<div className="flex flex-col">
+				<CommentSkeleton />
+				<CommentSkeleton />
+				<CommentSkeleton />
 			</div>
 		);
 	}
@@ -57,8 +60,8 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	if (allComments.length === 0) {
 		return (
-			<div className="text-center py-8 text-neutral-600 text-sm italic">
-				No comments yet. Be the first to share your thoughts!
+			<div className="text-center py-8 text-neutral-600 text-sm">
+				No comments yet ⸜( ´ ꒳ ` )⸝
 			</div>
 		);
 	}
