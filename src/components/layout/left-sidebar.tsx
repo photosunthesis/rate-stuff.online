@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/confirm-modal";
-import authClient from "~/auth/auth.client";
 import type { PublicUser } from "~/features/auth/types";
+import { useSignOut } from "~/hooks/use-sign-out";
 
 const getHeader = () => {
 	const headers = [
@@ -41,12 +41,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const [header] = useState(() => getHeader());
 	const location = useLocation();
-
-	const handleSignOut = async () => {
-		await authClient.signOut();
-		window.location.href = "/"; // Using useNavigate doesn't work for some reason 🤷🏻
-	};
-
+	const { signOut } = useSignOut();
 	const showFloatingButton =
 		location.pathname === "/" || location.pathname === "/explore";
 
@@ -65,7 +60,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						title="Ready to sign out?"
 						description="After signing out, you can sign back in anytime."
 						confirmLabel="Sign out"
-						onConfirm={handleSignOut}
+						onConfirm={signOut}
 					/>
 				</>
 			)}

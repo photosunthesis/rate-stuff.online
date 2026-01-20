@@ -3,7 +3,7 @@ import { Avatar } from "~/components/ui/avatar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/features/auth/queries";
 import { mapToCurrentUser } from "~/utils/user-mapping";
-import authClient from "~/auth/auth.client";
+import { useSignOut } from "~/hooks/use-sign-out";
 import { LogOut, UserPen } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "~/components/ui/confirm-modal";
@@ -22,13 +22,9 @@ export const Route = createFileRoute("/_authed/settings")({
 function SettingsPage() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
+	const { signOut } = useSignOut();
 
 	if (!user) return null;
-
-	const handleSignOut = async () => {
-		await authClient.signOut();
-		window.location.href = "/";
-	};
 
 	const currentUser = mapToCurrentUser(user);
 
@@ -41,7 +37,7 @@ function SettingsPage() {
 				title="Ready to sign out?"
 				description="After signing out, you can sign back in anytime."
 				confirmLabel="Sign out"
-				onConfirm={handleSignOut}
+				onConfirm={signOut}
 			/>
 
 			<div className="w-full flex flex-col h-full">
