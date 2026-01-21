@@ -20,7 +20,6 @@ interface CommentFormProps {
 export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 	const [content, setContent] = useState("");
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-	const [isFocused, setIsFocused] = useState(false);
 	const { mutate: createComment, isPending } = useCreateComment();
 	const isAuthenticated = !!currentUser;
 
@@ -37,7 +36,6 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 			{
 				onSuccess: () => {
 					setContent("");
-					setIsFocused(false);
 				},
 			},
 		);
@@ -46,16 +44,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 	return (
 		<div className="mb-4 flex gap-3">
 			<div className="flex-1 relative group">
-				{/** biome-ignore lint/a11y/noStaticElementInteractions: dont mind this */}
-				<div
-					className="relative flex gap-2 items-end"
-					onFocus={() => setIsFocused(true)}
-					onBlur={(e) => {
-						if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-							setIsFocused(false);
-						}
-					}}
-				>
+				<div className="relative flex gap-2 items-end">
 					{!isAuthenticated && (
 						<button
 							type="button"
@@ -81,10 +70,10 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 					<button
 						type="button"
 						onClick={handleSubmit}
-						disabled={!isFocused || !content.trim() || isPending}
+						disabled={!content.trim() || isPending}
 						className="mb-0.5 shrink-0 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:hover:bg-emerald-500/50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all flex items-center justify-center shadow-sm"
 					>
-						<Forward className="w-5 h-5" />
+						<Forward className="w-4 h-4" />
 					</button>
 				</div>
 			</div>
