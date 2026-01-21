@@ -6,6 +6,7 @@ import {
 	keepPreviousData,
 } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useRouter } from "@tanstack/react-router";
 import {
 	createRatingFn,
 	updateRatingImagesFn,
@@ -13,6 +14,7 @@ import {
 	searchTagsFn,
 	uploadRatingImageFn,
 	updateRatingFn,
+	deleteRatingFn,
 } from "./functions";
 import {
 	MAX_FILE_SIZE,
@@ -139,4 +141,23 @@ export function useStuffSearchQuery(query: string) {
 
 export function useTagSearchQuery(query: string) {
 	return useQuery(tagSearchQueryOptions(query));
+}
+
+export function useDeleteRatingMutation() {
+	const deleteRatingMutationFn = useServerFn(deleteRatingFn);
+	const queryClient = useQueryClient();
+	const router = useRouter();
+
+	return useMutation({
+		mutationFn: (data: { ratingId: string }) =>
+			deleteRatingMutationFn({ data }),
+		onSuccess: (data) => {
+			if (data && (data as { success?: boolean }).success) {
+				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
+				queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] });
+				queryClient.invalidateQueries({ queryKey: ["recent", "tags"] });
+				router.navigate({ to: "/" });
+			}
+		},
+	});
 }

@@ -15,7 +15,7 @@ import { Avatar } from "~/components/ui/avatar";
 import { Image } from "~/components/ui/image";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
-import { ArrowLeft, MoreVertical, Pencil } from "lucide-react";
+import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
@@ -26,6 +26,17 @@ import { mapToCurrentUser } from "~/utils/user-mapping";
 import { CommentsSection } from "~/features/comments/components/comments-section";
 import { MessageSquare } from "lucide-react";
 import { formatCompactNumber } from "~/utils/numbers";
+import {
+	Modal,
+	ModalContent,
+	ModalHeader,
+	ModalTitle,
+	ModalDescription,
+	ModalFooter,
+	ModalClose,
+} from "~/components/ui/modal";
+import { Button } from "~/components/ui/button";
+import { useDeleteRatingMutation } from "~/features/create-rating/queries";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
@@ -200,7 +211,9 @@ const RatingHeader = ({
 	const displayText = name ? name : `@${usernameHandle}`;
 	const image = rating.user?.image ?? null;
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+	const deleteMutation = useDeleteRatingMutation();
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -217,6 +230,11 @@ const RatingHeader = ({
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [isMenuOpen]);
+
+	const handleDelete = async () => {
+		await deleteMutation.mutateAsync({ ratingId: rating.id });
+		setIsDeleteModalOpen(false);
+	};
 
 	return (
 		<div className="flex items-start gap-3">
@@ -281,7 +299,7 @@ const RatingHeader = ({
 					</button>
 
 					{isMenuOpen && (
-						<div className="absolute right-0 top-full mt-1 w-32 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl overflow-hidden z-10">
+						<div className="absolute right-0 top-full mt-1 w-36 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl overflow-hidden z-10">
 							<Link
 								to="/rating/$ratingId/edit"
 								params={{ ratingId: rating.id }}
@@ -291,10 +309,56 @@ const RatingHeader = ({
 								<Pencil className="w-4 h-4" />
 								Edit
 							</Link>
+							<button
+								type="button"
+								onClick={() => {
+									setIsMenuOpen(false);
+									setIsDeleteModalOpen(true);
+								}}
+								className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
+							>
+								<Trash2 className="w-4 h-4" />
+								Delete
+							</button>
 						</div>
 					)}
 				</div>
 			)}
+
+			<Modal
+				isOpen={isDeleteModalOpen}
+				onClose={() => setIsDeleteModalOpen(false)}
+			>
+				<ModalContent width="sm">
+					<ModalHeader>
+						<ModalTitle>Delete this rating?</ModalTitle>
+						<ModalDescription>
+							Are you sure you want to remove this rating?
+						</ModalDescription>
+					</ModalHeader>
+					<ModalFooter>
+						<div className="flex w-full gap-2 sm:justify-end">
+							<Button
+								variant="secondary"
+								className="w-full sm:w-auto"
+								onClick={() => setIsDeleteModalOpen(false)}
+								disabled={deleteMutation.isPending}
+							>
+								Nevermind
+							</Button>
+							<Button
+								variant="destructive"
+								className="w-full sm:w-auto"
+								onClick={handleDelete}
+								isLoading={deleteMutation.isPending}
+							>
+								Delete rating
+							</Button>
+						</div>
+					</ModalFooter>
+					<ModalClose />
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 };

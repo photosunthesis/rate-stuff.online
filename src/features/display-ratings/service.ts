@@ -155,7 +155,7 @@ export const getRatingById = createServerOnlyFn(
 			.leftJoin(users, eq(ratings.userId, users.id))
 			.leftJoin(ratingsToTags, eq(ratings.id, ratingsToTags.ratingId))
 			.leftJoin(tags, eq(ratingsToTags.tagId, tags.id))
-			.where(eq(ratings.id, id))
+			.where(and(eq(ratings.id, id), isNull(ratings.deletedAt)))
 			.groupBy(ratings.id, stuff.id, users.id)
 			.limit(1);
 

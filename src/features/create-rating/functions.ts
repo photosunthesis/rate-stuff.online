@@ -9,6 +9,7 @@ import {
 	updateRatingImages,
 	uploadRatingImage,
 	updateRating,
+	deleteRating,
 } from "./service";
 import { ALLOWED_CONTENT_TYPES } from "~/features/file-storage/service";
 import {
@@ -202,6 +203,22 @@ export const updateRatingFn = createServerFn({ method: "POST" })
 				success: false,
 				errorMessage:
 					error instanceof Error ? error.message : "Failed to update rating",
+			};
+		}
+	});
+
+export const deleteRatingFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(z.object({ ratingId: z.string().min(1) }))
+	.handler(async ({ data, context }) => {
+		try {
+			await deleteRating(data.ratingId, context.user.id);
+			return { success: true };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to delete rating",
 			};
 		}
 	});

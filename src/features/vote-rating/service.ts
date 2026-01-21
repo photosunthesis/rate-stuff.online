@@ -1,5 +1,5 @@
 import { ratings, ratingVotes } from "~/db/schema/";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { getDatabase } from "~/db";
 import type { VoteRatingInput } from "./types";
@@ -24,7 +24,7 @@ export const voteRating = createServerOnlyFn(
 						eq(ratingVotes.userId, userId),
 					),
 				)
-				.where(eq(ratings.id, ratingId))
+				.where(and(eq(ratings.id, ratingId), isNull(ratings.deletedAt)))
 				.limit(1)
 				.then((rows) => rows[0]);
 

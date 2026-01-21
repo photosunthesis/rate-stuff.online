@@ -229,7 +229,7 @@ export const updateRatingImages = createServerOnlyFn(
 		const updated = await db
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })
-			.where(eq(ratings.id, ratingId))
+			.where(and(eq(ratings.id, ratingId), isNull(ratings.deletedAt)))
 			.returning();
 
 		if (!updated || updated.length === 0) return null;
@@ -266,7 +266,13 @@ export const updateRating = createServerOnlyFn(
 			const existingRating = await tx
 				.select()
 				.from(ratings)
-				.where(and(eq(ratings.id, ratingId), eq(ratings.userId, userId)))
+				.where(
+					and(
+						eq(ratings.id, ratingId),
+						eq(ratings.userId, userId),
+						isNull(ratings.deletedAt),
+					),
+				)
 				.limit(1)
 				.then((rows) => rows[0]);
 
@@ -345,6 +351,64 @@ export const updateRating = createServerOnlyFn(
 				.returning();
 
 			return updated;
+		});
+	},
+);
+
+export const deleteRating = createServerOnlyFn(
+	async (ratingId: string, userId: string) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
+			const existing = await tx
+				.select()
+				.from(ratings)
+				.where(
+					and(
+						eq(ratings.id, ratingId),
+						eq(ratings.userId, userId),
+						isNull(ratings.deletedAt),
+					),
+				)
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!existing) {
+				throw new Error(
+					"Rating not found or you don't have permission to delete it",
+				);
+			}
+
+			await tx.delete(ratings).where(eq(ratings.id, ratingId));
+
+			// Not sure yet if about this :D
+			// let imagesToDelete: string[] = [];
+
+			// if (existing.images) {
+			// 	const parsed =
+			// 		typeof existing.images === "string"
+			// 			? JSON.parse(existing.images)
+			// 			: existing.images;
+
+			// 	if (Array.isArray(parsed)) {
+			// 		imagesToDelete = parsed;
+			// 	}
+			// }
+
+			// if (imagesToDelete.length > 0) {
+			// 	await Promise.all(
+			// 		imagesToDelete.map(async (imgUrl) => {
+			// 			const parts = imgUrl.split("/");
+			// 			const keyIndex = parts.indexOf("ratings");
+			// 			if (keyIndex !== -1) {
+			// 				const key = parts.slice(keyIndex).join("/");
+			// 				await deleteFile(env.R2_BUCKET, key);
+			// 			}
+			// 		}),
+			// 	);
+			// }
+
+			return { success: true };
 		});
 	},
 );

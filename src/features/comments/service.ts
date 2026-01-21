@@ -1,6 +1,6 @@
 import { getDatabase } from "~/db";
 import { comments, commentVotes, ratings, users } from "~/db/schema";
-import { and, desc, eq, lt, or, sql } from "drizzle-orm";
+import { and, desc, eq, lt, or, sql, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { CreateCommentInput, VoteCommentInput } from "./types";
 
@@ -17,6 +17,17 @@ export const createComment = createServerOnlyFn(
 					content: input.content,
 				})
 				.returning();
+
+			const rating = await tx
+				.select()
+				.from(ratings)
+				.where(and(eq(ratings.id, input.ratingId), isNull(ratings.deletedAt)))
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!rating) {
+				throw new Error("Rating not found or deleted");
+			}
 
 			if (!comment) throw new Error("Failed to create comment");
 
@@ -159,6 +170,7 @@ export const getComments = createServerOnlyFn(
 				userVote: commentVotes.type,
 			})
 			.from(comments)
+			.innerJoin(ratings, eq(comments.ratingId, ratings.id))
 			.leftJoin(users, eq(comments.userId, users.id))
 			.leftJoin(
 				commentVotes,
@@ -167,7 +179,13 @@ export const getComments = createServerOnlyFn(
 					currentUserId ? eq(commentVotes.userId, currentUserId) : sql`FALSE`,
 				),
 			)
-			.where(and(eq(comments.ratingId, ratingId), cursorFilter))
+			.where(
+				and(
+					eq(comments.ratingId, ratingId),
+					isNull(ratings.deletedAt),
+					cursorFilter,
+				),
+			)
 			.orderBy(desc(comments.createdAt), desc(comments.id))
 			.limit(limit);
 
