@@ -1,12 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/avatar";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
+import { getPlainTextFromContent } from "~/utils/rich-text";
 import { getTimeAgo } from "~/utils/datetime";
 import { CommentVoteSection } from "./comment-vote-section";
 import type { comments, users } from "~/db/schema";
 import { useState } from "react";
-import { truncateMarkdown } from "~/utils/strings";
 
 interface CommentItemProps {
 	comment: typeof comments.$inferSelect & {
@@ -16,47 +15,6 @@ interface CommentItemProps {
 	currentUserId?: string;
 }
 
-interface MarkdownContentProps {
-	content: string;
-	inlineParagraphs?: boolean;
-}
-
-const MarkdownContent = ({
-	content,
-	inlineParagraphs,
-}: MarkdownContentProps) => {
-	const safe = content.replace(/<[^>]*>/g, "");
-
-	return (
-		<ReactMarkdown
-			remarkPlugins={[remarkGfm]}
-			components={{
-				p: ({ children }) =>
-					inlineParagraphs ? <span>{children}</span> : <p>{children}</p>,
-				em: ({ children }) => <em className="italic">{children}</em>,
-				strong: ({ children }) => (
-					<strong className="font-bold">{children}</strong>
-				),
-				del: ({ children }) => <del className="line-through">{children}</del>,
-				u: ({ children }) => <u className="underline">{children}</u>,
-				a: ({ href, children }) => (
-					<a
-						href={href}
-						className="underline underline-offset-2 hover:text-neutral-200"
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={(e) => e.stopPropagation()}
-					>
-						{children}
-					</a>
-				),
-			}}
-		>
-			{safe}
-		</ReactMarkdown>
-	);
-};
-
 export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const isOwner = currentUserId === comment.userId;
@@ -64,8 +22,11 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const name = comment.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
 	const image = comment.user?.image ?? null;
-	const maxContentLength = 256;
-	const shouldTruncate = comment.content.length > maxContentLength;
+
+	const plainText = getPlainTextFromContent(comment.content);
+	// Show "See more" if content is long (> 300 chars) or has many lines (> 4 newlines)
+	const shouldTruncate =
+		plainText.length > 300 || plainText.split("\n").length > 4;
 
 	return (
 		<div className="flex gap-3 py-1.5 px-2 rounded-lg -mx-2 items-start">
@@ -99,10 +60,10 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 
 				<div className="mb-2">
 					{shouldTruncate && !isExpanded ? (
-						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mb-3 [&_p]:leading-normal [&_p:last-of-type]:mb-1 [&_p:last-of-type]:inline">
-							<MarkdownContent
-								content={truncateMarkdown(comment.content, maxContentLength)}
-								inlineParagraphs={true}
+						<div className="text-slate-200 text-sm leading-normal line-clamp-4 relative">
+							<RichTextRenderer
+								content={comment.content}
+								className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
 							/>
 							<button
 								type="button"
@@ -110,14 +71,17 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 									e.stopPropagation();
 									setIsExpanded(true);
 								}}
-								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+								className="absolute bottom-0 right-0 pl-12 bg-linear-to-l from-neutral-950 via-neutral-950 to-transparent text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
 							>
 								See more
 							</button>
 						</div>
 					) : (
-						<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mb-3 [&_p]:leading-normal [&_p:last-of-type]:mb-1 [&_p:last-of-type]:inline">
-							<MarkdownContent content={comment.content} />
+						<div className="text-slate-200 text-sm leading-normal">
+							<RichTextRenderer
+								content={comment.content}
+								className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
+							/>
 							{shouldTruncate && (
 								<button
 									type="button"
@@ -125,7 +89,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 										e.stopPropagation();
 										setIsExpanded(false);
 									}}
-									className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+									className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1 block mt-1"
 								>
 									See less
 								</button>

@@ -153,7 +153,6 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 				} rounded-xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 			>
 				<div className="flex items-center gap-2">
-					<Search size={18} className="text-neutral-500" />
 					<input
 						id={inputId}
 						ref={inputRef}
@@ -176,10 +175,11 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 								}
 							}
 						}}
-						placeholder="Search for stuff to rate..."
+						placeholder="Type something to rate..."
 						className="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none"
 						autoComplete="off"
 					/>
+					<Search size={18} className="text-neutral-500" />
 				</div>
 			</div>
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}

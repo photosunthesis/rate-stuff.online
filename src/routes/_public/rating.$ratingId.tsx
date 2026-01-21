@@ -8,8 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
 import { useState, useId } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
 import { ratingQueryOptions } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
@@ -189,37 +188,6 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 	},
 });
 
-const MarkdownContent = ({ content }: { content: string }) => {
-	const safe = content.replace(/<[^>]*>/g, "");
-
-	return (
-		<ReactMarkdown
-			remarkPlugins={[remarkGfm]}
-			components={{
-				p: ({ children }) => <p>{children}</p>,
-				em: ({ children }) => <em className="italic">{children}</em>,
-				strong: ({ children }) => (
-					<strong className="font-bold">{children}</strong>
-				),
-				del: ({ children }) => <del className="line-through">{children}</del>,
-				u: ({ children }) => <u className="underline">{children}</u>,
-				a: ({ href, children }) => (
-					<a
-						href={href}
-						className="underline underline-offset-2 hover:text-neutral-200"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{children}
-					</a>
-				),
-			}}
-		>
-			{safe}
-		</ReactMarkdown>
-	);
-};
-
 const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
@@ -283,8 +251,11 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 
 const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
-		<div className="ml-11 mb-3 text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal">
-			<MarkdownContent content={rating.content} />
+		<div className="ml-11 mb-1 text-slate-200 text-sm leading-normal">
+			<RichTextRenderer
+				content={rating.content}
+				className="[&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal"
+			/>
 		</div>
 	);
 };
@@ -444,7 +415,7 @@ const TagsList = ({
 	if (!tags || tags.length === 0) return null;
 	return (
 		<>
-			<div className="flex flex-wrap gap-2 mb-3 ml-11">
+			<div className="flex flex-wrap gap-2 mb-1 ml-11">
 				{tags.map((tag: string) =>
 					isAuthenticated ? (
 						<Link
@@ -534,7 +505,7 @@ function RouteComponent() {
 					/>
 					<ContentSection rating={ratingTyped} />
 					<TagsList tags={ratingTyped.tags} isAuthenticated={!!currentUser} />
-					<div className="ml-11 mb-2 flex items-center gap-3">
+					<div className="ml-10.5 mb-2 flex items-center gap-3">
 						<VoteSection rating={ratingTyped} isAuthenticated={!!currentUser} />
 						<button
 							type="button"

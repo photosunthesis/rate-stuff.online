@@ -26,18 +26,9 @@ const config = defineConfig({
             '@tanstack/react-start',
             '@tanstack/react-form',
           ],
-          'tiptap-vendor': [
-            '@tiptap/react',
-            '@tiptap/starter-kit',
-            '@tiptap/extension-character-count',
-            '@tiptap/extension-link',
-            '@tiptap/extension-placeholder',
-            '@tiptap/extension-underline',
-          ],
+
           'ui-vendor': [
             'lucide-react',
-            'react-markdown',
-            'remark-gfm',
             'react-intersection-observer',
           ],
         },

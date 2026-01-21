@@ -120,7 +120,7 @@ export function VoteSection({
 		<>
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: interaction mainly for stopping propagation */}
 			<div
-				className={`relative group flex items-center gap-2.5 rounded-full w-fit ${className}`}
+				className={`relative group flex items-center gap-2.5 rounded-full w-fit -ml-1.5 ${className}`}
 				onClick={(e) => e.stopPropagation()}
 				onKeyDown={(e) => e.stopPropagation()}
 			>

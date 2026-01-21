@@ -115,7 +115,6 @@ export function TagSelector({
 						error ? "border-red-400" : "border-neutral-800"
 					} rounded-xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 				>
-					<Search size={16} className="text-neutral-500" />
 					<input
 						id={inputId}
 						ref={inputRef}
@@ -146,12 +145,13 @@ export function TagSelector({
 						placeholder={
 							selectedTags.length >= maxTags
 								? "Max tags reached"
-								: "Add a tag..."
+								: "Type in a tag..."
 						}
 						disabled={selectedTags.length >= maxTags}
 						className="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 						autoComplete="off"
 					/>
+					<Search size={16} className="text-neutral-500" />
 				</div>
 				{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
 

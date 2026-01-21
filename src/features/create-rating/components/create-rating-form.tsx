@@ -1,22 +1,16 @@
 import { useForm } from "@tanstack/react-form";
-import { useState, useRef, useEffect, lazy, Suspense, useId } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { useLocalStorage } from "~/hooks/use-local-storage";
 import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
-import { Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { createRatingSchema } from "~/features/create-rating/types";
 import { StuffSelector } from "~/features/create-rating/components/stuff-selector";
 import { TagSelector } from "~/features/create-rating/components/tag-selector";
 import { ImageField } from "~/features/create-rating/components/image-field";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
-
-const CompactMarkdownEditor = lazy(() =>
-	import("~/components/ui/compact-markdown-editor").then((module) => ({
-		default: module.CompactMarkdownEditor,
-	})),
-);
+import { CompactMarkdownEditor } from "~/components/ui/compact-markdown-editor";
 
 interface CreateRatingFormProps {
 	onSubmit: (
@@ -237,7 +231,7 @@ export function CreateRatingForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Your rating, 1 to 10 (e.g., 7.5)"
+									placeholder="1 to 10"
 									min="1"
 									max="10"
 									step="0.1"
@@ -271,20 +265,18 @@ export function CreateRatingForm({
 									>
 										Your thoughts
 									</label>
-									<Suspense fallback={<CompactMarkdownEditorSkeleton />}>
-										<CompactMarkdownEditor
-											id={contentEditorId}
-											value={field.state.value}
-											onChange={(value) => field.handleChange(value)}
-											error={
-												field.state.meta.errors[0] ||
-												mergedValidationErrors.content
-											}
-											charLimit={5000}
-											placeholder="Elaborate on your rating..."
-											minHeightClass="min-h-[160px]"
-										/>
-									</Suspense>
+									<CompactMarkdownEditor
+										id={contentEditorId}
+										value={field.state.value}
+										onChange={(value) => field.handleChange(value)}
+										error={
+											field.state.meta.errors[0] ||
+											mergedValidationErrors.content
+										}
+										charLimit={5000}
+										placeholder="Elaborate on your rating..."
+										minHeightClass="min-h-[160px]"
+									/>
 								</>
 							)}
 						</form.Field>
@@ -339,33 +331,6 @@ export function CreateRatingForm({
 		</form>
 	);
 }
-
-const CompactMarkdownEditorSkeleton = () => {
-	return (
-		<div className="animate-pulse">
-			<div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
-				{/* Toolbar Skeleton */}
-				<div className="flex items-center gap-0.5 px-2 py-1.5 bg-neutral-800/80 border-b border-neutral-800 backdrop-blur-sm">
-					<div className="p-1 text-neutral-600/50">
-						<Bold className="w-3.5 h-3.5" />
-					</div>
-					<div className="p-1 text-neutral-600/50">
-						<Italic className="w-3.5 h-3.5" />
-					</div>
-					<div className="p-1 text-neutral-600/50">
-						<Strikethrough className="w-3.5 h-3.5" />
-					</div>
-					<div className="p-1 text-neutral-600/50">
-						<Underline className="w-3.5 h-3.5" />
-					</div>
-				</div>
-
-				{/* Content Skeleton */}
-				<div className="h-[160px] bg-neutral-950 w-full" />
-			</div>
-		</div>
-	);
-};
 
 const LocalStorageSyncer = ({
 	score,

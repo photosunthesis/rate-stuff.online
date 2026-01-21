@@ -4,13 +4,12 @@ import type { RatingWithRelations } from "../../features/display-ratings/types";
 import { Avatar } from "~/components/ui/avatar";
 import { VoteSection } from "~/components/ui/vote-section";
 import { Image } from "~/components/ui/image";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
+import { getPlainTextFromContent } from "~/utils/rich-text";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
 import { getTimeAgo } from "~/utils/datetime";
-import { truncateMarkdown } from "~/utils/strings";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -20,47 +19,6 @@ interface RatingCardProps {
 	variant?: "default" | "userProfile";
 }
 
-interface MarkdownContentProps {
-	content: string;
-	inlineParagraphs?: boolean;
-}
-
-const MarkdownContent = ({
-	content,
-	inlineParagraphs,
-}: MarkdownContentProps) => {
-	const safe = content.replace(/<[^>]*>/g, "");
-
-	return (
-		<ReactMarkdown
-			remarkPlugins={[remarkGfm]}
-			components={{
-				p: ({ children }) =>
-					inlineParagraphs ? <span>{children}</span> : <p>{children}</p>,
-				em: ({ children }) => <em className="italic">{children}</em>,
-				strong: ({ children }) => (
-					<strong className="font-bold">{children}</strong>
-				),
-				del: ({ children }) => <del className="line-through">{children}</del>,
-				u: ({ children }) => <u className="underline">{children}</u>,
-				a: ({ href, children }) => (
-					<a
-						href={href}
-						className="underline underline-offset-2 hover:text-neutral-200"
-						target="_blank"
-						rel="noopener noreferrer"
-						onClick={(e) => e.stopPropagation()}
-					>
-						{children}
-					</a>
-				),
-			}}
-		>
-			{safe}
-		</ReactMarkdown>
-	);
-};
-
 export const RatingCard = memo(function RatingCard({
 	rating,
 	hideAvatar,
@@ -69,10 +27,11 @@ export const RatingCard = memo(function RatingCard({
 	variant = "default",
 }: RatingCardProps) {
 	const navigate = useNavigate();
-	const [isExpanded, setIsExpanded] = useState(false);
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-	const maxContentLength = 256;
-	const shouldTruncate = rating.content.length > maxContentLength;
+	const isAuthModalOpenState = useState(false);
+	const [isAuthModalOpen, setIsAuthModalOpen] = isAuthModalOpenState;
+	const plainText = getPlainTextFromContent(rating.content);
+	const shouldTruncate =
+		plainText.length > 300 || plainText.split("\n").length > 4;
 	const image = rating.user?.image ?? null;
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
@@ -291,39 +250,16 @@ export const RatingCard = memo(function RatingCard({
 			)}
 
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-				{shouldTruncate && !isExpanded ? (
-					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
-						<MarkdownContent
-							content={truncateMarkdown(rating.content, maxContentLength)}
-							inlineParagraphs={true}
-						/>
-						<button
-							type="button"
-							onClick={(e) => {
-								e.stopPropagation();
-								setIsExpanded(true);
-							}}
-							className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
-						>
-							See more
-						</button>
-					</div>
-				) : (
-					<div className="text-slate-200 text-sm leading-normal prose prose-invert prose-sm max-w-none [&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal [&_p:last-child]:inline">
-						<MarkdownContent content={rating.content} />
-						{shouldTruncate && (
-							<button
-								type="button"
-								onClick={(e) => {
-									e.stopPropagation();
-									setIsExpanded(false);
-								}}
-								className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer"
-							>
-								See less
-							</button>
-						)}
-					</div>
+				<div className="text-slate-200 text-sm leading-normal line-clamp-4">
+					<RichTextRenderer
+						content={rating.content}
+						className="[&_p]:mt-3 [&_p]:last:inline [&_p]:first:mt-0"
+					/>
+				</div>
+				{shouldTruncate && (
+					<span className="text-neutral-500 text-sm font-semibold hover:text-neutral-400">
+						See more
+					</span>
 				)}
 			</div>
 
