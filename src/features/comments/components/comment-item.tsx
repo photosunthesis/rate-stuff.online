@@ -134,7 +134,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 							</div>
 						</div>
 
-						<div className="mb-2">
+						<div className="mb-1">
 							{shouldTruncate && !isExpanded ? (
 								<div className="text-slate-200 text-sm leading-normal line-clamp-4 relative">
 									<RichTextRenderer
