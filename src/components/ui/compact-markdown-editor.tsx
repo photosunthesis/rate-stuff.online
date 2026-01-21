@@ -61,6 +61,7 @@ export function CompactMarkdownEditor({
 		if (editorRef.current && !quillRef.current) {
 			const quill = new Quill(editorRef.current, {
 				theme: "snow",
+				formats: ["bold", "italic", "strike", "underline"],
 				modules: {
 					toolbar: false,
 					keyboard: {
