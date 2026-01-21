@@ -139,8 +139,12 @@ export const Route = createFileRoute("/api/image-upload")({
 					}
 
 					try {
+						// console.log("Attempting upload to R2, bucket available:", !!env.R2_BUCKET);
 						await uploadFile(env.R2_BUCKET, key, body, { type: contentType });
 					} catch (err) {
+						console.error("R2 Upload Error:", err);
+						if (err instanceof Error && err.stack) console.error(err.stack);
+
 						const msg = err instanceof Error ? err.message : String(err);
 						return new Response(
 							JSON.stringify({ success: false, error: msg }),

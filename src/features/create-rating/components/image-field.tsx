@@ -2,8 +2,8 @@ import { useRef, useId, useState } from "react";
 import { X, Upload } from "lucide-react";
 
 interface ImageFieldProps {
-	images: File[];
-	onChange: (images: File[]) => void;
+	images: (File | string)[];
+	onChange: (images: (File | string)[]) => void;
 	error?: string;
 	maxFiles?: number;
 	maxSizeInMB?: number;
@@ -33,7 +33,7 @@ export function ImageField({
 			"image/heif",
 		];
 
-		const newFiles: File[] = [];
+		const newFiles: (File | string)[] = [];
 
 		for (const file of Array.from(files)) {
 			if (!validTypes.includes(file.type)) {
@@ -99,11 +99,11 @@ export function ImageField({
 			<div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
 				{images.map((file, index) => (
 					<div
-						key={`${file.name}-${index}`}
+						key={`${typeof file === "string" ? file : file.name}-${index}`}
 						className="relative aspect-square rounded-lg overflow-hidden group border border-neutral-800"
 					>
 						<img
-							src={URL.createObjectURL(file)}
+							src={typeof file === "string" ? file : URL.createObjectURL(file)}
 							alt="Preview"
 							className="w-full h-full object-cover"
 						/>

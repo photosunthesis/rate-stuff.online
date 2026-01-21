@@ -8,6 +8,7 @@ import {
 	searchTags,
 	updateRatingImages,
 	uploadRatingImage,
+	updateRating,
 } from "./service";
 import { ALLOWED_CONTENT_TYPES } from "~/features/file-storage/service";
 import {
@@ -170,6 +171,37 @@ export const uploadRatingImageFn = createServerFn({ method: "POST" })
 				success: false,
 				errorMessage:
 					error instanceof Error ? error.message : "Failed to upload image",
+			};
+		}
+	});
+
+export const updateRatingFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(
+		z.object({
+			ratingId: z.string().min(1),
+			score: z.number().min(1).max(10),
+			content: z.string().max(5000).optional().default(""),
+			tags: z.array(z.string()).max(5).default([]),
+			images: z.array(z.string()).max(3).default([]),
+		}),
+	)
+	.handler(async ({ data, context }) => {
+		try {
+			const { ratingId, score, content, tags, images } = data;
+			const updated = await updateRating(context.user.id, ratingId, {
+				score,
+				content: content || "",
+				tags,
+				images,
+			});
+
+			return { success: true, data: updated };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to update rating",
 			};
 		}
 	});

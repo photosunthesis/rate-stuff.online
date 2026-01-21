@@ -12,6 +12,7 @@ import {
 	searchStuffFn,
 	searchTagsFn,
 	uploadRatingImageFn,
+	updateRatingFn,
 } from "./functions";
 import {
 	MAX_FILE_SIZE,
@@ -69,6 +70,20 @@ export function useUploadImageMutation() {
 			}
 
 			return { key: result.key, url: result.url };
+		},
+	});
+}
+
+export function useUpdateRatingMutation() {
+	const updateRatingMutationFn = useServerFn(updateRatingFn);
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: updateRatingMutationFn,
+		onSuccess: (data) => {
+			if (data && (data as { success?: boolean }).success) {
+				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
+			}
 		},
 	});
 }

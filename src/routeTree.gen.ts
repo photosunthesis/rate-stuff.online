@@ -29,6 +29,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as PublicUserUsernameRouteImport } from './routes/_public/user.$username'
 import { Route as PublicStuffStuffSlugRouteImport } from './routes/_public/stuff.$stuffSlug'
 import { Route as PublicRatingRatingIdRouteImport } from './routes/_public/rating.$ratingId'
+import { Route as AuthedRatingRatingIdEditRouteImport } from './routes/_authed/rating.$ratingId.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -127,6 +128,12 @@ const PublicRatingRatingIdRoute = PublicRatingRatingIdRouteImport.update({
   path: '/rating/$ratingId',
   getParentRoute: () => PublicRouteRoute,
 } as any)
+const AuthedRatingRatingIdEditRoute =
+  AuthedRatingRatingIdEditRouteImport.update({
+    id: '/rating/$ratingId/edit',
+    path: '/rating/$ratingId/edit',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
   '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,6 +173,7 @@ export interface FileRoutesByTo {
   '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
   '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/_public/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
   '/_public/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_authed/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/stuff/$stuffSlug'
     | '/user/$username'
     | '/api/auth/$'
+    | '/rating/$ratingId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/stuff/$stuffSlug'
     | '/user/$username'
     | '/api/auth/$'
+    | '/rating/$ratingId/edit'
   id:
     | '__root__'
     | '/'
@@ -250,6 +262,7 @@ export interface FileRouteTypes {
     | '/_public/stuff/$stuffSlug'
     | '/_public/user/$username'
     | '/api/auth/$'
+    | '/_authed/rating/$ratingId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -406,6 +419,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicRatingRatingIdRouteImport
       parentRoute: typeof PublicRouteRoute
     }
+    '/_authed/rating/$ratingId/edit': {
+      id: '/_authed/rating/$ratingId/edit'
+      path: '/rating/$ratingId/edit'
+      fullPath: '/rating/$ratingId/edit'
+      preLoaderRoute: typeof AuthedRatingRatingIdEditRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
   }
 }
 
@@ -432,6 +452,7 @@ interface AuthedRouteRouteChildren {
   AuthedExploreRoute: typeof AuthedExploreRoute
   AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
   AuthedSettingsRoute: typeof AuthedSettingsRoute
+  AuthedRatingRatingIdEditRoute: typeof AuthedRatingRatingIdEditRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
@@ -439,6 +460,7 @@ const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedExploreRoute: AuthedExploreRoute,
   AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
   AuthedSettingsRoute: AuthedSettingsRoute,
+  AuthedRatingRatingIdEditRoute: AuthedRatingRatingIdEditRoute,
 }
 
 const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(

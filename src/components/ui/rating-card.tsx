@@ -120,6 +120,11 @@ export const RatingCard = memo(function RatingCard({
 							)}
 							<span className="text-neutral-500"> • </span>
 							<span className="text-neutral-500">{timeAgo}</span>
+							{rating.updatedAt &&
+								new Date(rating.updatedAt).getTime() >
+									new Date(rating.createdAt).getTime() + 1000 && (
+									<span className="text-neutral-500"> (edited)</span>
+								)}
 						</div>
 					</div>
 				</div>
@@ -139,16 +144,23 @@ export const RatingCard = memo(function RatingCard({
 						<span className="text-neutral-400 font-semibold">Unknown Item</span>
 					)}{" "}
 					<span>•</span> <span>{timeAgo}</span>
+					{rating.updatedAt &&
+						new Date(rating.updatedAt).getTime() >
+							new Date(rating.createdAt).getTime() + 1000 && (
+							<span> (edited)</span>
+						)}
 				</div>
 			)}
 
-			<h3
-				className={`text-2xl font-semibold text-white mb-2 ${
-					noIndent ? "" : "ml-11"
-				}`}
-			>
-				{rating.score}/10
-			</h3>
+			<div className="flex items-baseline gap-2 mb-2">
+				<h3
+					className={`text-2xl font-semibold text-white ${
+						noIndent ? "" : "ml-11"
+					}`}
+				>
+					{rating.score}/10
+				</h3>
+			</div>
 
 			{parsedImages && parsedImages.length > 0 && (
 				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>

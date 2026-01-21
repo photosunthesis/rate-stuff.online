@@ -11,6 +11,13 @@ import type { CreateRatingInput } from "./types";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
 
+interface UpdateRatingInput {
+	score: number;
+	content: string;
+	tags: string[];
+	images: string[];
+}
+
 export const searchStuff = createServerOnlyFn(
 	async (query: string, limit = 10) => {
 		const q = query.toLowerCase().trim();
@@ -247,5 +254,97 @@ export const uploadRatingImage = createServerOnlyFn(
 		});
 
 		return { key, url };
+	},
+);
+
+export const updateRating = createServerOnlyFn(
+	async (userId: string, ratingId: string, input: UpdateRatingInput) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
+			// 1. Verify ownership
+			const existingRating = await tx
+				.select()
+				.from(ratings)
+				.where(and(eq(ratings.id, ratingId), eq(ratings.userId, userId)))
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!existingRating) {
+				throw new Error(
+					"Rating not found or you don't have permission to edit it",
+				);
+			}
+
+			// 2. Handle Tags
+			// Normalize and dedupe tag names
+			const rawNames = input.tags ?? [];
+			const normalizedNames = rawNames
+				.map((n) => n?.toLowerCase().trim())
+				.filter(Boolean) as string[];
+			const uniqueNames = Array.from(new Set(normalizedNames));
+
+			// Insert any missing tags
+			if (uniqueNames.length > 0) {
+				const existingTags = await tx
+					.select()
+					.from(tags)
+					.where(inArray(sql`LOWER(${tags.name})`, uniqueNames));
+
+				const existingLower = new Set(
+					existingTags.map((t) => t.name.toLowerCase()),
+				);
+				const toCreate = uniqueNames.filter((n) => !existingLower.has(n));
+
+				if (toCreate.length > 0) {
+					await tx
+						.insert(tags)
+						.values(toCreate.map((name) => ({ name, createdBy: userId })))
+						.onConflictDoNothing()
+						.execute();
+				}
+			}
+
+			// Get all tag objects (old and new)
+			const tagObjects =
+				uniqueNames.length > 0
+					? await tx
+							.select()
+							.from(tags)
+							.where(inArray(sql`LOWER(${tags.name})`, uniqueNames))
+					: [];
+
+			// Update associations: Delete old ones, insert new ones
+			// Simplest approach: Delete all for this rating and re-insert
+			await tx
+				.delete(ratingsToTags)
+				.where(eq(ratingsToTags.ratingId, ratingId));
+
+			if (tagObjects.length > 0) {
+				await tx
+					.insert(ratingsToTags)
+					.values(
+						tagObjects.map((tag) => ({ ratingId: ratingId, tagId: tag.id })),
+					)
+					.onConflictDoNothing()
+					.execute();
+			}
+
+			// 3. Update Rating
+			const imagesJson = JSON.stringify(input.images ?? []);
+
+			const [updated] = await tx
+				.update(ratings)
+				.set({
+					score: input.score,
+					content: input.content,
+					images: imagesJson,
+					updatedAt: new Date(),
+				})
+				.where(eq(ratings.id, ratingId))
+				.returning();
+
+			return updated;
+		});
 	},
 );

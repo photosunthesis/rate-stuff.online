@@ -7,7 +7,7 @@ import {
 	notFound,
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
-import { useState, useId } from "react";
+import { useState, useId, useRef, useEffect } from "react";
 import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
 import { ratingQueryOptions } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
@@ -15,7 +15,7 @@ import { Avatar } from "~/components/ui/avatar";
 import { Image } from "~/components/ui/image";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MoreVertical, Pencil } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 
@@ -188,11 +188,35 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 	},
 });
 
-const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
+const RatingHeader = ({
+	rating,
+	isOwner,
+}: {
+	rating: RatingWithRelations;
+	isOwner: boolean;
+}) => {
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
 	const image = rating.user?.image ?? null;
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+				setIsMenuOpen(false);
+			}
+		};
+
+		if (isMenuOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [isMenuOpen]);
 
 	return (
 		<div className="flex items-start gap-3">
@@ -235,17 +259,53 @@ const RatingHeader = ({ rating }: { rating: RatingWithRelations }) => {
 					<span className="text-neutral-500">
 						{getTimeAgo(rating.createdAt)}
 					</span>
+					{rating.updatedAt &&
+						new Date(rating.updatedAt).getTime() >
+							new Date(rating.createdAt).getTime() + 1000 && (
+							<span className="text-neutral-500"> (edited)</span>
+						)}
 				</div>
 			</div>
+
+			{isOwner && (
+				<div className="relative -mr-2" ref={menuRef}>
+					<button
+						type="button"
+						onClick={(e) => {
+							e.stopPropagation();
+							setIsMenuOpen(!isMenuOpen);
+						}}
+						className="p-1.5 text-neutral-400 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
+					>
+						<MoreVertical className="w-5 h-5" />
+					</button>
+
+					{isMenuOpen && (
+						<div className="absolute right-0 top-full mt-1 w-32 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl overflow-hidden z-10">
+							<Link
+								to="/rating/$ratingId/edit"
+								params={{ ratingId: rating.id }}
+								className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
+								onClick={() => setIsMenuOpen(false)}
+							>
+								<Pencil className="w-4 h-4" />
+								Edit
+							</Link>
+						</div>
+					)}
+				</div>
+			)}
 		</div>
 	);
 };
 
 const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
-		<h3 className={`text-2xl font-semibold text-white mb-2 ml-11`}>
-			{rating.score}/10
-		</h3>
+		<div className="flex items-start justify-between mb-2 ml-11">
+			<div className="flex items-baseline gap-2">
+				<h3 className="text-2xl font-semibold text-white">{rating.score}/10</h3>
+			</div>
+		</div>
 	);
 };
 
@@ -415,7 +475,7 @@ const TagsList = ({
 	if (!tags || tags.length === 0) return null;
 	return (
 		<>
-			<div className="flex flex-wrap gap-2 mb-1 ml-11">
+			<div className="flex flex-wrap gap-2 mb-1 mt-2 ml-11">
 				{tags.map((tag: string) =>
 					isAuthenticated ? (
 						<Link
@@ -497,7 +557,10 @@ function RouteComponent() {
 					</div>
 				</div>
 				<div className="px-4 pt-4">
-					<RatingHeader rating={ratingTyped} />
+					<RatingHeader
+						rating={ratingTyped}
+						isOwner={currentUser?.id === rating.userId}
+					/>
 					<TitleBlock rating={ratingTyped} />
 					<ImagesGallery
 						images={parsedImages}
