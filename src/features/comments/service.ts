@@ -2,7 +2,12 @@ import { getDatabase } from "~/db";
 import { comments, commentVotes, ratings, users } from "~/db/schema";
 import { and, desc, eq, lt, or, sql, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import type { CreateCommentInput, VoteCommentInput } from "./types";
+import type {
+	CreateCommentInput,
+	DeleteCommentInput,
+	UpdateCommentInput,
+	VoteCommentInput,
+} from "./types";
 
 export const createComment = createServerOnlyFn(
 	async (userId: string, input: CreateCommentInput) => {
@@ -49,6 +54,80 @@ export const createComment = createServerOnlyFn(
 				...comment,
 				user: user || null,
 			};
+		});
+	},
+);
+
+export const updateComment = createServerOnlyFn(
+	async (userId: string, input: UpdateCommentInput) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
+			const comment = await tx
+				.select()
+				.from(comments)
+				.where(eq(comments.id, input.commentId))
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!comment) throw new Error("Comment not found");
+			if (comment.userId !== userId) {
+				throw new Error("You can only edit your own comments");
+			}
+
+			const [updatedComment] = await tx
+				.update(comments)
+				.set({
+					content: input.content,
+					updatedAt: new Date(),
+				})
+				.where(eq(comments.id, input.commentId))
+				.returning();
+
+			const user = await tx
+				.select()
+				.from(users)
+				.where(eq(users.id, userId))
+				.limit(1)
+				.then((res) => res[0]);
+
+			return {
+				...updatedComment,
+				user: user || null,
+			};
+		});
+	},
+);
+
+export const deleteComment = createServerOnlyFn(
+	async (userId: string, input: DeleteCommentInput) => {
+		const db = getDatabase();
+
+		return db.transaction(async (tx) => {
+			const comment = await tx
+				.select()
+				.from(comments)
+				.where(eq(comments.id, input.commentId))
+				.limit(1)
+				.then((rows) => rows[0]);
+
+			if (!comment) throw new Error("Comment not found");
+			if (comment.userId !== userId) {
+				throw new Error("You can only delete your own comments");
+			}
+
+			// Hard delete to match recent rating behavior
+			await tx.delete(comments).where(eq(comments.id, input.commentId));
+
+			// Decrement comment count on rating
+			await tx
+				.update(ratings)
+				.set({
+					commentsCount: sql`${ratings.commentsCount} - 1`,
+				})
+				.where(eq(ratings.id, comment.ratingId));
+
+			return true;
 		});
 	},
 );
@@ -183,6 +262,7 @@ export const getComments = createServerOnlyFn(
 				and(
 					eq(comments.ratingId, ratingId),
 					isNull(ratings.deletedAt),
+					isNull(comments.deletedAt),
 					cursorFilter,
 				),
 			)

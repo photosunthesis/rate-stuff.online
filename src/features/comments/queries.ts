@@ -5,11 +5,19 @@ import {
 	type InfiniteData,
 } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { createCommentFn, getCommentsFn, voteCommentFn } from "./functions";
+import {
+	createCommentFn,
+	deleteCommentFn,
+	getCommentsFn,
+	updateCommentFn,
+	voteCommentFn,
+} from "./functions";
 import type {
 	CommentWithRelations,
 	CreateCommentInput,
 	VoteCommentInput,
+	UpdateCommentInput,
+	DeleteCommentInput,
 } from "./types";
 
 export const commentKeys = {
@@ -39,7 +47,6 @@ export const useCreateComment = () => {
 	return useMutation({
 		mutationFn: async (input: CreateCommentInput) => {
 			const res = await createComment({ data: input });
-			// Ensure we always throw if success is false, so onError/onSuccess work correctly
 			if (!res.success) throw new Error(res.errorMessage);
 			return res.data;
 		},
@@ -47,13 +54,53 @@ export const useCreateComment = () => {
 			queryClient.invalidateQueries({
 				queryKey: commentKeys.list(variables.ratingId),
 			});
-			// Invalidate rating to update comment count
 			queryClient.invalidateQueries({
 				queryKey: ["rating", variables.ratingId],
 			});
-			// Invalidate all rating lists to update comment counts
 			queryClient.invalidateQueries({
 				queryKey: ["ratings"],
+			});
+		},
+	});
+};
+
+export const useUpdateComment = () => {
+	const queryClient = useQueryClient();
+	const updateComment = useServerFn(updateCommentFn);
+
+	return useMutation({
+		mutationFn: async (input: UpdateCommentInput) => {
+			const res = await updateComment({ data: input });
+			if (!res.success) throw new Error(res.errorMessage);
+			return res.data;
+		},
+		onSuccess: (_, __) => {
+			queryClient.invalidateQueries({
+				queryKey: commentKeys.lists(),
+			});
+		},
+	});
+};
+
+export const useDeleteComment = () => {
+	const queryClient = useQueryClient();
+	const deleteComment = useServerFn(deleteCommentFn);
+
+	return useMutation({
+		mutationFn: async (input: DeleteCommentInput) => {
+			const res = await deleteComment({ data: input });
+			if (!res.success) throw new Error(res.errorMessage);
+			return res.success;
+		},
+		onSuccess: (_, __) => {
+			queryClient.invalidateQueries({
+				queryKey: commentKeys.lists(),
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["ratings"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["rating"],
 			});
 		},
 	});
@@ -104,18 +151,14 @@ export const useVoteComment = () => {
 							let nextVote: "up" | "down" | null = null;
 
 							if (currentVote === voteType) {
-								// Remove vote
 								nextVote = null;
 								if (voteType === "up") upvotesCount--;
 								else downvotesCount--;
 							} else {
-								// Switch or Add
 								nextVote = voteType;
-								// Remove old influence
 								if (currentVote === "up") upvotesCount--;
 								else if (currentVote === "down") downvotesCount--;
 
-								// Add new influence
 								if (voteType === "up") upvotesCount++;
 								else downvotesCount++;
 							}

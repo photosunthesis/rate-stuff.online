@@ -7,7 +7,7 @@ export type CommentWithRelations = typeof comments.$inferSelect & {
 };
 
 export const createCommentSchema = z.object({
-	ratingId: z.string().uuid(),
+	ratingId: z.uuid(),
 	content: z
 		.string()
 		.min(1, "Comment cannot be empty")
@@ -17,16 +17,32 @@ export const createCommentSchema = z.object({
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 
 export const voteCommentSchema = z.object({
-	commentId: z.string().uuid(),
+	commentId: z.uuid(),
 	type: z.enum(["up", "down"]),
 });
 
 export type VoteCommentInput = z.infer<typeof voteCommentSchema>;
 
 export const getCommentsSchema = z.object({
-	ratingId: z.string().uuid(),
+	ratingId: z.uuid(),
 	cursor: z.string().optional(),
 	limit: z.number().min(1).max(50).default(10),
 });
 
 export type GetCommentsInput = z.infer<typeof getCommentsSchema>;
+
+export const updateCommentSchema = z.object({
+	commentId: z.uuid(),
+	content: z
+		.string()
+		.min(1, "Comment cannot be empty")
+		.max(2000, "Comment is too long"),
+});
+
+export type UpdateCommentInput = z.infer<typeof updateCommentSchema>;
+
+export const deleteCommentSchema = z.object({
+	commentId: z.uuid(),
+});
+
+export type DeleteCommentInput = z.infer<typeof deleteCommentSchema>;

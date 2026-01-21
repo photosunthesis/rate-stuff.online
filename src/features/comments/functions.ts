@@ -2,10 +2,18 @@ import { createServerFn } from "@tanstack/react-start";
 import { ZodError } from "zod";
 import {
 	createCommentSchema,
+	deleteCommentSchema,
 	getCommentsSchema,
+	updateCommentSchema,
 	voteCommentSchema,
 } from "./types";
-import { createComment, getComments, voteOnComment } from "./service";
+import {
+	createComment,
+	deleteComment,
+	getComments,
+	updateComment,
+	voteOnComment,
+} from "./service";
 import {
 	createRateLimitMiddleware,
 	rateLimitKeys,
@@ -49,6 +57,38 @@ export const createCommentFn = createServerFn({ method: "POST" })
 				success: false,
 				errorMessage:
 					error instanceof Error ? error.message : "Failed to create comment",
+			};
+		}
+	});
+
+export const updateCommentFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(updateCommentSchema)
+	.handler(async ({ data, context }) => {
+		try {
+			const updatedComment = await updateComment(context.user.id, data);
+			return { success: true, data: updatedComment };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to update comment",
+			};
+		}
+	});
+
+export const deleteCommentFn = createServerFn({ method: "POST" })
+	.middleware([authMiddleware, rateLimitMiddleware])
+	.inputValidator(deleteCommentSchema)
+	.handler(async ({ data, context }) => {
+		try {
+			await deleteComment(context.user.id, data);
+			return { success: true };
+		} catch (error) {
+			return {
+				success: false,
+				errorMessage:
+					error instanceof Error ? error.message : "Failed to delete comment",
 			};
 		}
 	});

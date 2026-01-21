@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useCreateComment } from "../queries";
-import { Forward } from "lucide-react";
 import { AuthModal } from "~/features/auth/components/auth-modal";
 import { CompactMarkdownEditor } from "~/components/ui/compact-markdown-editor";
 
@@ -15,13 +14,26 @@ interface CommentFormProps {
 		  }
 		| null
 		| undefined;
+	initialContent?: string;
+	onCancel?: () => void;
+	onSubmit?: (content: string) => void;
+	isEditing?: boolean;
 }
 
-export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
-	const [content, setContent] = useState("");
+export function CommentForm({
+	ratingId,
+	currentUser,
+	initialContent = "",
+	onCancel,
+	onSubmit,
+	isEditing = false,
+}: CommentFormProps) {
+	const [content, setContent] = useState(initialContent);
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-	const { mutate: createComment, isPending } = useCreateComment();
+	const { mutate: createComment, isPending: isCreatePending } =
+		useCreateComment();
 	const isAuthenticated = !!currentUser;
+	const isPending = isCreatePending;
 
 	const handleSubmit = () => {
 		if (!isAuthenticated) {
@@ -30,6 +42,11 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 		}
 
 		if (!content.trim() || isPending) return;
+
+		if (isEditing && onSubmit) {
+			onSubmit(content);
+			return;
+		}
 
 		createComment(
 			{ ratingId, content },
@@ -44,7 +61,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 	return (
 		<div className="mb-4 flex gap-3">
 			<div className="flex-1 relative group">
-				<div className="relative flex gap-2 items-end">
+				<div className="relative flex gap-2 items-end flex-wrap">
 					{!isAuthenticated && (
 						<button
 							type="button"
@@ -54,7 +71,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 							<span className="sr-only">Sign in to comment</span>
 						</button>
 					)}
-					<div className="flex-1">
+					<div className="w-full">
 						<CompactMarkdownEditor
 							value={content}
 							onChange={setContent}
@@ -67,14 +84,36 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 						/>
 					</div>
 
-					<button
-						type="button"
-						onClick={handleSubmit}
-						disabled={!content.trim() || isPending}
-						className="mb-0.5 shrink-0 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:hover:bg-emerald-500/50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all flex items-center justify-center shadow-sm"
-					>
-						<Forward className="w-4 h-4" />
-					</button>
+					{isEditing ? (
+						<div className="flex gap-2 w-full justify-end">
+							<button
+								type="button"
+								onClick={onCancel}
+								className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
+							>
+								Cancel
+							</button>
+							<button
+								type="button"
+								onClick={handleSubmit}
+								disabled={!content.trim() || isPending}
+								className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+							>
+								Update
+							</button>
+						</div>
+					) : (
+						<div className="flex w-full justify-end">
+							<button
+								type="button"
+								onClick={handleSubmit}
+								disabled={!content.trim() || isPending}
+								className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+							>
+								Add comment
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 			<AuthModal
