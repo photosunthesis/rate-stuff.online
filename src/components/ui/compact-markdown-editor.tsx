@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState } from "react";
-import Quill from "quill";
+import { useRef, useEffect, useState, useId } from "react";
+import type Quill from "quill";
 import "quill/dist/quill.snow.css";
 import {
 	Bold,
@@ -19,6 +19,7 @@ interface CompactMarkdownEditorProps {
 	maxHeightClass?: string;
 	placeholder?: string;
 	onSubmit?: () => void;
+	fontSize?: string;
 }
 
 export function CompactMarkdownEditor({
@@ -31,12 +32,15 @@ export function CompactMarkdownEditor({
 	minHeightClass = "min-h-[80px]",
 	maxHeightClass = "max-h-[300px]",
 	placeholder = "Share your thoughts...",
+	fontSize = "16px",
 	onSubmit,
 }: CompactMarkdownEditorProps) {
 	const editorRef = useRef<HTMLDivElement>(null);
 	const quillRef = useRef<Quill | null>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [charCount, setCharCount] = useState(0);
+	const reactId = useId();
+	const uniqueId = reactId.replace(/:/g, "_");
 	const [activeFormats, setActiveFormats] = useState({
 		bold: false,
 		italic: false,
@@ -49,79 +53,92 @@ export function CompactMarkdownEditor({
 	const initialValueRef = useRef(value);
 	const placeholderRef = useRef(placeholder);
 	const onSubmitRef = useRef(onSubmit);
+	const fontSizeRef = useRef(fontSize);
 
 	useEffect(() => {
 		onTextChangeRef.current = onChange;
 		placeholderRef.current = placeholder;
 		onSubmitRef.current = onSubmit;
-	}, [onChange, placeholder, onSubmit]);
+		fontSizeRef.current = fontSize;
+	}, [onChange, placeholder, onSubmit, fontSize]);
 
 	// Initialize Quill
 	useEffect(() => {
 		if (editorRef.current && !quillRef.current) {
-			const quill = new Quill(editorRef.current, {
-				theme: "snow",
-				formats: ["bold", "italic", "strike", "underline"],
-				modules: {
-					toolbar: false,
-					keyboard: {
-						bindings: {
-							submit: {
-								key: 13,
-								shiftKey: false,
-								handler: () => {
-									onSubmitRef.current?.();
-									return false; // Prevent default newline
+			import("quill").then(({ default: QuillConstructor }) => {
+				if (!editorRef.current || quillRef.current) return;
+
+				const quill = new QuillConstructor(editorRef.current, {
+					theme: "snow",
+					formats: ["bold", "italic", "strike", "underline"],
+					modules: {
+						toolbar: false,
+						keyboard: {
+							bindings: {
+								submit: {
+									key: 13,
+									shiftKey: false,
+									handler: () => {
+										onSubmitRef.current?.();
+										return false;
+									},
 								},
 							},
 						},
 					},
-				},
-				placeholder: placeholderRef.current,
-			});
+					placeholder: placeholderRef.current,
+				});
 
-			quillRef.current = quill;
+				quillRef.current = quill;
 
-			quill.on("text-change", () => {
-				const text = quill.getText();
-				const isEmpty = text.trim().length === 0;
-				setCharCount(isEmpty ? 0 : text.length);
+				quill.on("text-change", () => {
+					const text = quill.getText();
+					const isEmpty = text.trim().length === 0;
+					setCharCount(isEmpty ? 0 : text.length);
 
-				if (isEmpty) {
-					onTextChangeRef.current?.("");
-				} else {
-					const content = JSON.stringify(quill.getContents());
-					onTextChangeRef.current?.(content);
-				}
-			});
-
-			quill.on("selection-change", (range) => {
-				if (range) {
-					const formats = quill.getFormat(range);
-					setActiveFormats({
-						bold: !!formats.bold,
-						italic: !!formats.italic,
-						strike: !!formats.strike,
-						underline: !!formats.underline,
-					});
-				}
-			});
-
-			const initialValue = initialValueRef.current;
-			if (initialValue) {
-				try {
-					const delta = JSON.parse(initialValue);
-					if (delta.ops) {
-						quill.setContents(delta);
+					if (isEmpty) {
+						onTextChangeRef.current?.("");
 					} else {
+						const content = JSON.stringify(quill.getContents());
+						onTextChangeRef.current?.(content);
+					}
+				});
+
+				quill.on("selection-change", (range) => {
+					if (range) {
+						const formats = quill.getFormat(range);
+						setActiveFormats({
+							bold: !!formats.bold,
+							italic: !!formats.italic,
+							strike: !!formats.strike,
+							underline: !!formats.underline,
+						});
+					}
+				});
+
+				const initialValue = initialValueRef.current;
+				if (initialValue) {
+					try {
+						const delta = JSON.parse(initialValue);
+						if (delta.ops) {
+							quill.setContents(delta);
+						} else {
+							quill.setText(initialValue);
+						}
+					} catch {
 						quill.setText(initialValue);
 					}
-				} catch {
-					quill.setText(initialValue);
 				}
-			}
+
+				const qlEditor = editorRef.current?.querySelector(
+					".ql-editor",
+				) as HTMLElement;
+				if (qlEditor) {
+					qlEditor.style.fontSize = fontSizeRef.current;
+				}
+			});
 		}
-	}, []); // Run once on mount
+	}, []);
 
 	useEffect(() => {
 		if (quillRef.current && value) {
@@ -156,7 +173,7 @@ export function CompactMarkdownEditor({
 	};
 
 	return (
-		<div>
+		<div data-instance-id={uniqueId}>
 			{label && (
 				<label
 					htmlFor={id}
@@ -176,7 +193,7 @@ export function CompactMarkdownEditor({
 					<div className="flex-1 w-full relative">
 						<div
 							ref={editorRef}
-							className="h-full bg-neutral-950 text-neutral-200 text-sm [&_.ql-editor]:px-3 [&_.ql-editor]:py-3 [&_.ql-editor]:prose [&_.ql-editor]:prose-invert [&_.ql-editor]:prose-sm [&_.ql-editor]:max-w-none [&_.ql-editor]:focus:outline-none [&_.ql-blank::before]:text-neutral-500 [&_.ql-blank::before]:not-italic"
+							className="h-full bg-neutral-950 text-neutral-200 [&_.ql-editor]:px-3 [&_.ql-editor]:py-3 [&_.ql-editor]:prose [&_.ql-editor]:prose-invert [&_.ql-editor]:prose-sm [&_.ql-editor]:max-w-none [&_.ql-editor]:focus:outline-none [&_.ql-blank::before]:text-neutral-500 [&_.ql-blank::before]:not-italic"
 						/>
 					</div>
 
@@ -219,7 +236,17 @@ export function CompactMarkdownEditor({
 				.ql-toolbar { display: none !important; }
 				.ql-container.ql-snow { border: none !important; }
 				.ql-editor.ql-blank::before { color: #737373; font-style: normal; }
-				.ql-container, .ql-editor { font-family: var(--font-sans) !important; font-size: 16px !important; }
+				[data-instance-id='${uniqueId}'] .ql-container,
+				[data-instance-id='${uniqueId}'] .ql-editor {
+					font-family: var(--font-sans) !important;
+				}
+				[data-instance-id='${uniqueId}'] .ql-editor,
+				[data-instance-id='${uniqueId}'] .ql-editor *,
+				[data-instance-id='${uniqueId}'] .ql-editor p,
+				[data-instance-id='${uniqueId}'] .ql-editor span {
+					font-size: ${fontSize} !important;
+					line-height: 1.5 !important;
+				}
 			`}</style>
 		</div>
 	);
