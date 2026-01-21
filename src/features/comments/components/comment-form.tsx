@@ -54,7 +54,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 							className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
 							onClick={() => setIsAuthModalOpen(true)}
 						>
-							<span className="sr-only">Log in to comment</span>
+							<span className="sr-only">Sign in to comment</span>
 						</button>
 					)}
 					<div>
@@ -63,7 +63,7 @@ export function CommentForm({ ratingId, currentUser }: CommentFormProps) {
 								value={content}
 								onChange={setContent}
 								placeholder={
-									isAuthenticated ? "Add a comment..." : "Log in to comment..."
+									isAuthenticated ? "Add a comment..." : "Sign in to comment..."
 								}
 								charLimit={2000}
 								minHeightClass="min-h-[80px]"
