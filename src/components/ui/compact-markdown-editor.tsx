@@ -198,29 +198,29 @@ export function CompactMarkdownEditor({
 					</div>
 
 					<div className="flex-none flex items-center justify-between pl-0.5 pr-3 pt-1 pb-0.5 md:px-2 md:pb-1 border-t border-neutral-800/50">
-						<div className="flex items-center gap-2 sm:gap-1.5">
+						<div className="flex items-center gap-1.5">
 							<ToolbarButton
 								onClick={() => toggleFormat("bold")}
 								isActive={activeFormats.bold}
-								icon={<Bold className="w-5 h-5 sm:w-3.5 sm:h-3.5" />}
+								icon={<Bold className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
 								title="Bold"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("italic")}
 								isActive={activeFormats.italic}
-								icon={<Italic className="w-5 h-5 sm:w-3.5 sm:h-3.5" />}
+								icon={<Italic className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
 								title="Italic"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("strike")}
 								isActive={activeFormats.strike}
-								icon={<Strikethrough className="w-5 h-5 sm:w-3.5 sm:h-3.5" />}
+								icon={<Strikethrough className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
 								title="Strikethrough"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("underline")}
 								isActive={activeFormats.underline}
-								icon={<UnderlineIcon className="w-5 h-5 sm:w-3.5 sm:h-3.5" />}
+								icon={<UnderlineIcon className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
 								title="Underline"
 							/>
 						</div>

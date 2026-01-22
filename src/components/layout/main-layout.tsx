@@ -46,6 +46,8 @@ export function MainLayout({
 					</main>
 				</div>
 
+				<div className="hidden md:block lg:hidden w-20" />
+
 				<RightSidebar user={user} />
 			</div>
 		</div>

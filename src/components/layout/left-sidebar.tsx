@@ -149,8 +149,8 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								onClick={() => setIsCreateOpen(true)}
 								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
 							>
-								<PencilLine className="w-4 h-4" />
-								<span>New Rating</span>
+								<PencilLine className="w-4 h-4 shrink-0" />
+								<span className="truncate">New Rating</span>
 							</button>
 						</div>
 
