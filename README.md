@@ -70,4 +70,6 @@ A quick tour of the repo and the modular feature-based structure.
 
 ## License 📄
 
-- Licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+Copyright (C) 2026 Sun Envidiado
+
+This project is licensed under the **GNU General Public License v3.0** — see the [LICENSE](LICENSE) file for details.
