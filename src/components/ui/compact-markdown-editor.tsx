@@ -190,7 +190,7 @@ export function CompactMarkdownEditor({
 				<div
 					className={`flex flex-col rounded-xl overflow-hidden ${minHeightClass} ${maxHeightClass} bg-neutral-950`}
 				>
-					<div className="flex-1 w-full relative">
+					<div className="flex-1 w-full relative overflow-y-auto">
 						<div
 							ref={editorRef}
 							className="h-full bg-neutral-950 text-neutral-200 [&_.ql-editor]:px-3 [&_.ql-editor]:py-3 [&_.ql-editor]:prose [&_.ql-editor]:prose-invert [&_.ql-editor]:prose-sm [&_.ql-editor]:max-w-none [&_.ql-editor]:focus:outline-none [&_.ql-blank::before]:text-neutral-500 [&_.ql-blank::before]:not-italic"
