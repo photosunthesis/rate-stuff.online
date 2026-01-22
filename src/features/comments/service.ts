@@ -1,5 +1,11 @@
 import { getDatabase } from "~/db";
-import { comments, commentVotes, ratings, users } from "~/db/schema";
+import {
+	activities,
+	comments,
+	commentVotes,
+	ratings,
+	users,
+} from "~/db/schema";
 import { and, desc, eq, lt, or, sql, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type {
@@ -8,6 +14,8 @@ import type {
 	UpdateCommentInput,
 	VoteCommentInput,
 } from "./types";
+import { createActivity } from "~/features/activity/service";
+import { getQuillTextPreview } from "~/utils/quill";
 
 export const createComment = createServerOnlyFn(
 	async (userId: string, input: CreateCommentInput) => {
@@ -49,6 +57,18 @@ export const createComment = createServerOnlyFn(
 				.where(eq(users.id, userId))
 				.limit(1)
 				.then((res) => res[0]);
+
+			if (rating.userId !== userId) {
+				const preview = getQuillTextPreview(input.content);
+				await createActivity(tx, {
+					userId: rating.userId,
+					actorId: userId,
+					type: "comment_create",
+					entityId: comment.id,
+					entityType: "comment",
+					metadata: { preview },
+				});
+			}
 
 			return {
 				...comment,
@@ -116,10 +136,18 @@ export const deleteComment = createServerOnlyFn(
 				throw new Error("You can only delete your own comments");
 			}
 
-			// Hard delete to match recent rating behavior
 			await tx.delete(comments).where(eq(comments.id, input.commentId));
 
-			// Decrement comment count on rating
+			await tx
+				.update(activities)
+				.set({ deletedAt: new Date() })
+				.where(
+					and(
+						eq(activities.entityId, input.commentId),
+						eq(activities.entityType, "comment"),
+					),
+				);
+
 			await tx
 				.update(ratings)
 				.set({
@@ -217,6 +245,19 @@ export const voteOnComment = createServerOnlyFn(
 				})
 				.where(eq(comments.id, commentId))
 				.returning();
+
+			const isRemoval = existingVote && existingVote.type === type;
+
+			if (!isRemoval) {
+				await createActivity(tx, {
+					userId: comment.userId,
+					actorId: userId,
+					type: "comment_vote",
+					entityId: commentId,
+					entityType: "comment",
+					metadata: { vote: type },
+				});
+			}
 
 			return updatedComment;
 		});

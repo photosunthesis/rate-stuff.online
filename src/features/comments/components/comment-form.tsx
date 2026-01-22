@@ -34,6 +34,7 @@ export function CommentForm({
 		useCreateComment();
 	const isAuthenticated = !!currentUser;
 	const isPending = isCreatePending;
+	const [isFocused, setIsFocused] = useState(false);
 
 	const handleSubmit = () => {
 		if (!isAuthenticated) {
@@ -59,8 +60,17 @@ export function CommentForm({
 	};
 
 	return (
-		<div className="mb-4 flex gap-3">
-			<div className="flex-1 relative group">
+		<div className="mb-2 flex gap-3">
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: Focus management is needed for the form UX */}
+			<div
+				className="flex-1 relative group"
+				onFocus={() => setIsFocused(true)}
+				onBlur={(e) => {
+					if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+						setIsFocused(false);
+					}
+				}}
+			>
 				<div className="relative flex gap-2 items-end flex-wrap">
 					{!isAuthenticated && (
 						<button
@@ -85,36 +95,46 @@ export function CommentForm({
 						/>
 					</div>
 
-					{isEditing ? (
-						<div className="flex gap-2 w-full justify-end">
-							<button
-								type="button"
-								onClick={onCancel}
-								className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
-							>
-								Cancel
-							</button>
-							<button
-								type="button"
-								onClick={handleSubmit}
-								disabled={!content.trim() || isPending}
-								className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
-							>
-								Update
-							</button>
+					<div
+						className={`grid w-full transition-all duration-300 ease-in-out ${
+							isFocused || content.trim().length > 0 || isEditing
+								? "grid-rows-[1fr] opacity-100"
+								: "grid-rows-[0fr] opacity-0"
+						}`}
+					>
+						<div className="overflow-hidden min-h-0">
+							{isEditing ? (
+								<div className="flex gap-2 w-full justify-end">
+									<button
+										type="button"
+										onClick={onCancel}
+										className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
+									>
+										Cancel
+									</button>
+									<button
+										type="button"
+										onClick={handleSubmit}
+										disabled={!content.trim() || isPending}
+										className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+									>
+										Update
+									</button>
+								</div>
+							) : (
+								<div className="flex w-full justify-end">
+									<button
+										type="button"
+										onClick={handleSubmit}
+										disabled={!content.trim() || isPending}
+										className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+									>
+										Add comment
+									</button>
+								</div>
+							)}
 						</div>
-					) : (
-						<div className="flex w-full justify-end">
-							<button
-								type="button"
-								onClick={handleSubmit}
-								disabled={!content.trim() || isPending}
-								className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
-							>
-								Add comment
-							</button>
-						</div>
-					)}
+					</div>
 				</div>
 			</div>
 			<AuthModal

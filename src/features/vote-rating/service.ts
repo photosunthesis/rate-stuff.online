@@ -3,6 +3,7 @@ import { eq, and, sql, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { getDatabase } from "~/db";
 import type { VoteRatingInput } from "./types";
+import { createActivity } from "../activity/service";
 
 export const voteRating = createServerOnlyFn(
 	async (userId: string, input: VoteRatingInput) => {
@@ -38,7 +39,6 @@ export const voteRating = createServerOnlyFn(
 
 			if (vote === "none") {
 				if (currentVoteType) {
-					// Remove vote
 					await tx
 						.delete(ratingVotes)
 						.where(
@@ -48,7 +48,6 @@ export const voteRating = createServerOnlyFn(
 							),
 						);
 
-					// Decrement count
 					if (currentVoteType === "up") {
 						await tx
 							.update(ratings)
@@ -68,7 +67,6 @@ export const voteRating = createServerOnlyFn(
 			} else {
 				if (currentVoteType) {
 					if (currentVoteType !== vote) {
-						// Change vote
 						await tx
 							.update(ratingVotes)
 							.set({ type: vote })
@@ -79,7 +77,6 @@ export const voteRating = createServerOnlyFn(
 								),
 							);
 
-						// Update counts (decrement old type, increment new type)
 						if (vote === "up") {
 							await tx
 								.update(ratings)
@@ -97,8 +94,16 @@ export const voteRating = createServerOnlyFn(
 								})
 								.where(eq(ratings.id, ratingId));
 						}
+
+						await createActivity(tx, {
+							userId: existing.ownerId,
+							actorId: userId,
+							type: "rating_vote",
+							entityId: ratingId,
+							entityType: "rating",
+							metadata: { vote },
+						});
 					}
-					// If type matches, do nothing
 				} else {
 					await tx.insert(ratingVotes).values({
 						ratingId,
@@ -117,6 +122,15 @@ export const voteRating = createServerOnlyFn(
 							.set({ downvotesCount: sql`${ratings.downvotesCount} + 1` })
 							.where(eq(ratings.id, ratingId));
 					}
+
+					await createActivity(tx, {
+						userId: existing.ownerId,
+						actorId: userId,
+						type: "rating_vote",
+						entityId: ratingId,
+						entityType: "rating",
+						metadata: { vote },
+					});
 				}
 			}
 		});

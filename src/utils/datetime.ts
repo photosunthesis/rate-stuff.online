@@ -55,3 +55,31 @@ export const getTimeAgo = (date: Date | number | string): string => {
 
 	return dateObj.toLocaleDateString();
 };
+
+export const getDateGroupLabel = (date: Date): string => {
+	const today = new Date();
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+
+	const dateObj = new Date(date);
+
+	if (dateObj.toDateString() === today.toDateString()) {
+		return "Today";
+	}
+	if (dateObj.toDateString() === yesterday.toDateString()) {
+		return "Yesterday";
+	}
+
+	if (dateObj.getFullYear() !== today.getFullYear()) {
+		return dateObj.toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		});
+	}
+
+	return dateObj.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+	});
+};

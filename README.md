@@ -17,15 +17,15 @@ A tiny corner to rate stuff — quickly create, browse, and score things you fin
 
 ## Tech stack 🔧
 
-- **Made with:** **TanStack Start** (app scaffolding & routing)
-- Frontend: **React / TypeScript**, Vite
-- App framework & routing: **TanStack Start** & **TanStack Router**
-- Backend: **Cloudflare Workers** (edge-first server runtime)
-- Database: **PostgreSQL (via Hyperdrive)** + **Drizzle ORM** + SQL migrations
-- Storage: **Cloudflare R2** (object storage for uploads)
-- State & Data: **TanStack Query** (data fetching & caching)
-- Authentication: Better Auth (https://www.better-auth.com/)
-- Build & package: **pnpm**
+- **Framework**: TanStack Start (React + TypeScript + Vite)
+- **Routing**: TanStack Router
+- **Backend & Edge**: Cloudflare Workers
+- **Real-time**: PartyKit (WebSockets & broadcasting)
+- **Database**: PostgreSQL (via Cloudflare Hyperdrive) + Drizzle ORM
+- **Storage**: Cloudflare R2
+- **Data Fetching**: TanStack Query
+- **Authentication**: Better Auth
+- **Package Manager**: pnpm
 
 ## Project layout 🗂️
 

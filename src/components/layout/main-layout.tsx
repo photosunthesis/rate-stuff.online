@@ -3,6 +3,12 @@ import { LeftSidebar } from "./left-sidebar";
 import { RightSidebar } from "./right-sidebar";
 import { DiscoverStrip } from "./discover-strip";
 import type { PublicUser } from "~/features/auth/types";
+import usePartySocket from "partysocket/react";
+import { useQueryClient } from "@tanstack/react-query";
+import { activityKeys } from "~/features/activity/queries";
+
+const PARTYKIT_HOST =
+	import.meta.env.VITE_PARTYKIT_URL || "http://127.0.0.1:1999";
 
 export function MainLayout({
 	user,
@@ -13,6 +19,18 @@ export function MainLayout({
 	showDiscoverStrip?: boolean;
 	children: React.ReactNode;
 }) {
+	const queryClient = useQueryClient();
+
+	usePartySocket({
+		host: PARTYKIT_HOST,
+		room: user ? `user-${user.id}` : "anon",
+		onMessage(event) {
+			if (event.data === "NEW_ACTIVITY") {
+				queryClient.invalidateQueries({ queryKey: activityKeys.all });
+			}
+		},
+	});
+
 	return (
 		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
 			<MobileHeader user={user} />

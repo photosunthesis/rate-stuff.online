@@ -238,8 +238,8 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 					<ModalHeader>
 						<ModalTitle>Delete this comment?</ModalTitle>
 						<ModalDescription>
-							This action cannot be undone. The comment will be permanently
-							removed.
+							Are you sure you want to delete this comment? This action cannot
+							be undone.
 						</ModalDescription>
 					</ModalHeader>
 					<ModalFooter>

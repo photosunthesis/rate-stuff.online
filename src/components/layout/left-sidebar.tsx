@@ -13,6 +13,8 @@ import { CreateRatingModal } from "~/features/create-rating/components/create-ra
 import { ConfirmModal } from "~/components/ui/confirm-modal";
 import type { PublicUser } from "~/features/auth/types";
 import { useSignOut } from "~/hooks/use-sign-out";
+import { unreadActivityCountQueryOptions } from "~/features/activity/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 const getHeader = () => {
 	const headers = [
@@ -44,6 +46,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const { signOut } = useSignOut();
 	const showFloatingButton =
 		location.pathname === "/" || location.pathname === "/explore";
+	const { data: unreadCount } = useSuspenseQuery(
+		unreadActivityCountQueryOptions(user?.id),
+	);
 
 	return (
 		<>
@@ -117,7 +122,15 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 							>
-								<Bell className="w-5 h-5" />
+								<div className="relative">
+									<Bell className="w-5 h-5" />
+									{unreadCount > 0 && (
+										<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+											<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+											<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+										</span>
+									)}
+								</div>
 								<span className="font-medium">Activity</span>
 							</Link>
 							<Link
@@ -184,7 +197,15 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
 						>
-							<Bell className="w-6 h-6" />
+							<div className="relative">
+								<Bell className="w-6 h-6" />
+								{unreadCount > 0 && (
+									<span className="absolute -top-1 -right-1 flex h-3 w-3">
+										<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+										<span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+									</span>
+								)}
+							</div>
 						</Link>
 						<Link
 							to="/settings"
@@ -196,17 +217,15 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					</div>
 
 					<div className="mb-4">
-						{showFloatingButton && (
-							<button
-								type="button"
-								onClick={() => setIsCreateOpen(true)}
-								aria-label="New Rating"
-								title="New Rating"
-								className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
-							>
-								<PencilLine className="w-4 h-4" />
-							</button>
-						)}
+						<button
+							type="button"
+							onClick={() => setIsCreateOpen(true)}
+							aria-label="New Rating"
+							title="New Rating"
+							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+						>
+							<PencilLine className="w-4 h-4" />
+						</button>
 					</div>
 
 					<button
@@ -255,7 +274,15 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
 					>
-						<Bell className="w-6 h-6" />
+						<div className="relative">
+							<Bell className="w-6 h-6" />
+							{unreadCount > 0 && (
+								<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+									<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+									<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+								</span>
+							)}
+						</div>
 						<span className="text-[10px] font-medium">Activity</span>
 					</Link>
 					<Link
