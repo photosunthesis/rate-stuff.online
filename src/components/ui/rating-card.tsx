@@ -169,7 +169,7 @@ export const RatingCard = memo(function RatingCard({
 							src={parsedImages[0]}
 							alt="Rating"
 							variant="card"
-							className="block aspect-video object-cover rounded-xl"
+							className="block aspect-video object-cover rounded-xl bg-neutral-800 border border-neutral-700/50"
 						/>
 					) : parsedImages.length === 2 ? (
 						<div className="flex gap-1.5">
@@ -185,8 +185,8 @@ export const RatingCard = memo(function RatingCard({
 										variant="card"
 										className={
 											idx === 0
-												? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
-												: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm"
+												? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
+												: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm bg-neutral-800 border border-neutral-700/50"
 										}
 									/>
 								</div>
@@ -202,7 +202,7 @@ export const RatingCard = memo(function RatingCard({
 									src={parsedImages[0]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
 
@@ -211,7 +211,7 @@ export const RatingCard = memo(function RatingCard({
 									src={parsedImages[1]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
 							<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
@@ -219,7 +219,7 @@ export const RatingCard = memo(function RatingCard({
 									src={parsedImages[2]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm"
+									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
 						</div>
@@ -251,7 +251,7 @@ export const RatingCard = memo(function RatingCard({
 											src={image}
 											alt="Rating"
 											variant="card"
-											className={`w-full h-full object-cover object-center ${cornerClass}`}
+											className={`w-full h-full object-cover object-center ${cornerClass} bg-neutral-800 border border-neutral-700/50`}
 										/>
 									</div>
 								);

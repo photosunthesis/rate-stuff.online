@@ -403,7 +403,7 @@ const ImagesGallery = ({
 					<img
 						src={images[0]}
 						alt="Rating"
-						className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
+						className="block aspect-video object-cover rounded-xl w-full cursor-pointer bg-neutral-800 border border-neutral-700/50"
 					/>
 				</button>
 			</div>
@@ -429,8 +429,8 @@ const ImagesGallery = ({
 								alt="Rating"
 								className={
 									idx === 0
-										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
-										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer"
+										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
+										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
 								}
 							/>
 						</button>
@@ -455,7 +455,7 @@ const ImagesGallery = ({
 						<img
 							src={images[0]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
 						/>
 					</button>
 				</div>
@@ -468,7 +468,7 @@ const ImagesGallery = ({
 						<img
 							src={images[1]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
 						/>
 					</button>
 				</div>
@@ -481,7 +481,7 @@ const ImagesGallery = ({
 						<img
 							src={images[2]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
 						/>
 					</button>
 				</div>
@@ -518,7 +518,7 @@ const ImagesGallery = ({
 							src={src}
 							alt="Rating"
 							variant="card"
-							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
+							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer bg-neutral-800 border border-neutral-700/50`}
 						/>
 					</button>
 				);
