@@ -34,9 +34,19 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 		plugins: [tanstackStartCookies(), username()],
 
 		session: {
+			expiresIn: 60 * 60 * 24 * 30, // 30 days
+			updateAge: 60 * 60 * 24, // 1 day
 			cookieCache: {
 				enabled: true,
 				maxAge: 5 * 60, // 5 minutes
+			},
+		},
+
+		advanced: {
+			defaultCookieAttributes: {
+				secure: true, // Required for modern cookies
+				sameSite: "lax",
+				httpOnly: true,
 			},
 		},
 
