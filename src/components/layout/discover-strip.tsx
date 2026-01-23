@@ -32,7 +32,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 		setIsRoot(window.location.pathname === "/");
 	}, []);
 
-	if (!isRoot) return null;
+	if (!isRoot || !isAuthenticated) return null;
 
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">

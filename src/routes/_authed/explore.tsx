@@ -159,7 +159,7 @@ function ExploreContent() {
 					<div className="h-8" />
 				) : (
 					<div className="px-4 pt-8 pb-6 text-center text-neutral-500">
-						All caught up! \(￣▽￣)/
+						All caught up \(￣▽￣)/
 					</div>
 				)}
 			</div>

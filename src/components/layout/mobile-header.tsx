@@ -6,7 +6,7 @@ export function MobileHeader({ user }: { user?: PublicUser }) {
 	if (user != null) return null;
 
 	return (
-		<div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-sm border-t border-white/5">
+		<div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-lg border-t border-white/5">
 			<div className="absolute inset-0 bg-linear-to-t from-neutral-950/95 via-neutral-950/60 to-neutral-950/10 -z-10" />
 			<div className="w-full max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
 				<div className="flex items-center gap-3">

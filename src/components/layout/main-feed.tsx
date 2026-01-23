@@ -116,7 +116,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 			{isAuthenticated ? (
 				isFetchingNextPage ? (
 					<div className="-mx-4 border-t border-neutral-800">
-						<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+						<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
 							Loading more...
 						</div>
 					</div>
@@ -126,12 +126,19 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 					</div>
 				) : (
 					<div className="-mx-4 border-t border-neutral-800">
-						<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
-							All caught up! \(￣▽￣)/
+						<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+							All caught up \(￣▽￣)/
 						</div>
 					</div>
 				)
-			) : null}
+			) : (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+						The scores get spicier inside. <br />
+						Join in! (☆ω☆)
+					</div>
+				</div>
+			)}
 		</>
 	);
 }
