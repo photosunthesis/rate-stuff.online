@@ -25,6 +25,7 @@ import { Button } from "~/components/ui/button";
 import { CheckCheck } from "lucide-react";
 import type { activities } from "~/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
+import { getPlainTextFromContent } from "~/utils/rich-text";
 
 type Activity = InferSelectModel<typeof activities> & {
 	// biome-ignore lint/suspicious/noExplicitAny: Metadata is a loose JSON field
@@ -218,7 +219,11 @@ function RouteComponent() {
 														</p>
 														{activity.commentContent && (
 															<div className="text-base text-neutral-400 italic line-clamp-2">
-																"{activity.commentContent}"
+																"
+																{getPlainTextFromContent(
+																	activity.commentContent,
+																)}
+																"
 															</div>
 														)}
 														<p className="text-xs text-neutral-500 mt-1">
