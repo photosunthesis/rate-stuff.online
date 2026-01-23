@@ -91,7 +91,6 @@ export function CommentForm({
 							charLimit={2000}
 							minHeightClass="min-h-[80px]"
 							onSubmit={handleSubmit}
-							fontSize="14px"
 						/>
 					</div>
 

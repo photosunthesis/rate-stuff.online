@@ -88,7 +88,7 @@ export const RatingCard = memo(function RatingCard({
 						/>
 					)}
 					<div className="flex-1 min-w-0">
-						<div className="text-sm leading-normal py-1.5">
+						<div className="text-base leading-normal py-1.5">
 							{rating.user ? (
 								<Link
 									to="/user/$username"
@@ -129,7 +129,7 @@ export const RatingCard = memo(function RatingCard({
 					</div>
 				</div>
 			) : (
-				<div className="text-sm text-neutral-500 mb-2 leading-relaxed">
+				<div className="text-base text-neutral-500 mb-2 leading-relaxed">
 					<span className="text-neutral-400">A rating of</span>{" "}
 					{rating.stuff ? (
 						<Link
@@ -262,14 +262,14 @@ export const RatingCard = memo(function RatingCard({
 			)}
 
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-				<div className="text-slate-200 text-sm leading-normal line-clamp-4">
+				<div className="text-slate-200 text-base leading-normal line-clamp-4">
 					<RichTextRenderer
 						content={rating.content}
 						className="[&_p]:mt-3 [&_p]:last:inline [&_p]:first:mt-0"
 					/>
 				</div>
 				{shouldTruncate && (
-					<span className="text-neutral-500 text-sm font-semibold hover:text-neutral-400">
+					<span className="text-neutral-500 text-base font-semibold hover:text-neutral-400">
 						See more
 					</span>
 				)}
@@ -326,7 +326,7 @@ export const RatingCard = memo(function RatingCard({
 						)}
 					</div>
 					{rating.commentsCount > 0 && (
-						<span className="text-sm font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+						<span className="text-base font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
 							{formatCompactNumber(rating.commentsCount)}
 						</span>
 					)}

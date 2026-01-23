@@ -59,13 +59,13 @@ export function ErrorOccurred() {
 					<h1 className="text-5xl text-white font-semibold">500</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-sm mx-auto leading-[1.6]">
+				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
 					Something went wrong, but we're on it. Try again shortly.
 				</p>
 				<div className="mt-4">
 					<Button
 						variant="secondary"
-						className="w-auto! inline-flex px-3 py-1 text-sm rounded-md justify-center whitespace-nowrap"
+						className="w-auto! inline-flex px-3 py-1 text-base rounded-md justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
 						Go to homepage

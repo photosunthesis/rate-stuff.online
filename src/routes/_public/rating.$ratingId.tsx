@@ -247,7 +247,7 @@ const RatingHeader = ({
 			/>
 
 			<div className="flex-1 min-w-0">
-				<div className="text-sm leading-normal py-1.5">
+				<div className="text-base leading-normal py-1.5">
 					{rating.user ? (
 						<Link
 							to="/user/$username"
@@ -303,7 +303,7 @@ const RatingHeader = ({
 							<Link
 								to="/rating/$ratingId/edit"
 								params={{ ratingId: rating.id }}
-								className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
+								className="flex items-center gap-2 px-3 py-2 text-base text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
 								onClick={() => setIsMenuOpen(false)}
 							>
 								<Pencil className="w-4 h-4" />
@@ -315,7 +315,7 @@ const RatingHeader = ({
 									setIsMenuOpen(false);
 									setIsDeleteModalOpen(true);
 								}}
-								className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
+								className="flex items-center gap-2 px-3 py-2 text-base text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
 							>
 								<Trash2 className="w-4 h-4" />
 								Delete
@@ -375,7 +375,7 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 
 const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
-		<div className="ml-11 mb-1 text-slate-200 text-sm leading-normal">
+		<div className="ml-11 mb-1 text-slate-200 text-base leading-normal">
 			<RichTextRenderer
 				content={rating.content}
 				className="[&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal"
@@ -403,7 +403,7 @@ const ImagesGallery = ({
 					<img
 						src={images[0]}
 						alt="Rating"
-						className="block aspect-video object-cover rounded-xl w-full cursor-pointer bg-neutral-800 border border-neutral-700/50"
+						className="block aspect-video object-cover rounded-xl w-full cursor-pointer bg-neutral-900 border border-white/5"
 					/>
 				</button>
 			</div>
@@ -429,8 +429,8 @@ const ImagesGallery = ({
 								alt="Rating"
 								className={
 									idx === 0
-										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
-										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
+										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-900 border border-white/5"
+										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer bg-neutral-900 border border-white/5"
 								}
 							/>
 						</button>
@@ -455,7 +455,7 @@ const ImagesGallery = ({
 						<img
 							src={images[0]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-900 border border-white/5"
 						/>
 					</button>
 				</div>
@@ -468,7 +468,7 @@ const ImagesGallery = ({
 						<img
 							src={images[1]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-900 border border-white/5"
 						/>
 					</button>
 				</div>
@@ -481,7 +481,7 @@ const ImagesGallery = ({
 						<img
 							src={images[2]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-800 border border-neutral-700/50"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-900 border border-white/5"
 						/>
 					</button>
 				</div>
@@ -518,7 +518,7 @@ const ImagesGallery = ({
 							src={src}
 							alt="Rating"
 							variant="card"
-							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer bg-neutral-800 border border-neutral-700/50`}
+							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer bg-neutral-900 border border-white/5`}
 						/>
 					</button>
 				);
@@ -645,7 +645,7 @@ function RouteComponent() {
 						>
 							<MessageSquare className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
 							{rating.commentsCount > 0 && (
-								<span className="text-sm font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+								<span className="text-base font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
 									{formatCompactNumber(rating.commentsCount)}
 								</span>
 							)}

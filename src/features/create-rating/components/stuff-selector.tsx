@@ -112,7 +112,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			<div className="relative">
 				<label
 					htmlFor={inputId}
-					className="block text-sm font-medium text-neutral-300 mb-2"
+					className="block text-base font-medium text-neutral-300 mb-2"
 				>
 					Stuff to Rate
 				</label>
@@ -128,7 +128,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					<button
 						type="button"
 						onClick={handleClear}
-						className="px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-lg transition-colors"
+						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-lg transition-colors"
 					>
 						Change
 					</button>
@@ -142,7 +142,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 		<div ref={containerRef} className="relative">
 			<label
 				htmlFor={inputId}
-				className="block text-sm font-medium text-neutral-300 mb-2"
+				className="block text-base font-medium text-neutral-300 mb-2"
 			>
 				Stuff to Rate
 			</label>
@@ -215,7 +215,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					)}
 
 					{isLoading && (
-						<div className="p-3 text-center text-neutral-500 text-sm border-t border-neutral-800">
+						<div className="p-3 text-center text-neutral-500 text-base border-t border-neutral-800">
 							Searching...
 						</div>
 					)}

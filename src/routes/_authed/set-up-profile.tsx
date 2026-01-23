@@ -98,6 +98,7 @@ function RouteComponent() {
 					? error.message
 					: `An error occured while setting up your profile: ${error}`,
 			);
+			throw error;
 		} finally {
 			setIsPending(false);
 		}

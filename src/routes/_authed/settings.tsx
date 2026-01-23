@@ -58,7 +58,7 @@ function SettingsPage() {
 									<h3 className="text-md font-semibold text-white truncate">
 										{user.name || "User"}
 									</h3>
-									<p className="text-sm text-neutral-400 truncate">
+									<p className="text-base text-neutral-400 truncate">
 										@{user.username}
 									</p>
 								</div>
@@ -76,7 +76,7 @@ function SettingsPage() {
 							<div className="flex items-center gap-3">
 								<div className="flex flex-col gap-1">
 									<span className="text-md font-medium ">Sign Out</span>
-									<span className="text-sm text-neutral-400">
+									<span className="text-base text-neutral-400">
 										Sign out of your account
 									</span>
 								</div>

@@ -62,10 +62,11 @@ function RouteComponent() {
 				});
 
 				if (error) {
+					console.error(error);
 					setErrorMessage(
 						error.message ?? `Failed to sign in due to an error: ${error}`,
 					);
-					return;
+					throw error;
 				}
 
 				handleSuccess(data.redirectUrl);
@@ -82,10 +83,11 @@ function RouteComponent() {
 				);
 
 				if (error) {
+					console.error(error);
 					setErrorMessage(
 						error.message ?? `Failed to sign in due to an error: ${error}`,
 					);
-					return;
+					throw error;
 				}
 
 				handleSuccess(data.redirectUrl);

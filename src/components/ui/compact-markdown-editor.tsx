@@ -32,7 +32,7 @@ export function CompactMarkdownEditor({
 	minHeightClass = "min-h-[80px]",
 	maxHeightClass = "max-h-[300px]",
 	placeholder = "Share your thoughts...",
-	fontSize = "16px",
+	fontSize = "15px",
 	onSubmit,
 }: CompactMarkdownEditorProps) {
 	const editorRef = useRef<HTMLDivElement>(null);

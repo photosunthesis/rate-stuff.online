@@ -25,6 +25,7 @@ export function ResetPasswordForm({
 			confirmPassword: "",
 		},
 		onSubmit: async ({ value }) => {
+			setIsSuccess(false);
 			try {
 				await onSubmit({ password: value.password });
 				setIsSuccess(true);
@@ -47,7 +48,7 @@ export function ResetPasswordForm({
 						<h3 className="text-lg font-medium text-white mb-2">
 							Password Reset!
 						</h3>
-						<p className="text-neutral-400 text-sm">
+						<p className="text-neutral-400 text-base">
 							Your password has been successfully updated. You can now sign in
 							with your new password.
 						</p>

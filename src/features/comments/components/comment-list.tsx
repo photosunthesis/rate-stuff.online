@@ -47,7 +47,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	if (error) {
 		return (
-			<div className="text-center py-8 text-neutral-500 text-sm">
+			<div className="text-center py-8 text-neutral-500 text-base">
 				Failed to load comments.
 			</div>
 		);
@@ -57,7 +57,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	if (allComments.length === 0) {
 		return (
-			<div className="text-center py-8 text-neutral-600 text-sm">
+			<div className="text-center py-8 text-neutral-600 text-base">
 				No comments yet ⸜( ´ ꒳ ` )⸝
 			</div>
 		);

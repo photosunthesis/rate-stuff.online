@@ -60,14 +60,14 @@ export function NotFound() {
 					<h1 className="text-5xl text-white font-semibold">404</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-sm mx-auto leading-[1.6]">
+				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
 					We searched everywhere. This page is either invalid or just doesn't
 					exist.
 				</p>
 				<div className="mt-4">
 					<Button
 						variant="secondary"
-						className="w-auto! inline-flex px-3 py-1 text-sm rounded-md justify-center whitespace-nowrap"
+						className="w-auto! inline-flex px-3 py-1 text-base rounded-md justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
 						Go to homepage

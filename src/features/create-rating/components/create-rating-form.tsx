@@ -66,6 +66,7 @@ export function CreateRatingForm({
 			if (isSubmitting || isPending) return;
 
 			setIsSubmitting(true);
+			setIsSuccess(false);
 
 			try {
 				const inputData = {
@@ -96,6 +97,8 @@ export function CreateRatingForm({
 				setSelectedImages([]);
 				onSuccess?.();
 			} catch {
+				// Error is handled by parent, we just need to reset submitting state
+			} finally {
 				setIsSubmitting(false);
 			}
 		},
@@ -261,7 +264,7 @@ export function CreateRatingForm({
 								<>
 									<label
 										htmlFor={contentEditorId}
-										className="block text-sm font-medium text-neutral-300 mb-2"
+										className="block text-base font-medium text-neutral-300 mb-2"
 									>
 										Your thoughts
 									</label>
@@ -294,7 +297,7 @@ export function CreateRatingForm({
 					<div>
 						<ImageField
 							images={selectedImages}
-							onChange={setSelectedImages}
+							onChange={(images) => setSelectedImages(images as File[])}
 							error={mergedValidationErrors.images}
 							maxFiles={3}
 						/>
@@ -310,7 +313,7 @@ export function CreateRatingForm({
 								type="button"
 								onClick={onCancel}
 								disabled={isPending || isSubmitting}
-								className="w-auto! px-4 py-1.5 text-sm"
+								className="w-auto! px-4 py-1.5 text-base"
 								variant="secondary"
 							>
 								Cancel
@@ -320,7 +323,7 @@ export function CreateRatingForm({
 								loadingLabel="Creating..."
 								disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 								isLoading={isPending || isSubmitting || isSuccess}
-								className="w-auto! px-6 py-1.5 text-sm"
+								className="w-auto! px-6 py-1.5 text-base"
 							>
 								{isSuccess ? "Created!" : "Create Rating"}
 							</Button>

@@ -26,6 +26,7 @@ export function SignInForm({
 			rememberMe: true,
 		},
 		onSubmit: async ({ value }) => {
+			setIsSuccess(false);
 			try {
 				await onSubmit(value);
 				setIsSuccess(true);

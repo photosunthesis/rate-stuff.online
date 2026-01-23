@@ -214,7 +214,7 @@ function UserRatingsList({
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-sm">Scroll for more...</p>
+					<p className="text-neutral-500 text-base">Scroll for more...</p>
 				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
@@ -260,7 +260,7 @@ function RouteComponent() {
 							@{publicUser.username}
 						</div>
 					)}
-					<div className="text-neutral-500 text-sm">
+					<div className="text-neutral-500 text-base">
 						{publicUser.createdAt ? (
 							<>
 								Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}

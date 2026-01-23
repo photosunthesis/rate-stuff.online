@@ -71,7 +71,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 								key={stuff.id}
 								to="/stuff/$stuffSlug"
 								params={{ stuffSlug: stuff.slug }}
-								className="inline-flex items-center py-0.5 pl-0.5 pr-2 bg-neutral-800 text-white text-sm font-medium rounded-md"
+								className="inline-flex items-center py-0.5 pl-0.5 pr-2 bg-neutral-800 text-white text-base font-medium rounded-md"
 							>
 								<div className="flex items-center mr-0.5">
 									<div className="w-5 h-5 bg-neutral-800 rounded-sm shrink-0 flex items-center justify-center">

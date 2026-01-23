@@ -113,12 +113,12 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 									<Link
 										to="/user/$username"
 										params={{ username: usernameHandle }}
-										className="text-white text-sm font-medium hover:underline"
+										className="text-white text-base font-medium hover:underline"
 									>
 										{displayText}
 									</Link>
 								) : (
-									<span className="text-neutral-400 text-sm font-medium">
+									<span className="text-neutral-400 text-base font-medium">
 										{displayText}
 									</span>
 								)}
@@ -136,7 +136,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 
 						<div className="mb-1">
 							{shouldTruncate && !isExpanded ? (
-								<div className="text-slate-200 text-sm leading-normal line-clamp-4 relative">
+								<div className="text-slate-200 text-base leading-normal line-clamp-4 relative">
 									<RichTextRenderer
 										content={comment.content}
 										className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
@@ -147,13 +147,13 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 											e.stopPropagation();
 											setIsExpanded(true);
 										}}
-										className="absolute bottom-0 right-0 pl-12 bg-linear-to-l from-neutral-950 via-neutral-950 to-transparent text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1"
+										className="absolute bottom-0 right-0 pl-12 bg-linear-to-l from-neutral-950 via-neutral-950 to-transparent text-neutral-500 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer ml-1"
 									>
 										See more
 									</button>
 								</div>
 							) : (
-								<div className="text-slate-200 text-sm leading-normal">
+								<div className="text-slate-200 text-base leading-normal">
 									<RichTextRenderer
 										content={comment.content}
 										className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
@@ -165,7 +165,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 												e.stopPropagation();
 												setIsExpanded(false);
 											}}
-											className="text-neutral-500 hover:text-neutral-400 text-sm font-semibold transition-colors cursor-pointer ml-1 block mt-1"
+											className="text-neutral-500 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer ml-1 block mt-1"
 										>
 											See less
 										</button>
@@ -205,7 +205,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 													setIsMenuOpen(false);
 													setIsEditing(true);
 												}}
-												className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
+												className="flex items-center gap-2 px-3 py-2 text-base text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
 											>
 												<Pencil className="w-3.5 h-3.5" />
 												Edit
@@ -216,7 +216,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 													setIsMenuOpen(false);
 													setIsDeleteModalOpen(true);
 												}}
-												className="flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
+												className="flex items-center gap-2 px-3 py-2 text-base text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
 											>
 												<Trash2 className="w-3.5 h-3.5" />
 												Delete

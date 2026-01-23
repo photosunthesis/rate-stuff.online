@@ -220,7 +220,7 @@ export function ModalDescription({
 	...props
 }: ModalDescriptionProps) {
 	return (
-		<p className={`text-sm text-neutral-400 ${className}`} {...props}>
+		<p className={`text-base text-neutral-400 ${className}`} {...props}>
 			{children}
 		</p>
 	);

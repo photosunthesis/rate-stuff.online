@@ -54,7 +54,7 @@ export function Image({
 			<IKImage
 				path={imagePath}
 				transformation={preset.transformation}
-				className={className}
+				className={`${className} border border-white/5 bg-neutral-900`}
 				loading={loading as "lazy" | undefined}
 				alt={alt}
 				{...rest}
@@ -65,5 +65,12 @@ export function Image({
 	// Fallback for external images or null src
 	if (!src) return null;
 
-	return <img src={src} className={className} alt={alt} {...props} />;
+	return (
+		<img
+			src={src}
+			className={`${className} border border-white/5 bg-neutral-900`}
+			alt={alt}
+			{...props}
+		/>
+	);
 }

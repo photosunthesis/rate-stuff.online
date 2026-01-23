@@ -85,14 +85,14 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<div className="space-y-2 px-3">
 						<Link
 							to="/sign-up"
-							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center"
+							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center"
 						>
 							Create Account
 						</Link>
 						<Link
 							to="/sign-in"
 							search={{ redirect: undefined }}
-							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-sm flex items-center justify-center"
+							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
 						>
 							Sign In
 						</Link>
@@ -147,7 +147,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							<button
 								type="button"
 								onClick={() => setIsCreateOpen(true)}
-								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-sm flex items-center justify-center gap-2 cursor-pointer"
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
 								<PencilLine className="w-4 h-4 shrink-0" />
 								<span className="truncate">New Rating</span>

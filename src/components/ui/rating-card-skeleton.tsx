@@ -17,7 +17,7 @@ export function RatingCardSkeleton({
 	const header =
 		hideAvatar || variant === "user" ? (
 			<div
-				className={`flex items-center gap-1 text-sm ${variant === "user" ? "mb-2" : "mb-0"}`}
+				className={`flex items-center gap-1 text-base ${variant === "user" ? "mb-2" : "mb-0"}`}
 			>
 				<div
 					className={`h-3 bg-neutral-800/40 rounded w-28 ${variant === "user" ? "" : "mb-2"}`}
@@ -27,7 +27,7 @@ export function RatingCardSkeleton({
 			<div className="flex items-center gap-3">
 				<div className="w-8 h-8 rounded-full bg-neutral-800/40" />
 				<div className="flex-1 min-w-0">
-					<div className="flex items-center gap-1 flex-wrap text-sm">
+					<div className="flex items-center gap-1 flex-wrap text-base">
 						<div className="h-3 bg-neutral-800/40 rounded w-48 mb-2" />
 					</div>
 				</div>

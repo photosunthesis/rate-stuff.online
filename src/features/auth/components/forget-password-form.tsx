@@ -24,6 +24,7 @@ export function ForgotPasswordForm({
 			email: "",
 		},
 		onSubmit: async ({ value }) => {
+			setIsSuccess(false);
 			try {
 				await onSubmit(value);
 				setIsSuccess(true);
@@ -46,7 +47,7 @@ export function ForgotPasswordForm({
 						<h3 className="text-lg font-medium text-white mb-2">
 							Check your email
 						</h3>
-						<p className="text-neutral-400 text-sm">
+						<p className="text-neutral-400 text-base">
 							We've sent a password reset link to your email address. Please
 							check your inbox (and spam folder) to continue.
 						</p>

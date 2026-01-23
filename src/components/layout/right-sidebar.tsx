@@ -68,7 +68,7 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 												}`}
 											>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-white truncate">
+													<p className="text-base font-medium text-white truncate">
 														{thing.name}
 													</p>
 												</div>

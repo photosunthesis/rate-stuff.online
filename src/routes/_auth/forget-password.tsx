@@ -47,7 +47,7 @@ function RouteComponent() {
 					errors[issue.path[0] as string] = issue.message;
 				}
 				setValidationErrors(errors);
-				return;
+				throw new Error("Validation failed");
 			}
 
 			const { error } = await withTimeout(

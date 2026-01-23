@@ -50,14 +50,14 @@ export function Checkbox({
 				{label && (
 					<label
 						htmlFor={inputId}
-						className="text-sm font-medium text-neutral-300 cursor-pointer select-none"
+						className="text-base font-medium text-neutral-300 cursor-pointer select-none"
 					>
 						{label}
 					</label>
 				)}
 			</div>
 			{error && (
-				<p id={errorId} className="text-red-400 text-sm">
+				<p id={errorId} className="text-red-400 text-base">
 					{error}
 				</p>
 			)}

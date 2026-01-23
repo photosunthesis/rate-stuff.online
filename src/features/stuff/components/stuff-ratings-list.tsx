@@ -195,7 +195,7 @@ export function StuffRatingsList({
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-sm">Scroll for more...</p>
+					<p className="text-neutral-500 text-base">Scroll for more...</p>
 				</div>
 			) : (
 				<div className="border-t border-neutral-800">

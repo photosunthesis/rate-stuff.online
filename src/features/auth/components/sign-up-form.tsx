@@ -37,6 +37,7 @@ export function SignUpForm({
 			terms: false,
 		},
 		onSubmit: async ({ value }) => {
+			setIsSuccess(false);
 			try {
 				await onSubmit(value);
 				setIsSuccess(true);

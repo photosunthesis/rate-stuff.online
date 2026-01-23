@@ -130,7 +130,7 @@ export function VoteSection({
 					onClick={() => handleVote("up")}
 					disabled={isOwner}
 				/>
-				<span className="text-sm font-semibold min-w-[1.5ch] text-center text-neutral-500">
+				<span className="text-base font-semibold min-w-[1.5ch] text-center text-neutral-500">
 					{formatCompactNumber(voteScore)}
 				</span>
 				<VoteButton

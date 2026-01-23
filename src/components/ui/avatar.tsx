@@ -40,7 +40,7 @@ export function Avatar({
 		/>
 	) : (
 		<div
-			className={`${sizeClasses[size]} rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-neutral-500 ${className}`}
+			className={`${sizeClasses[size]} rounded-full bg-neutral-900 border border-white/5 flex items-center justify-center text-neutral-500 ${className}`}
 		>
 			<UserIcon className={iconSizes[size]} />
 		</div>

@@ -72,7 +72,7 @@ function RouteComponent() {
 					errors[issue.path[0] as string] = issue.message;
 				}
 				setValidationErrors(errors);
-				return;
+				throw new Error("Validation failed");
 			}
 
 			const validCodeResult = await validateInviteCode({
@@ -83,7 +83,7 @@ function RouteComponent() {
 				setValidationErrors({
 					inviteCode: "Invalid invite code",
 				});
-				return;
+				throw new Error("Invalid invite code");
 			}
 
 			const { error } = await withTimeout(
@@ -100,7 +100,7 @@ function RouteComponent() {
 				setErrorMessage(
 					error.message ?? `Failed to sign up due to an error: ${error}`,
 				);
-				return;
+				throw error;
 			}
 
 			queryClient.removeQueries({

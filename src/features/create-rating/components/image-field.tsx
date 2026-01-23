@@ -91,7 +91,7 @@ export function ImageField({
 		<div>
 			<label
 				htmlFor={inputId}
-				className="block text-sm font-medium text-neutral-300 mb-2"
+				className="block text-base font-medium text-neutral-300 mb-2"
 			>
 				Images
 			</label>
@@ -100,7 +100,7 @@ export function ImageField({
 				{images.map((file, index) => (
 					<div
 						key={`${typeof file === "string" ? file : file.name}-${index}`}
-						className="relative aspect-square rounded-lg overflow-hidden group border border-neutral-800"
+						className="relative aspect-square rounded-lg overflow-hidden group border border-white/5 bg-neutral-900"
 					>
 						<img
 							src={typeof file === "string" ? file : URL.createObjectURL(file)}

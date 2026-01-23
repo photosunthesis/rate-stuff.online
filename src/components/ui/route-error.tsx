@@ -11,14 +11,14 @@ export function RouteError({ error, reset }: ErrorComponentProps) {
 			<h2 className="text-xl font-semibold mb-2 text-white">
 				Something went wrong!
 			</h2>
-			<p className="mb-4 text-sm max-w-md">
+			<p className="mb-4 text-base max-w-md">
 				{error.message ||
 					"An unexpected error occurred while loading this content."}
 			</p>
 			<button
 				type="button"
 				onClick={reset}
-				className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md transition-colors text-sm font-medium"
+				className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-md transition-colors text-base font-medium"
 			>
 				Try again
 			</button>

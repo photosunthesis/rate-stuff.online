@@ -62,6 +62,7 @@ export function EditRatingForm({
 			if (isSubmitting || isPending) return;
 
 			setIsSubmitting(true);
+			setIsSuccess(false);
 
 			try {
 				const newFiles = selectedImages.filter(
@@ -219,7 +220,7 @@ export function EditRatingForm({
 								<>
 									<label
 										htmlFor={contentEditorId}
-										className="block text-sm font-medium text-neutral-300 mb-2"
+										className="block text-base font-medium text-neutral-300 mb-2"
 									>
 										Your thoughts
 									</label>
@@ -268,7 +269,7 @@ export function EditRatingForm({
 								type="button"
 								onClick={onCancel}
 								disabled={isPending || isSubmitting}
-								className="w-auto! px-4 py-1.5 text-sm"
+								className="w-auto! px-4 py-1.5 text-base"
 								variant="secondary"
 							>
 								Cancel
@@ -278,7 +279,7 @@ export function EditRatingForm({
 								loadingLabel="Updating..."
 								disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 								isLoading={isPending || isSubmitting || isSuccess}
-								className="w-auto! px-6 py-1.5 text-sm"
+								className="w-auto! px-6 py-1.5 text-base"
 							>
 								{isSuccess ? "Updated!" : "Update Rating"}
 							</Button>

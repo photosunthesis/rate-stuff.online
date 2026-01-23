@@ -208,7 +208,7 @@ function RouteComponent() {
 														}
 													/>
 													<div className="flex-1 space-y-1">
-														<p className="text-sm text-neutral-200">
+														<p className="text-base text-neutral-200">
 															<span className="font-semibold text-white">
 																{activity.actor?.name ??
 																	activity.actor?.username ??
@@ -217,7 +217,7 @@ function RouteComponent() {
 															{getActivityText(activity as Activity)}
 														</p>
 														{activity.commentContent && (
-															<div className="text-sm text-neutral-400 italic line-clamp-2">
+															<div className="text-base text-neutral-400 italic line-clamp-2">
 																"{activity.commentContent}"
 															</div>
 														)}
@@ -239,7 +239,7 @@ function RouteComponent() {
 									{isFetchingNextPage ? (
 										<div className="h-6 w-6 rounded-full border-2 border-neutral-600 border-t-white animate-spin" />
 									) : (
-										<span className="text-sm text-neutral-500">
+										<span className="text-base text-neutral-500">
 											Load more events
 										</span>
 									)}

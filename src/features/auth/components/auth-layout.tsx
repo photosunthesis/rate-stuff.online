@@ -32,7 +32,7 @@ export function AuthLayout({
 
 				{footerText && footerLinkText && footerLinkTo && (
 					<div className="mt-6 mb-8 md:mb-4 text-left">
-						<p className="text-neutral-400 text-sm">
+						<p className="text-neutral-400 text-base">
 							{footerText}{" "}
 							<Link
 								to={footerLinkTo}

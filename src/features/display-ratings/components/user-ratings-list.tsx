@@ -65,7 +65,7 @@ export function UserRatingsList() {
 
 	if (error) {
 		return (
-			<div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+			<div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-base">
 				Failed to load ratings. Please try again.
 			</div>
 		);
@@ -94,7 +94,7 @@ export function UserRatingsList() {
 							<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
 						</div>
 					) : (
-						<p className="text-neutral-500 text-sm">Scroll for more...</p>
+						<p className="text-neutral-500 text-base">Scroll for more...</p>
 					)}
 				</div>
 			)}

@@ -51,12 +51,12 @@ function RouteComponent() {
 
 			if (!result.success) {
 				setValidationErrors({ password: result.error.issues[0].message });
-				return;
+				throw new Error("Validation failed");
 			}
 
 			if (!token) {
 				setErrorMessage("Invalid or missing reset token.");
-				return;
+				throw new Error("Invalid or missing reset token.");
 			}
 
 			const { error } = await withTimeout(

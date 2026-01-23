@@ -93,7 +93,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						</div>
 					</div>
 				</div>
-				<div className="flex items-center gap-1.5 text-sm md:text-base font-medium text-neutral-400">
+				<div className="flex items-center gap-1.5 text-base md:text-base font-medium text-neutral-400">
 					<MessageSquareQuote className="w-4 h-4" />
 					<span>
 						{stuff.ratingCount} {stuff.ratingCount === 1 ? "rating" : "ratings"}

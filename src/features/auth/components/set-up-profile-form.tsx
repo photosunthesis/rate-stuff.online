@@ -64,6 +64,9 @@ export function SetUpProfileForm({
 		onSubmit: async ({ value }) => {
 			if (!hasValues || isPending || isSuccess) return;
 
+			// Reset success state
+			setIsSuccess(false);
+
 			const payload: Parameters<typeof onSubmit>[0] = {
 				...value,
 				avatar: avatarFile ?? undefined,
@@ -225,12 +228,12 @@ export function SetUpProfileForm({
 
 				{fileError && (
 					<div className="bg-red-950/50 border border-red-800 rounded-lg p-3">
-						<p className="text-red-400 text-sm">{fileError}</p>
+						<p className="text-red-400 text-base">{fileError}</p>
 					</div>
 				)}
 				{validationErrors?.avatar && (
 					<div className="bg-red-950/50 border border-red-800 rounded-lg p-3">
-						<p className="text-red-400 text-sm">{validationErrors.avatar}</p>
+						<p className="text-red-400 text-base">{validationErrors.avatar}</p>
 					</div>
 				)}
 

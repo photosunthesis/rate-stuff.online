@@ -46,7 +46,7 @@ export const Route = createFileRoute("/privacy")({
 
 function RouteComponent() {
 	return (
-		<main className="max-w-2xl mx-auto px-4 py-12 text-sm text-neutral-200">
+		<main className="max-w-2xl mx-auto px-4 py-12 text-base text-neutral-200">
 			<div className="flex justify-start mb-6">
 				<AppLogo size={48} />
 			</div>
@@ -194,7 +194,7 @@ function RouteComponent() {
 				.
 			</p>
 
-			<div className="mt-6 text-sm text-neutral-500">
+			<div className="mt-6 text-base text-neutral-500">
 				Last updated: January 17, 2026
 			</div>
 		</main>

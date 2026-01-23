@@ -14,7 +14,7 @@ export function TextField({ label, error, id, ...props }: TextFieldProps) {
 		<div>
 			<label
 				htmlFor={inputId}
-				className="block text-sm font-medium text-neutral-300 mb-2"
+				className="block text-base font-medium text-neutral-300 mb-2"
 			>
 				{label}
 			</label>
@@ -32,7 +32,7 @@ export function TextField({ label, error, id, ...props }: TextFieldProps) {
 				{...props}
 			/>
 			{error && (
-				<p id={errorId} className="text-red-400 text-sm mt-2">
+				<p id={errorId} className="text-red-400 text-base mt-2">
 					{error}
 				</p>
 			)}
