@@ -30,15 +30,16 @@ export const createActivity = createServerOnlyFn(
 			metadata: input.metadata,
 		});
 
+		const PARTYKIT_HOST = process.env.VITE_PARTYKIT_HOST ?? "127.0.0.1:1999";
+		const PROTOCOL = PARTYKIT_HOST.startsWith("127.0.0.1") ? "http" : "https";
+		const PARTYKIT_URL = `${PROTOCOL}://${PARTYKIT_HOST}`;
+
 		try {
-			fetch(
-				`${process.env.VITE_PARTYKIT_URL}/parties/main/user-${input.userId}`,
-				{
-					method: "POST",
-					body: JSON.stringify({ message: "NEW_ACTIVITY" }),
-					headers: { "Content-Type": "application/json" },
-				},
-			).catch((e) => console.error("Failed to broadcast activity", e));
+			fetch(`${PARTYKIT_URL}/parties/main/user-${input.userId}`, {
+				method: "POST",
+				body: JSON.stringify({ message: "NEW_ACTIVITY" }),
+				headers: { "Content-Type": "application/json" },
+			}).catch((e) => console.error("Failed to broadcast activity", e));
 		} catch (e) {
 			console.error("Failed to initiate broadcast", e);
 		}

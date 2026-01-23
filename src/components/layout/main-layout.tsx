@@ -7,9 +7,6 @@ import usePartySocket from "partysocket/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { activityKeys } from "~/features/activity/queries";
 
-const PARTYKIT_HOST =
-	import.meta.env.VITE_PARTYKIT_URL || "http://127.0.0.1:1999";
-
 export function MainLayout({
 	user,
 	showDiscoverStrip = false,
@@ -20,9 +17,10 @@ export function MainLayout({
 	children: React.ReactNode;
 }) {
 	const queryClient = useQueryClient();
+	const partyKitHost = import.meta.env.VITE_PARTYKIT_HOST ?? "127.0.0.1:1999";
 
 	usePartySocket({
-		host: PARTYKIT_HOST,
+		host: partyKitHost,
 		room: user ? `user-${user.id}` : "anon",
 		onMessage(event) {
 			if (event.data === "NEW_ACTIVITY") {
