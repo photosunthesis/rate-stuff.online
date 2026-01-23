@@ -132,7 +132,7 @@ function RouteComponent() {
 
 	return (
 		<MainLayout user={currentUser}>
-			<div className="flex flex-col min-h-screen border-x border-neutral-800 relative">
+			<div className="flex flex-col min-h-screen relative">
 				{allActivities.length > 0 && (
 					<div className="absolute top-4 right-4 z-10">
 						<Button
