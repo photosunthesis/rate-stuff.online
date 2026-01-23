@@ -239,7 +239,8 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 			)}
 
 			{isAuthenticated && (
-				<nav className="md:hidden fixed bottom-0 left-0 right-0 bg-neutral-950/80 backdrop-blur-md border-t border-neutral-800 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
+				<nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-sm border-t border-white/5 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
+					<div className="absolute inset-0 bg-linear-to-t from-neutral-950/95 via-neutral-950/60 to-neutral-950/10 -z-10" />
 					<Link
 						to="/"
 						activeOptions={{ exact: true }}
