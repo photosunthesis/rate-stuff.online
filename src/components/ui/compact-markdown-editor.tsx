@@ -19,7 +19,6 @@ interface CompactMarkdownEditorProps {
 	maxHeightClass?: string;
 	placeholder?: string;
 	onSubmit?: () => void;
-	fontSize?: string;
 }
 
 export function CompactMarkdownEditor({
@@ -32,7 +31,6 @@ export function CompactMarkdownEditor({
 	minHeightClass = "min-h-[80px]",
 	maxHeightClass = "max-h-[300px]",
 	placeholder = "Share your thoughts...",
-	fontSize = "15px",
 	onSubmit,
 }: CompactMarkdownEditorProps) {
 	const editorRef = useRef<HTMLDivElement>(null);
@@ -53,14 +51,12 @@ export function CompactMarkdownEditor({
 	const initialValueRef = useRef(value);
 	const placeholderRef = useRef(placeholder);
 	const onSubmitRef = useRef(onSubmit);
-	const fontSizeRef = useRef(fontSize);
 
 	useEffect(() => {
 		onTextChangeRef.current = onChange;
 		placeholderRef.current = placeholder;
 		onSubmitRef.current = onSubmit;
-		fontSizeRef.current = fontSize;
-	}, [onChange, placeholder, onSubmit, fontSize]);
+	}, [onChange, placeholder, onSubmit]);
 
 	// Initialize Quill
 	useEffect(() => {
@@ -128,13 +124,6 @@ export function CompactMarkdownEditor({
 					} catch {
 						quill.setText(initialValue);
 					}
-				}
-
-				const qlEditor = editorRef.current?.querySelector(
-					".ql-editor",
-				) as HTMLElement;
-				if (qlEditor) {
-					qlEditor.style.fontSize = fontSizeRef.current;
 				}
 			});
 		}
@@ -240,12 +229,36 @@ export function CompactMarkdownEditor({
 				[data-instance-id='${uniqueId}'] .ql-editor {
 					font-family: var(--font-sans) !important;
 				}
+				/* Desktop defaults */
 				[data-instance-id='${uniqueId}'] .ql-editor,
 				[data-instance-id='${uniqueId}'] .ql-editor *,
 				[data-instance-id='${uniqueId}'] .ql-editor p,
 				[data-instance-id='${uniqueId}'] .ql-editor span {
-					font-size: ${fontSize} !important;
+					font-size: 15px !important;
 					line-height: 1.5 !important;
+				}
+
+				/* 
+				  Mobile scale trick:
+				  1. Force 16px to prevent zoom
+				  2. Scale down to 15px (15/16 = 0.9375)
+				  3. Compensate width (100 / 0.9375 = 106.67%)
+				*/
+				@media screen and (max-width: 768px) {
+					[data-instance-id='${uniqueId}'] .ql-editor {
+						font-size: 16px !important;
+						transform: scale(0.9375);
+						transform-origin: left top;
+						width: 106.67% !important;
+						max-width: 106.67% !important;
+						overflow-x: hidden; /* Prevent horizontal scroll from width increase */
+					}
+					/* Ensure child elements inherit the 16px size so they don't break the logic */
+					[data-instance-id='${uniqueId}'] .ql-editor *,
+					[data-instance-id='${uniqueId}'] .ql-editor p,
+					[data-instance-id='${uniqueId}'] .ql-editor span {
+						font-size: 16px !important;
+					}
 				}
 			`}</style>
 		</div>

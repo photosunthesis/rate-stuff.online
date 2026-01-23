@@ -44,7 +44,7 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 
 		advanced: {
 			defaultCookieAttributes: {
-				secure: true,
+				secure: process.env.NODE_ENV === "production",
 				sameSite: "lax",
 				httpOnly: true,
 			},
