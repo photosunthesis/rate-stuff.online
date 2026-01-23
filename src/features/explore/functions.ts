@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "~/features/auth/middleware";
 import { getVisualRatings } from "./service";
-
 import { z } from "zod";
 
 export const getVisualRatingsFn = createServerFn({ method: "GET" })
@@ -10,7 +9,7 @@ export const getVisualRatingsFn = createServerFn({ method: "GET" })
 		z.object({
 			cursor: z
 				.object({
-					createdAt: z.string().transform((str) => new Date(str)), // Dates over JSON are strings
+					createdAt: z.date(),
 					id: z.string(),
 				})
 				.optional(),

@@ -1,20 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/features/auth/queries";
-import { useSuspenseQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { mapToCurrentUser } from "~/utils/user-mapping";
-import { exploreQueries } from "~/features/explore/queries";
+import { useVisualRatings } from "~/features/explore/queries";
 import { VisualRatingCard } from "~/features/explore/components/visual-rating-card";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/_authed/explore")({
 	component: RouteComponent,
-	beforeLoad: async ({ context }) => {
-		await context.queryClient.ensureInfiniteQueryData(
-			exploreQueries.infinite(),
-		);
-	},
 	head: () => ({
 		meta: [
 			{ title: "Explore - Rate Stuff Online" },
@@ -84,7 +79,7 @@ function ExploreSkeleton() {
 
 function ExploreContent() {
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-		useInfiniteQuery(exploreQueries.infinite());
+		useVisualRatings();
 
 	const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -106,9 +101,7 @@ function ExploreContent() {
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const allItems = useMemo(() => {
-		return (
-			data?.pages.flatMap((page) => (page.success ? page.data.items : [])) ?? []
-		);
+		return data?.pages.flatMap((page) => (page ? page.items : [])) ?? [];
 	}, [data]);
 
 	const columns = useMemo(() => {
