@@ -48,23 +48,35 @@ function ExploreSkeleton() {
 				<div className="w-48 h-6 bg-neutral-800 rounded animate-pulse" />
 			</div>
 
-			<div className="grid grid-cols-2 gap-4">
-				{[1, 2].map((col) => (
-					<div key={`skeleton-col-${col}`} className="grid gap-4">
-						{[1, 2, 3].map((i) => (
-							<div
-								key={`skeleton-item-${col}-${i}`}
-								className="rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 animate-pulse relative"
-								style={{ height: `${Math.floor(Math.random() * 200 + 200)}px` }}
-							>
-								<div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
-									<div className="w-3/4 h-4 bg-neutral-800 rounded" />
-									<div className="w-1/2 h-3 bg-neutral-800 rounded" />
-								</div>
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div className="grid gap-4">
+					{[1, 2, 3].map((i) => (
+						<div
+							key={`skeleton-item-1-${i}`}
+							className="rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 animate-pulse relative"
+							style={{ height: `${Math.floor(Math.random() * 200 + 200)}px` }}
+						>
+							<div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+								<div className="w-3/4 h-4 bg-neutral-800 rounded" />
+								<div className="w-1/2 h-3 bg-neutral-800 rounded" />
 							</div>
-						))}
-					</div>
-				))}
+						</div>
+					))}
+				</div>
+				<div className="hidden md:grid gap-4">
+					{[1, 2, 3].map((i) => (
+						<div
+							key={`skeleton-item-2-${i}`}
+							className="rounded-xl overflow-hidden bg-neutral-900 border border-neutral-800 animate-pulse relative"
+							style={{ height: `${Math.floor(Math.random() * 200 + 200)}px` }}
+						>
+							<div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+								<div className="w-3/4 h-4 bg-neutral-800 rounded" />
+								<div className="w-1/2 h-3 bg-neutral-800 rounded" />
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);
@@ -116,11 +128,24 @@ function ExploreContent() {
 				<TrendingUp className="w-5 h-5 text-white" />
 			</div>
 
-			<div className="grid grid-cols-2 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+				{/* Mobile only: single column with all items in order */}
+				<div className="md:hidden grid gap-4">
+					{allItems.map((item) => (
+						<VisualRatingCard
+							key={item.id}
+							rating={item}
+							user={item.user}
+							stuff={item.stuff}
+						/>
+					))}
+				</div>
+
+				{/* Desktop only: two columns for masonry-like layout */}
 				{columns.map((colItems, colIndex) => (
 					<div
 						key={colIndex === 0 ? "left-column" : "right-column"}
-						className="grid gap-4 content-start"
+						className="hidden md:grid gap-4 content-start"
 					>
 						{colItems.map((item) => (
 							<VisualRatingCard
