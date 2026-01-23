@@ -163,7 +163,7 @@ function UserRatingsList({
 				<div className="divide-y divide-neutral-800">
 					{[1, 2, 3, 4, 5].map((i) => (
 						<RatingCardSkeleton
-							key={i}
+							key={`skeleton-${i}`}
 							noIndent
 							hideAvatar
 							showImage={i % 2 === 0}

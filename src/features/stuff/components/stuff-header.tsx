@@ -4,16 +4,7 @@ import { Lightbox } from "~/components/ui/lightbox";
 import { MessageSquareQuote } from "lucide-react";
 import { Image } from "~/components/ui/image";
 
-const getRatingEmoji = (rating: number) => {
-	if (rating >= 9.5) return "🤩";
-	if (rating >= 9) return "😍";
-	if (rating >= 8) return "🥰";
-	if (rating >= 7) return "😄";
-	if (rating >= 6) return "🙂";
-	if (rating >= 5) return "🤔";
-	if (rating >= 3) return "🫢";
-	return "😑";
-};
+import { getRatingEmoji } from "~/utils/rating";
 
 export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);

@@ -27,6 +27,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 	variant?: ImageVariant;
 	width?: number | string;
 	height?: number | string;
+	noBorder?: boolean;
 }
 
 export function Image({
@@ -35,6 +36,7 @@ export function Image({
 	variant = "raw",
 	className,
 	alt,
+	noBorder,
 	...props
 }: ImageProps) {
 	// If path is explicitly provided, use it.
@@ -54,7 +56,9 @@ export function Image({
 			<IKImage
 				path={imagePath}
 				transformation={preset.transformation}
-				className={`${className} border border-white/5 bg-neutral-900`}
+				className={`${className} ${
+					noBorder ? "" : "border border-white/5 bg-neutral-900"
+				}`}
 				loading={loading as "lazy" | undefined}
 				alt={alt}
 				{...rest}
@@ -68,7 +72,9 @@ export function Image({
 	return (
 		<img
 			src={src}
-			className={`${className} border border-white/5 bg-neutral-900`}
+			className={`${className} ${
+				noBorder ? "" : "border border-white/5 bg-neutral-900"
+			}`}
 			alt={alt}
 			{...props}
 		/>

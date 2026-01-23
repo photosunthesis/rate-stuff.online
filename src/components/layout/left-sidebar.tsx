@@ -256,7 +256,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							onClick={() => setIsCreateOpen(true)}
 							aria-label="New Rating"
 							title="New Rating"
-							className="absolute -top-14 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50"
+							className="absolute -top-18 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50"
 						>
 							<PencilLine className="w-5 h-5" />
 						</button>

@@ -145,7 +145,7 @@ function RouteComponent() {
 								isMarkingAll ||
 								allActivities.every((a) => a.isRead)
 							}
-							className="w-auto! gap-2 flex items-center shadow-lg"
+							className="w-auto! gap-1 flex items-center shadow-lg text-xs! font-medium!"
 						>
 							<CheckCheck className="w-4 h-4" />
 							Mark all as read
@@ -218,7 +218,7 @@ function RouteComponent() {
 															{getActivityText(activity as Activity)}
 														</p>
 														{activity.commentContent && (
-															<div className="text-base text-neutral-400 italic line-clamp-2">
+															<div className="text-sm text-neutral-400 italic line-clamp-2">
 																"
 																{getPlainTextFromContent(
 																	activity.commentContent,
