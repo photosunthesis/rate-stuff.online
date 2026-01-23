@@ -36,6 +36,7 @@ function LightboxContent({ src, alt }: { src: string; alt?: string }) {
 				alt={alt}
 				variant="lightbox"
 				className="w-full h-auto max-h-[92vh] object-contain"
+				noBorder
 			/>
 		</div>
 	);
