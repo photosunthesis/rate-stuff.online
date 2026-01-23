@@ -9,11 +9,10 @@ import { getRecentTags, getRecentStuff } from "./service";
 import { z } from "zod";
 import { authMiddleware } from "~/features/auth/middleware";
 import {
-	createRateLimitMiddleware,
-	RATE_LIMITER_BINDING,
+	paginationRateLimitMiddleware,
+	generalRateLimitMiddleware,
 } from "~/features/rate-limit/middleware";
 import { getUserByUsername } from "~/features/auth/service";
-import { rateLimitKeys } from "../rate-limit/middleware";
 import { getAuth } from "~/auth/auth.server";
 import { getRequest } from "@tanstack/react-start/server";
 
@@ -42,14 +41,7 @@ async function getUserId() {
 }
 
 export const getUserRatingsFn = createServerFn({ method: "GET" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.PAGINATION,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, paginationRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
@@ -85,13 +77,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 	});
 
 export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
-	.middleware([
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.PAGINATION,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([paginationRateLimitMiddleware])
 	.inputValidator(z.object({ tag: z.string().optional() }))
 	.handler(async ({ data }) => {
 		try {
@@ -108,14 +94,7 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 	});
 
 export const getFeedRatingsFn = createServerFn({ method: "GET" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.PAGINATION,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, paginationRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			limit: z.number().default(10),
@@ -149,13 +128,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	});
 
 export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
-	.middleware([
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.PAGINATION,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([paginationRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			username: z.string(),
@@ -196,6 +169,7 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 	});
 
 export const getUserRatingsCountFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
 	.inputValidator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -217,6 +191,7 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 	});
 
 export const getRatingByIdFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			id: z.string(),
@@ -240,14 +215,7 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentTagsFn = createServerFn({ method: "GET" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.handler(async () => {
 		try {
 			const tags = await getRecentTags(10);
@@ -262,14 +230,7 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentStuffFn = createServerFn({ method: "GET" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.handler(async () => {
 		try {
 			const stuff = await getRecentStuff(5);

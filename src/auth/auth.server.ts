@@ -44,7 +44,7 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 
 		advanced: {
 			defaultCookieAttributes: {
-				secure: true, // Required for modern cookies
+				secure: true,
 				sameSite: "lax",
 				httpOnly: true,
 			},

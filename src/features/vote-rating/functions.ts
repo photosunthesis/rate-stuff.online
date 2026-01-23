@@ -2,20 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { voteRatingSchema } from "./types";
 import { voteRating } from "./service";
 import { authMiddleware } from "~/features/auth/middleware";
-import {
-	createRateLimitMiddleware,
-	rateLimitKeys,
-} from "~/features/rate-limit/middleware";
+import { actionRateLimitMiddleware } from "~/features/rate-limit/middleware";
 
 export const voteRatingFn = createServerFn({ method: "POST" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: "GENERAL",
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again after a short while.",
-		}),
-	])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(voteRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {

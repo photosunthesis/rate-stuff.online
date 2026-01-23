@@ -7,8 +7,9 @@ export function useSignOut() {
 
 	const handleSignOut = async () => {
 		try {
-			await authClient.signOut();
 			queryClient.clear();
+			await authClient.signOut();
+
 			window.location.href = "/";
 		} catch (error) {
 			Sentry.captureException(error);

@@ -12,10 +12,7 @@ import {
 	deleteRating,
 } from "./service";
 import { ALLOWED_CONTENT_TYPES } from "~/features/file-storage/service";
-import {
-	createRateLimitMiddleware,
-	rateLimitKeys,
-} from "~/features/rate-limit/middleware";
+import { actionRateLimitMiddleware } from "~/features/rate-limit/middleware";
 import { authMiddleware } from "../auth/middleware";
 
 function formatZodError(error: ZodError): Record<string, string> {
@@ -27,14 +24,8 @@ function formatZodError(error: ZodError): Record<string, string> {
 	return fieldErrors;
 }
 
-const rateLimitMiddleware = createRateLimitMiddleware({
-	binding: "GENERAL",
-	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-	errorMessage: "Too many requests. Please try again after a short while.",
-});
-
 export const searchStuffFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -49,7 +40,7 @@ export const searchStuffFn = createServerFn({ method: "GET" })
 	});
 
 export const searchTagsFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -64,7 +55,7 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 	});
 
 export const createRatingFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(createRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {
@@ -88,7 +79,7 @@ export const createRatingFn = createServerFn({ method: "POST" })
 	});
 
 export const getUploadUrlFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			ratingId: z.string().min(1),
@@ -118,7 +109,7 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 	});
 
 export const updateRatingImagesFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			ratingId: z.string().min(1),
@@ -141,7 +132,7 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 	});
 
 export const uploadRatingImageFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(
 		z.preprocess(
 			(val) => {
@@ -177,7 +168,7 @@ export const uploadRatingImageFn = createServerFn({ method: "POST" })
 	});
 
 export const updateRatingFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			ratingId: z.string().min(1),
@@ -208,7 +199,7 @@ export const updateRatingFn = createServerFn({ method: "POST" })
 	});
 
 export const deleteRatingFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(z.object({ ratingId: z.string().min(1) }))
 	.handler(async ({ data, context }) => {
 		try {

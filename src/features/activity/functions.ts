@@ -7,9 +7,13 @@ import {
 	markActivitiesAsRead,
 	markActivityAsRead,
 } from "./service";
+import {
+	generalRateLimitMiddleware,
+	paginationRateLimitMiddleware,
+} from "~/features/rate-limit/middleware";
 
 export const getActivitiesFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([authMiddleware, paginationRateLimitMiddleware])
 	.inputValidator(
 		z.object({
 			userId: z.string(),
@@ -48,7 +52,7 @@ export const getActivitiesFn = createServerFn({ method: "GET" })
 	});
 
 export const getUnreadCountFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.inputValidator(z.object({ userId: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -66,7 +70,7 @@ export const getUnreadCountFn = createServerFn({ method: "GET" })
 	});
 
 export const markActivitiesAsReadFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.inputValidator(z.object({ userId: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -82,7 +86,7 @@ export const markActivitiesAsReadFn = createServerFn({ method: "POST" })
 	});
 
 export const markActivityAsReadFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.inputValidator(z.object({ userId: z.string(), activityId: z.string() }))
 	.handler(async ({ data }) => {
 		try {

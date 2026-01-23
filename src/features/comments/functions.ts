@@ -15,19 +15,13 @@ import {
 	voteOnComment,
 } from "./service";
 import {
-	createRateLimitMiddleware,
-	rateLimitKeys,
+	actionRateLimitMiddleware,
+	paginationRateLimitMiddleware,
 } from "~/features/rate-limit/middleware";
 import {
 	authMiddleware,
 	optionalAuthMiddleware,
 } from "~/features/auth/middleware";
-
-const rateLimitMiddleware = createRateLimitMiddleware({
-	binding: "GENERAL",
-	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-	errorMessage: "Too many requests. Please try again after a short while.",
-});
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -43,7 +37,7 @@ function makeCursor(createdAt: Date | string | number, id: string) {
 }
 
 export const createCommentFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(createCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
@@ -62,7 +56,7 @@ export const createCommentFn = createServerFn({ method: "POST" })
 	});
 
 export const updateCommentFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(updateCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
@@ -78,7 +72,7 @@ export const updateCommentFn = createServerFn({ method: "POST" })
 	});
 
 export const deleteCommentFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(deleteCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
@@ -94,7 +88,7 @@ export const deleteCommentFn = createServerFn({ method: "POST" })
 	});
 
 export const voteCommentFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, rateLimitMiddleware])
+	.middleware([authMiddleware, actionRateLimitMiddleware])
 	.inputValidator(voteCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
@@ -110,7 +104,7 @@ export const voteCommentFn = createServerFn({ method: "POST" })
 	});
 
 export const getCommentsFn = createServerFn({ method: "GET" })
-	.middleware([optionalAuthMiddleware])
+	.middleware([optionalAuthMiddleware, paginationRateLimitMiddleware])
 	.inputValidator(getCommentsSchema)
 	.handler(async ({ data, context }) => {
 		try {

@@ -1,10 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import {
-	createRateLimitMiddleware,
-	RATE_LIMITER_BINDING,
-	rateLimitKeys,
-} from "~/features/rate-limit/middleware";
+import { generalRateLimitMiddleware } from "~/features/rate-limit/middleware";
 import { authMiddleware } from "~/features/auth/middleware";
 import {
 	getUserByUsername as getUserByUsernameService,
@@ -16,13 +12,7 @@ import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
 import { getAuth } from "~/auth/auth.server";
 
 export const validateInviteCodeFn = createServerFn({ method: "POST" })
-	.middleware([
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([generalRateLimitMiddleware])
 	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
 	.handler(async ({ data }) => {
 		try {
@@ -46,14 +36,7 @@ export const validateInviteCodeFn = createServerFn({ method: "POST" })
 	});
 
 export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
 	.handler(async ({ data, context }) => {
 		try {
@@ -69,14 +52,7 @@ export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
 	});
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
-	.middleware([
-		authMiddleware,
-		createRateLimitMiddleware({
-			binding: RATE_LIMITER_BINDING.GENERAL,
-			keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
-			errorMessage: "Too many requests. Please try again later.",
-		}),
-	])
+	.middleware([authMiddleware, generalRateLimitMiddleware])
 	.inputValidator(
 		z.preprocess(
 			(val) => {
@@ -112,6 +88,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 	});
 
 export const getUserByUsernameFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
 	.inputValidator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
@@ -133,8 +110,9 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 		}
 	});
 
-export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
-	async () => {
+export const getCurrentUserFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
+	.handler(async () => {
 		const session = await getAuth().api.getSession({
 			headers: getRequest().headers,
 			returnHeaders: true,
@@ -147,5 +125,4 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
 		}
 
 		return session.response?.user || null;
-	},
-);
+	});

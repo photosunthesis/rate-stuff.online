@@ -34,7 +34,7 @@ export const createRateLimitMiddleware = (config: {
 			});
 
 			setResponseStatus(429);
-			throw new Error("Too Many Requests");
+			throw new Error(config.errorMessage || "Too Many Requests");
 		}
 
 		return next();
@@ -70,3 +70,21 @@ export const rateLimitKeys = {
 		return rateLimitKeys.byIpAndEndpoint(request);
 	},
 };
+
+export const generalRateLimitMiddleware = createRateLimitMiddleware({
+	binding: RATE_LIMITER_BINDING.GENERAL,
+	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+	errorMessage: "Too many requests. Please try again later.",
+});
+
+export const actionRateLimitMiddleware = createRateLimitMiddleware({
+	binding: RATE_LIMITER_BINDING.GENERAL,
+	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+	errorMessage: "Too many requests. Please try again after a short while.",
+});
+
+export const paginationRateLimitMiddleware = createRateLimitMiddleware({
+	binding: RATE_LIMITER_BINDING.PAGINATION,
+	keyFn: rateLimitKeys.bySessionThenIpAndEndpoint,
+	errorMessage: "Too many requests. Please try again later.",
+});
