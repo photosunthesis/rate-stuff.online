@@ -65,6 +65,12 @@ function RouteComponent() {
 				personal and community use.
 			</p>
 
+			<h2 className="text-lg font-medium mt-4 mb-2">Eligibility</h2>
+			<p className="mb-4">
+				You must be at least 13 years old to use this service. By creating an
+				account, you represent and warrant that you meet this age requirement.
+			</p>
+
 			<h2 className="text-lg font-medium mt-4 mb-2">Accounts &amp; Content</h2>
 			<p className="mb-2">
 				You may create an account to post reviews, ratings, and images. You are
@@ -97,7 +103,7 @@ function RouteComponent() {
 				We respect the intellectual property rights of others. If you believe
 				your copyright has been infringed, please notify our designated agent at{" "}
 				<a
-					className="text-emerald-400 underline"
+					className="underline underline-offset-2"
 					href="mailto:hello@rate-stuff.online"
 				>
 					hello@rate-stuff.online
@@ -152,7 +158,7 @@ function RouteComponent() {
 			<p>
 				Questions about these Terms can be sent to the site maintainers at
 				<a
-					className="text-emerald-400 underline ml-1"
+					className="underline underline-offset-2 ml-1"
 					href="mailto:hello@rate-stuff.online"
 				>
 					hello@rate-stuff.online
@@ -161,7 +167,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 17, 2026
+				Last updated: January 23, 2026
 			</div>
 		</main>
 	);

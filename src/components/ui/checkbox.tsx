@@ -20,8 +20,8 @@ export function Checkbox({
 
 	return (
 		<div className="flex flex-col gap-1.5">
-			<div className="flex items-center gap-3">
-				<div className="relative flex items-center">
+			<div className="flex items-start gap-3">
+				<div className="relative flex items-center mt-0.5">
 					<input
 						type="checkbox"
 						id={inputId}
@@ -50,7 +50,7 @@ export function Checkbox({
 				{label && (
 					<label
 						htmlFor={inputId}
-						className="text-base font-medium text-neutral-300 cursor-pointer select-none"
+						className="text-sm text-neutral-300 cursor-pointer select-none"
 					>
 						{label}
 					</label>

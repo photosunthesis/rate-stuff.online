@@ -77,7 +77,7 @@ function RouteComponent() {
 			<ul className="list-disc pl-6 mb-4 space-y-1">
 				<li>
 					<strong>Access:</strong> Request a copy of the personal data we hold
-					about you.
+					about you by emailing us.
 				</li>
 				<li>
 					<strong>Correction:</strong> Update inaccurate or incomplete data via
@@ -85,17 +85,18 @@ function RouteComponent() {
 				</li>
 				<li>
 					<strong>Erasure:</strong> Request deletion of your account and
-					associated data ("Right to be Forgotten").
+					associated data ("Right to be Forgotten") by emailing us. We do not
+					currently offer self-service account deletion.
 				</li>
 				<li>
 					<strong>Portability:</strong> Request your data in a machine-readable
-					format.
+					format by emailing us.
 				</li>
 			</ul>
 			<p className="mb-4">
 				To exercise these rights, please email us at{" "}
 				<a
-					className="text-emerald-400 underline"
+					className="underline underline-offset-2"
 					href="mailto:hello@rate-stuff.online"
 				>
 					hello@rate-stuff.online
@@ -132,7 +133,7 @@ function RouteComponent() {
 					delivery. Cloudflare may set cookies for DDoS protection and
 					performance optimization. See{" "}
 					<a
-						className="text-emerald-400 underline"
+						className="underline underline-offset-2"
 						href="https://www.cloudflare.com/privacypolicy/"
 						target="_blank"
 						rel="noopener noreferrer"
@@ -186,7 +187,7 @@ function RouteComponent() {
 			<p>
 				If you have questions about privacy or data requests, please email us at
 				<a
-					className="text-emerald-400 underline ml-1"
+					className="underline underline-offset-2 ml-1"
 					href="mailto:hello@rate-stuff.online"
 				>
 					hello@rate-stuff.online
@@ -195,7 +196,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 17, 2026
+				Last updated: January 23, 2026
 			</div>
 		</main>
 	);

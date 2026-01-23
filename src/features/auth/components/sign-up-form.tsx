@@ -272,7 +272,7 @@ export function SignUpForm({
 								}
 								label={
 									<span className="text-neutral-400">
-										I agree to the{" "}
+										I am 13 years or older and agree to the{" "}
 										<a
 											href="/terms"
 											className="underline underline-offset-2 hover:text-neutral-200"
