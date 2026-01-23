@@ -70,3 +70,21 @@ h1, h2, h3, h4, h5, h6 {
 code {
   font-family: var(--font-mono);
 }
+
+/* 
+  Fix for iOS Safari zooming in when focusing on inputs with font-size < 16px.
+  We force font-size to 16px to prevent zoom, then scale down (15/16 = 0.9375)
+  to visually match the 15px design. Width is increased to 106.67% to compensate 
+  for the scale down.
+*/
+@media screen and (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]), 
+  textarea, 
+  select {
+    font-size: 16px !important;
+    transform: scale(0.9375);
+    transform-origin: left top;
+    width: 106.67% !important;
+    max-width: 106.67% !important;
+  }
+}
