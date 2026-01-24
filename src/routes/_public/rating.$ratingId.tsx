@@ -12,7 +12,7 @@ import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
 import { ratingQueryOptions } from "~/features/display-ratings/queries";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
-import { Image } from "~/components/ui/image";
+import { Image as UiImage } from "~/components/ui/image";
 import type { RatingWithRelations } from "~/features/display-ratings/types";
 import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
@@ -400,10 +400,11 @@ const ImagesGallery = ({
 					onClick={() => onImageClick(images[0])}
 					className="block w-full"
 				>
-					<img
+					<UiImage
 						src={images[0]}
 						alt="Rating"
-						className="block aspect-video object-cover rounded-xl w-full cursor-pointer bg-neutral-900 border border-white/5"
+						className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
+						variant="card"
 					/>
 				</button>
 			</div>
@@ -424,14 +425,15 @@ const ImagesGallery = ({
 							onClick={() => onImageClick(src)}
 							className="w-full h-full"
 						>
-							<img
+							<UiImage
 								src={src}
 								alt="Rating"
 								className={
 									idx === 0
-										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-900 border border-white/5"
-										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer bg-neutral-900 border border-white/5"
+										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer"
 								}
+								variant="card"
 							/>
 						</button>
 					</div>
@@ -452,10 +454,11 @@ const ImagesGallery = ({
 						onClick={() => onImageClick(images[0])}
 						className="w-full h-full"
 					>
-						<img
+						<UiImage
 							src={images[0]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer bg-neutral-900 border border-white/5"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+							variant="card"
 						/>
 					</button>
 				</div>
@@ -465,10 +468,11 @@ const ImagesGallery = ({
 						onClick={() => onImageClick(images[1])}
 						className="w-full h-full"
 					>
-						<img
+						<UiImage
 							src={images[1]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-900 border border-white/5"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							variant="card"
 						/>
 					</button>
 				</div>
@@ -478,10 +482,11 @@ const ImagesGallery = ({
 						onClick={() => onImageClick(images[2])}
 						className="w-full h-full"
 					>
-						<img
+						<UiImage
 							src={images[2]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer bg-neutral-900 border border-white/5"
+							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							variant="card"
 						/>
 					</button>
 				</div>
@@ -514,11 +519,11 @@ const ImagesGallery = ({
 						onClick={() => onImageClick(src)}
 						className="w-full h-full"
 					>
-						<Image
+						<UiImage
 							src={src}
 							alt="Rating"
 							variant="card"
-							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer bg-neutral-900 border border-white/5`}
+							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
 						/>
 					</button>
 				);

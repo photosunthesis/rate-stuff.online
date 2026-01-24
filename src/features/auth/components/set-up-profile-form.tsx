@@ -5,6 +5,7 @@ import { TextField } from "~/components/ui/text-field";
 import { Button } from "~/components/ui/button";
 import { FormError } from "~/components/ui/form-error";
 import { User as UserIcon, Camera, X } from "lucide-react";
+import { Image as UiImage } from "~/components/ui/image";
 
 interface Props {
 	onSubmit: (data: { avatar?: File | string; name?: string }) => Promise<void>;
@@ -161,10 +162,11 @@ export function SetUpProfileForm({
 							/>
 							<div className="w-32 h-32 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden border-2 border-neutral-700 group-hover:border-neutral-600 transition-colors">
 								{avatarPreview ? (
-									<img
+									<UiImage
 										src={avatarPreview}
 										alt="Avatar preview"
 										className="w-full h-full object-cover"
+										variant="avatar"
 									/>
 								) : (
 									<UserIcon

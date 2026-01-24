@@ -33,7 +33,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 export function Image({
 	src,
 	path,
-	variant = "raw",
+	variant = "card",
 	className,
 	alt,
 	noBorder,

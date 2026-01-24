@@ -1,5 +1,6 @@
 import { useRef, useId, useState } from "react";
 import { X, Upload } from "lucide-react";
+import { Image as UiImage } from "~/components/ui/image";
 
 interface ImageFieldProps {
 	images: (File | string)[];
@@ -102,10 +103,12 @@ export function ImageField({
 						key={`${typeof file === "string" ? file : file.name}-${index}`}
 						className="relative aspect-square rounded-lg overflow-hidden group border border-white/5 bg-neutral-900"
 					>
-						<img
+						<UiImage
 							src={typeof file === "string" ? file : URL.createObjectURL(file)}
 							alt="Preview"
 							className="w-full h-full object-cover"
+							noBorder
+							variant="card"
 						/>
 						<button
 							type="button"
