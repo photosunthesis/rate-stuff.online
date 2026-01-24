@@ -17,6 +17,7 @@ import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
+import { Route as ApiImageRouteImport } from './routes/api/image'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthedExploreRouteImport } from './routes/_authed/explore'
@@ -25,7 +26,7 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as PublicUserUsernameRouteImport } from './routes/_public/user.$username'
 import { Route as PublicStuffStuffSlugRouteImport } from './routes/_public/stuff.$stuffSlug'
 import { Route as PublicRatingRatingIdRouteImport } from './routes/_public/rating.$ratingId'
@@ -66,6 +67,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiImageUploadRoute = ApiImageUploadRouteImport.update({
   id: '/api/image-upload',
   path: '/api/image-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiImageRoute = ApiImageRouteImport.update({
+  id: '/api/image',
+  path: '/api/image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
+  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof PublicRatingRatingIdRoute
   '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
+  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/rating/$ratingId': typeof PublicRatingRatingIdRoute
   '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/_authed/explore': typeof AuthedExploreRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_authed/settings': typeof AuthedSettingsRoute
+  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/_public/rating/$ratingId': typeof PublicRatingRatingIdRoute
   '/_public/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/set-up-profile'
     | '/settings'
+    | '/api/image'
     | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/set-up-profile'
     | '/settings'
+    | '/api/image'
     | '/api/image-upload'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/_authed/explore'
     | '/_authed/set-up-profile'
     | '/_authed/settings'
+    | '/api/image'
     | '/api/image-upload'
     | '/_public/rating/$ratingId'
     | '/_public/stuff/$stuffSlug'
@@ -273,6 +285,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApiImageRoute: typeof ApiImageRoute
   ApiImageUploadRoute: typeof ApiImageUploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -333,6 +346,13 @@ declare module '@tanstack/react-router' {
       path: '/api/image-upload'
       fullPath: '/api/image-upload'
       preLoaderRoute: typeof ApiImageUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/image': {
+      id: '/api/image'
+      path: '/api/image'
+      fullPath: '/api/image'
+      preLoaderRoute: typeof ApiImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed/settings': {
@@ -491,6 +511,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApiImageRoute: ApiImageRoute,
   ApiImageUploadRoute: ApiImageUploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
