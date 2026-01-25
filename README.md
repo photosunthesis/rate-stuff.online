@@ -22,43 +22,56 @@ A tiny corner to rate stuff — quickly create, browse, and score things you fin
 - **Backend & Edge**: Cloudflare Workers
 - **Real-time**: PartyKit (WebSockets & broadcasting)
 - **Database**: PostgreSQL (via Cloudflare Hyperdrive) + Drizzle ORM
-- **Storage**: Cloudflare R2
+- **Storage**: Cloudflare R2 + ImageKit (CDN & transformations)
 - **Data Fetching**: TanStack Query
 - **Authentication**: Better Auth
 - **Package Manager**: pnpm
 
 ## Project layout 🗂️
 
-A quick tour of the repo and the modular feature-based structure.
+A quick tour of the repo and the domain-driven structure.
 
 ```
-/                         # repo root
+/                           # repo root
 ├─ src/
-│  ├─ auth/               # Better Auth client & server config
-│  ├─ components/         # global shared UI & layout primitives
-│  ├─ db/                 # Drizzle schema & database client
-│  ├─ features/           # modular feature directories
-│  │  ├─ create-rating/   # [example feature]
-│  │  │  ├─ components/   # feature-specific UI
-│  │  │  ├─ functions.ts  # server functions (RPC layer)
-│  │  │  ├─ service.ts    # backend business logic & DB calls
-│  │  │  ├─ queries.ts    # client data fetching & mutations
-│  │  │  └─ types.ts      # feature-specific types & Zod schemas
-│  │  └─ ...              # display-ratings, stuff, file-storage, etc.
-│  ├─ routes/             # TanStack Router file-based routes
-│  ├─ lib/                # core client/server helpers
-│  ├─ utils/              # global utility functions
-│  ├─ styles.css          # global styles & design system
-│  └─ router.tsx          # TanStack Router config
-├─ drizzle/               # SQL migrations and snapshots
-└─ wrangler.jsonc         # Cloudflare Workers config
+│  ├─ components/           # global shared UI
+│  │  ├─ layout/            # app shell & layout primitives
+│  │  └─ ui/                # reusable UI components
+│  ├─ db/                   # Drizzle schema & database client
+│  │  └─ schema/            # table definitions
+│  ├─ domains/              # domain-driven feature modules
+│  │  ├─ users/             # [example domain]
+│  │  │  ├─ auth/           # Better Auth client & server config
+│  │  │  ├─ components/     # domain-specific UI
+│  │  │  ├─ utils/          # domain-specific helpers
+│  │  │  ├─ functions.ts    # server functions (RPC layer)
+│  │  │  ├─ service.ts      # backend business logic & DB calls
+│  │  │  ├─ queries.ts      # client data fetching & mutations
+│  │  │  ├─ hooks.ts        # domain-specific React hooks
+│  │  │  ├─ middleware.ts   # auth & request middleware
+│  │  │  └─ types.ts        # domain types & Zod schemas
+│  │  └─ ...                # ratings, comments, stuff, explore, activity
+│  ├─ hooks/                # global React hooks
+│  ├─ infrastructure/       # cross-cutting concerns
+│  │  ├─ file-storage/      # R2 file upload handling
+│  │  └─ rate-limit/        # rate limiting utilities
+│  ├─ integrations/         # third-party integrations
+│  │  └─ tanstack-query/    # query client config
+│  ├─ party/                # PartyKit WebSocket server
+│  ├─ routes/               # TanStack Router file-based routes
+│  ├─ utils/                # global utility functions
+│  ├─ styles.css            # global styles & design system
+│  └─ router.tsx            # TanStack Router config
+├─ drizzle/                 # SQL migrations and snapshots
+└─ wrangler.jsonc           # Cloudflare Workers config
 ```
 
 ### Modular Guidelines
-- **Features**: Everything related to a specific domain (API, UI, State) stays inside its `features/` folder.
+- **Domains**: Everything related to a specific domain (API, UI, State) stays inside its `domains/` folder.
 - **Server Functions**: Use `functions.ts` to bridge the client and server with Zod validation.
 - **Backend**: Put heavy business logic and database interactions in `service.ts`.
-- **Reusable UI**: If a component is used by >1 feature, move it to `src/components/ui/`.
+- **Infrastructure**: Cross-cutting concerns like file storage and rate limiting live in `infrastructure/`.
+- **Reusable UI**: If a component is used by >1 domain, move it to `src/components/ui/`.
 
 ---
 
