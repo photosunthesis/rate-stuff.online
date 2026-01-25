@@ -6,20 +6,28 @@ export const Route = createFileRoute("/_public/privacy")({
 	head: () => {
 		const title = "Privacy Policy - Rate Stuff Online";
 		const description =
-			"Privacy policy for Rate Stuff Online — what we collect and how we use it.";
+			"Privacy policy for Rate Stuff Online — what we collect, how we use it, and your rights regarding your data.";
+		const image = "https://rate-stuff.online/web-app-manifest-512x512.png";
 
 		return {
 			meta: [
 				{ title },
 				{ name: "description", content: description },
+				{
+					name: "keywords",
+					content:
+						"privacy policy, data protection, gdpr, data privacy, rate stuff online",
+				},
 				{ name: "robots", content: "index, follow" },
 				{ property: "og:title", content: title },
 				{ property: "og:description", content: description },
 				{ property: "og:type", content: "website" },
 				{ property: "og:url", content: "https://rate-stuff.online/privacy" },
+				{ property: "og:image", content: image },
 				{ name: "twitter:card", content: "summary" },
 				{ name: "twitter:title", content: title },
 				{ name: "twitter:description", content: description },
+				{ name: "twitter:image", content: image },
 			],
 			links: [{ rel: "canonical", href: "/privacy" }],
 			scripts: [
@@ -32,6 +40,7 @@ export const Route = createFileRoute("/_public/privacy")({
 						description,
 						url: "https://rate-stuff.online/privacy",
 						dateModified: "2026-01-25",
+						image,
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",

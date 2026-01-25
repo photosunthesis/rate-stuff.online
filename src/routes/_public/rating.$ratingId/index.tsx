@@ -104,10 +104,18 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 		}
 
 		const pageUrl = `https://rate-stuff.online/rating/${params.ratingId}`;
+		const fallbackImage =
+			"https://rate-stuff.online/web-app-manifest-512x512.png";
+		const finalImage = image || fallbackImage;
+
+		const keywords = ["rating", "review", stuffName, "rate stuff online"].join(
+			", ",
+		);
 
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
 			{ name: "description", content: description },
+			{ name: "keywords", content: keywords },
 			{
 				name: "og:site_name",
 				property: "og:site_name",
@@ -121,19 +129,16 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 			},
 			{ name: "og:type", property: "og:type", content: "article" },
 			{ name: "og:url", property: "og:url", content: pageUrl },
+			{ name: "og:image", property: "og:image", content: finalImage },
 			{
 				name: "twitter:card",
 				content: image ? "summary_large_image" : "summary",
 			},
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
+			{ name: "twitter:image", content: finalImage },
 			{ name: "robots", content: "index, follow" },
 		];
-
-		if (image) {
-			metas.push({ name: "og:image", property: "og:image", content: image });
-			metas.push({ name: "twitter:image", content: image });
-		}
 
 		if (rating?.createdAt) {
 			metas.push({

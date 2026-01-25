@@ -91,9 +91,23 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 				: `View ratings and details for ${stuff.name} on Rate Stuff Online.`
 			: "Stuff on Rate Stuff Online.";
 
+		const pageUrl = `https://rate-stuff.online/stuff/${params.stuffSlug}`;
+		const finalImage = hasImages
+			? images[0]
+			: "https://rate-stuff.online/web-app-manifest-512x512.png";
+
+		const keywords = [
+			stuff?.name ?? "stuff",
+			"reviews",
+			"ratings",
+			"community opinions",
+			"rate stuff online",
+		].join(", ");
+
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
 			{ name: "description", content: description },
+			{ name: "keywords", content: keywords },
 			{
 				name: "og:site_name",
 				property: "og:site_name",
@@ -107,26 +121,26 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			},
 			{ name: "og:type", property: "og:type", content: "product" },
 			{
+				name: "og:url",
+				property: "og:url",
+				content: pageUrl,
+			},
+			{ name: "og:image", content: finalImage },
+			{
 				name: "twitter:card",
 				content: hasImages ? "summary_large_image" : "summary",
 			},
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
+			{ name: "twitter:image", content: finalImage },
 			{ name: "robots", content: "index, follow" },
 		];
-
-		if (hasImages) {
-			metas.push({ name: "og:image", content: images[0] });
-			metas.push({ name: "twitter:image", content: images[0] });
-		}
-
-		const pageUrl = `https://rate-stuff.online/stuff/${params.stuffSlug}`;
 
 		const ld: Record<string, unknown> = {
 			"@context": "https://schema.org",
 			"@type": "Product",
 			name: stuff?.name ?? undefined,
-			image: hasImages ? images : undefined,
+			image: hasImages ? images : [finalImage],
 			url: pageUrl,
 			description: description,
 		};

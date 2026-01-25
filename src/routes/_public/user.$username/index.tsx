@@ -43,9 +43,26 @@ export const Route = createFileRoute("/_public/user/$username/")({
 				} on Rate Stuff.`
 			: `View ratings and profile for @${params.username} on Rate Stuff.`;
 
+		const pageUrl = `https://rate-stuff.online/user/${params.username}`;
+		const userImage = user?.image ?? null;
+		const fallbackImage =
+			"https://rate-stuff.online/web-app-manifest-512x512.png";
+		const finalImage = userImage || fallbackImage;
+
+		const keywords = [
+			`@${params.username}`,
+			user?.name ?? "",
+			"user profile",
+			"ratings",
+			"rate stuff online",
+		]
+			.filter(Boolean)
+			.join(", ");
+
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
 			{ name: "description", content: description },
+			{ name: "keywords", content: keywords },
 			{
 				name: "og:site_name",
 				property: "og:site_name",
@@ -58,22 +75,18 @@ export const Route = createFileRoute("/_public/user/$username/")({
 				content: description,
 			},
 			{ name: "og:type", property: "og:type", content: "profile" },
+			{ name: "og:url", property: "og:url", content: pageUrl },
+			{
+				name: "og:image",
+				property: "og:image",
+				content: finalImage,
+			},
 			{ name: "twitter:card", content: "summary_large_image" },
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
+			{ name: "twitter:image", content: finalImage },
 			{ name: "robots", content: "index, follow" },
 		];
-
-		const pageUrl = `https://rate-stuff.online/user/${params.username}`;
-
-		if (user?.image) {
-			metas.push({
-				name: "og:image",
-				property: "og:image",
-				content: user.image,
-			});
-			metas.push({ name: "twitter:image", content: user.image });
-		}
 
 		const ld = {
 			"@context": "https://schema.org",
@@ -82,7 +95,7 @@ export const Route = createFileRoute("/_public/user/$username/")({
 				"@type": "Person",
 				name: user?.name ?? `@${params.username}`,
 				url: pageUrl,
-				image: user?.image ?? undefined,
+				image: finalImage,
 				sameAs: undefined,
 			},
 			name: title,

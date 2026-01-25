@@ -6,20 +6,28 @@ export const Route = createFileRoute("/_public/terms")({
 	head: () => {
 		const title = "Terms of Service - Rate Stuff Online";
 		const description =
-			"Terms of Service for using Rate Stuff Online, a small hobby project.";
+			"Terms of Service for using Rate Stuff Online, a small hobby project. Read about user eligibility, content ownership, and rules.";
+		const image = "https://rate-stuff.online/web-app-manifest-512x512.png";
 
 		return {
 			meta: [
 				{ title },
 				{ name: "description", content: description },
+				{
+					name: "keywords",
+					content:
+						"terms of service, tos, legal, rules, guidelines, rate stuff online",
+				},
 				{ name: "robots", content: "index, follow" },
 				{ property: "og:title", content: title },
 				{ property: "og:description", content: description },
 				{ property: "og:type", content: "website" },
 				{ property: "og:url", content: "https://rate-stuff.online/terms" },
+				{ property: "og:image", content: image },
 				{ name: "twitter:card", content: "summary" },
 				{ name: "twitter:title", content: title },
 				{ name: "twitter:description", content: description },
+				{ name: "twitter:image", content: image },
 			],
 			links: [{ rel: "canonical", href: "/terms" }],
 			scripts: [
@@ -32,6 +40,7 @@ export const Route = createFileRoute("/_public/terms")({
 						description,
 						url: "https://rate-stuff.online/terms",
 						dateModified: "2026-01-25",
+						image,
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",
