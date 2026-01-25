@@ -3,13 +3,14 @@ import {
 	type SearchSchemaInput,
 	useSearch,
 } from "@tanstack/react-router";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { RouteError } from "~/components/ui/feedback/route-error";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
+import { useUmami } from "@danielgtmn/umami-react";
 
 const MainFeed = lazy(() =>
 	import("~/components/layout/main-feed").then((module) => ({
@@ -114,6 +115,13 @@ function App() {
 	const tag = search.tag as string | undefined;
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const currentUser = mapToCurrentUser(user);
+	const umami = useUmami();
+
+	useEffect(() => {
+		if (tag && umami) {
+			umami.track("filter_feed", { tag });
+		}
+	}, [tag, umami]);
 
 	return (
 		<MainLayout user={currentUser} showDiscoverStrip={tag === undefined}>

@@ -543,9 +543,11 @@ const ImagesGallery = ({
 const TagsList = ({
 	tags,
 	isAuthenticated = false,
+	onTagClick,
 }: {
 	tags?: string[];
 	isAuthenticated?: boolean;
+	onTagClick?: (tag: string) => void;
 }) => {
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -560,6 +562,7 @@ const TagsList = ({
 							to="/"
 							search={{ tag }}
 							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+							onClick={() => onTagClick?.(tag)}
 						>
 							#{tag}
 						</Link>
@@ -567,7 +570,10 @@ const TagsList = ({
 						<button
 							key={tag}
 							type="button"
-							onClick={() => setIsAuthModalOpen(true)}
+							onClick={() => {
+								setIsAuthModalOpen(true);
+								onTagClick?.(tag);
+							}}
 							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 						>
 							#{tag}
@@ -592,6 +598,7 @@ function RouteComponent() {
 	const { data: ratingRes } = useSuspenseQuery(ratingQueryOptions(ratingId));
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const currentUser = mapToCurrentUser(user);
+	const umami = useUmami();
 
 	if (!ratingRes || !ratingRes.success || !ratingRes.data) return <NotFound />;
 
@@ -609,7 +616,10 @@ function RouteComponent() {
 		parsedImages = rating.images;
 	}
 
-	const handleImageClick = (src: string) => setLightboxSrc(src);
+	const handleImageClick = (src: string) => {
+		setLightboxSrc(src);
+		if (umami) umami.track("view_image");
+	};
 
 	return (
 		<>
@@ -644,7 +654,13 @@ function RouteComponent() {
 						onImageClick={handleImageClick}
 					/>
 					<ContentSection rating={ratingTyped} />
-					<TagsList tags={ratingTyped.tags} isAuthenticated={!!currentUser} />
+					<TagsList
+						tags={ratingTyped.tags}
+						isAuthenticated={!!currentUser}
+						onTagClick={(tag) => {
+							if (umami) umami.track("click_tag", { tag });
+						}}
+					/>
 					<div className="ml-10.5 mb-2 flex items-center gap-3">
 						<VoteSection rating={ratingTyped} isAuthenticated={!!currentUser} />
 						<button

@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus } from "lucide-react";
 import { useDebounce } from "~/hooks/use-debounce";
+import { useUmami } from "@danielgtmn/umami-react";
 import { useStuffSearchQuery } from "~/domains/ratings/queries/create";
 
 const useStuffSearch = (query: string) => {
 	const debouncedQuery = useDebounce(query, 300);
-	return useStuffSearchQuery(debouncedQuery);
+	return { ...useStuffSearchQuery(debouncedQuery), debouncedQuery };
 };
 
 interface StuffSelectorProps {
@@ -18,12 +19,17 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 	const inputId = useId();
 	const [searchInput, setSearchInput] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
-	const { data: searchResults, isLoading } = useStuffSearch(searchInput);
+	const {
+		data: searchResults,
+		isLoading,
+		debouncedQuery,
+	} = useStuffSearch(searchInput);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	// Prevent immediate re-opening after programmatic close (reduces flicker)
 	const suppressOpenRef = useRef(false);
 	const suppressionTimeoutRef = useRef<number | null>(null);
+	const umami = useUmami();
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -53,10 +59,19 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 		};
 	}, []);
 
+	// Track search queries (debounced)
+	useEffect(() => {
+		if (debouncedQuery && umami) {
+			umami.track("search_stuff", { query: debouncedQuery });
+		}
+	}, [debouncedQuery, umami]);
+
 	const handleSelect = (stuff: { id?: string; name: string }) => {
 		onChange(stuff);
 		setSearchInput("");
 		setIsOpen(false);
+		if (umami) umami.track("select_stuff", { name: stuff.name, id: stuff.id });
+
 		// suppress immediate re-open from programmatic UI change
 		suppressOpenRef.current = true;
 		if (suppressionTimeoutRef.current) {
@@ -73,6 +88,9 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			onChange({ name: searchInput.trim() });
 			setSearchInput("");
 			setIsOpen(false);
+			if (umami)
+				umami.track("create_stuff_intent", { name: searchInput.trim() });
+
 			// suppress immediate re-open from programmatic UI change
 			suppressOpenRef.current = true;
 			if (suppressionTimeoutRef.current) {

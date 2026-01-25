@@ -12,6 +12,7 @@ import { SignUpForm } from "~/domains/users/components/sign-up-form";
 import { authQueryOptions } from "~/domains/users/queries";
 import { registerSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
@@ -46,6 +47,7 @@ export const Route = createFileRoute("/_auth/sign-up")({
 });
 
 function RouteComponent() {
+	const umami = useUmami();
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -126,6 +128,7 @@ function RouteComponent() {
 	}) => {
 		if (isPending) return;
 		await signUpMutate(data);
+		if (umami) umami.track("signup", { method: "email" });
 	};
 
 	return (

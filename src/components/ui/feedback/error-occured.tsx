@@ -2,8 +2,22 @@ import { useNavigate } from "@tanstack/react-router";
 import { AppLogo } from "~/components/ui/misc/app-logo";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/form/button";
+import { useUmami } from "@danielgtmn/umami-react";
 
-export function ErrorOccurred() {
+interface ErrorOccurredProps {
+	error?: Error;
+	reset?: () => void;
+}
+
+export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
+	const umami = useUmami();
+
+	useEffect(() => {
+		if (umami && error) {
+			umami.track("app_error", { message: error.message });
+		}
+	}, [umami, error]);
+
 	useEffect(() => {
 		document.title = "(°□°;)";
 
@@ -54,18 +68,37 @@ export function ErrorOccurred() {
 
 	return (
 		<div className="flex items-center justify-center min-h-screen bg-neutral-950">
-			<div className="text-center px-4">
+			<div className="text-center px-4 max-w-lg mx-auto">
 				<div className="flex items-center justify-center gap-2 mb-4">
 					<h1 className="text-5xl text-white font-semibold">500</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
-					Something went wrong, but we're on it. Try again shortly.
+				<p className="text-neutral-500 text-base mx-auto leading-[1.6] mb-4">
+					{error?.message ||
+						"Something went wrong, but we're on it. Try again shortly."}
 				</p>
-				<div className="mt-4">
+
+				{process.env.NODE_ENV === "development" && error?.stack && (
+					<div className="mb-6 p-4 bg-red-950/30 border border-red-900/50 rounded-md text-left overflow-auto max-h-48">
+						<code className="text-xs text-red-200 font-mono whitespace-pre-wrap">
+							{error.stack}
+						</code>
+					</div>
+				)}
+
+				<div className="flex items-center justify-center gap-3">
+					{reset && (
+						<Button
+							variant="primary"
+							className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
+							onClick={reset}
+						>
+							Try again
+						</Button>
+					)}
 					<Button
 						variant="secondary"
-						className="w-auto! inline-flex px-3 py-1 text-base rounded-md justify-center whitespace-nowrap"
+						className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
 						Go to homepage

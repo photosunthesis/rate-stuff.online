@@ -10,6 +10,7 @@ import { AuthModal } from "~/domains/users/components/auth-modal";
 import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
 import { getTimeAgo } from "~/utils/datetime";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -37,6 +38,7 @@ export const RatingCard = memo(function RatingCard({
 	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
 	const timeAgo = getTimeAgo(rating.createdAt);
+	const umami = useUmami();
 
 	let parsedImages: string[] = [];
 	if (typeof rating.images === "string") {
@@ -283,7 +285,10 @@ export const RatingCard = memo(function RatingCard({
 								key={tag}
 								to="/"
 								search={{ tag }}
-								onClick={(e) => e.stopPropagation()}
+								onClick={(e) => {
+									e.stopPropagation();
+									if (umami) umami.track("click_tag", { tag, context: "feed" });
+								}}
 								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 							>
 								#{tag}
@@ -295,6 +300,7 @@ export const RatingCard = memo(function RatingCard({
 								onClick={(e) => {
 									e.stopPropagation();
 									setIsAuthModalOpen(true);
+									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
 								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 							>

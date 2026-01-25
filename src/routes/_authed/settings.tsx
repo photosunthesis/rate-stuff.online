@@ -8,6 +8,7 @@ import { LogOut, UserPen } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
 import { MainLayout } from "~/components/layout/main-layout";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_authed/settings")({
 	component: SettingsPage,
@@ -23,6 +24,7 @@ function SettingsPage() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const [signOut] = useSignOut();
+	const umami = useUmami();
 
 	if (!user) return null;
 
@@ -37,7 +39,10 @@ function SettingsPage() {
 				title="Ready to sign out?"
 				description="After signing out, you can sign back in anytime."
 				confirmLabel="Sign out"
-				onConfirm={signOut}
+				onConfirm={() => {
+					signOut();
+					if (umami) umami.track("sign_out");
+				}}
 			/>
 
 			<div className="w-full flex flex-col h-full">

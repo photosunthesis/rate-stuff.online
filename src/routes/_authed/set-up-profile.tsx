@@ -9,6 +9,7 @@ import { SetUpProfileForm } from "~/domains/users/components/set-up-profile-form
 import { uploadAvatarFn } from "~/domains/users/functions";
 import { authQueryOptions } from "~/domains/users/queries";
 import { withTimeout } from "~/utils/timeout";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,
@@ -30,6 +31,7 @@ function RouteComponent() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const { redirect } = Route.useSearch();
 	const { refetch } = authClient.useSession();
+	const umami = useUmami();
 
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
@@ -84,6 +86,12 @@ function RouteComponent() {
 			});
 
 			if (error) throw error;
+
+			if (umami)
+				umami.track("profile_update", {
+					hasAvatar: !!(uploadedUrl || payload.image),
+					hasName: !!payload.name,
+				});
 
 			await queryClient.invalidateQueries({
 				queryKey: authQueryOptions().queryKey,

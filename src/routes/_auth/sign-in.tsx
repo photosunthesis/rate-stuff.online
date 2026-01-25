@@ -7,6 +7,7 @@ import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { SignInForm } from "~/domains/users/components/sign-in-form";
 import { authQueryOptions } from "~/domains/users/queries";
 import { isEmail } from "~/utils/strings";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/_auth/sign-in")({
 });
 
 function RouteComponent() {
+	const umami = useUmami();
 	const redirectUrl = Route.useRouteContext().redirectUrl;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -109,6 +111,11 @@ function RouteComponent() {
 			password: data.password,
 			redirectUrl,
 		});
+
+		if (umami)
+			umami.track("login", {
+				method: isEmail(data.identifier) ? "email" : "username",
+			});
 	};
 
 	return (
