@@ -12,7 +12,6 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
 		returnHeaders: true,
 	});
 
-	// Forward any Set-Cookie headers to the client, e.g. for session/cache refresh
 	const cookies = session.headers?.getSetCookie();
 
 	if (cookies?.length) {

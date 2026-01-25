@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { authMiddleware } from "~/domains/users/middleware";
+import {
+	authMiddleware,
+	optionalAuthMiddleware,
+} from "~/domains/users/middleware";
 import {
 	getActivities,
 	getUnreadCount,
@@ -52,10 +55,14 @@ export const getActivitiesFn = createServerFn({ method: "GET" })
 	});
 
 export const getUnreadCountFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware, generalRateLimitMiddleware])
+	.middleware([optionalAuthMiddleware, generalRateLimitMiddleware])
 	.inputValidator(z.object({ userId: z.string() }))
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
+			if (!context.user) {
+				return { success: true, data: 0 };
+			}
+
 			const count = await getUnreadCount(data.userId);
 			return { success: true, data: count };
 		} catch (error) {

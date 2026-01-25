@@ -129,12 +129,7 @@ function UserRatingsList({
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			(entries) => {
-				if (
-					entries[0].isIntersecting &&
-					hasNextPage &&
-					!isFetchingNextPage &&
-					isAuthenticated
-				) {
+				if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
 					fetchNextPage?.();
 				}
 			},
@@ -150,7 +145,7 @@ function UserRatingsList({
 				observer.unobserve(observerTarget.current);
 			}
 		};
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const allRatings = useMemo(
 		() => data?.pages.flatMap((p) => p.data || []) || [],

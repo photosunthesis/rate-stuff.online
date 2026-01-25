@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authed/settings")({
 function SettingsPage() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
-	const { signOut } = useSignOut();
+	const [signOut] = useSignOut();
 
 	if (!user) return null;
 

@@ -80,8 +80,7 @@ export function StuffRatingsList({
 					entries[0].isIntersecting &&
 					hasNextPage &&
 					!isFetchingNextPage &&
-					fetchNextPage &&
-					isAuthenticated
+					fetchNextPage
 				) {
 					fetchNextPage();
 				}
@@ -97,7 +96,7 @@ export function StuffRatingsList({
 				observer.unobserve(observerTarget.current);
 			}
 		};
-	}, [hasNextPage, isFetchingNextPage, fetchNextPage, isAuthenticated]);
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const [showSkeleton, setShowSkeleton] = useState(true);
 	const [skeletonFading, setSkeletonFading] = useState(false);

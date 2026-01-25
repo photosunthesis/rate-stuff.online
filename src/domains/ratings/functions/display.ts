@@ -78,13 +78,32 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 
 export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 	.middleware([paginationRateLimitMiddleware])
-	.inputValidator(z.object({ tag: z.string().optional() }))
+	.inputValidator(
+		z.object({
+			limit: z.number().default(10),
+			cursor: z.string().optional(),
+			tag: z.string().optional(),
+		}),
+	)
 	.handler(async ({ data }) => {
 		try {
 			const userId = await getUserId();
-			const ratings = await getFeedRatings(12, undefined, data.tag, userId);
+			const cursor = parseCursor(data.cursor);
+			const ratings = await getFeedRatings(
+				data.limit,
+				cursor,
+				data.tag,
+				userId,
+			);
 
-			return { success: true, data: ratings, nextCursor: undefined };
+			let nextCursor: string | undefined;
+
+			if (ratings.length === data.limit) {
+				const last = ratings[ratings.length - 1];
+				nextCursor = makeCursor(last.createdAt, last.id);
+			}
+
+			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
 			return {
 				success: false,

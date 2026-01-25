@@ -101,8 +101,6 @@ export function useFeedRatings(
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
 			if (lastPage.success === false) return undefined;
-			// Disable pagination for unauthenticated users (only first page)
-			if (!isAuthenticated) return undefined;
 			return lastPage.nextCursor;
 		},
 
@@ -116,7 +114,6 @@ export function usePublicUserRatings(
 	isAuthenticated: boolean = true,
 ) {
 	const getRatings = useServerFn(getRatingsByUsernameFn);
-	const effectiveLimit = isAuthenticated ? limit : Math.min(limit, 10);
 	const key = username
 		? [...ratingKeys.user(username), isAuthenticated ? "auth" : "public"]
 		: [
@@ -132,7 +129,7 @@ export function usePublicUserRatings(
 			const res = (await getRatings({
 				data: {
 					username: username ?? "",
-					limit: effectiveLimit,
+					limit,
 					cursor: pageParam,
 				},
 			})) as PageResult;
@@ -143,8 +140,6 @@ export function usePublicUserRatings(
 		getNextPageParam: (lastPage: PageResult) => {
 			if (!lastPage) return undefined;
 			if (lastPage.success === false) return undefined;
-			// Disable pagination for unauthenticated users (only first page)
-			if (!isAuthenticated) return undefined;
 			return lastPage.nextCursor;
 		},
 

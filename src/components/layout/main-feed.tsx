@@ -23,10 +23,10 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 	const canGoBack = useCanGoBack();
 
 	useEffect(() => {
-		if (inView && hasNextPage && isAuthenticated) {
+		if (inView && hasNextPage) {
 			fetchNextPage();
 		}
-	}, [inView, hasNextPage, isAuthenticated, fetchNextPage]);
+	}, [inView, hasNextPage, fetchNextPage]);
 
 	const ratings = useMemo(
 		() => data?.pages.flatMap((page) => (page.success ? page.data : [])) || [],
@@ -113,29 +113,20 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 				})}
 			</div>
 
-			{isAuthenticated ? (
-				isFetchingNextPage ? (
-					<div className="-mx-4 border-t border-neutral-800">
-						<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
-							Loading more...
-						</div>
+			{isFetchingNextPage ? (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+						Loading more...
 					</div>
-				) : hasNextPage ? (
-					<div className="-mx-4 border-t border-neutral-800">
-						<div ref={ref} className="h-4" />
-					</div>
-				) : (
-					<div className="-mx-4 border-t border-neutral-800">
-						<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
-							All caught up \(￣▽￣)/
-						</div>
-					</div>
-				)
+				</div>
+			) : hasNextPage ? (
+				<div className="-mx-4 border-t border-neutral-800">
+					<div ref={ref} className="h-4" />
+				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
 					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
-						The scores get spicier inside. <br />
-						Join in! (☆ω☆)
+						All caught up \(￣▽￣)/
 					</div>
 				</div>
 			)}

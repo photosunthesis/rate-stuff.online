@@ -43,7 +43,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;
 	const [header] = useState(() => getHeader());
 	const location = useLocation();
-	const { signOut } = useSignOut();
+	const [signOut] = useSignOut();
 	const showFloatingButton =
 		location.pathname === "/" || location.pathname === "/explore";
 	const { data: unreadCount } = useSuspenseQuery(
