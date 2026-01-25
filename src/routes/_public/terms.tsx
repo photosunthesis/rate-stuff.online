@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_public/terms")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/terms",
-						dateModified: "2026-01-17",
+						dateModified: "2026-01-25",
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",
@@ -62,13 +62,15 @@ function RouteComponent() {
 			<p className="mb-4">
 				Rate Stuff Online is a small hobby project. We (the site maintainers)
 				operate and maintain the service. This site is provided "as-is" for
-				personal and community use.
+				personal and community use. Registration is currently invite-only.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Eligibility</h2>
 			<p className="mb-4">
 				You must be at least 13 years old to use this service. By creating an
 				account, you represent and warrant that you meet this age requirement.
+				If we discover a user is under 13, we will immediately terminate their
+				account and delete their data as required by law.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Accounts &amp; Content</h2>
@@ -94,8 +96,21 @@ function RouteComponent() {
 			<p className="mb-4">
 				We reserve the right to remove content or terminate accounts that
 				violate these terms, or for technical/security reasons, at our
-				discretion. We will make reasonable efforts to provide notice when
-				possible.
+				discretion. Account termination decisions are final. We are not
+				obligated to provide reasons.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Reporting Violations</h2>
+			<p className="mb-4">
+				Users can report violations by emailing{" "}
+				<a
+					className="underline underline-offset-2"
+					href="mailto:hello@rate-stuff.online"
+				>
+					hello@rate-stuff.online
+				</a>
+				. We will investigate reports within 7 business days and remove content
+				that violates these Terms or applicable law.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">DMCA & Copyright Policy</h2>
@@ -167,7 +182,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 23, 2026
+				Last updated: January 25, 2026
 			</div>
 		</main>
 	);

@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_public/privacy")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/privacy",
-						dateModified: "2026-01-17",
+						dateModified: "2026-01-25",
 						publisher: {
 							"@type": "Organization",
 							name: "Rate Stuff Online",
@@ -71,8 +71,9 @@ function RouteComponent() {
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Your Rights</h2>
 			<p className="mb-2">
-				Depending on your location (e.g., GDPR, CCPA), you may have specific
-				rights regarding your data:
+				This policy complies with Republic Act No. 10173 (Data Privacy Act of
+				2012). Philippine residents and users in other jurisdictions (e.g.,
+				GDPR, CCPA) have the following rights regarding their data:
 			</p>
 			<ul className="list-disc pl-6 mb-4 space-y-1">
 				<li>
@@ -85,8 +86,9 @@ function RouteComponent() {
 				</li>
 				<li>
 					<strong>Erasure:</strong> Request deletion of your account and
-					associated data ("Right to be Forgotten") by emailing us. We do not
-					currently offer self-service account deletion.
+					associated data ("Right to be Forgotten") by emailing us. We will
+					process deletion requests within 15 business days and confirm via
+					email when complete.
 				</li>
 				<li>
 					<strong>Portability:</strong> Request your data in a machine-readable
@@ -101,8 +103,12 @@ function RouteComponent() {
 				>
 					hello@rate-stuff.online
 				</a>
-				. We will respond to data requests within 30 days of receipt. Please
-				allow additional time for technical processing of deletions.
+				. We will respond to data requests within 15 business days of receipt.
+			</p>
+			<p className="mb-4">
+				For users outside the Philippines: We operate from the Philippines and
+				process data there. By using this service, you consent to Philippine
+				data protection standards.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">How we use information</h2>
@@ -130,8 +136,9 @@ function RouteComponent() {
 			<ul className="list-disc pl-6 mb-4 space-y-1">
 				<li>
 					<strong>Cloudflare:</strong> For hosting, security, and global content
-					delivery. Cloudflare may set cookies for DDoS protection and
-					performance optimization. See{" "}
+					delivery. Cloudflare may set cookies (<code>__cf_bm</code>,{" "}
+					<code>cf_clearance</code>) for security and performance. These are
+					necessary for the site to function and cannot be disabled. See{" "}
 					<a
 						className="underline underline-offset-2"
 						href="https://www.cloudflare.com/privacypolicy/"
@@ -177,6 +184,12 @@ function RouteComponent() {
 				applicable law).
 			</p>
 
+			<h2 className="text-lg font-medium mt-4 mb-2">Data Retention</h2>
+			<p className="mb-4">
+				We retain account data as long as your account is active. Deleted
+				accounts are purged within 30 days.
+			</p>
+
 			<h2 className="text-lg font-medium mt-4 mb-2">Changes</h2>
 			<p className="mb-4">
 				We may update this policy occasionally; please check it from time to
@@ -196,7 +209,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 23, 2026
+				Last updated: January 25, 2026
 			</div>
 		</main>
 	);
