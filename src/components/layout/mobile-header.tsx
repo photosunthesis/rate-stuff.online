@@ -1,4 +1,4 @@
-import AppLogo from "~/components/ui/app-logo";
+import AppLogo from "~/components/ui/misc/app-logo";
 import { Link } from "@tanstack/react-router";
 import type { PublicUser } from "~/domains/users/types";
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { StuffWithAggregates } from "../types";
-import { Lightbox } from "~/components/ui/lightbox";
+import { Lightbox } from "~/components/ui/modal/lightbox";
 import { MessageSquareQuote } from "lucide-react";
-import { Image } from "~/components/ui/image";
+import { Image } from "~/components/ui/content/image";
 
 import { getRatingEmoji } from "~/domains/ratings/utils";
 

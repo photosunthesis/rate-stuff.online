@@ -1,7 +1,7 @@
 import { MobileHeader } from "./mobile-header";
 import { LeftSidebar } from "./left-sidebar";
 import { RightSidebar } from "./right-sidebar";
-import { DiscoverStrip } from "./discover-strip";
+import { DiscoverStrip } from "../ui/content/discover-strip";
 import type { PublicUser } from "~/domains/users/types";
 import usePartySocket from "partysocket/react";
 import { useQueryClient } from "@tanstack/react-query";

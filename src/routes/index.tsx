@@ -4,8 +4,8 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
-import { RouteError } from "~/components/ui/route-error";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { RouteError } from "~/components/ui/feedback/route-error";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";

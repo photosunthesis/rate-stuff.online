@@ -6,8 +6,8 @@ import {
 	ModalTitle,
 	ModalDescription,
 	ModalFooter,
-} from "~/components/ui/modal";
-import { Button } from "~/components/ui/button";
+} from "~/components/ui/modal/modal";
+import { Button } from "~/components/ui/form/button";
 
 interface ConfirmModalProps {
 	isOpen: boolean;

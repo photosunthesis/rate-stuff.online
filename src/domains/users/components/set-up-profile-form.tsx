@@ -1,11 +1,11 @@
 import { useState, useId, useEffect, useRef } from "react";
 
 import { useForm } from "@tanstack/react-form";
-import { TextField } from "~/components/ui/text-field";
-import { Button } from "~/components/ui/button";
-import { FormError } from "~/components/ui/form-error";
+import { TextField } from "~/components/ui/form/text-field";
+import { Button } from "~/components/ui/form/button";
+import { FormError } from "~/components/ui/form/form-error";
 import { User as UserIcon, Camera, X } from "lucide-react";
-import { Image as UiImage } from "~/components/ui/image";
+import { Image as UiImage } from "~/components/ui/content/image";
 
 interface Props {
 	onSubmit: (data: { avatar?: File | string; name?: string }) => Promise<void>;

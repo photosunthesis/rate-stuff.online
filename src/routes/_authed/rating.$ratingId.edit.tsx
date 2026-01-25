@@ -16,7 +16,7 @@ import {
 } from "~/domains/ratings/queries/create";
 import { useState } from "react";
 import { withTimeout } from "~/utils/timeout";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/feedback/not-found";
 
 export const Route = createFileRoute("/_authed/rating/$ratingId/edit")({
 	beforeLoad: async ({ params, context }) => {

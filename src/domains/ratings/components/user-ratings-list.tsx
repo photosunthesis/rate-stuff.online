@@ -1,7 +1,7 @@
 import { useUserRatings } from "~/domains/ratings/queries/display";
-import { RatingCard } from "../../../components/ui/rating-card";
+import { RatingCard } from "../../../components/ui/content/rating-card";
 import { useEffect, useRef, useMemo } from "react";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 
 export function UserRatingsList() {
 	const {

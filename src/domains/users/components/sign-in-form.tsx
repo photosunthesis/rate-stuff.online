@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { TextField } from "~/components/ui/text-field";
-import { Button } from "~/components/ui/button";
-import { FormError } from "~/components/ui/form-error";
+import { TextField } from "~/components/ui/form/text-field";
+import { Button } from "~/components/ui/form/button";
+import { FormError } from "~/components/ui/form/form-error";
 import { loginSchema } from "../types";
 
 interface SignInFormProps {

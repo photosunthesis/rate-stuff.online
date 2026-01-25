@@ -1,6 +1,6 @@
 import { User as UserIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { Image } from "./image";
+import { Image } from "../content/image";
 
 interface AvatarProps {
 	src: string | null;

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Avatar } from "~/components/ui/avatar";
-import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { getPlainTextFromContent } from "~/utils/rich-text";
 import { getTimeAgo } from "~/utils/datetime";
 import { CommentVoteSection } from "./comment-vote-section";
@@ -15,8 +15,8 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalTitle,
-} from "~/components/ui/modal";
-import { Button } from "~/components/ui/button";
+} from "~/components/ui/modal/modal";
+import { Button } from "~/components/ui/form/button";
 import { CommentForm } from "./comment-form";
 import { useDeleteComment, useUpdateComment } from "../queries";
 

@@ -1,10 +1,10 @@
 import { useState, memo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
-import { Avatar } from "~/components/ui/avatar";
-import { VoteSection } from "~/components/ui/vote-section";
-import { Image } from "~/components/ui/image";
-import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { VoteSection } from "~/components/ui/content/vote-section";
+import { Image } from "~/components/ui/content/image";
+import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { getPlainTextFromContent } from "~/utils/rich-text";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 import { formatCompactNumber } from "~/utils/numbers";

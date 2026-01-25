@@ -1,6 +1,6 @@
-import { RatingCard } from "~/components/ui/rating-card";
+import { RatingCard } from "~/components/ui/content/rating-card";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import type { StuffRating } from "../types";
 import type { PublicUser } from "~/domains/users/types";
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";

@@ -1,5 +1,5 @@
-import { RatingCard } from "~/components/ui/rating-card";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { RatingCard } from "~/components/ui/content/rating-card";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { useFeedRatings } from "~/domains/ratings/queries/display";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";

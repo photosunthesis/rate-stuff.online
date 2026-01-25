@@ -1,11 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
-import { AppLogo } from "~/components/ui/app-logo";
+import { AppLogo } from "~/components/ui/misc/app-logo";
 import { useEffect } from "react";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui/form/button";
 
-export function NotFound() {
+export function ErrorOccurred() {
 	useEffect(() => {
-		document.title = "(ó﹏ò｡)";
+		document.title = "(°□°;)";
 
 		let metaDescription = document.querySelector(
 			'meta[name="description"]',
@@ -15,8 +15,7 @@ export function NotFound() {
 			metaDescription.name = "description";
 			document.head.appendChild(metaDescription);
 		}
-		metaDescription.content =
-			"The page you're looking for doesn't exist or has been moved.";
+		metaDescription.content = "Something broke. Try again after a few minutes.";
 
 		let metaRobots = document.querySelector(
 			'meta[name="robots"]',
@@ -37,7 +36,7 @@ export function NotFound() {
 			ogTitle.setAttribute("property", "og:title");
 			document.head.appendChild(ogTitle);
 		}
-		ogTitle.content = "Error 404 - Page Not Found";
+		ogTitle.content = "Error 500 - Something Went Wrong";
 
 		// Set og:description
 		let ogDescription = document.querySelector(
@@ -48,7 +47,7 @@ export function NotFound() {
 			ogDescription.setAttribute("property", "og:description");
 			document.head.appendChild(ogDescription);
 		}
-		ogDescription.content = "Oops! The page you're looking for doesn't exist.";
+		ogDescription.content = "Something went wrong. Please try again later.";
 	}, []);
 
 	const navigate = useNavigate();
@@ -57,12 +56,11 @@ export function NotFound() {
 		<div className="flex items-center justify-center min-h-screen bg-neutral-950">
 			<div className="text-center px-4">
 				<div className="flex items-center justify-center gap-2 mb-4">
-					<h1 className="text-5xl text-white font-semibold">404</h1>
+					<h1 className="text-5xl text-white font-semibold">500</h1>
 					<AppLogo size={40} />
 				</div>
 				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
-					We searched everywhere. This page is either invalid or just doesn't
-					exist.
+					Something went wrong, but we're on it. Try again shortly.
 				</p>
 				<div className="mt-4">
 					<Button

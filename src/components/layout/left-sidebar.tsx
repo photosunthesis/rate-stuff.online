@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import AppLogo from "~/components/ui/app-logo";
+import AppLogo from "~/components/ui/misc/app-logo";
 import {
 	Home,
 	Compass,
@@ -10,7 +10,7 @@ import {
 	PencilLine,
 } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
-import { ConfirmModal } from "~/components/ui/confirm-modal";
+import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
 import type { PublicUser } from "~/domains/users/types";
 import { useSignOut } from "~/domains/users/hooks";
 import { unreadActivityCountQueryOptions } from "~/domains/activity/queries";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Modal, useModal } from "~/components/ui/modal";
+import { Modal, useModal } from "~/components/ui/modal/modal";
 import { X } from "lucide-react";
-import { Image } from "~/components/ui/image";
+import { Image } from "~/components/ui/content/image";
 
 interface LightboxProps {
 	src: string | null;

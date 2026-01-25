@@ -1,9 +1,9 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/feedback/not-found";
 import { StuffHeader } from "~/domains/stuff/components/stuff-header";
 import { Suspense, lazy } from "react";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 
 const StuffRatingsList = lazy(() =>
 	import("~/domains/stuff/components/stuff-ratings-list").then((module) => ({

@@ -1,16 +1,16 @@
 import { useForm } from "@tanstack/react-form";
 import { useState, useRef, useEffect, useId } from "react";
 import { useLocalStorage } from "~/hooks/use-local-storage";
-import { TextField } from "~/components/ui/text-field";
-import { Button } from "~/components/ui/button";
-import { FormError } from "~/components/ui/form-error";
+import { TextField } from "~/components/ui/form/text-field";
+import { Button } from "~/components/ui/form/button";
+import { FormError } from "~/components/ui/form/form-error";
 import { createRatingSchema } from "~/domains/ratings/types/create";
 import { StuffSelector } from "~/domains/ratings/components/stuff-selector";
 import { TagSelector } from "~/domains/ratings/components/tag-selector";
 import { ImageField } from "~/domains/ratings/components/image-field";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
-import { CompactMarkdownEditor } from "~/components/ui/compact-markdown-editor";
+import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
 
 interface CreateRatingFormProps {
 	onSubmit: (

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { TextField } from "~/components/ui/text-field";
-import { Button } from "~/components/ui/button";
-import { Checkbox } from "~/components/ui/checkbox";
-import { FormError } from "~/components/ui/form-error";
+import { TextField } from "~/components/ui/form/text-field";
+import { Button } from "~/components/ui/form/button";
+import { Checkbox } from "~/components/ui/form/checkbox";
+import { FormError } from "~/components/ui/form/form-error";
 import { registerSchema } from "../types";
 
 interface SignUpFormProps {

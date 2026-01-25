@@ -6,20 +6,20 @@ import {
 	useCanGoBack,
 	notFound,
 } from "@tanstack/react-router";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/feedback/not-found";
 import { useState, useId, useRef, useEffect } from "react";
-import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
+import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { ratingQueryOptions } from "~/domains/ratings/queries/display";
-import { Lightbox } from "~/components/ui/lightbox";
-import { Avatar } from "~/components/ui/avatar";
-import { Image as UiImage } from "~/components/ui/image";
+import { Lightbox } from "~/components/ui/modal/lightbox";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { Image as UiImage } from "~/components/ui/content/image";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
 import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 
-import { VoteSection } from "~/components/ui/vote-section";
+import { VoteSection } from "~/components/ui/content/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
 import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
@@ -34,8 +34,8 @@ import {
 	ModalDescription,
 	ModalFooter,
 	ModalClose,
-} from "~/components/ui/modal";
-import { Button } from "~/components/ui/button";
+} from "~/components/ui/modal/modal";
+import { Button } from "~/components/ui/form/button";
 import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 
 const excerptFromMarkdown = (md: string, max = 160) => {

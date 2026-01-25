@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCreateComment } from "../queries";
 import { AuthModal } from "~/domains/users/components/auth-modal";
-import { CompactMarkdownEditor } from "~/components/ui/compact-markdown-editor";
+import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
 
 interface CommentFormProps {
 	ratingId: string;

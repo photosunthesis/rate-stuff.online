@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Avatar } from "~/components/ui/avatar";
-import { Image } from "~/components/ui/image";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { Image } from "~/components/ui/content/image";
 
 interface VisualRatingCardProps {
 	rating: {

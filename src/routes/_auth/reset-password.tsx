@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import authClient from "~/domains/users/auth/client";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/feedback/not-found";
 import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { ResetPasswordForm } from "~/domains/users/components/reset-password-form";
 import { resetPasswordSchema } from "~/domains/users/types";

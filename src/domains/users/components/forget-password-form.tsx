@@ -1,8 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { FormError } from "~/components/ui/form-error";
-import { TextField } from "~/components/ui/text-field";
+import { Button } from "~/components/ui/form/button";
+import { FormError } from "~/components/ui/form/form-error";
+import { TextField } from "~/components/ui/form/text-field";
 import { forgotPasswordSchema } from "../types";
 
 interface ForgotPasswordFormProps {

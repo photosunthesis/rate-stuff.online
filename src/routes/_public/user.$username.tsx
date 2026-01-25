@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { NotFound } from "~/components/ui/not-found";
-import { Avatar } from "~/components/ui/avatar";
-import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
+import { NotFound } from "~/components/ui/feedback/not-found";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { usePublicUserRatings } from "~/domains/ratings/queries/display";
-import { RatingCard } from "~/components/ui/rating-card";
+import { RatingCard } from "~/components/ui/content/rating-card";
 import { useEffect, useRef, useMemo } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";

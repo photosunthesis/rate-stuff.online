@@ -2,9 +2,9 @@ import { createRouter } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import * as Sentry from "@sentry/tanstackstart-react";
 import { routeTree } from "~/routeTree.gen";
-import { NotFound } from "~/components/ui/not-found";
+import { NotFound } from "~/components/ui/feedback/not-found";
 import { QueryClient } from "@tanstack/react-query";
-import { ErrorOccurred } from "./components/ui/error-occured";
+import { ErrorOccurred } from "./components/ui/feedback/error-occured";
 
 export function getRouter() {
 	const queryClient = new QueryClient({

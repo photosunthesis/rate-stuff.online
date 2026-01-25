@@ -1,4 +1,4 @@
-import { Modal, ModalContent } from "~/components/ui/modal";
+import { Modal, ModalContent } from "~/components/ui/modal/modal";
 import { CreateRatingForm } from "~/domains/ratings/components/create-rating-form";
 import { useState } from "react";
 import {

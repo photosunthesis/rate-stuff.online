@@ -1,6 +1,6 @@
 import { useRef, useId, useState } from "react";
 import { X, Upload } from "lucide-react";
-import { Image as UiImage } from "~/components/ui/image";
+import { Image as UiImage } from "~/components/ui/content/image";
 
 interface ImageFieldProps {
 	images: (File | string)[];

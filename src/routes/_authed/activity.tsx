@@ -20,8 +20,8 @@ import {
 } from "~/domains/activity/functions";
 import { useEffect } from "react";
 import { getTimeAgo, getDateGroupLabel } from "~/utils/datetime";
-import { Avatar } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
+import { Avatar } from "~/components/ui/misc/avatar";
+import { Button } from "~/components/ui/form/button";
 import { CheckCheck } from "lucide-react";
 import type { activities } from "~/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
