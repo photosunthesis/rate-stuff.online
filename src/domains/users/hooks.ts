@@ -5,22 +5,20 @@ import * as Sentry from "@sentry/tanstackstart-react";
 export function useSignOut() {
 	const queryClient = useQueryClient();
 
-	const handleSignOut = async () => {
+	const signOut = async () => {
 		try {
-			queryClient.clear();
+			queryClient.cancelQueries({ fetchStatus: "fetching" });
 			localStorage.removeItem("create-rating-stuff");
 			localStorage.removeItem("create-rating-tags");
 			localStorage.removeItem("create-rating-score");
 			localStorage.removeItem("create-rating-content");
 			await authClient.signOut();
-
-			window.location.href = "/";
+			queryClient.clear();
+			window.location.replace("/");
 		} catch (error) {
 			Sentry.captureException(error);
 		}
 	};
 
-	return {
-		signOut: handleSignOut,
-	};
+	return [signOut];
 }
