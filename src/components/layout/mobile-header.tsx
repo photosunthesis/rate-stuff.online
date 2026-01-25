@@ -1,6 +1,6 @@
 import AppLogo from "~/components/ui/app-logo";
 import { Link } from "@tanstack/react-router";
-import type { PublicUser } from "~/features/auth/types";
+import type { PublicUser } from "~/domains/users/types";
 
 export function MobileHeader({ user }: { user?: PublicUser }) {
 	if (user != null) return null;

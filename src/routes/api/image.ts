@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getImageKit } from "~/features/file-storage/service";
-import { optionalAuthMiddleware } from "~/features/auth/middleware";
+import { getImageKit } from "~/infrastructure/file-storage/service";
+import { optionalAuthMiddleware } from "~/domains/users/middleware";
 
 const PRESETS = {
 	avatar: {

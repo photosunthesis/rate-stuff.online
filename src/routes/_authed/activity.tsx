@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/features/auth/queries";
+import { authQueryOptions } from "~/domains/users/queries";
 import {
 	useSuspenseInfiniteQuery,
 	useSuspenseQuery,
@@ -9,15 +9,15 @@ import {
 } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useMemo } from "react";
-import { mapToCurrentUser } from "~/utils/user-mapping";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import {
 	activityListQueryOptions,
 	activityKeys,
-} from "~/features/activity/queries";
+} from "~/domains/activity/queries";
 import {
 	markActivitiesAsReadFn,
 	markActivityAsReadFn,
-} from "~/features/activity/functions";
+} from "~/domains/activity/functions";
 import { useEffect } from "react";
 import { getTimeAgo, getDateGroupLabel } from "~/utils/datetime";
 import { Avatar } from "~/components/ui/avatar";

@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/auth/auth.client";
+import authClient from "~/domains/users/auth/client";
 import { NotFound } from "~/components/ui/not-found";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { ResetPasswordForm } from "~/features/auth/components/reset-password-form";
-import { resetPasswordSchema } from "~/features/auth/types";
+import { AuthLayout } from "~/domains/users/components/auth-layout";
+import { ResetPasswordForm } from "~/domains/users/components/reset-password-form";
+import { resetPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/reset-password")({

@@ -1,9 +1,9 @@
 import { RatingCard } from "~/components/ui/rating-card";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import { useFeedRatings } from "~/features/display-ratings/queries";
+import { useFeedRatings } from "~/domains/ratings/queries/display";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
-import type { PublicUser } from "~/features/auth/types";
+import type { PublicUser } from "~/domains/users/types";
 import { ArrowLeft } from "lucide-react";
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
 

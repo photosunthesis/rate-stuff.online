@@ -1,4 +1,4 @@
-import { imagesBucketUrl } from "~/features/file-storage/service";
+import { imagesBucketUrl } from "~/infrastructure/file-storage/service";
 
 const PRESETS = {
 	avatar: "avatar",

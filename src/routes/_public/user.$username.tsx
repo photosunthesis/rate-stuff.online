@@ -2,14 +2,14 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { NotFound } from "~/components/ui/not-found";
 import { Avatar } from "~/components/ui/avatar";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
-import { usePublicUserRatings } from "~/features/display-ratings/queries";
+import { usePublicUserRatings } from "~/domains/ratings/queries/display";
 import { RatingCard } from "~/components/ui/rating-card";
 import { useEffect, useRef, useMemo } from "react";
 import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
-import { userQueryOptions, authQueryOptions } from "~/features/auth/queries";
+import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { mapToCurrentUser } from "~/utils/user-mapping";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 export const Route = createFileRoute("/_public/user/$username")({
 	beforeLoad: async ({ params, context }) => {

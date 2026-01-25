@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/features/auth/queries";
+import { authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { mapToCurrentUser } from "~/utils/user-mapping";
-import { useVisualRatings } from "~/features/explore/queries";
-import { VisualRatingCard } from "~/features/explore/components/visual-rating-card";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
+import { useVisualRatings } from "~/domains/explore/queries";
+import { VisualRatingCard } from "~/domains/explore/components/visual-rating-card";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 import { TrendingUp } from "lucide-react";
 

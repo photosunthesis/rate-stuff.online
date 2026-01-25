@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/auth/auth.client";
+import authClient from "~/domains/users/auth/client";
 import { withTimeout } from "~/utils/timeout";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { SignInForm } from "~/features/auth/components/sign-in-form";
-import { authQueryOptions } from "~/features/auth/queries";
+import { AuthLayout } from "~/domains/users/components/auth-layout";
+import { SignInForm } from "~/domains/users/components/sign-in-form";
+import { authQueryOptions } from "~/domains/users/queries";
 import { isEmail } from "~/utils/strings";
 
 export const Route = createFileRoute("/_auth/sign-in")({

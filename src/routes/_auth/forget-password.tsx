@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/auth/auth.client";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { ForgotPasswordForm } from "~/features/auth/components/forget-password-form";
-import { forgotPasswordSchema } from "~/features/auth/types";
+import authClient from "~/domains/users/auth/client";
+import { AuthLayout } from "~/domains/users/components/auth-layout";
+import { ForgotPasswordForm } from "~/domains/users/components/forget-password-form";
+import { forgotPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/forget-password")({

@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/avatar";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/queries";
-import { mapToCurrentUser } from "~/utils/user-mapping";
-import { useSignOut } from "~/hooks/use-sign-out";
+import { authQueryOptions } from "~/domains/users/queries";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
+import { useSignOut } from "~/domains/users/hooks";
 import { LogOut, UserPen } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "~/components/ui/confirm-modal";

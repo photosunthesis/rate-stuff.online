@@ -5,15 +5,15 @@ import {
 	useCanGoBack,
 } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { ratingQueryOptions } from "~/features/display-ratings/queries";
-import { authQueryOptions } from "~/features/auth/queries";
-import { EditRatingForm } from "~/features/create-rating/components/edit-rating-form";
+import { ratingQueryOptions } from "~/domains/ratings/queries/display";
+import { authQueryOptions } from "~/domains/users/queries";
+import { EditRatingForm } from "~/domains/ratings/components/edit-rating-form";
 import { MainLayout } from "~/components/layout/main-layout";
-import { mapToCurrentUser } from "~/utils/user-mapping";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import {
 	useUpdateRatingMutation,
 	useUploadImageMutation,
-} from "~/features/create-rating/queries";
+} from "~/domains/ratings/queries/create";
 import { useState } from "react";
 import { withTimeout } from "~/utils/timeout";
 import { NotFound } from "~/components/ui/not-found";

@@ -1,19 +1,19 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { MainLayout } from "~/components/layout/main-layout";
 import { NotFound } from "~/components/ui/not-found";
-import { StuffHeader } from "~/features/stuff/components/stuff-header";
+import { StuffHeader } from "~/domains/stuff/components/stuff-header";
 import { Suspense, lazy } from "react";
 import { RatingCardSkeleton } from "~/components/ui/rating-card-skeleton";
 
 const StuffRatingsList = lazy(() =>
-	import("~/features/stuff/components/stuff-ratings-list").then((module) => ({
+	import("~/domains/stuff/components/stuff-ratings-list").then((module) => ({
 		default: module.StuffRatingsList,
 	})),
 );
-import { stuffQueryOptions } from "~/features/stuff/queries";
+import { stuffQueryOptions } from "~/domains/stuff/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/queries";
-import { mapToCurrentUser } from "~/utils/user-mapping";
+import { authQueryOptions } from "~/domains/users/queries";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 export const Route = createFileRoute("/_public/stuff/$stuffSlug")({
 	beforeLoad: async ({ params, context }) => {

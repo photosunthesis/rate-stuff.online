@@ -13,10 +13,10 @@ export const AppLogo = ({ isWhite = false, size }: AppLogoProps) => {
 	return (
 		<Link to="/">
 			<img
-					src={isWhite ? logoWhiteUrl : logoUrl}
-					alt="Rate Stuff Online logo"
+				src={isWhite ? logoWhiteUrl : logoUrl}
+				alt="Rate Stuff Online logo"
 				{...sizeProps}
-				/>
+			/>
 		</Link>
 	);
 };

@@ -9,11 +9,11 @@ import {
 	LogOut,
 	PencilLine,
 } from "lucide-react";
-import { CreateRatingModal } from "~/features/create-rating/components/create-rating-modal";
+import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/confirm-modal";
-import type { PublicUser } from "~/features/auth/types";
-import { useSignOut } from "~/hooks/use-sign-out";
-import { unreadActivityCountQueryOptions } from "~/features/activity/queries";
+import type { PublicUser } from "~/domains/users/types";
+import { useSignOut } from "~/domains/users/hooks";
+import { unreadActivityCountQueryOptions } from "~/domains/activity/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 const getHeader = () => {

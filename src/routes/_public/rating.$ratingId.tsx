@@ -9,21 +9,21 @@ import {
 import { NotFound } from "~/components/ui/not-found";
 import { useState, useId, useRef, useEffect } from "react";
 import { RichTextRenderer } from "~/components/ui/rich-text-renderer";
-import { ratingQueryOptions } from "~/features/display-ratings/queries";
+import { ratingQueryOptions } from "~/domains/ratings/queries/display";
 import { Lightbox } from "~/components/ui/lightbox";
 import { Avatar } from "~/components/ui/avatar";
 import { Image as UiImage } from "~/components/ui/image";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import type { RatingWithRelations } from "~/domains/ratings/types/display";
 import { getTimeAgo } from "~/utils/datetime";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { AuthModal } from "~/domains/users/components/auth-modal";
 
 import { VoteSection } from "~/components/ui/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/queries";
-import { mapToCurrentUser } from "~/utils/user-mapping";
-import { CommentsSection } from "~/features/comments/components/comments-section";
+import { authQueryOptions } from "~/domains/users/queries";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
+import { CommentsSection } from "~/domains/comments/components/comments-section";
 import { MessageSquare } from "lucide-react";
 import { formatCompactNumber } from "~/utils/numbers";
 import {
@@ -36,7 +36,7 @@ import {
 	ModalClose,
 } from "~/components/ui/modal";
 import { Button } from "~/components/ui/button";
-import { useDeleteRatingMutation } from "~/features/create-rating/queries";
+import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";

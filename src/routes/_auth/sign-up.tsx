@@ -2,15 +2,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import authClient from "~/auth/auth.client";
+import authClient from "~/domains/users/auth/client";
 import {
 	markInviteCodeAsUsedFn,
 	validateInviteCodeFn,
-} from "~/features/auth/functions";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { SignUpForm } from "~/features/auth/components/sign-up-form";
-import { authQueryOptions } from "~/features/auth/queries";
-import { registerSchema } from "~/features/auth/types";
+} from "~/domains/users/functions";
+import { AuthLayout } from "~/domains/users/components/auth-layout";
+import { SignUpForm } from "~/domains/users/components/sign-up-form";
+import { authQueryOptions } from "~/domains/users/queries";
+import { registerSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_auth/sign-up")({

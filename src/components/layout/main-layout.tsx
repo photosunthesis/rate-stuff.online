@@ -2,10 +2,10 @@ import { MobileHeader } from "./mobile-header";
 import { LeftSidebar } from "./left-sidebar";
 import { RightSidebar } from "./right-sidebar";
 import { DiscoverStrip } from "./discover-strip";
-import type { PublicUser } from "~/features/auth/types";
+import type { PublicUser } from "~/domains/users/types";
 import usePartySocket from "partysocket/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { activityKeys } from "~/features/activity/queries";
+import { activityKeys } from "~/domains/activity/queries";
 
 export function MainLayout({
 	user,

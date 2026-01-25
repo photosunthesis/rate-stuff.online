@@ -10,7 +10,7 @@ import UmamiAnalytics from "@danielgtmn/umami-react";
 import {
 	authQueryOptions,
 	type AuthQueryResult,
-} from "~/features/auth/queries";
+} from "~/domains/users/queries";
 import { IKContext } from "imagekitio-react";
 
 export const Route = createRootRouteWithContext<{

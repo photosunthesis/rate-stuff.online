@@ -3,11 +3,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { z } from "zod";
-import authClient from "~/auth/auth.client";
-import { AuthLayout } from "~/features/auth/components/auth-layout";
-import { SetUpProfileForm } from "~/features/auth/components/set-up-profile-form";
-import { uploadAvatarFn } from "~/features/auth/functions";
-import { authQueryOptions } from "~/features/auth/queries";
+import authClient from "~/domains/users/auth/client";
+import { AuthLayout } from "~/domains/users/components/auth-layout";
+import { SetUpProfileForm } from "~/domains/users/components/set-up-profile-form";
+import { uploadAvatarFn } from "~/domains/users/functions";
+import { authQueryOptions } from "~/domains/users/queries";
 import { withTimeout } from "~/utils/timeout";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({

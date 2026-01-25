@@ -4,9 +4,9 @@ import { TrendingUp } from "lucide-react";
 import {
 	useRecentTags,
 	useRecentStuff,
-} from "~/features/display-ratings/queries";
-import type { PublicUser } from "~/features/auth/types";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+} from "~/domains/ratings/queries/display";
+import type { PublicUser } from "~/domains/users/types";
+import { AuthModal } from "~/domains/users/components/auth-modal";
 
 export function DiscoverStrip({ user }: { user?: PublicUser }) {
 	const isAuthenticated = user != null;

@@ -5,9 +5,9 @@ import {
 	uploadFile,
 	MAX_FILE_SIZE,
 	ALLOWED_CONTENT_TYPES,
-} from "~/features/file-storage/service";
+} from "~/infrastructure/file-storage/service";
 import { env } from "cloudflare:workers";
-import { authMiddleware } from "~/features/auth/middleware";
+import { authMiddleware } from "~/domains/users/middleware";
 
 export const Route = createFileRoute("/api/image-upload")({
 	server: {

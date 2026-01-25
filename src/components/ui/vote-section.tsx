@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ArrowBigUp, ArrowBigDown } from "lucide-react";
-import { useVoteRating } from "~/features/vote-rating/queries";
+import { useVoteRating } from "~/domains/ratings/queries/vote";
 import { formatCompactNumber } from "~/utils/numbers";
 import { useUmami } from "@danielgtmn/umami-react";
-import { AuthModal } from "~/features/auth/components/auth-modal";
-import type { RatingWithRelations } from "~/features/display-ratings/types";
+import { AuthModal } from "~/domains/users/components/auth-modal";
+import type { RatingWithRelations } from "~/domains/ratings/types/display";
 
 interface VoteSectionProps {
 	rating: RatingWithRelations;
@@ -57,7 +57,7 @@ function VoteButton({
 }
 
 import { useQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/queries";
+import { authQueryOptions } from "~/domains/users/queries";
 
 export function VoteSection({
 	rating,
