@@ -11,7 +11,7 @@ import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
-export const Route = createFileRoute("/_public/user/$username")({
+export const Route = createFileRoute("/_public/user/$username/")({
 	beforeLoad: async ({ params, context }) => {
 		const username = params.username;
 

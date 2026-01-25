@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/misc/app-logo";
 
-export const Route = createFileRoute("/privacy")({
+export const Route = createFileRoute("/_public/privacy")({
 	component: RouteComponent,
 	head: () => {
 		const title = "Privacy Policy - Rate Stuff Online";
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/privacy")({
 					}),
 				},
 			],
-		};
+		}
 	},
 });
 
@@ -199,5 +199,5 @@ function RouteComponent() {
 				Last updated: January 23, 2026
 			</div>
 		</main>
-	);
+	)
 }

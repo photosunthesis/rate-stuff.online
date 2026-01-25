@@ -9,15 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PublicRouteRouteImport } from './routes/_public/route'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
 import { Route as ApiImageRouteImport } from './routes/api/image'
+import { Route as PublicTermsRouteImport } from './routes/_public/terms'
+import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthedExploreRouteImport } from './routes/_authed/explore'
@@ -27,24 +27,14 @@ import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
 import { Route as AuthForgetPasswordRouteImport } from './routes/_auth/forget-password'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
-import { Route as PublicUserUsernameRouteImport } from './routes/_public/user.$username'
-import { Route as PublicStuffStuffSlugRouteImport } from './routes/_public/stuff.$stuffSlug'
-import { Route as PublicRatingRatingIdRouteImport } from './routes/_public/rating.$ratingId'
+import { Route as PublicUserUsernameIndexRouteImport } from './routes/_public/user.$username/index'
+import { Route as PublicStuffStuffSlugIndexRouteImport } from './routes/_public/stuff.$stuffSlug/index'
+import { Route as PublicRatingRatingIdIndexRouteImport } from './routes/_public/rating.$ratingId/index'
 import { Route as AuthedRatingRatingIdEditRouteImport } from './routes/_authed/rating.$ratingId.edit'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicRouteRoute = PublicRouteRouteImport.update({
@@ -73,6 +63,16 @@ const ApiImageRoute = ApiImageRouteImport.update({
   id: '/api/image',
   path: '/api/image',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicTermsRoute = PublicTermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
   id: '/settings',
@@ -119,21 +119,23 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PublicUserUsernameRoute = PublicUserUsernameRouteImport.update({
-  id: '/user/$username',
-  path: '/user/$username',
+const PublicUserUsernameIndexRoute = PublicUserUsernameIndexRouteImport.update({
+  id: '/user/$username/',
+  path: '/user/$username/',
   getParentRoute: () => PublicRouteRoute,
 } as any)
-const PublicStuffStuffSlugRoute = PublicStuffStuffSlugRouteImport.update({
-  id: '/stuff/$stuffSlug',
-  path: '/stuff/$stuffSlug',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
-const PublicRatingRatingIdRoute = PublicRatingRatingIdRouteImport.update({
-  id: '/rating/$ratingId',
-  path: '/rating/$ratingId',
-  getParentRoute: () => PublicRouteRoute,
-} as any)
+const PublicStuffStuffSlugIndexRoute =
+  PublicStuffStuffSlugIndexRouteImport.update({
+    id: '/stuff/$stuffSlug/',
+    path: '/stuff/$stuffSlug/',
+    getParentRoute: () => PublicRouteRoute,
+  } as any)
+const PublicRatingRatingIdIndexRoute =
+  PublicRatingRatingIdIndexRouteImport.update({
+    id: '/rating/$ratingId/',
+    path: '/rating/$ratingId/',
+    getParentRoute: () => PublicRouteRoute,
+  } as any)
 const AuthedRatingRatingIdEditRoute =
   AuthedRatingRatingIdEditRouteImport.update({
     id: '/rating/$ratingId/edit',
@@ -143,9 +145,7 @@ const AuthedRatingRatingIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms': typeof TermsRoute
   '/forget-password': typeof AuthForgetPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -154,19 +154,19 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/rating/$ratingId': typeof PublicRatingRatingIdRoute
-  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
-  '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
+  '/rating/$ratingId': typeof PublicRatingRatingIdIndexRoute
+  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugIndexRoute
+  '/user/$username': typeof PublicUserUsernameIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms': typeof TermsRoute
   '/forget-password': typeof AuthForgetPasswordRoute
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
@@ -175,13 +175,15 @@ export interface FileRoutesByTo {
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
+  '/privacy': typeof PublicPrivacyRoute
+  '/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/rating/$ratingId': typeof PublicRatingRatingIdRoute
-  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
-  '/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
+  '/rating/$ratingId': typeof PublicRatingRatingIdIndexRoute
+  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugIndexRoute
+  '/user/$username': typeof PublicUserUsernameIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,9 +191,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_authed': typeof AuthedRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
-  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/terms': typeof TermsRoute
   '/_auth/forget-password': typeof AuthForgetPasswordRoute
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -200,21 +200,21 @@ export interface FileRoutesById {
   '/_authed/explore': typeof AuthedExploreRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_authed/settings': typeof AuthedSettingsRoute
+  '/_public/privacy': typeof PublicPrivacyRoute
+  '/_public/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
-  '/_public/rating/$ratingId': typeof PublicRatingRatingIdRoute
-  '/_public/stuff/$stuffSlug': typeof PublicStuffStuffSlugRoute
-  '/_public/user/$username': typeof PublicUserUsernameRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authed/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
+  '/_public/rating/$ratingId/': typeof PublicRatingRatingIdIndexRoute
+  '/_public/stuff/$stuffSlug/': typeof PublicStuffStuffSlugIndexRoute
+  '/_public/user/$username/': typeof PublicUserUsernameIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/privacy'
     | '/sitemap.xml'
-    | '/terms'
     | '/forget-password'
     | '/reset-password'
     | '/sign-in'
@@ -223,19 +223,19 @@ export interface FileRouteTypes {
     | '/explore'
     | '/set-up-profile'
     | '/settings'
+    | '/privacy'
+    | '/terms'
     | '/api/image'
     | '/api/image-upload'
+    | '/api/auth/$'
+    | '/rating/$ratingId/edit'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
     | '/user/$username'
-    | '/api/auth/$'
-    | '/rating/$ratingId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/privacy'
     | '/sitemap.xml'
-    | '/terms'
     | '/forget-password'
     | '/reset-password'
     | '/sign-in'
@@ -244,22 +244,22 @@ export interface FileRouteTypes {
     | '/explore'
     | '/set-up-profile'
     | '/settings'
+    | '/privacy'
+    | '/terms'
     | '/api/image'
     | '/api/image-upload'
+    | '/api/auth/$'
+    | '/rating/$ratingId/edit'
     | '/rating/$ratingId'
     | '/stuff/$stuffSlug'
     | '/user/$username'
-    | '/api/auth/$'
-    | '/rating/$ratingId/edit'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_authed'
     | '/_public'
-    | '/privacy'
     | '/sitemap.xml'
-    | '/terms'
     | '/_auth/forget-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
@@ -268,13 +268,15 @@ export interface FileRouteTypes {
     | '/_authed/explore'
     | '/_authed/set-up-profile'
     | '/_authed/settings'
+    | '/_public/privacy'
+    | '/_public/terms'
     | '/api/image'
     | '/api/image-upload'
-    | '/_public/rating/$ratingId'
-    | '/_public/stuff/$stuffSlug'
-    | '/_public/user/$username'
     | '/api/auth/$'
     | '/_authed/rating/$ratingId/edit'
+    | '/_public/rating/$ratingId/'
+    | '/_public/stuff/$stuffSlug/'
+    | '/_public/user/$username/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -282,9 +284,7 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
-  PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TermsRoute: typeof TermsRoute
   ApiImageRoute: typeof ApiImageRoute
   ApiImageUploadRoute: typeof ApiImageUploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -292,25 +292,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public': {
@@ -354,6 +340,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/image'
       preLoaderRoute: typeof ApiImageRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_public/terms': {
+      id: '/_public/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof PublicTermsRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PublicPrivacyRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
     '/_authed/settings': {
       id: '/_authed/settings'
@@ -418,25 +418,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_public/user/$username': {
-      id: '/_public/user/$username'
+    '/_public/user/$username/': {
+      id: '/_public/user/$username/'
       path: '/user/$username'
       fullPath: '/user/$username'
-      preLoaderRoute: typeof PublicUserUsernameRouteImport
+      preLoaderRoute: typeof PublicUserUsernameIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }
-    '/_public/stuff/$stuffSlug': {
-      id: '/_public/stuff/$stuffSlug'
+    '/_public/stuff/$stuffSlug/': {
+      id: '/_public/stuff/$stuffSlug/'
       path: '/stuff/$stuffSlug'
       fullPath: '/stuff/$stuffSlug'
-      preLoaderRoute: typeof PublicStuffStuffSlugRouteImport
+      preLoaderRoute: typeof PublicStuffStuffSlugIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }
-    '/_public/rating/$ratingId': {
-      id: '/_public/rating/$ratingId'
+    '/_public/rating/$ratingId/': {
+      id: '/_public/rating/$ratingId/'
       path: '/rating/$ratingId'
       fullPath: '/rating/$ratingId'
-      preLoaderRoute: typeof PublicRatingRatingIdRouteImport
+      preLoaderRoute: typeof PublicRatingRatingIdIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_authed/rating/$ratingId/edit': {
@@ -488,15 +488,19 @@ const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
 )
 
 interface PublicRouteRouteChildren {
-  PublicRatingRatingIdRoute: typeof PublicRatingRatingIdRoute
-  PublicStuffStuffSlugRoute: typeof PublicStuffStuffSlugRoute
-  PublicUserUsernameRoute: typeof PublicUserUsernameRoute
+  PublicPrivacyRoute: typeof PublicPrivacyRoute
+  PublicTermsRoute: typeof PublicTermsRoute
+  PublicRatingRatingIdIndexRoute: typeof PublicRatingRatingIdIndexRoute
+  PublicStuffStuffSlugIndexRoute: typeof PublicStuffStuffSlugIndexRoute
+  PublicUserUsernameIndexRoute: typeof PublicUserUsernameIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
-  PublicRatingRatingIdRoute: PublicRatingRatingIdRoute,
-  PublicStuffStuffSlugRoute: PublicStuffStuffSlugRoute,
-  PublicUserUsernameRoute: PublicUserUsernameRoute,
+  PublicPrivacyRoute: PublicPrivacyRoute,
+  PublicTermsRoute: PublicTermsRoute,
+  PublicRatingRatingIdIndexRoute: PublicRatingRatingIdIndexRoute,
+  PublicStuffStuffSlugIndexRoute: PublicStuffStuffSlugIndexRoute,
+  PublicUserUsernameIndexRoute: PublicUserUsernameIndexRoute,
 }
 
 const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
@@ -508,9 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AuthedRouteRoute: AuthedRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
-  PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TermsRoute: TermsRoute,
   ApiImageRoute: ApiImageRoute,
   ApiImageUploadRoute: ApiImageUploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

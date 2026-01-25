@@ -51,7 +51,7 @@ const excerptFromMarkdown = (md: string, max = 160) => {
 	return text.length > max ? `${text.slice(0, max - 1).trim()}…` : text;
 };
 
-export const Route = createFileRoute("/_public/rating/$ratingId")({
+export const Route = createFileRoute("/_public/rating/$ratingId/")({
 	beforeLoad: async ({ params, context }) => {
 		const ratingId = params.ratingId;
 
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 
 		const rating = await context.queryClient.ensureQueryData(
 			ratingQueryOptions(ratingId),
-		);
+		)
 
 		if (!rating || !rating.success) {
 			throw notFound();
@@ -72,7 +72,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 	head: ({ params, match }) => {
 		const cached = match.context.queryClient.getQueryData(
 			ratingQueryOptions(params.ratingId).queryKey,
-		);
+		)
 
 		const rating = cached?.success ? cached.data : null;
 		const stuffName = rating?.stuff?.name ?? "Rating";
@@ -127,7 +127,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
 			{ name: "robots", content: "index, follow" },
-		];
+		]
 
 		if (image) {
 			metas.push({ name: "og:image", property: "og:image", content: image });
@@ -139,7 +139,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 				name: "article:published_time",
 				property: "article:published_time",
 				content: new Date(rating.createdAt).toISOString(),
-			});
+			})
 		}
 
 		const scripts: { type: string; children: string }[] = [];
@@ -175,27 +175,27 @@ export const Route = createFileRoute("/_public/rating/$ratingId")({
 					url: "https://rate-stuff.online",
 				},
 				image: image,
-			};
+			}
 
 			if (rating.stuff) {
 				ldJson.itemReviewed = {
 					"@type": "Thing",
 					name: rating.stuff.name,
 					url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
-				};
+				}
 			}
 
 			scripts.push({
 				type: "application/ld+json",
 				children: JSON.stringify(ldJson),
-			});
+			})
 		}
 
 		return {
 			meta: metas,
 			links: [{ rel: "canonical", href: `/rating/${params.ratingId}` }],
 			scripts,
-		};
+		}
 	},
 });
 
@@ -220,7 +220,7 @@ const RatingHeader = ({
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
 				setIsMenuOpen(false);
 			}
-		};
+		}
 
 		if (isMenuOpen) {
 			document.addEventListener("mousedown", handleClickOutside);
@@ -228,13 +228,13 @@ const RatingHeader = ({
 
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
-		};
+		}
 	}, [isMenuOpen]);
 
 	const handleDelete = async () => {
 		await deleteMutation.mutateAsync({ ratingId: rating.id });
 		setIsDeleteModalOpen(false);
-	};
+	}
 
 	return (
 		<div className="flex items-start gap-3">
@@ -290,7 +290,7 @@ const RatingHeader = ({
 					<button
 						type="button"
 						onClick={(e) => {
-							e.stopPropagation();
+							e.stopPropagation()
 							setIsMenuOpen(!isMenuOpen);
 						}}
 						className="p-1.5 text-neutral-400 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
@@ -312,8 +312,8 @@ const RatingHeader = ({
 							<button
 								type="button"
 								onClick={() => {
-									setIsMenuOpen(false);
-									setIsDeleteModalOpen(true);
+									setIsMenuOpen(false)
+									setIsDeleteModalOpen(true)
 								}}
 								className="flex items-center gap-2 px-3 py-2 text-base text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
 							>
@@ -360,7 +360,7 @@ const RatingHeader = ({
 				</ModalContent>
 			</Modal>
 		</div>
-	);
+	)
 };
 
 const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
@@ -370,7 +370,7 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 				<h3 className="text-2xl font-semibold text-white">{rating.score}/10</h3>
 			</div>
 		</div>
-	);
+	)
 };
 
 const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
@@ -381,7 +381,7 @@ const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 				className="[&_p]:mt-3 [&_p]:mb-0 [&_p]:leading-normal"
 			/>
 		</div>
-	);
+	)
 };
 
 const ImagesGallery = ({
@@ -408,7 +408,7 @@ const ImagesGallery = ({
 					/>
 				</button>
 			</div>
-		);
+		)
 	}
 
 	if (images.length === 2) {
@@ -439,7 +439,7 @@ const ImagesGallery = ({
 					</div>
 				))}
 			</div>
-		);
+		)
 	}
 
 	if (images.length === 3) {
@@ -491,7 +491,7 @@ const ImagesGallery = ({
 					</button>
 				</div>
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -501,16 +501,16 @@ const ImagesGallery = ({
 				switch (idx) {
 					case 0:
 						cornerClass = "rounded-xl rounded-br-sm";
-						break;
+						break
 					case 1:
 						cornerClass = "rounded-xl rounded-bl-sm";
-						break;
+						break
 					case 2:
 						cornerClass = "rounded-xl rounded-tr-sm";
-						break;
+						break
 					case 3:
 						cornerClass = "rounded-xl rounded-tl-sm";
-						break;
+						break
 				}
 				return (
 					<button
@@ -526,10 +526,10 @@ const ImagesGallery = ({
 							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
 						/>
 					</button>
-				);
+				)
 			})}
 		</div>
-	);
+	)
 };
 
 const TagsList = ({
@@ -572,7 +572,7 @@ const TagsList = ({
 				onClose={() => setIsAuthModalOpen(false)}
 			/>
 		</>
-	);
+	)
 };
 
 function RouteComponent() {
@@ -612,9 +612,9 @@ function RouteComponent() {
 							type="button"
 							className="flex items-center justify-center p-2 rounded-xl text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
 							onClick={(e) => {
-								e.stopPropagation();
+								e.stopPropagation()
 								if (canGoBack) {
-									router.history.back();
+									router.history.back()
 								} else {
 									router.navigate({ to: "/" });
 								}
@@ -669,5 +669,5 @@ function RouteComponent() {
 				alt={`${rating.stuff?.name ?? "Rating"} - ${rating.score}/10`}
 			/>
 		</>
-	);
+	)
 }
