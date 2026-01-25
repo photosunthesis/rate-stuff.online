@@ -19,6 +19,7 @@ import {
 import { Button } from "~/components/ui/form/button";
 import { CommentForm } from "./comment-form";
 import { useDeleteComment, useUpdateComment } from "../queries";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface CommentItemProps {
 	comment: typeof comments.$inferSelect & {
@@ -41,6 +42,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const { mutate: updateComment } = useUpdateComment();
 	const { mutate: deleteComment, isPending: isDeletePending } =
 		useDeleteComment();
+	const umami = useUmami();
 
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +83,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 			{
 				onSuccess: () => {
 					setIsDeleteModalOpen(false);
+					if (umami) umami.track("delete_comment");
 				},
 			},
 		);

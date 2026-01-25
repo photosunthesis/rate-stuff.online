@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_public/terms")({
 					}),
 				},
 			],
-		}
+		};
 	},
 });
 
@@ -170,5 +170,5 @@ function RouteComponent() {
 				Last updated: January 23, 2026
 			</div>
 		</main>
-	)
+	);
 }

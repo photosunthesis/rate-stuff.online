@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 
 		const stuff = await context.queryClient.ensureQueryData(
 			stuffQueryOptions(slug),
-		)
+		);
 
 		if (!stuff) throw notFound();
 
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 	head: ({ params, match }) => {
 		const cachedRaw = match.context.queryClient.getQueryData(
 			stuffQueryOptions(params.stuffSlug).queryKey,
-		)
+		);
 
 		let cached: {
 			id?: string;
@@ -47,20 +47,20 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			const maybeWrapper = cachedRaw as Record<string, unknown>;
 			if ("data" in maybeWrapper && typeof maybeWrapper.data === "object") {
 				cached = maybeWrapper.data as {
-					id?: string
-					name?: string
+					id?: string;
+					name?: string;
 					images?: string[];
 					averageRating?: number;
 					ratingCount?: number;
-				}
+				};
 			} else {
 				cached = maybeWrapper as {
-					id?: string
-					name?: string
+					id?: string;
+					name?: string;
 					images?: string[];
 					averageRating?: number;
 					ratingCount?: number;
-				}
+				};
 			}
 		}
 
@@ -71,17 +71,17 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 
 		const images = Array.isArray(stuff?.images)
 			? (stuff.images as string[])
-			: []
+			: [];
 		const hasImages = images.length > 0;
 
 		const ratingCount =
 			typeof stuff?.ratingCount === "number"
 				? (stuff?.ratingCount as number)
-				: undefined
+				: undefined;
 		const averageRating =
 			typeof stuff?.averageRating === "number"
 				? (stuff?.averageRating as number)
-				: undefined
+				: undefined;
 
 		const description = stuff?.name
 			? averageRating != null && ratingCount != null
@@ -113,7 +113,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
 			{ name: "robots", content: "index, follow" },
-		]
+		];
 
 		if (hasImages) {
 			metas.push({ name: "og:image", content: images[0] });
@@ -129,21 +129,21 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			image: hasImages ? images : undefined,
 			url: pageUrl,
 			description: description,
-		}
+		};
 
 		if (averageRating != null && ratingCount != null && ratingCount > 0) {
 			ld.aggregateRating = {
 				"@type": "AggregateRating",
 				ratingValue: averageRating.toFixed(2),
 				ratingCount: ratingCount,
-			}
+			};
 		}
 
 		return {
 			meta: metas,
 			links: [{ rel: "canonical", href: `/stuff/${params.stuffSlug}` }],
 			scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }],
-		}
+		};
 	},
 });
 
@@ -158,11 +158,11 @@ function RouteComponent() {
 		(stuff as unknown as { images?: unknown })?.images,
 	)
 		? ((stuff as { images?: string[] }).images ?? [])
-		: []
+		: [];
 	const safeStuff = {
 		...stuff,
 		images: imagesForSafe,
-	}
+	};
 
 	if (!Array.isArray(safeStuff.images)) {
 		safeStuff.images = [];
@@ -189,5 +189,5 @@ function RouteComponent() {
 				<StuffRatingsList slug={slug} user={currentUser} />
 			</Suspense>
 		</MainLayout>
-	)
+	);
 }

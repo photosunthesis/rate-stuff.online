@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCreateComment } from "../queries";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface CommentFormProps {
 	ratingId: string;
@@ -35,6 +36,7 @@ export function CommentForm({
 	const isAuthenticated = !!currentUser;
 	const isPending = isCreatePending;
 	const [isFocused, setIsFocused] = useState(false);
+	const umami = useUmami();
 
 	const handleSubmit = () => {
 		if (!isAuthenticated) {
@@ -46,6 +48,7 @@ export function CommentForm({
 
 		if (isEditing && onSubmit) {
 			onSubmit(content);
+			if (umami) umami.track("edit_comment");
 			return;
 		}
 
@@ -54,6 +57,7 @@ export function CommentForm({
 			{
 				onSuccess: () => {
 					setContent("");
+					if (umami) umami.track("create_comment");
 				},
 			},
 		);

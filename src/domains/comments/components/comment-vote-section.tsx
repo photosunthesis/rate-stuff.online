@@ -3,6 +3,7 @@ import { ArrowBigUp, ArrowBigDown } from "lucide-react";
 import { useVoteComment } from "../queries";
 import { formatCompactNumber } from "~/utils/numbers";
 import { AuthModal } from "~/domains/users/components/auth-modal";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface CommentVoteSectionProps {
 	commentId: string;
@@ -68,6 +69,7 @@ export function CommentVoteSection({
 }: CommentVoteSectionProps) {
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 	const { mutate: vote } = useVoteComment();
+	const umami = useUmami();
 
 	// Local state for optimistic updates
 	const [userVote, setUserVote] = useState(initialUserVote);
@@ -102,6 +104,12 @@ export function CommentVoteSection({
 
 		// Fire in background
 		vote({ commentId, type });
+
+		if (umami) {
+			umami.track("vote_comment", {
+				type: newVote,
+			});
+		}
 	};
 
 	return (

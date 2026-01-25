@@ -111,7 +111,6 @@ export function VoteSection({
 		if (umami) {
 			umami.track("vote", {
 				type: newVote,
-				ratingId: rating.id,
 			});
 		}
 	};
