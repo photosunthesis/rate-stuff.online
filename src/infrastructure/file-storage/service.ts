@@ -13,30 +13,32 @@ export const ALLOWED_CONTENT_TYPES = [
 	"image/heif",
 ];
 
-export const uploadFile = async (
-	r2Bucket: R2Bucket,
-	key: string,
-	file: File | Blob | string | ArrayBuffer | ArrayBufferView,
-	options?: { type?: string },
-) => {
-	const bucket = r2Bucket;
-	let body = file;
+export const uploadFile = createServerOnlyFn(
+	async (
+		r2Bucket: R2Bucket,
+		key: string,
+		file: File | Blob | string | ArrayBuffer | ArrayBufferView,
+		options?: { type?: string },
+	) => {
+		const bucket = r2Bucket;
+		let body = file;
 
-	// Convert File or Blob to ArrayBuffer to ensure compatibility
-	if (file instanceof File || file instanceof Blob) {
-		body = await file.arrayBuffer();
-	}
+		// Convert File or Blob to ArrayBuffer to ensure compatibility
+		if (file instanceof File || file instanceof Blob) {
+			body = await file.arrayBuffer();
+		}
 
-	await bucket.put(key, body, {
-		httpMetadata: options?.type
-			? { contentType: options.type }
-			: file instanceof File
-				? { contentType: file.type }
-				: { contentType: "application/octet-stream" },
-	});
+		await bucket.put(key, body, {
+			httpMetadata: options?.type
+				? { contentType: options.type }
+				: file instanceof File
+					? { contentType: file.type }
+					: { contentType: "application/octet-stream" },
+		});
 
-	return `${imagesBucketUrl}/${key}`;
-};
+		return `${imagesBucketUrl}/${key}`;
+	},
+);
 
 export const createPresignedUploadUrl = createServerOnlyFn(
 	async (key: string, expiresSeconds = 300) => {

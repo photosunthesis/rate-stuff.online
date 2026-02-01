@@ -39,8 +39,6 @@ export const Route = createFileRoute("/api/image")({
 						const signedUrl = imagekit.url({
 							path,
 							transformation: preset.transformation,
-							signed: true,
-							expireSeconds: 300,
 						});
 
 						return new Response(null, {
