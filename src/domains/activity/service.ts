@@ -39,10 +39,8 @@ export const createActivity = createServerOnlyFn(
 				method: "POST",
 				body: JSON.stringify({ message: "NEW_ACTIVITY" }),
 				headers: { "Content-Type": "application/json" },
-			}).catch((e) => console.error("Failed to broadcast activity", e));
-		} catch (e) {
-			console.error("Failed to initiate broadcast", e);
-		}
+			}).catch((_) => {});
+		} catch (_) {}
 	},
 );
 

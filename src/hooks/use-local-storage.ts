@@ -8,8 +8,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 		try {
 			const item = window.localStorage.getItem(key);
 			return item ? JSON.parse(item) : initialValue;
-		} catch (error) {
-			console.error(error);
+		} catch (_) {
 			return initialValue;
 		}
 	});
@@ -24,9 +23,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 					}
 					return newValue;
 				});
-			} catch (error) {
-				console.error(error);
-			}
+			} catch (_) {}
 		},
 		[key],
 	);
@@ -36,9 +33,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 			if (event.key === key && event.newValue) {
 				try {
 					setStoredValue(JSON.parse(event.newValue));
-				} catch (error) {
-					console.error(error);
-				}
+				} catch (_) {}
 			}
 		};
 

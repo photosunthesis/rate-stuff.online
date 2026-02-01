@@ -12,7 +12,6 @@ interface SignUpFormProps {
 		email: string;
 		password: string;
 		confirmPassword: string;
-		inviteCode: string;
 		terms: boolean;
 	}) => Promise<void>;
 	isPending: boolean;
@@ -33,7 +32,6 @@ export function SignUpForm({
 			email: "",
 			password: "",
 			confirmPassword: "",
-			inviteCode: "",
 			terms: false,
 		},
 		onSubmit: async ({ value }) => {
@@ -56,12 +54,6 @@ export function SignUpForm({
 
 		if (msg.includes("username") && !validationErrors.username)
 			inferredFieldErrors.username = errorMessage;
-
-		if (
-			(msg.includes("invite") || msg.includes("invite code")) &&
-			!validationErrors.inviteCode
-		)
-			inferredFieldErrors.inviteCode = errorMessage;
 
 		if (msg.includes("confirm") && !validationErrors.confirmPassword)
 			inferredFieldErrors.confirmPassword = errorMessage;
@@ -99,40 +91,6 @@ export function SignUpForm({
 					disabled={isPending || isSuccess}
 					className="space-y-4 border-none p-0 m-0"
 				>
-					<form.Field
-						name="inviteCode"
-						validators={{
-							onChange: ({ value }) => {
-								const result = registerSchema.shape.inviteCode.safeParse(value);
-								return result.success
-									? undefined
-									: result.error.issues[0].message;
-							},
-						}}
-					>
-						{(field) => (
-							<div>
-								<TextField
-									label="Invite Code"
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="e.g., NUS420"
-									error={
-										field.state.meta.errors[0]?.toString() ||
-										mergedValidationErrors.inviteCode
-									}
-									required
-								/>
-								<p className="text-neutral-500 text-xs mt-2">
-									We're invite-only for now while we build things out. Thank you
-									for your interest!
-								</p>
-							</div>
-						)}
-					</form.Field>
-
 					<form.Field
 						name="username"
 						validators={{

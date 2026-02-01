@@ -23,8 +23,7 @@ export const getVisualRatingsFn = createServerFn({ method: "GET" })
 				success: true,
 				data: result,
 			};
-		} catch (error) {
-			console.error("Visual ratings fetch error:", error);
+		} catch (_) {
 			return {
 				success: false,
 				errorMessage: "Failed to load visual ratings",

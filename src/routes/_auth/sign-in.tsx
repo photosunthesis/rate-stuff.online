@@ -8,6 +8,8 @@ import { SignInForm } from "~/domains/users/components/sign-in-form";
 import { authQueryOptions } from "~/domains/users/queries";
 import { isEmail } from "~/utils/strings";
 import { useUmami } from "@danielgtmn/umami-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getEmailForUnverifiedUserFn } from "~/domains/users/functions";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
@@ -35,6 +37,7 @@ function RouteComponent() {
 	const redirectUrl = Route.useRouteContext().redirectUrl;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const getUnverifiedEmail = useServerFn(getEmailForUnverifiedUserFn);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState(
 		{} as Record<string, string>,
@@ -64,7 +67,20 @@ function RouteComponent() {
 				});
 
 				if (error) {
-					console.error(error);
+					if (
+						error.status === 403 ||
+						error.message?.toLowerCase().includes("verified")
+					) {
+						const { email } = await getUnverifiedEmail({
+							data: { email: data.identifier },
+						});
+						navigate({
+							to: "/verify-email",
+							search: { e: email ? btoa(email) : undefined },
+						});
+						return;
+					}
+
 					setErrorMessage(
 						error.message ?? `Failed to sign in due to an error: ${error}`,
 					);
@@ -85,7 +101,20 @@ function RouteComponent() {
 				);
 
 				if (error) {
-					console.error(error);
+					if (
+						error.status === 403 ||
+						error.message?.toLowerCase().includes("verified")
+					) {
+						const { email } = await getUnverifiedEmail({
+							data: { username: data.identifier },
+						});
+						navigate({
+							to: "/verify-email",
+							search: { e: email ? btoa(email) : undefined },
+						});
+						return;
+					}
+
 					setErrorMessage(
 						error.message ?? `Failed to sign in due to an error: ${error}`,
 					);

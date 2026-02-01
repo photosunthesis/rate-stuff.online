@@ -24,15 +24,6 @@ export const createRateLimitMiddleware = (config: {
 		const { success } = await env[config.binding].limit({ key });
 
 		if (!success) {
-			console.warn("Rate limit exceeded", {
-				binding: config.binding,
-				key,
-				timestamp: new Date().toISOString(),
-				ip: request.headers.get("CF-Connecting-IP") || "unknown",
-				userAgent: request.headers.get("User-Agent") || "unknown",
-				path: new URL(request.url).pathname,
-			});
-
 			setResponseStatus(429);
 			throw new Error(config.errorMessage || "Too Many Requests");
 		}

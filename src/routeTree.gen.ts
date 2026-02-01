@@ -21,7 +21,9 @@ import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
 import { Route as AuthedExploreRouteImport } from './routes/_authed/explore'
+import { Route as AuthedEmailVerifiedRouteImport } from './routes/_authed/email-verified'
 import { Route as AuthedActivityRouteImport } from './routes/_authed/activity'
+import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password'
@@ -89,10 +91,20 @@ const AuthedExploreRoute = AuthedExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
+const AuthedEmailVerifiedRoute = AuthedEmailVerifiedRouteImport.update({
+  id: '/email-verified',
+  path: '/email-verified',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
 const AuthedActivityRoute = AuthedActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
   getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthVerifyEmailRoute = AuthVerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/sign-up',
@@ -150,7 +162,9 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
+  '/email-verified': typeof AuthedEmailVerifiedRoute
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
@@ -171,7 +185,9 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
+  '/email-verified': typeof AuthedEmailVerifiedRoute
   '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
@@ -196,7 +212,9 @@ export interface FileRoutesById {
   '/_auth/reset-password': typeof AuthResetPasswordRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
+  '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_authed/activity': typeof AuthedActivityRoute
+  '/_authed/email-verified': typeof AuthedEmailVerifiedRoute
   '/_authed/explore': typeof AuthedExploreRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_authed/settings': typeof AuthedSettingsRoute
@@ -219,7 +237,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify-email'
     | '/activity'
+    | '/email-verified'
     | '/explore'
     | '/set-up-profile'
     | '/settings'
@@ -240,7 +260,9 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/sign-in'
     | '/sign-up'
+    | '/verify-email'
     | '/activity'
+    | '/email-verified'
     | '/explore'
     | '/set-up-profile'
     | '/settings'
@@ -264,7 +286,9 @@ export interface FileRouteTypes {
     | '/_auth/reset-password'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
+    | '/_auth/verify-email'
     | '/_authed/activity'
+    | '/_authed/email-verified'
     | '/_authed/explore'
     | '/_authed/set-up-profile'
     | '/_authed/settings'
@@ -376,12 +400,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedExploreRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
+    '/_authed/email-verified': {
+      id: '/_authed/email-verified'
+      path: '/email-verified'
+      fullPath: '/email-verified'
+      preLoaderRoute: typeof AuthedEmailVerifiedRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
     '/_authed/activity': {
       id: '/_authed/activity'
       path: '/activity'
       fullPath: '/activity'
       preLoaderRoute: typeof AuthedActivityRouteImport
       parentRoute: typeof AuthedRouteRoute
+    }
+    '/_auth/verify-email': {
+      id: '/_auth/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof AuthVerifyEmailRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/_auth/sign-up': {
       id: '/_auth/sign-up'
@@ -454,6 +492,7 @@ interface AuthRouteRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthVerifyEmailRoute: typeof AuthVerifyEmailRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
@@ -461,6 +500,7 @@ const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
+  AuthVerifyEmailRoute: AuthVerifyEmailRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -469,6 +509,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface AuthedRouteRouteChildren {
   AuthedActivityRoute: typeof AuthedActivityRoute
+  AuthedEmailVerifiedRoute: typeof AuthedEmailVerifiedRoute
   AuthedExploreRoute: typeof AuthedExploreRoute
   AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
   AuthedSettingsRoute: typeof AuthedSettingsRoute
@@ -477,6 +518,7 @@ interface AuthedRouteRouteChildren {
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedActivityRoute: AuthedActivityRoute,
+  AuthedEmailVerifiedRoute: AuthedEmailVerifiedRoute,
   AuthedExploreRoute: AuthedExploreRoute,
   AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
   AuthedSettingsRoute: AuthedSettingsRoute,

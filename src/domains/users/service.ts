@@ -1,5 +1,5 @@
 import { users, ratings, inviteCodes } from "~/db/schema/";
-import { eq, and, isNull, sql } from "drizzle-orm";
+import { eq, and, isNull, sql, or } from "drizzle-orm";
 import { uploadFile } from "~/infrastructure/file-storage/service";
 import { numberWithCommas } from "~/utils/numbers";
 import { createServerOnlyFn } from "@tanstack/react-start";
@@ -109,5 +109,29 @@ export const markInviteCodeAsUsed = createServerOnlyFn(
 				usedAt: new Date(),
 			})
 			.where(eq(inviteCodes.code, inviteCode));
+	},
+);
+
+export const getEmailForUnverifiedUser = createServerOnlyFn(
+	async (params: { username?: string; email?: string }) => {
+		const db = getDatabase();
+		const conditions = [];
+		if (params.username) conditions.push(eq(users.username, params.username));
+		if (params.email) conditions.push(eq(users.email, params.email));
+
+		if (conditions.length === 0) return null;
+
+		const rows = await db
+			.select({ email: users.email, emailVerified: users.emailVerified })
+			.from(users)
+			.where(or(...conditions))
+			.limit(1);
+
+		if (rows.length === 0) return null;
+
+		const user = rows[0];
+		if (user.emailVerified) return null;
+
+		return user.email;
 	},
 );

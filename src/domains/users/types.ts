@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const registerBaseSchema = z.object({
-	inviteCode: z.string().min(1, "Invite code is required"),
 	username: z
 		.string()
 		.min(3, "Username must be at least 3 characters")

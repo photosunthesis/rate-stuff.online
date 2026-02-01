@@ -1,12 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import authClient from "~/domains/users/auth/client";
-import {
-	markInviteCodeAsUsedFn,
-	validateInviteCodeFn,
-} from "~/domains/users/functions";
 import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { SignUpForm } from "~/domains/users/components/sign-up-form";
 import { authQueryOptions } from "~/domains/users/queries";
@@ -52,15 +47,12 @@ function RouteComponent() {
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState({});
-	const validateInviteCode = useServerFn(validateInviteCodeFn);
-	const markInviteCodeAsUsed = useServerFn(markInviteCodeAsUsedFn);
 
 	const { mutateAsync: signUpMutate, isPending } = useMutation({
 		mutationFn: async (data: {
 			username: string;
 			email: string;
 			password: string;
-			inviteCode: string;
 			terms: boolean;
 		}) => {
 			setErrorMessage(null);
@@ -75,17 +67,6 @@ function RouteComponent() {
 				}
 				setValidationErrors(errors);
 				throw new Error("Validation failed");
-			}
-
-			const validCodeResult = await validateInviteCode({
-				data: { inviteCode: data.inviteCode },
-			});
-
-			if (!validCodeResult.success) {
-				setValidationErrors({
-					inviteCode: "Invalid invite code",
-				});
-				throw new Error("Invalid invite code");
 			}
 
 			const { error } = await withTimeout(
@@ -109,11 +90,10 @@ function RouteComponent() {
 				queryKey: authQueryOptions().queryKey,
 			});
 
-			await markInviteCodeAsUsed({
-				data: { inviteCode: data.inviteCode },
+			navigate({
+				to: "/verify-email",
+				search: { e: btoa(data.email) },
 			});
-
-			navigate({ to: "/set-up-profile" });
 
 			if (error) throw error;
 		},
@@ -123,7 +103,6 @@ function RouteComponent() {
 		username: string;
 		email: string;
 		password: string;
-		inviteCode: string;
 		terms: boolean;
 	}) => {
 		if (isPending) return;

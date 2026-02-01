@@ -15,6 +15,12 @@ export const Route = createFileRoute("/_authed")({
 			});
 		}
 
+		if (!user.emailVerified) {
+			throw redirect({
+				to: "/verify-email",
+			});
+		}
+
 		return {
 			user: user,
 		};

@@ -4,52 +4,11 @@ import { generalRateLimitMiddleware } from "~/infrastructure/rate-limit/middlewa
 import { authMiddleware } from "~/domains/users/middleware";
 import {
 	getUserByUsername as getUserByUsernameService,
-	markInviteCodeAsUsed,
 	uploadProfileImage,
-	validateInviteCode,
+	getEmailForUnverifiedUser,
 } from "./service";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
 import { getAuth } from "~/domains/users/auth/server";
-
-export const validateInviteCodeFn = createServerFn({ method: "POST" })
-	.middleware([generalRateLimitMiddleware])
-	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
-	.handler(async ({ data }) => {
-		try {
-			const isValid = await validateInviteCode(data.inviteCode);
-			if (!isValid) {
-				return {
-					success: false,
-					errors: { inviteCode: "Invalid invite code" },
-				};
-			}
-			return { success: true };
-		} catch (error) {
-			return {
-				success: false,
-				errors: {
-					inviteCode:
-						error instanceof Error ? error.message : "Validation failed",
-				},
-			};
-		}
-	});
-
-export const markInviteCodeAsUsedFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, generalRateLimitMiddleware])
-	.inputValidator(z.object({ inviteCode: z.string().min(1) }))
-	.handler(async ({ data, context }) => {
-		try {
-			await markInviteCodeAsUsed(data.inviteCode, context.user.id);
-			return { success: true };
-		} catch (error) {
-			return {
-				success: false,
-				errorMessage:
-					error instanceof Error ? error.message : "Operation failed",
-			};
-		}
-	});
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, generalRateLimitMiddleware])
@@ -107,6 +66,23 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 				errorMessage:
 					error instanceof Error ? error.message : "Failed to get user",
 			};
+		}
+	});
+
+export const getEmailForUnverifiedUserFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
+	.inputValidator(
+		z.object({ username: z.string().optional(), email: z.string().optional() }),
+	)
+	.handler(async ({ data }) => {
+		try {
+			const email = await getEmailForUnverifiedUser(data);
+
+			if (!email) return { success: false };
+
+			return { success: true, email };
+		} catch (_) {
+			return { success: false };
 		}
 	});
 

@@ -4,7 +4,10 @@ import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { username } from "better-auth/plugins";
 import { getDatabase, type Database } from "~/db";
-import { sendResetPasswordEmail } from "~/domains/users/utils/email";
+import {
+	sendResetPasswordEmail,
+	sendVerificationEmail,
+} from "~/domains/users/utils/email";
 import { hashPassword, verifyPassword } from "~/domains/users/utils/passwords";
 
 const getAuthConfig = createServerOnlyFn((db: Database) =>
@@ -57,6 +60,20 @@ const getAuthConfig = createServerOnlyFn((db: Database) =>
 				verify: verifyPassword,
 			},
 			sendResetPassword: sendResetPasswordEmail,
+			requireEmailVerification: true,
+		},
+		emailVerification: {
+			sendOnSignUp: true,
+			autoSignInAfterVerification: true,
+			sendVerificationEmail: async (data) => {
+				const url = new URL(data.url);
+				url.searchParams.set("callbackURL", "/email-verified");
+
+				await sendVerificationEmail({
+					user: data.user,
+					url: url.toString(),
+				});
+			},
 		},
 
 		experimental: {
