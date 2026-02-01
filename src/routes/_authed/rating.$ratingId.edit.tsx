@@ -125,8 +125,13 @@ function RouteComponent() {
 				throw new Error(result.errorMessage);
 			}
 
-			router.navigate({ to: `/rating/${rating.id}`, replace: true });
 			router.invalidate();
+
+			if (canGoBack) {
+				router.history.back();
+			} else {
+				router.navigate({ to: `/rating/${rating.id}` });
+			}
 		} catch (error) {
 			setFormError(
 				error instanceof Error ? error.message : "Failed to update rating",
