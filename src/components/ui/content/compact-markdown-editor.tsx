@@ -6,6 +6,7 @@ import {
 	Italic,
 	Strikethrough,
 	Underline as UnderlineIcon,
+	List,
 } from "lucide-react";
 
 interface CompactMarkdownEditorProps {
@@ -44,6 +45,7 @@ export function CompactMarkdownEditor({
 		italic: false,
 		strike: false,
 		underline: false,
+		list: false,
 	});
 
 	// Use refs for stable access in useEffect
@@ -66,7 +68,7 @@ export function CompactMarkdownEditor({
 
 				const quill = new QuillConstructor(editorRef.current, {
 					theme: "snow",
-					formats: ["bold", "italic", "strike", "underline"],
+					formats: ["bold", "italic", "strike", "underline", "list"],
 					modules: {
 						toolbar: false,
 						keyboard: {
@@ -108,6 +110,7 @@ export function CompactMarkdownEditor({
 							italic: !!formats.italic,
 							strike: !!formats.strike,
 							underline: !!formats.underline,
+							list: formats.list === "bullet",
 						});
 					}
 				});
@@ -157,6 +160,19 @@ export function CompactMarkdownEditor({
 			setActiveFormats((prev) => ({
 				...prev,
 				[format]: !current[format],
+			}));
+		}
+	};
+
+	const toggleList = () => {
+		if (quillRef.current) {
+			const current = quillRef.current.getFormat();
+			const isList = current.list === "bullet";
+			quillRef.current.format("list", isList ? false : "bullet");
+
+			setActiveFormats((prev) => ({
+				...prev,
+				list: !isList,
 			}));
 		}
 	};
@@ -212,6 +228,12 @@ export function CompactMarkdownEditor({
 								icon={<UnderlineIcon className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
 								title="Underline"
 							/>
+							<ToolbarButton
+								onClick={toggleList}
+								isActive={activeFormats.list}
+								icon={<List className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								title="Bullet List"
+							/>
 						</div>
 						<div className="text-xs text-neutral-500 font-mono">
 							{charCount}/{charLimit}
@@ -236,6 +258,21 @@ export function CompactMarkdownEditor({
 				[data-instance-id='${uniqueId}'] .ql-editor span {
 					font-size: 15px !important;
 					line-height: 1.5 !important;
+				}
+
+				/* List indentation fix */
+				[data-instance-id='${uniqueId}'] .ql-editor ul {
+					list-style-type: disc !important;
+					padding-left: 1.5em !important;
+					margin-top: 1em !important;
+				}
+				[data-instance-id='${uniqueId}'] .ql-editor ol {
+					list-style-type: decimal !important;
+					padding-left: 1.5em !important;
+					margin-top: 1em !important;
+				}
+				[data-instance-id='${uniqueId}'] .ql-editor li {
+					padding-left: 0 !important;
 				}
 
 				/* 
