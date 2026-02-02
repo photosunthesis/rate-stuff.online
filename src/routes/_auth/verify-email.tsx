@@ -107,25 +107,27 @@ function VerifyEmailPage() {
 					</p>
 				)}
 
-				<Button
-					onClick={handleResendEmail}
-					disabled={isLoading || !canResend}
-					isLoading={isLoading}
-					variant="secondary"
-					className="w-full mb-2"
-				>
-					{canResend
-						? "Resend Verification Email"
-						: `Resend in ${timeRemaining}s`}
-				</Button>
+				<div className="flex gap-2">
+					<Button
+						onClick={handleResendEmail}
+						disabled={isLoading || !canResend}
+						isLoading={isLoading}
+						variant="secondary"
+						className="flex-1"
+					>
+						{canResend
+							? "Resend Verification Email"
+							: `Resend in ${timeRemaining}s`}
+					</Button>
 
-				<Button
-					onClick={() => window.location.reload()}
-					variant="secondary"
-					className="w-full"
-				>
-					I've verified my email
-				</Button>
+					<Button
+						onClick={() => window.location.reload()}
+						variant="secondary"
+						className="flex-1"
+					>
+						I've verified my email
+					</Button>
+				</div>
 			</div>
 		</AuthLayout>
 	);
