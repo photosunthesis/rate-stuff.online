@@ -105,7 +105,7 @@ export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
 									: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 							}
 						>
-							<div className="px-4 -my-1">
+							<div className="px-4">
 								<RatingCard rating={rating} isAuthenticated={isAuthenticated} />
 							</div>
 						</div>
