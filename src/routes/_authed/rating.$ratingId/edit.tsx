@@ -40,8 +40,8 @@ export const Route = createFileRoute("/_authed/rating/$ratingId/edit")({
 
 		if (rating.userId !== user.id) {
 			throw redirect({
-				to: "/sign-in",
-				search: { redirect: `/rating/${ratingId}` },
+				to: "/rating/$ratingId",
+				params: { ratingId },
 			});
 		}
 

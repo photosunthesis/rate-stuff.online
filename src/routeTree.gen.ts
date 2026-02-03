@@ -32,7 +32,7 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as PublicUserUsernameIndexRouteImport } from './routes/_public/user.$username/index'
 import { Route as PublicStuffStuffSlugIndexRouteImport } from './routes/_public/stuff.$stuffSlug/index'
 import { Route as PublicRatingRatingIdIndexRouteImport } from './routes/_public/rating.$ratingId/index'
-import { Route as AuthedRatingRatingIdEditRouteImport } from './routes/_authed/rating.$ratingId.edit'
+import { Route as AuthedRatingRatingIdEditRouteImport } from './routes/_authed/rating.$ratingId/edit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
