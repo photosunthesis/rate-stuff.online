@@ -197,63 +197,92 @@ export const RatingCard = memo(function RatingCard({
 					) : parsedImages.length === 3 ? (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							<div
-								className="row-span-2 overflow-hidden"
-								style={{ aspectRatio: "1 / 1" }}
+								className="row-span-2 overflow-hidden rounded-xl"
+								style={{
+									borderTopRightRadius: "0.5px",
+									borderBottomRightRadius: "0.5px",
+								}}
 							>
 								<Image
 									src={parsedImages[0]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
+									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
 
-							<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
+							<div
+								className="overflow-hidden rounded-xl"
+								style={{ borderTopLeftRadius: "0.5px" }}
+							>
 								<Image
 									src={parsedImages[1]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm bg-neutral-800 border border-neutral-700/50"
+									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
-							<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
+							<div
+								className="overflow-hidden rounded-xl"
+								style={{ borderTopLeftRadius: "0.5px" }}
+							>
 								<Image
 									src={parsedImages[2]}
 									alt="Rating"
 									variant="card"
-									className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm bg-neutral-800 border border-neutral-700/50"
+									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
 								/>
 							</div>
 						</div>
 					) : (
 						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 							{parsedImages.slice(0, 4).map((image, idx) => {
-								let cornerClass = "rounded-xl";
+								let borderRadiusStyle: React.CSSProperties = {};
 								switch (idx) {
 									case 0:
-										cornerClass = "rounded-xl rounded-br-sm"; // top-left: inner bottom-right small
+										borderRadiusStyle = {
+											borderTopLeftRadius: "0.75rem",
+											borderTopRightRadius: "0.5px",
+											borderBottomLeftRadius: "0.5px",
+											borderBottomRightRadius: "0.5px",
+										};
 										break;
 									case 1:
-										cornerClass = "rounded-xl rounded-bl-sm"; // top-right: inner bottom-left small
+										borderRadiusStyle = {
+											borderTopRightRadius: "0.75rem",
+											borderTopLeftRadius: "0.5px",
+											borderBottomLeftRadius: "0.5px",
+											borderBottomRightRadius: "0.5px",
+										};
 										break;
 									case 2:
-										cornerClass = "rounded-xl rounded-tr-sm"; // bottom-left: inner top-right small
+										borderRadiusStyle = {
+											borderBottomLeftRadius: "0.75rem",
+											borderTopLeftRadius: "0.5px",
+											borderTopRightRadius: "0.5px",
+											borderBottomRightRadius: "0.5px",
+										};
 										break;
 									case 3:
-										cornerClass = "rounded-xl rounded-tl-sm"; // bottom-right: inner top-left small
+										borderRadiusStyle = {
+											borderBottomRightRadius: "0.75rem",
+											borderTopLeftRadius: "0.5px",
+											borderTopRightRadius: "0.5px",
+											borderBottomLeftRadius: "0.5px",
+										};
 										break;
 								}
 								return (
 									<div
 										key={image}
 										className="overflow-hidden"
-										style={{ aspectRatio: "1 / 1" }}
+										style={borderRadiusStyle}
 									>
 										<Image
 											src={image}
 											alt="Rating"
 											variant="card"
-											className={`w-full h-full object-cover object-center ${cornerClass} bg-neutral-800 border border-neutral-700/50`}
+											className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
 										/>
 									</div>
 								);

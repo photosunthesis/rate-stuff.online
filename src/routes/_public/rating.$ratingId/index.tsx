@@ -454,8 +454,11 @@ const ImagesGallery = ({
 		return (
 			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 				<div
-					className="row-span-2 overflow-hidden"
-					style={{ aspectRatio: "1 / 1" }}
+					className="row-span-2 overflow-hidden rounded-xl"
+					style={{
+						borderTopRightRadius: "0.5px",
+						borderBottomRightRadius: "0.5px",
+					}}
 				>
 					<button
 						type="button"
@@ -465,12 +468,15 @@ const ImagesGallery = ({
 						<UiImage
 							src={images[0]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
+							className="w-full h-full object-cover object-center cursor-pointer"
 							variant="card"
 						/>
 					</button>
 				</div>
-				<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
+				<div
+					className="overflow-hidden rounded-xl"
+					style={{ borderTopLeftRadius: "0.5px" }}
+				>
 					<button
 						type="button"
 						onClick={() => onImageClick(images[1])}
@@ -479,12 +485,15 @@ const ImagesGallery = ({
 						<UiImage
 							src={images[1]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							className="w-full h-full object-cover object-center cursor-pointer"
 							variant="card"
 						/>
 					</button>
 				</div>
-				<div className="overflow-hidden" style={{ aspectRatio: "2 / 1" }}>
+				<div
+					className="overflow-hidden rounded-xl"
+					style={{ borderTopLeftRadius: "0.5px" }}
+				>
 					<button
 						type="button"
 						onClick={() => onImageClick(images[2])}
@@ -493,7 +502,7 @@ const ImagesGallery = ({
 						<UiImage
 							src={images[2]}
 							alt="Rating"
-							className="w-full h-full object-cover object-center rounded-xl rounded-tl-sm cursor-pointer"
+							className="w-full h-full object-cover object-center cursor-pointer"
 							variant="card"
 						/>
 					</button>
@@ -505,35 +514,56 @@ const ImagesGallery = ({
 	return (
 		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 			{images.slice(0, 4).map((src, idx) => {
-				let cornerClass = "rounded-xl";
+				let borderRadiusStyle: React.CSSProperties = {};
 				switch (idx) {
 					case 0:
-						cornerClass = "rounded-xl rounded-br-sm";
+						borderRadiusStyle = {
+							borderTopLeftRadius: "0.75rem",
+							borderTopRightRadius: "0.5px",
+							borderBottomLeftRadius: "0.5px",
+							borderBottomRightRadius: "0.5px",
+						};
 						break;
 					case 1:
-						cornerClass = "rounded-xl rounded-bl-sm";
+						borderRadiusStyle = {
+							borderTopRightRadius: "0.75rem",
+							borderTopLeftRadius: "0.5px",
+							borderBottomLeftRadius: "0.5px",
+							borderBottomRightRadius: "0.5px",
+						};
 						break;
 					case 2:
-						cornerClass = "rounded-xl rounded-tr-sm";
+						borderRadiusStyle = {
+							borderBottomLeftRadius: "0.75rem",
+							borderTopLeftRadius: "0.5px",
+							borderTopRightRadius: "0.5px",
+							borderBottomRightRadius: "0.5px",
+						};
 						break;
 					case 3:
-						cornerClass = "rounded-xl rounded-tl-sm";
+						borderRadiusStyle = {
+							borderBottomRightRadius: "0.75rem",
+							borderTopLeftRadius: "0.5px",
+							borderTopRightRadius: "0.5px",
+							borderBottomLeftRadius: "0.5px",
+						};
 						break;
 				}
 				return (
-					<button
-						key={src}
-						type="button"
-						onClick={() => onImageClick(src)}
-						className="w-full h-full"
-					>
-						<UiImage
-							src={src}
-							alt="Rating"
-							variant="card"
-							className={`w-full h-full object-cover object-center ${cornerClass} cursor-pointer`}
-						/>
-					</button>
+					<div key={src} className="overflow-hidden" style={borderRadiusStyle}>
+						<button
+							type="button"
+							onClick={() => onImageClick(src)}
+							className="w-full h-full"
+						>
+							<UiImage
+								src={src}
+								alt="Rating"
+								variant="card"
+								className="w-full h-full object-cover object-center cursor-pointer"
+							/>
+						</button>
+					</div>
 				);
 			})}
 		</div>
