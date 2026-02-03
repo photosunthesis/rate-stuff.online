@@ -456,8 +456,8 @@ const ImagesGallery = ({
 				<div
 					className="row-span-2 overflow-hidden rounded-xl"
 					style={{
-						borderTopRightRadius: "0.5px",
-						borderBottomRightRadius: "0.5px",
+						borderTopRightRadius: "6px",
+						borderBottomRightRadius: "6px",
 					}}
 				>
 					<button
@@ -475,7 +475,11 @@ const ImagesGallery = ({
 				</div>
 				<div
 					className="overflow-hidden rounded-xl"
-					style={{ borderTopLeftRadius: "0.5px" }}
+					style={{
+						borderTopLeftRadius: "6px",
+						borderBottomLeftRadius: "6px",
+						borderBottomRightRadius: "6px",
+					}}
 				>
 					<button
 						type="button"
@@ -492,7 +496,11 @@ const ImagesGallery = ({
 				</div>
 				<div
 					className="overflow-hidden rounded-xl"
-					style={{ borderTopLeftRadius: "0.5px" }}
+					style={{
+						borderTopLeftRadius: "6px",
+						borderBottomLeftRadius: "6px",
+						borderTopRightRadius: "6px",
+					}}
 				>
 					<button
 						type="button"
@@ -519,33 +527,33 @@ const ImagesGallery = ({
 					case 0:
 						borderRadiusStyle = {
 							borderTopLeftRadius: "0.75rem",
-							borderTopRightRadius: "0.5px",
-							borderBottomLeftRadius: "0.5px",
-							borderBottomRightRadius: "0.5px",
+							borderTopRightRadius: "6px",
+							borderBottomLeftRadius: "6px",
+							borderBottomRightRadius: "6px",
 						};
 						break;
 					case 1:
 						borderRadiusStyle = {
 							borderTopRightRadius: "0.75rem",
-							borderTopLeftRadius: "0.5px",
-							borderBottomLeftRadius: "0.5px",
-							borderBottomRightRadius: "0.5px",
+							borderTopLeftRadius: "6px",
+							borderBottomLeftRadius: "6px",
+							borderBottomRightRadius: "6px",
 						};
 						break;
 					case 2:
 						borderRadiusStyle = {
 							borderBottomLeftRadius: "0.75rem",
-							borderTopLeftRadius: "0.5px",
-							borderTopRightRadius: "0.5px",
-							borderBottomRightRadius: "0.5px",
+							borderTopLeftRadius: "6px",
+							borderTopRightRadius: "6px",
+							borderBottomRightRadius: "6px",
 						};
 						break;
 					case 3:
 						borderRadiusStyle = {
 							borderBottomRightRadius: "0.75rem",
-							borderTopLeftRadius: "0.5px",
-							borderTopRightRadius: "0.5px",
-							borderBottomLeftRadius: "0.5px",
+							borderTopLeftRadius: "6px",
+							borderTopRightRadius: "6px",
+							borderBottomLeftRadius: "6px",
 						};
 						break;
 				}
