@@ -91,7 +91,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 									key={tag.name}
 									to="/"
 									search={{ tag: tag.name }}
-									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-base font-medium transition-colors rounded-md"
 								>
 									#{tag.name}
 								</Link>
@@ -100,7 +100,7 @@ export function DiscoverStrip({ user }: { user?: PublicUser }) {
 									key={tag.name}
 									type="button"
 									onClick={() => setIsAuthModalOpen(true)}
-									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-base font-medium transition-colors rounded-md cursor-pointer"
 								>
 									#{tag.name}
 								</button>

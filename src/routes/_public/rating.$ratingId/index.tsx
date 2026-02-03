@@ -273,13 +273,13 @@ const RatingHeader = ({
 						<Link
 							to="/stuff/$stuffSlug"
 							params={{ stuffSlug: rating.stuff.slug }}
-							className="text-white hover:underline font-semibold"
+							className="text-white hover:underline font-medium"
 							onClick={(e) => e.stopPropagation()}
 						>
 							{rating.stuff.name}
 						</Link>
 					) : (
-						<span className="text-neutral-400 font-semibold">Unknown Item</span>
+						<span className="text-neutral-400 font-medium">Unknown Item</span>
 					)}
 					<span className="text-neutral-500"> • </span>
 					<span className="text-neutral-500">
