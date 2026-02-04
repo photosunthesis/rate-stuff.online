@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { getPlainTextFromContent } from "~/utils/rich-text";
-import { getTimeAgo } from "~/utils/datetime";
+import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { CommentVoteSection } from "./comment-vote-section";
 import type { comments, users } from "~/db/schema";
 import { useState, useRef, useEffect } from "react";
@@ -126,9 +126,10 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 									</span>
 								)}
 								<span className="text-neutral-500 text-xs">•</span>
-								<span className="text-neutral-500 text-xs text-nowrap">
-									{getTimeAgo(comment.createdAt)}
-								</span>
+								<TimeAgo
+									date={comment.createdAt}
+									className="text-neutral-500 text-xs text-nowrap"
+								/>
 								{comment.updatedAt &&
 									comment.updatedAt.getTime() >
 										comment.createdAt.getTime() + 1000 && (

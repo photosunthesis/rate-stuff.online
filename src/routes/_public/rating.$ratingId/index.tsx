@@ -14,7 +14,7 @@ import { Lightbox } from "~/components/ui/modal/lightbox";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { Image as UiImage } from "~/components/ui/content/image";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
-import { getTimeAgo } from "~/utils/datetime";
+import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "~/components/layout/main-layout";
 import { AuthModal } from "~/domains/users/components/auth-modal";
@@ -282,9 +282,7 @@ const RatingHeader = ({
 						<span className="text-neutral-400 font-medium">Unknown Item</span>
 					)}
 					<span className="text-neutral-500"> • </span>
-					<span className="text-neutral-500">
-						{getTimeAgo(rating.createdAt)}
-					</span>
+					<TimeAgo date={rating.createdAt} className="text-neutral-500" />
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
