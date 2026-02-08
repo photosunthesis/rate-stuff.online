@@ -173,137 +173,93 @@ export const RatingCard = memo(function RatingCard({
 
 			{parsedImages && parsedImages.length > 0 && (
 				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-					{parsedImages.length === 1 ? (
-						<Image
-							src={parsedImages[0]}
-							alt="Rating"
-							variant="card"
-							className="block aspect-video object-cover rounded-xl bg-neutral-800 border border-neutral-700/50"
-						/>
-					) : parsedImages.length === 2 ? (
-						<div className="flex gap-1.5">
-							{parsedImages.map((image, idx) => (
+					{(() => {
+						const displayImages = parsedImages.slice(0, 3);
+						if (displayImages.length === 1) {
+							return (
+								<Image
+									src={displayImages[0]}
+									alt="Rating"
+									variant="card"
+									className="block aspect-video object-cover rounded-xl bg-neutral-800 border border-neutral-700/50"
+								/>
+							);
+						}
+						if (displayImages.length === 2) {
+							return (
+								<div className="flex gap-1.5">
+									{displayImages.map((image, idx) => (
+										<div
+											key={image}
+											className="flex-1 overflow-hidden"
+											style={{ aspectRatio: "1 / 1" }}
+										>
+											<Image
+												src={image}
+												alt="Rating"
+												variant="card"
+												className={
+													idx === 0
+														? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
+														: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm bg-neutral-800 border border-neutral-700/50"
+												}
+											/>
+										</div>
+									))}
+								</div>
+							);
+						}
+						// implied length === 3 (or > 2 due to slice logic, but effectively 3 here)
+						return (
+							<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
 								<div
-									key={image}
-									className="flex-1 overflow-hidden"
-									style={{ aspectRatio: "1 / 1" }}
+									className="row-span-2 overflow-hidden rounded-xl"
+									style={{
+										borderTopRightRadius: "6px",
+										borderBottomRightRadius: "6px",
+									}}
 								>
 									<Image
-										src={image}
+										src={displayImages[0]}
 										alt="Rating"
 										variant="card"
-										className={
-											idx === 0
-												? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
-												: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm bg-neutral-800 border border-neutral-700/50"
-										}
+										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
 									/>
 								</div>
-							))}
-						</div>
-					) : parsedImages.length === 3 ? (
-						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-							<div
-								className="row-span-2 overflow-hidden rounded-xl"
-								style={{
-									borderTopRightRadius: "6px",
-									borderBottomRightRadius: "6px",
-								}}
-							>
-								<Image
-									src={parsedImages[0]}
-									alt="Rating"
-									variant="card"
-									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-								/>
-							</div>
 
-							<div
-								className="overflow-hidden rounded-xl"
-								style={{
-									borderTopLeftRadius: "6px",
-									borderBottomLeftRadius: "6px",
-									borderBottomRightRadius: "6px",
-								}}
-							>
-								<Image
-									src={parsedImages[1]}
-									alt="Rating"
-									variant="card"
-									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-								/>
+								<div
+									className="overflow-hidden rounded-xl"
+									style={{
+										borderTopLeftRadius: "6px",
+										borderBottomLeftRadius: "6px",
+										borderBottomRightRadius: "6px",
+									}}
+								>
+									<Image
+										src={displayImages[1]}
+										alt="Rating"
+										variant="card"
+										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
+									/>
+								</div>
+								<div
+									className="overflow-hidden rounded-xl"
+									style={{
+										borderTopLeftRadius: "6px",
+										borderBottomLeftRadius: "6px",
+										borderTopRightRadius: "6px",
+									}}
+								>
+									<Image
+										src={displayImages[2]}
+										alt="Rating"
+										variant="card"
+										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
+									/>
+								</div>
 							</div>
-							<div
-								className="overflow-hidden rounded-xl"
-								style={{
-									borderTopLeftRadius: "6px",
-									borderBottomLeftRadius: "6px",
-									borderTopRightRadius: "6px",
-								}}
-							>
-								<Image
-									src={parsedImages[2]}
-									alt="Rating"
-									variant="card"
-									className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-								/>
-							</div>
-						</div>
-					) : (
-						<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-							{parsedImages.slice(0, 4).map((image, idx) => {
-								let borderRadiusStyle: React.CSSProperties = {};
-								switch (idx) {
-									case 0:
-										borderRadiusStyle = {
-											borderTopLeftRadius: "0.75rem",
-											borderTopRightRadius: "6px",
-											borderBottomLeftRadius: "6px",
-											borderBottomRightRadius: "6px",
-										};
-										break;
-									case 1:
-										borderRadiusStyle = {
-											borderTopRightRadius: "0.75rem",
-											borderTopLeftRadius: "6px",
-											borderBottomLeftRadius: "6px",
-											borderBottomRightRadius: "6px",
-										};
-										break;
-									case 2:
-										borderRadiusStyle = {
-											borderBottomLeftRadius: "0.75rem",
-											borderTopLeftRadius: "6px",
-											borderTopRightRadius: "6px",
-											borderBottomRightRadius: "6px",
-										};
-										break;
-									case 3:
-										borderRadiusStyle = {
-											borderBottomRightRadius: "0.75rem",
-											borderTopLeftRadius: "6px",
-											borderTopRightRadius: "6px",
-											borderBottomLeftRadius: "6px",
-										};
-										break;
-								}
-								return (
-									<div
-										key={image}
-										className="overflow-hidden"
-										style={borderRadiusStyle}
-									>
-										<Image
-											src={image}
-											alt="Rating"
-											variant="card"
-											className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-										/>
-									</div>
-								);
-							})}
-						</div>
-					)}
+						);
+					})()}
 				</div>
 			)}
 
