@@ -125,15 +125,15 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 										{displayText}
 									</span>
 								)}
-								<span className="text-neutral-500 text-xs">•</span>
+								<span className="text-neutral-500 text-base">•</span>
 								<TimeAgo
 									date={comment.createdAt}
-									className="text-neutral-500 text-xs text-nowrap"
+									className="text-neutral-500 text-base text-nowrap"
 								/>
 								{comment.updatedAt &&
 									comment.updatedAt.getTime() >
 										comment.createdAt.getTime() + 1000 && (
-										<span className="text-neutral-500 text-xs">(edited)</span>
+										<span className="text-neutral-500 text-base">(edited)</span>
 									)}
 							</div>
 						</div>

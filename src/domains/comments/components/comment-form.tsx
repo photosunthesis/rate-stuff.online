@@ -111,7 +111,7 @@ export function CommentForm({
 									<button
 										type="button"
 										onClick={onCancel}
-										className="px-3 py-1.5 text-xs font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
 									>
 										Cancel
 									</button>
@@ -119,7 +119,7 @@ export function CommentForm({
 										type="button"
 										onClick={handleSubmit}
 										disabled={!content.trim() || isPending}
-										className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
 									>
 										Update
 									</button>
@@ -130,7 +130,7 @@ export function CommentForm({
 										type="button"
 										onClick={handleSubmit}
 										disabled={!content.trim() || isPending}
-										className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
 									>
 										Add comment
 									</button>

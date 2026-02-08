@@ -86,7 +86,7 @@ export function RightSidebar({ user }: { user?: PublicUser }) {
 
 						<section>
 							<p className="text-md font-semibold text-white mb-2 px-1">
-								Popular Tags
+								Trending Tags
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">
 								{loadingTags

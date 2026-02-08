@@ -121,14 +121,7 @@ export const RatingCard = memo(function RatingCard({
 								</span>
 							)}
 							<span className="text-neutral-500"> • </span>
-							<Link
-								to="/rating/$ratingId"
-								params={{ ratingId: rating.id }}
-								className="text-neutral-500 hover:underline"
-								onClick={(e) => e.stopPropagation()}
-							>
-								{timeAgo}
-							</Link>
+							<span className="text-neutral-500">{timeAgo}</span>
 							{rating.updatedAt &&
 								new Date(rating.updatedAt).getTime() >
 									new Date(rating.createdAt).getTime() + 1000 && (
@@ -152,15 +145,7 @@ export const RatingCard = memo(function RatingCard({
 					) : (
 						<span className="text-neutral-400 font-medium">Unknown Item</span>
 					)}{" "}
-					<span>•</span>{" "}
-					<Link
-						to="/rating/$ratingId"
-						params={{ ratingId: rating.id }}
-						className="text-neutral-500 hover:underline"
-						onClick={(e) => e.stopPropagation()}
-					>
-						{timeAgo}
-					</Link>
+					<span>•</span> <span className="text-neutral-500">{timeAgo}</span>
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
@@ -175,7 +160,14 @@ export const RatingCard = memo(function RatingCard({
 						noIndent ? "" : "ml-11"
 					}`}
 				>
-					{rating.score}/10
+					<Link
+						to="/rating/$ratingId"
+						params={{ ratingId: rating.id }}
+						className="hover:underline text-white"
+						onClick={(e) => e.stopPropagation()}
+					>
+						{rating.score}/10
+					</Link>
 				</h3>
 			</div>
 
