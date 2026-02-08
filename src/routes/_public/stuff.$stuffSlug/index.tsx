@@ -138,7 +138,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 
 		const ld: Record<string, unknown> = {
 			"@context": "https://schema.org",
-			"@type": "Product",
+			"@type": "CreativeWork",
 			name: stuff?.name ?? undefined,
 			image: hasImages ? images : [finalImage],
 			url: pageUrl,
@@ -150,6 +150,8 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 				"@type": "AggregateRating",
 				ratingValue: averageRating.toFixed(2),
 				ratingCount: ratingCount,
+				bestRating: "10",
+				worstRating: "1",
 			};
 		}
 
