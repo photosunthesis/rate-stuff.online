@@ -137,8 +137,16 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
 			{ name: "twitter:image", content: finalImage },
-			{ name: "robots", content: "index, follow" },
 		];
+
+		const contentText = excerptFromMarkdown(rating?.content ?? "", 1000);
+		const isThinContent = contentText.length < 50;
+
+		if (isThinContent) {
+			metas.push({ name: "robots", content: "noindex" });
+		} else {
+			metas.push({ name: "robots", content: "index, follow" });
+		}
 
 		if (rating?.createdAt) {
 			metas.push({

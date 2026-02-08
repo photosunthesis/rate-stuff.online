@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { stuff, users, ratings } from "~/db/schema";
-import { isNull, desc, sql } from "drizzle-orm";
+import { isNull, desc, sql, and, gt } from "drizzle-orm";
 import { getDatabase } from "~/db";
 
 export const Route = createFileRoute("/sitemap.xml")({
@@ -68,11 +68,16 @@ export const Route = createFileRoute("/sitemap.xml")({
 						)
 						.join("");
 
-					// Ratings (by id) — exclude soft-deleted
+					// Ratings (by id) — exclude soft-deleted and reviews with content length <= 50
 					const ratingRows = await db
 						.select({ id: ratings.id })
 						.from(ratings)
-						.where(isNull(ratings.deletedAt))
+						.where(
+							and(
+								isNull(ratings.deletedAt),
+								gt(sql<number>`length(${ratings.content})`, 50),
+							),
+						)
 						.orderBy(desc(ratings.createdAt))
 						.limit(100);
 
