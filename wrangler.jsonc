@@ -36,7 +36,7 @@
 	"hyperdrive": [
 		{
 			"binding": "HYPERDRIVE",
-			"id": "8f481c0d50a04bb4a603f53d6369bbba",
+			"id": "68d6bfde15e24842bfaa9c9150bea8b0",
 			"localConnectionString": "postgresql://sun:securePassword@localhost:5432/rate-stuff-online-db"
 		}
 	]
