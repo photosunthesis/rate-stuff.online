@@ -4,16 +4,16 @@ import { NotFound } from "~/components/ui/feedback/not-found";
 import { StuffHeader } from "~/domains/stuff/components/stuff-header";
 import { Suspense, lazy } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
+import { stuffQueryOptions } from "~/domains/stuff/queries";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { authQueryOptions } from "~/domains/users/queries";
+import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 const StuffRatingsList = lazy(() =>
 	import("~/domains/stuff/components/stuff-ratings-list").then((module) => ({
 		default: module.StuffRatingsList,
 	})),
 );
-import { stuffQueryOptions } from "~/domains/stuff/queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/domains/users/queries";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 	beforeLoad: async ({ params, context }) => {
@@ -138,26 +138,16 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 
 		const ld: Record<string, unknown> = {
 			"@context": "https://schema.org",
-			"@type": "CreativeWork",
+			"@type": "Thing",
 			name: stuff?.name ?? undefined,
 			image: hasImages ? images : [finalImage],
 			url: pageUrl,
 			description: description,
 		};
 
-		if (averageRating != null && ratingCount != null && ratingCount > 0) {
-			ld.aggregateRating = {
-				"@type": "AggregateRating",
-				ratingValue: averageRating.toFixed(2),
-				ratingCount: ratingCount,
-				bestRating: "10",
-				worstRating: "1",
-			};
-		}
-
 		return {
 			meta: metas,
-			links: [{ rel: "canonical", href: `/stuff/${params.stuffSlug}` }],
+			links: [{ rel: "canonical", href: pageUrl }],
 			scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }],
 		};
 	},
