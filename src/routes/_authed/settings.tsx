@@ -49,34 +49,39 @@ function RouteComponent() {
 			<div className="w-full flex flex-col min-h-full">
 				<div className="px-4 py-8 flex flex-col flex-1 max-w-3xl mx-auto w-full gap-8">
 					{/* User Profile Section */}
-					<div className="flex items-center gap-4 px-2">
-						<Avatar
-							src={user.image ?? null}
-							alt={user.name || "User"}
-							size="lg"
-						/>
-						<div className="flex-1 min-w-0">
-							<div className="flex items-center justify-between gap-2">
-								<div className="flex flex-col">
-									<h3 className="text-lg font-semibold text-white truncate">
-										{user.name || "User"}
-									</h3>
-									<p className="text-base text-neutral-400 truncate">
-										@{user.username}
-									</p>
-								</div>
-								<Link to="/set-up-profile" search={{ redirect: "/settings" }}>
-									<Button
-										variant="secondary"
-										size="sm"
-										className="w-auto! shrink-0 shadow-lg flex items-center gap-1.5"
-									>
-										<UserPen className="w-4 h-4" />
-										Edit Profile
-									</Button>
-								</Link>
+					<div className="flex items-center justify-between gap-4 px-2">
+						<Link
+							to="/user/$username"
+							params={{
+								username: user.username as string,
+							}}
+							className="flex items-center gap-4 min-w-0 group"
+						>
+							<Avatar
+								src={user.image ?? null}
+								alt={user.name || "User"}
+								size="lg"
+								className="group-hover:opacity-80 transition-opacity"
+							/>
+							<div className="flex flex-col min-w-0">
+								<h3 className="text-lg font-semibold text-white truncate">
+									{user.name || "User"}
+								</h3>
+								<p className="text-base text-neutral-400 truncate">
+									@{user.username}
+								</p>
 							</div>
-						</div>
+						</Link>
+						<Link to="/set-up-profile" search={{ redirect: "/settings" }}>
+							<Button
+								variant="secondary"
+								size="sm"
+								className="w-auto! shrink-0 shadow-lg flex items-center gap-1.5"
+							>
+								<UserPen className="w-4 h-4" />
+								Edit Profile
+							</Button>
+						</Link>
 					</div>
 
 					{/* Main Settings Card */}
@@ -97,7 +102,7 @@ function RouteComponent() {
 						/>
 
 						<SettingsRow
-							label="Contact Us"
+							label="Contact"
 							description="Reach out to us for support"
 							href="mailto:hello@rate-stuff.online"
 							icon={ArrowUpRight}

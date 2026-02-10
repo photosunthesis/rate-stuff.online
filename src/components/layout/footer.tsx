@@ -20,7 +20,7 @@ export function Footer() {
 					href="mailto:hello@rate-stuff.online"
 					className="hover:underline underline-offset-2 hover:text-neutral-400 transition-colors"
 				>
-					Contact Us
+					Contact
 				</a>
 				<span>
 					<a
