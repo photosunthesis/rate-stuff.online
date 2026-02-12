@@ -57,6 +57,10 @@ export function CommentForm({
 			{
 				onSuccess: () => {
 					setContent("");
+					setIsFocused(false);
+					if (document.activeElement instanceof HTMLElement) {
+						document.activeElement.blur();
+					}
 					if (umami) umami.track("create_comment");
 				},
 			},
@@ -70,7 +74,10 @@ export function CommentForm({
 				className="flex-1 relative group"
 				onFocus={() => setIsFocused(true)}
 				onBlur={(e) => {
-					if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+					if (
+						!e.relatedTarget ||
+						!e.currentTarget.contains(e.relatedTarget as Node)
+					) {
 						setIsFocused(false);
 					}
 				}}
