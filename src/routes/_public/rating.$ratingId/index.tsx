@@ -12,7 +12,7 @@ import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { ratingQueryOptions } from "~/domains/ratings/queries/display";
 import { Lightbox } from "~/components/ui/modal/lightbox";
 import { Avatar } from "~/components/ui/misc/avatar";
-import { Image as UiImage } from "~/components/ui/content/image";
+import { ImageGrid } from "~/components/ui/content/image-grid";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
 import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
@@ -398,192 +398,6 @@ const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 	);
 };
 
-const ImagesGallery = ({
-	images,
-	onImageClick,
-}: {
-	images: string[];
-	onImageClick: (src: string) => void;
-}) => {
-	if (!images || images.length === 0) return null;
-	if (images.length === 1) {
-		return (
-			<div className="ml-11 mb-3">
-				<button
-					type="button"
-					onClick={() => onImageClick(images[0])}
-					className="block w-full"
-				>
-					<UiImage
-						src={images[0]}
-						alt="Rating"
-						className="block aspect-video object-cover rounded-xl w-full cursor-pointer"
-						variant="card"
-					/>
-				</button>
-			</div>
-		);
-	}
-
-	if (images.length === 2) {
-		return (
-			<div className="ml-11 mb-3 flex gap-1.5">
-				{images.map((src, idx) => (
-					<div
-						key={src}
-						className="flex-1 overflow-hidden"
-						style={{ aspectRatio: "1 / 1" }}
-					>
-						<button
-							type="button"
-							onClick={() => onImageClick(src)}
-							className="w-full h-full"
-						>
-							<UiImage
-								src={src}
-								alt="Rating"
-								className={
-									idx === 0
-										? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm cursor-pointer"
-										: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm cursor-pointer"
-								}
-								variant="card"
-							/>
-						</button>
-					</div>
-				))}
-			</div>
-		);
-	}
-
-	if (images.length === 3) {
-		return (
-			<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-				<div
-					className="row-span-2 overflow-hidden rounded-xl"
-					style={{
-						borderTopRightRadius: "6px",
-						borderBottomRightRadius: "6px",
-					}}
-				>
-					<button
-						type="button"
-						onClick={() => onImageClick(images[0])}
-						className="w-full h-full"
-					>
-						<UiImage
-							src={images[0]}
-							alt="Rating"
-							className="w-full h-full object-cover object-center cursor-pointer"
-							variant="card"
-						/>
-					</button>
-				</div>
-				<div
-					className="overflow-hidden rounded-xl"
-					style={{
-						borderTopLeftRadius: "6px",
-						borderBottomLeftRadius: "6px",
-						borderBottomRightRadius: "6px",
-					}}
-				>
-					<button
-						type="button"
-						onClick={() => onImageClick(images[1])}
-						className="w-full h-full"
-					>
-						<UiImage
-							src={images[1]}
-							alt="Rating"
-							className="w-full h-full object-cover object-center cursor-pointer"
-							variant="card"
-						/>
-					</button>
-				</div>
-				<div
-					className="overflow-hidden rounded-xl"
-					style={{
-						borderTopLeftRadius: "6px",
-						borderBottomLeftRadius: "6px",
-						borderTopRightRadius: "6px",
-					}}
-				>
-					<button
-						type="button"
-						onClick={() => onImageClick(images[2])}
-						className="w-full h-full"
-					>
-						<UiImage
-							src={images[2]}
-							alt="Rating"
-							className="w-full h-full object-cover object-center cursor-pointer"
-							variant="card"
-						/>
-					</button>
-				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div className="ml-11 mb-3 aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-			{images.slice(0, 4).map((src, idx) => {
-				let borderRadiusStyle: React.CSSProperties = {};
-				switch (idx) {
-					case 0:
-						borderRadiusStyle = {
-							borderTopLeftRadius: "0.75rem",
-							borderTopRightRadius: "6px",
-							borderBottomLeftRadius: "6px",
-							borderBottomRightRadius: "6px",
-						};
-						break;
-					case 1:
-						borderRadiusStyle = {
-							borderTopRightRadius: "0.75rem",
-							borderTopLeftRadius: "6px",
-							borderBottomLeftRadius: "6px",
-							borderBottomRightRadius: "6px",
-						};
-						break;
-					case 2:
-						borderRadiusStyle = {
-							borderBottomLeftRadius: "0.75rem",
-							borderTopLeftRadius: "6px",
-							borderTopRightRadius: "6px",
-							borderBottomRightRadius: "6px",
-						};
-						break;
-					case 3:
-						borderRadiusStyle = {
-							borderBottomRightRadius: "0.75rem",
-							borderTopLeftRadius: "6px",
-							borderTopRightRadius: "6px",
-							borderBottomLeftRadius: "6px",
-						};
-						break;
-				}
-				return (
-					<div key={src} className="overflow-hidden" style={borderRadiusStyle}>
-						<button
-							type="button"
-							onClick={() => onImageClick(src)}
-							className="w-full h-full"
-						>
-							<UiImage
-								src={src}
-								alt="Rating"
-								variant="card"
-								className="w-full h-full object-cover object-center cursor-pointer"
-							/>
-						</button>
-					</div>
-				);
-			})}
-		</div>
-	);
-};
-
 const TagsList = ({
 	tags,
 	isAuthenticated = false,
@@ -693,9 +507,11 @@ function RouteComponent() {
 						isOwner={currentUser?.id === rating.userId}
 					/>
 					<TitleBlock rating={ratingTyped} />
-					<ImagesGallery
+					<ImageGrid
 						images={parsedImages}
+						alt="Rating"
 						onImageClick={handleImageClick}
+						className="ml-11 mb-3"
 					/>
 					<ContentSection rating={ratingTyped} />
 					<TagsList

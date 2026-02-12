@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { VoteSection } from "~/components/ui/content/vote-section";
-import { Image } from "~/components/ui/content/image";
+import { ImageGrid } from "~/components/ui/content/image-grid";
 import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { getPlainTextFromContent } from "~/utils/rich-text";
 import { AuthModal } from "~/domains/users/components/auth-modal";
@@ -172,95 +172,12 @@ export const RatingCard = memo(function RatingCard({
 			</div>
 
 			{parsedImages && parsedImages.length > 0 && (
-				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-					{(() => {
-						const displayImages = parsedImages.slice(0, 3);
-						if (displayImages.length === 1) {
-							return (
-								<Image
-									src={displayImages[0]}
-									alt="Rating"
-									variant="card"
-									className="block aspect-video object-cover rounded-xl bg-neutral-800 border border-neutral-700/50"
-								/>
-							);
-						}
-						if (displayImages.length === 2) {
-							return (
-								<div className="flex gap-1.5">
-									{displayImages.map((image, idx) => (
-										<div
-											key={image}
-											className="flex-1 overflow-hidden"
-											style={{ aspectRatio: "1 / 1" }}
-										>
-											<Image
-												src={image}
-												alt="Rating"
-												variant="card"
-												className={
-													idx === 0
-														? "w-full h-full object-cover object-center rounded-xl rounded-tr-sm rounded-br-sm bg-neutral-800 border border-neutral-700/50"
-														: "w-full h-full object-cover object-center rounded-xl rounded-tl-sm rounded-bl-sm bg-neutral-800 border border-neutral-700/50"
-												}
-											/>
-										</div>
-									))}
-								</div>
-							);
-						}
-						// implied length === 3 (or > 2 due to slice logic, but effectively 3 here)
-						return (
-							<div className="aspect-video grid grid-cols-2 grid-rows-2 gap-1.5">
-								<div
-									className="row-span-2 overflow-hidden rounded-xl"
-									style={{
-										borderTopRightRadius: "6px",
-										borderBottomRightRadius: "6px",
-									}}
-								>
-									<Image
-										src={displayImages[0]}
-										alt="Rating"
-										variant="card"
-										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-									/>
-								</div>
-
-								<div
-									className="overflow-hidden rounded-xl"
-									style={{
-										borderTopLeftRadius: "6px",
-										borderBottomLeftRadius: "6px",
-										borderBottomRightRadius: "6px",
-									}}
-								>
-									<Image
-										src={displayImages[1]}
-										alt="Rating"
-										variant="card"
-										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-									/>
-								</div>
-								<div
-									className="overflow-hidden rounded-xl"
-									style={{
-										borderTopLeftRadius: "6px",
-										borderBottomLeftRadius: "6px",
-										borderTopRightRadius: "6px",
-									}}
-								>
-									<Image
-										src={displayImages[2]}
-										alt="Rating"
-										variant="card"
-										className="w-full h-full object-cover object-center bg-neutral-800 border border-neutral-700/50"
-									/>
-								</div>
-							</div>
-						);
-					})()}
-				</div>
+				<ImageGrid
+					images={parsedImages}
+					alt="Rating"
+					maxImages={3}
+					className={`${noIndent ? "" : "ml-11"} mb-3`}
+				/>
 			)}
 
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
