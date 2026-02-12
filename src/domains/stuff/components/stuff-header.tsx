@@ -19,7 +19,7 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 						alt={stuff.name}
 						maxImages={3}
 						onImageClick={(src) => setLightboxSrc(src)}
-						className="mb-3"
+						className="mb-3 max-h-[300px]"
 					/>
 				)}
 
