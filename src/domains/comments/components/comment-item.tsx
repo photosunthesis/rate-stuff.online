@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
 import { getPlainTextFromContent } from "~/utils/rich-text";
@@ -43,6 +43,19 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	const { mutate: deleteComment, isPending: isDeletePending } =
 		useDeleteComment();
 	const umami = useUmami();
+	const location = useLocation();
+	const isTargeted = location.hash === `comment-${comment.id}`;
+	const [shouldHighlight, setShouldHighlight] = useState(false);
+
+	useEffect(() => {
+		if (isTargeted) {
+			setShouldHighlight(true);
+			const timer = setTimeout(() => {
+				setShouldHighlight(false);
+			}, 1000);
+			return () => clearTimeout(timer);
+		}
+	}, [isTargeted]);
 
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +103,10 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 	};
 
 	return (
-		<div className="flex gap-3 py-1.5 px-2 rounded-lg -mx-2 items-start group/comment">
+		<div
+			id={`comment-${comment.id}`}
+			className={`flex gap-3 py-1.5 px-2 rounded-lg -mx-2 items-start group/comment transition-colors duration-300 ${shouldHighlight ? "bg-neutral-800/50" : ""}`}
+		>
 			<Avatar
 				src={image}
 				alt={displayText}

@@ -28,8 +28,7 @@ import type { InferSelectModel } from "drizzle-orm";
 import { getPlainTextFromContent } from "~/utils/rich-text";
 
 type Activity = InferSelectModel<typeof activities> & {
-	// biome-ignore lint/suspicious/noExplicitAny: Metadata is a loose JSON field
-	metadata: any;
+	metadata: Record<string, unknown>;
 	actor: {
 		name: string | null;
 		image: string | null;
@@ -179,9 +178,15 @@ function RouteComponent() {
 													}
 
 													if (activity.targetRatingId) {
+														const isCommentActivity =
+															activity.type === "comment_create" ||
+															activity.type === "comment_vote";
 														navigate({
 															to: "/rating/$ratingId",
 															params: { ratingId: activity.targetRatingId },
+															hash: isCommentActivity
+																? `comment-${activity.entityId}`
+																: undefined,
 														});
 													}
 												}}
@@ -191,9 +196,15 @@ function RouteComponent() {
 														(e.key === "Enter" || e.key === " ")
 													) {
 														e.preventDefault();
+														const isCommentActivity =
+															activity.type === "comment_create" ||
+															activity.type === "comment_vote";
 														navigate({
 															to: "/rating/$ratingId",
 															params: { ratingId: activity.targetRatingId },
+															hash: isCommentActivity
+																? `comment-${activity.entityId}`
+																: undefined,
 														});
 													}
 												}}

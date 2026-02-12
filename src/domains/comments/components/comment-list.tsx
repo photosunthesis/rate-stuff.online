@@ -1,8 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { commentsQueryOptions } from "../queries";
+import type { CommentWithRelations } from "../types";
 import { CommentItem } from "./comment-item";
 import { CommentSkeleton } from "./comment-skeleton";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "@tanstack/react-router";
 
 interface CommentListProps {
 	ratingId: string;
@@ -19,6 +21,9 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 		error,
 	} = useInfiniteQuery(commentsQueryOptions(ratingId));
 
+	const location = useLocation();
+	const [hasScrolled, setHasScrolled] = useState(false);
+
 	const loadMoreRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -34,6 +39,21 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 		observer.observe(element);
 		return () => observer.disconnect();
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	useEffect(() => {
+		if (isLoading || hasScrolled || !location.hash.startsWith("comment-"))
+			return;
+
+		const commentId = location.hash.replace("comment-", "");
+		const element = document.getElementById(`comment-${commentId}`);
+
+		if (element) {
+			setTimeout(() => {
+				element.scrollIntoView({ behavior: "smooth", block: "center" });
+				setHasScrolled(true);
+			}, 100);
+		}
+	}, [isLoading, location.hash, hasScrolled]);
 
 	if (isLoading) {
 		return (
@@ -53,7 +73,10 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 		);
 	}
 
-	const allComments = data?.pages.flatMap((page) => page.comments) ?? [];
+	const allComments =
+		data?.pages.flatMap(
+			(page: { comments: CommentWithRelations[] }) => page.comments,
+		) ?? [];
 
 	if (allComments.length === 0) {
 		return (
@@ -65,7 +88,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	return (
 		<div className="flex flex-col">
-			{allComments.map((comment) => (
+			{allComments.map((comment: CommentWithRelations) => (
 				<CommentItem
 					key={comment.id}
 					comment={comment}
