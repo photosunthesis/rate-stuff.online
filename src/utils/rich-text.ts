@@ -38,3 +38,13 @@ export const getPlainTextFromContent = (content: string): string => {
 	} catch {}
 	return content;
 };
+
+export const getQuillTextPreview = (
+	content: string,
+	maxLength = 128,
+): string => {
+	const text = getPlainTextFromContent(content);
+	const cleanText = text.trim().replace(/\s+/g, " ");
+	if (cleanText.length <= maxLength) return cleanText;
+	return `${cleanText.substring(0, maxLength)}...`;
+};

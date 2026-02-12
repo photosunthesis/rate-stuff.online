@@ -15,7 +15,7 @@ import type {
 	VoteCommentInput,
 } from "./types";
 import { createActivity } from "~/domains/activity/service";
-import { getQuillTextPreview } from "~/utils/quill";
+import { getQuillTextPreview } from "~/utils/rich-text";
 
 export const createComment = createServerOnlyFn(
 	async (userId: string, input: CreateCommentInput) => {
