@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { Image } from "~/components/ui/content/image";
+import { useUmami } from "@danielgtmn/umami-react";
 
 interface VisualRatingCardProps {
 	rating: {
@@ -26,6 +27,7 @@ export function VisualRatingCard({
 	user,
 	stuff,
 }: VisualRatingCardProps) {
+	const umami = useUmami();
 	let imageUrl: string | undefined;
 	if (rating.images) {
 		try {
@@ -52,6 +54,14 @@ export function VisualRatingCard({
 		<Link
 			to="/rating/$ratingId"
 			params={{ ratingId: rating.id }}
+			onClick={() => {
+				if (umami) {
+					umami.track("click_explore_card", {
+						stuffName: stuff.name,
+						ratingId: rating.id,
+					});
+				}
+			}}
 			className="group relative block w-full rounded-xl overflow-hidden bg-neutral-900 border border-white/5 hover:border-white/10 transition-all"
 		>
 			<div className={`relative ${cardAspect}`}>

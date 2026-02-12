@@ -7,6 +7,7 @@ import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { ResetPasswordForm } from "~/domains/users/components/reset-password-form";
 import { resetPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/reset-password")({
 	component: RouteComponent,
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_auth/reset-password")({
 });
 
 function RouteComponent() {
+	const umami = useUmami();
 	const { token } = Route.useSearch() as { token?: string };
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState<
@@ -73,6 +75,10 @@ function RouteComponent() {
 				throw new Error(
 					error.message ?? `Failed to reset password due to an error: ${error}`,
 				);
+			}
+
+			if (umami) {
+				umami.track("reset_password");
 			}
 		},
 	});

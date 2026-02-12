@@ -15,6 +15,7 @@ import type { PublicUser } from "~/domains/users/types";
 import { useSignOut } from "~/domains/users/hooks";
 import { unreadActivityCountQueryOptions } from "~/domains/activity/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useUmami } from "@danielgtmn/umami-react";
 
 const getHeader = () => {
 	const headers = [
@@ -38,6 +39,7 @@ const getHeader = () => {
 };
 
 export function LeftSidebar({ user }: { user?: PublicUser }) {
+	const umami = useUmami();
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const isAuthenticated = user != null;
@@ -105,6 +107,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								activeOptions={{ exact: true }}
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
+								onClick={() => {
+									if (umami) umami.track("click_nav", { destination: "home" });
+								}}
 							>
 								<Home className="w-5 h-5" />
 								<span className="font-medium">Home</span>
@@ -113,6 +118,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								to="/explore"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
+								onClick={() => {
+									if (umami)
+										umami.track("click_nav", { destination: "explore" });
+								}}
 							>
 								<Compass className="w-5 h-5" />
 								<span className="font-medium">Explore</span>
@@ -121,6 +130,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								to="/activity"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
+								onClick={() => {
+									if (umami)
+										umami.track("click_nav", { destination: "activity" });
+								}}
 							>
 								<div className="relative">
 									<Bell className="w-5 h-5" />
@@ -137,6 +150,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								to="/settings"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
+								onClick={() => {
+									if (umami)
+										umami.track("click_nav", { destination: "settings" });
+								}}
 							>
 								<Settings className="w-5 h-5" />
 								<span className="font-medium">Settings</span>
@@ -146,7 +163,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						<div className="my-6 px-3">
 							<button
 								type="button"
-								onClick={() => setIsCreateOpen(true)}
+								onClick={() => {
+									if (umami) umami.track("click_create_rating");
+									setIsCreateOpen(true);
+								}}
 								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
 								<PencilLine className="w-4 h-4 shrink-0" />
@@ -180,6 +200,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							title="Home"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami) umami.track("click_nav", { destination: "home" });
+							}}
 						>
 							<Home className="w-6 h-6" />
 						</Link>
@@ -188,6 +211,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							title="Explore"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami) umami.track("click_nav", { destination: "explore" });
+							}}
 						>
 							<Compass className="w-6 h-6" />
 						</Link>
@@ -196,6 +222,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							title="Activity"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami)
+									umami.track("click_nav", { destination: "activity" });
+							}}
 						>
 							<div className="relative">
 								<Bell className="w-6 h-6" />
@@ -211,6 +241,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							to="/settings"
 							title="Settings"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							onClick={() => {
+								if (umami)
+									umami.track("click_nav", { destination: "settings" });
+							}}
 						>
 							<Settings className="w-6 h-6" />
 						</Link>
@@ -219,7 +253,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					<div className="mb-4">
 						<button
 							type="button"
-							onClick={() => setIsCreateOpen(true)}
+							onClick={() => {
+								if (umami) umami.track("click_create_rating");
+								setIsCreateOpen(true);
+							}}
 							aria-label="New Rating"
 							title="New Rating"
 							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
@@ -246,6 +283,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						activeOptions={{ exact: true }}
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
+						onClick={() => {
+							if (umami) umami.track("click_nav", { destination: "home" });
+						}}
 					>
 						<Home className="w-6 h-6" />
 						<span className="text-[10px] font-medium">Home</span>
@@ -254,7 +294,10 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 					{showFloatingButton && (
 						<button
 							type="button"
-							onClick={() => setIsCreateOpen(true)}
+							onClick={() => {
+								if (umami) umami.track("click_create_rating");
+								setIsCreateOpen(true);
+							}}
 							aria-label="New Rating"
 							title="New Rating"
 							className="absolute -top-18 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50"
@@ -266,6 +309,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						to="/explore"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
+						onClick={() => {
+							if (umami) umami.track("click_nav", { destination: "explore" });
+						}}
 					>
 						<Compass className="w-6 h-6" />
 						<span className="text-[10px] font-medium">Explore</span>
@@ -274,6 +320,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						to="/activity"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
+						onClick={() => {
+							if (umami) umami.track("click_nav", { destination: "activity" });
+						}}
 					>
 						<div className="relative">
 							<Bell className="w-6 h-6" />
@@ -290,6 +339,9 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						to="/settings"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
+						onClick={() => {
+							if (umami) umami.track("click_nav", { destination: "settings" });
+						}}
 					>
 						<Settings className="w-6 h-6" />
 						<span className="text-[10px] font-medium">Settings</span>

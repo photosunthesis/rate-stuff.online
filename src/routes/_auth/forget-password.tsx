@@ -6,6 +6,7 @@ import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { ForgotPasswordForm } from "~/domains/users/components/forget-password-form";
 import { forgotPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/forget-password")({
 	component: RouteComponent,
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/_auth/forget-password")({
 });
 
 function RouteComponent() {
+	const umami = useUmami();
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [validationErrors, setValidationErrors] = useState<
 		Record<string, string>
@@ -66,6 +68,10 @@ function RouteComponent() {
 					error.message ??
 						`Failed to send reset link due to an error: ${error}`,
 				);
+			}
+
+			if (umami) {
+				umami.track("forgot_password");
 			}
 		},
 	});

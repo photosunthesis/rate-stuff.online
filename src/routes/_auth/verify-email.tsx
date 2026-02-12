@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
 import { maskEmail } from "~/utils/strings";
+import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/verify-email")({
 	component: VerifyEmailPage,
@@ -20,6 +21,7 @@ const RESEND_COOLDOWN_MS = 60 * 1000;
 const STORAGE_KEY = "email_verification_last_sent";
 
 function VerifyEmailPage() {
+	const umami = useUmami();
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const search = Route.useSearch();
 	const emailStr = search.e;
@@ -61,6 +63,10 @@ function VerifyEmailPage() {
 
 	const handleResendEmail = async () => {
 		if (!email || !canResend) return;
+
+		if (umami) {
+			umami.track("resend_verification");
+		}
 
 		setIsLoading(true);
 		setMessage(null);
