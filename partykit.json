@@ -1,5 +1,0 @@
-{
-  "name": "rate-stuff-online",
-  "main": "src/party/server.ts",
-  "compatibilityDate": "2026-01-22"
-}

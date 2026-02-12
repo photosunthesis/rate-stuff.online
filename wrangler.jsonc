@@ -7,7 +7,23 @@
 		"nodejs_compat",
 		"no_handle_cross_request_promise_resolution"
 	],
-	"main": "@tanstack/react-start/server-entry",
+	"main": "src/server.ts",
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "ACTIVITY_NOTIFICATIONS",
+				"class_name": "ActivityNotifications"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": [
+				"ActivityNotifications"
+			]
+		}
+	],
 	"ratelimits": [
 		{
 			"name": "GENERAL",

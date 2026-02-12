@@ -2,6 +2,7 @@ import { getDatabase } from "~/db";
 import { activities, comments, users } from "~/db/schema";
 import { eq, desc, and, count, or, lt, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
 
 type Transaction = Parameters<
 	Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]
@@ -30,16 +31,17 @@ export const createActivity = createServerOnlyFn(
 			metadata: input.metadata,
 		});
 
-		const PARTYKIT_HOST = process.env.VITE_PARTYKIT_HOST ?? "127.0.0.1:1999";
-		const PROTOCOL = PARTYKIT_HOST.startsWith("127.0.0.1") ? "http" : "https";
-		const PARTYKIT_URL = `${PROTOCOL}://${PARTYKIT_HOST}`;
-
 		try {
-			fetch(`${PARTYKIT_URL}/parties/main/user-${input.userId}`, {
-				method: "POST",
-				body: JSON.stringify({ message: "NEW_ACTIVITY" }),
-				headers: { "Content-Type": "application/json" },
-			}).catch((_) => {});
+			const id = env.ACTIVITY_NOTIFICATIONS.idFromName(`user-${input.userId}`);
+			const stub = env.ACTIVITY_NOTIFICATIONS.get(id);
+			stub
+				.fetch(
+					new Request("https://do/broadcast", {
+						method: "POST",
+						body: JSON.stringify({ message: "NEW_ACTIVITY" }),
+					}),
+				)
+				.catch(() => {});
 		} catch (_) {}
 	},
 );
