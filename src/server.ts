@@ -1,7 +1,7 @@
 import handler from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
 
-export { ActivityNotifications } from "./durable-objects/activity-notifications";
+export { ActivityNotifications } from "./infrastructure/durable-objects/activity-notifications";
 
 export default {
 	fetch(request: Request) {
