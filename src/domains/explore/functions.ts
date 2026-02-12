@@ -19,6 +19,7 @@ export const getVisualRatingsFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const result = await getVisualRatings(20, data.cursor);
+
 			return {
 				success: true,
 				data: result,

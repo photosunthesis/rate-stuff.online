@@ -15,6 +15,7 @@ import {
 import { getUserByUsername } from "~/domains/users/service";
 import { getAuth } from "~/domains/users/auth/server";
 import { getRequest } from "@tanstack/react-start/server";
+import { setPublicCacheHeader } from "~/utils/cache";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -103,6 +104,10 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 				nextCursor = makeCursor(last.createdAt, last.id);
 			}
 
+			if (!userId) {
+				setPublicCacheHeader();
+			}
+
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
 			return {
@@ -177,6 +182,10 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 				nextCursor = makeCursor(last.createdAt, last.id);
 			}
 
+			if (!viewerId) {
+				setPublicCacheHeader();
+			}
+
 			return { success: true, data: ratings, nextCursor };
 		} catch (error) {
 			return {
@@ -197,6 +206,9 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 			if (!user) return { success: false, error: "Not found" };
 
 			const count = await getUserRatingsCount(user.id);
+
+			setPublicCacheHeader();
+
 			return { success: true, data: { count } };
 		} catch (error) {
 			return {
@@ -223,6 +235,10 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 
 			if (!rating) throw new Error("Not found");
 
+			if (!userId) {
+				setPublicCacheHeader();
+			}
+
 			return { success: true, data: rating };
 		} catch (error) {
 			return {
@@ -239,6 +255,8 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 		try {
 			const tags = await getRecentTags(10);
 
+			setPublicCacheHeader();
+
 			return { success: true, data: tags as { name: string; count: number }[] };
 		} catch (error) {
 			return {
@@ -253,6 +271,9 @@ export const getRecentStuffFn = createServerFn({ method: "GET" })
 	.handler(async () => {
 		try {
 			const stuff = await getRecentStuff(5);
+
+			setPublicCacheHeader();
+
 			return {
 				success: true,
 				data: stuff as {

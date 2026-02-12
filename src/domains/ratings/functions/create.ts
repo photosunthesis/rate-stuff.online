@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { setPublicCacheHeader } from "~/utils/cache";
 import { z, ZodError } from "zod";
 import { createRatingSchema } from "../types/create";
 import {
@@ -30,6 +31,7 @@ export const searchStuffFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const results = await searchStuff(data.query);
+			setPublicCacheHeader();
 			return { success: true, data: results };
 		} catch {
 			return {
@@ -45,6 +47,7 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 	.handler(async ({ data }) => {
 		try {
 			const results = await searchTags(data.query);
+			setPublicCacheHeader();
 			return { success: true, data: results };
 		} catch {
 			return {

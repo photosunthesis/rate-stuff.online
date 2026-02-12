@@ -7,6 +7,7 @@ import {
 } from "~/infrastructure/rate-limit/middleware";
 import { getAuth } from "~/domains/users/auth/server";
 import { getRequest } from "@tanstack/react-start/server";
+import { setPublicCacheHeader } from "~/utils/cache";
 
 async function getUserId() {
 	try {
@@ -30,6 +31,9 @@ export const getStuffBySlugFn = createServerFn({ method: "GET" })
 		try {
 			const s = await getStuffBySlug(data.slug);
 			if (!s) return { success: false, error: "Not found" };
+
+			setPublicCacheHeader();
+
 			return { success: true, data: s };
 		} catch (error) {
 			return {
@@ -58,6 +62,10 @@ export const getPaginatedStuffRatingsFn = createServerFn({ method: "GET" })
 				viewerId,
 			);
 			if (!page) return { success: false, error: "Not found" };
+
+			if (!viewerId) {
+				setPublicCacheHeader();
+			}
 
 			return { success: true, data: page.ratings, nextCursor: page.nextCursor };
 		} catch (error) {

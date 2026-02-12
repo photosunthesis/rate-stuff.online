@@ -8,6 +8,7 @@ import {
 	getEmailForUnverifiedUser,
 } from "./service";
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
+import { setPublicCacheHeader } from "~/utils/cache";
 import { getAuth } from "~/domains/users/auth/server";
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
@@ -58,6 +59,8 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 					success: false,
 					errorMessage: "User not found",
 				};
+
+			setPublicCacheHeader();
 
 			return { success: true, data: user };
 		} catch (error) {

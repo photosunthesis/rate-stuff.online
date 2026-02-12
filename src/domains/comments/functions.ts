@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { setPublicCacheHeader } from "~/utils/cache";
 import { ZodError } from "zod";
 import {
 	createCommentSchema,
@@ -121,6 +122,10 @@ export const getCommentsFn = createServerFn({ method: "GET" })
 			if (comments.length === data.limit) {
 				const last = comments[comments.length - 1];
 				nextCursor = makeCursor(last.createdAt, last.id);
+			}
+
+			if (!userId) {
+				setPublicCacheHeader();
 			}
 
 			return {
