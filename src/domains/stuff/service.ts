@@ -72,40 +72,32 @@ async function extractImagesForStuff(
 	stuffId: string,
 	maxImages = 8,
 ): Promise<string[]> {
-	const imageRows = await db
-		.select({ images: ratings.images })
-		.from(ratings)
-		.where(
-			and(
-				eq(ratings.stuffId, stuffId),
-				sql`${ratings.images} IS NOT NULL`,
-				isNull(ratings.deletedAt),
-			),
-		)
-		.orderBy(desc(ratings.createdAt), desc(ratings.id))
-		.limit(100);
+	// We use raw SQL here because Drizzle's query builder doesn't yet support `CROSS JOIN LATERAL`
+	// with `json_array_elements_text`, which is required to efficiently unpack the JSON array
+	// inside the database. This avoids fetching 100 heavily-loaded rows to the worker.
+	//
+	// SAFETY: This is safe from SQL injection because we use Drizzle's `sql` template tag,
+	// which automatically parameterizes all inputs (like ${stuffId}).
+	const result = await db.execute(sql`
+    WITH recent_images AS (
+      SELECT t.image
+      FROM ${ratings} r
+      CROSS JOIN LATERAL json_array_elements_text(
+        CASE 
+          WHEN r.images IS NULL OR r.images = '' THEN '[]'::json 
+          ELSE r.images::json 
+        END
+      ) as t(image)
+      WHERE r.stuff_id = ${stuffId}
+        AND r.images IS NOT NULL
+        AND r.deleted_at IS NULL
+      ORDER BY r.created_at DESC, r.id DESC
+      LIMIT 100
+    )
+    SELECT DISTINCT image FROM recent_images LIMIT ${maxImages}
+  `);
 
-	const images: string[] = [];
-	const seen = new Set<string>();
-
-	for (const r of imageRows) {
-		if (!r.images) continue;
-		try {
-			const parsed: unknown = JSON.parse(r.images);
-			if (Array.isArray(parsed)) {
-				for (const img of parsed) {
-					if (typeof img === "string" && !seen.has(img)) {
-						images.push(img);
-						seen.add(img);
-						if (images.length >= maxImages) break;
-					}
-				}
-			}
-		} catch {}
-		if (images.length >= maxImages) break;
-	}
-
-	return images;
+	return result.map((row) => row.image as string);
 }
 
 export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
