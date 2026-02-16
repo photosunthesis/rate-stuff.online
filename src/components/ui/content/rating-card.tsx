@@ -11,6 +11,7 @@ import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
 import { getTimeAgo } from "~/utils/datetime";
 import { useUmami } from "@danielgtmn/umami-react";
+import { getRatingEmoji } from "~/utils/ratings";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -106,20 +107,14 @@ export const RatingCard = memo(function RatingCard({
 								</span>
 							)}
 							<span className="text-neutral-500"> rated </span>
-							{rating.stuff ? (
-								<Link
-									to="/stuff/$stuffSlug"
-									params={{ stuffSlug: rating.stuff.slug }}
-									className="text-white hover:underline font-medium"
-									onClick={(e) => e.stopPropagation()}
-								>
-									{rating.stuff.name}
-								</Link>
-							) : (
-								<span className="text-neutral-400 font-medium">
-									Unknown Item
-								</span>
-							)}
+							<Link
+								to="/stuff/$stuffSlug"
+								params={{ stuffSlug: rating.stuff.slug }}
+								className="text-white hover:underline font-medium"
+								onClick={(e) => e.stopPropagation()}
+							>
+								{rating.stuff.name}
+							</Link>
 							<span className="text-neutral-500"> • </span>
 							<span className="text-neutral-500">{timeAgo}</span>
 							{rating.updatedAt &&
@@ -133,18 +128,14 @@ export const RatingCard = memo(function RatingCard({
 			) : (
 				<div className="text-base text-neutral-500 mb-2 leading-relaxed">
 					<span className="text-neutral-400">A rating of</span>{" "}
-					{rating.stuff ? (
-						<Link
-							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff.slug }}
-							className="text-white hover:underline font-medium"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{rating.stuff.name}
-						</Link>
-					) : (
-						<span className="text-neutral-400 font-medium">Unknown Item</span>
-					)}{" "}
+					<Link
+						to="/stuff/$stuffSlug"
+						params={{ stuffSlug: rating.stuff.slug }}
+						className="text-white hover:underline font-medium"
+						onClick={(e) => e.stopPropagation()}
+					>
+						{rating.stuff.name}
+					</Link>{" "}
 					<span>•</span> <span className="text-neutral-500">{timeAgo}</span>
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
@@ -156,7 +147,7 @@ export const RatingCard = memo(function RatingCard({
 
 			<div className="flex items-baseline gap-2 mb-2">
 				<h3
-					className={`text-2xl font-semibold text-white ${
+					className={`text-2xl md:text-3xl font-semibold text-white ${
 						noIndent ? "" : "ml-11"
 					}`}
 				>
@@ -166,7 +157,10 @@ export const RatingCard = memo(function RatingCard({
 						className="hover:underline text-white"
 						onClick={(e) => e.stopPropagation()}
 					>
-						{rating.score}/10
+						{rating.score}/10{" "}
+						<span className="grayscale-[0.2] select-none">
+							{getRatingEmoji(rating.score)}
+						</span>
 					</Link>
 				</h3>
 			</div>

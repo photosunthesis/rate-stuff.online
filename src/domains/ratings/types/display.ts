@@ -17,7 +17,7 @@ export type RatingWithRelations = typeof ratings.$inferSelect & {
 		username: string | null;
 		image: string | null;
 	} | null;
-	stuff: typeof stuff.$inferSelect | null;
+	stuff: typeof stuff.$inferSelect;
 	userVote: "up" | "down" | null;
 };
 

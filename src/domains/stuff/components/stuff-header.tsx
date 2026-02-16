@@ -3,8 +3,7 @@ import type { StuffWithAggregates } from "../types";
 import { Lightbox } from "~/components/ui/modal/lightbox";
 import { MessageSquareQuote } from "lucide-react";
 import { ImageGrid } from "~/components/ui/content/image-grid";
-
-import { getRatingEmoji } from "~/domains/ratings/utils";
+import { getRatingEmoji } from "~/utils/ratings";
 
 export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);

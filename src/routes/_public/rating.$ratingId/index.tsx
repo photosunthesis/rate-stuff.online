@@ -38,6 +38,7 @@ import {
 import { Button } from "~/components/ui/form/button";
 import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 import { useUmami } from "@danielgtmn/umami-react";
+import { getRatingEmoji } from "~/utils/ratings";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
@@ -78,7 +79,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 		const rating = cached?.success ? cached.data : null;
 		const stuffName = rating?.stuff?.name ?? "Rating";
 		const title = rating
-			? `${stuffName} - ${rating.score}/10`
+			? `${stuffName} - ${rating.score}/10 ${getRatingEmoji(rating.score)}`
 			: "Rating - Rate Stuff Online";
 		const description = rating
 			? excerptFromMarkdown(rating.content, 160)
@@ -176,7 +177,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 				},
 				datePublished: new Date(rating.createdAt).toISOString(),
 				reviewBody: excerptFromMarkdown(rating.content, 500),
-				name: `${stuffName} - ${rating.score}/10`,
+				name: `${stuffName} - ${rating.score}/10 ${getRatingEmoji(rating.score)}`,
 				reviewRating: {
 					"@type": "Rating",
 					ratingValue: rating.score,
@@ -277,18 +278,14 @@ const RatingHeader = ({
 						<span className="font-medium text-neutral-400">{displayText}</span>
 					)}
 					<span className="text-neutral-500"> rated </span>
-					{rating.stuff ? (
-						<Link
-							to="/stuff/$stuffSlug"
-							params={{ stuffSlug: rating.stuff.slug }}
-							className="text-white hover:underline font-medium"
-							onClick={(e) => e.stopPropagation()}
-						>
-							{rating.stuff.name}
-						</Link>
-					) : (
-						<span className="text-neutral-400 font-medium">Unknown Item</span>
-					)}
+					<Link
+						to="/stuff/$stuffSlug"
+						params={{ stuffSlug: rating.stuff.slug }}
+						className="text-white hover:underline font-medium"
+						onClick={(e) => e.stopPropagation()}
+					>
+						{rating.stuff.name}
+					</Link>
 					<span className="text-neutral-500"> • </span>
 					<TimeAgo date={rating.createdAt} className="text-neutral-500" />
 					{rating.updatedAt &&
@@ -381,7 +378,12 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
 		<div className="flex items-start justify-between mb-2 ml-11">
 			<div className="flex items-baseline gap-2">
-				<h3 className="text-2xl font-semibold text-white">{rating.score}/10</h3>
+				<h3 className="text-2xl md:text-3xl font-semibold text-white">
+					{rating.score}/10{" "}
+					<span className="grayscale-[0.2] select-none">
+						{getRatingEmoji(rating.score)}
+					</span>
+				</h3>
 			</div>
 		</div>
 	);
@@ -550,7 +552,7 @@ function RouteComponent() {
 			<Lightbox
 				src={lightboxSrc}
 				onClose={() => setLightboxSrc(null)}
-				alt={`${rating.stuff?.name ?? "Rating"} - ${rating.score}/10`}
+				alt={`${rating.stuff.name} - ${rating.score}/10`}
 			/>
 		</>
 	);
