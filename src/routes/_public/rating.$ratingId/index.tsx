@@ -22,7 +22,6 @@ import { AuthModal } from "~/domains/users/components/auth-modal";
 import { VoteSection } from "~/components/ui/content/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import { CommentsSection } from "~/domains/comments/components/comments-section";
 import { MessageSquare } from "lucide-react";
 import { formatCompactNumber } from "~/utils/numbers";
@@ -457,7 +456,6 @@ function RouteComponent() {
 	const { ratingId } = Route.useParams();
 	const { data: ratingRes } = useSuspenseQuery(ratingQueryOptions(ratingId));
 	const { data: user } = useSuspenseQuery(authQueryOptions());
-	const currentUser = mapToCurrentUser(user);
 	const umami = useUmami();
 
 	if (!ratingRes || !ratingRes.success || !ratingRes.data) return <NotFound />;
@@ -483,7 +481,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<MainLayout user={currentUser}>
+			<MainLayout>
 				<div className="border-b border-neutral-800 px-3 py-2">
 					<div className="flex items-center gap-3">
 						<button
@@ -506,7 +504,7 @@ function RouteComponent() {
 				<div className="px-4 pt-4">
 					<RatingHeader
 						rating={ratingTyped}
-						isOwner={currentUser?.id === rating.userId}
+						isOwner={user?.id === rating.userId}
 					/>
 					<TitleBlock rating={ratingTyped} />
 					<ImageGrid
@@ -518,13 +516,13 @@ function RouteComponent() {
 					<ContentSection rating={ratingTyped} />
 					<TagsList
 						tags={ratingTyped.tags}
-						isAuthenticated={!!currentUser}
+						isAuthenticated={!!user}
 						onTagClick={(tag) => {
 							if (umami) umami.track("click_tag", { tag });
 						}}
 					/>
 					<div className="ml-10.5 mb-2 flex items-center gap-3">
-						<VoteSection rating={ratingTyped} isAuthenticated={!!currentUser} />
+						<VoteSection rating={ratingTyped} isAuthenticated={!!user} />
 						<button
 							type="button"
 							className="flex items-center gap-2 text-neutral-400 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
@@ -544,7 +542,7 @@ function RouteComponent() {
 					</div>
 					<div className="-mx-4 border-t border-neutral-800 my-4" />
 					<div id={commentsSectionId} className="mb-4">
-						<CommentsSection ratingId={rating.id} currentUser={currentUser} />
+						<CommentsSection ratingId={rating.id} currentUser={user} />
 					</div>
 				</div>
 			</MainLayout>

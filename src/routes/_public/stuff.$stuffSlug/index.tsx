@@ -5,9 +5,6 @@ import { StuffHeader } from "~/domains/stuff/components/stuff-header";
 import { Suspense, lazy } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { stuffQueryOptions } from "~/domains/stuff/queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/domains/users/queries";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 const StuffRatingsList = lazy(() =>
 	import("~/domains/stuff/components/stuff-ratings-list").then((module) => ({
@@ -102,7 +99,8 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			"ratings",
 			"community opinions",
 			"rate stuff online",
-		].join(", ");
+		].join(", "
+);
 
 		const metas: Record<string, string | undefined>[] = [
 			{ title },
@@ -156,8 +154,6 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 function RouteComponent() {
 	const slug = Route.useParams().stuffSlug;
 	const { stuff } = Route.useRouteContext();
-	const { data: user } = useSuspenseQuery(authQueryOptions());
-	const currentUser = mapToCurrentUser(user);
 
 	// Normalize to safe shape to avoid runtime errors
 	const imagesForSafe = Array.isArray(
@@ -175,7 +171,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout>
 			<StuffHeader stuff={safeStuff} />{" "}
 			<div className="border-t border-neutral-800" />
 			<Suspense
@@ -192,7 +188,7 @@ function RouteComponent() {
 					</div>
 				}
 			>
-				<StuffRatingsList slug={slug} user={currentUser} />
+				<StuffRatingsList slug={slug} />
 			</Suspense>
 		</MainLayout>
 	);

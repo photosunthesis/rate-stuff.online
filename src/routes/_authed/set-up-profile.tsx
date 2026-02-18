@@ -7,7 +7,8 @@ import authClient from "~/domains/users/auth/client";
 import { AuthLayout } from "~/domains/users/components/auth-layout";
 import { SetUpProfileForm } from "~/domains/users/components/set-up-profile-form";
 import { uploadAvatarFn } from "~/domains/users/functions";
-import { authQueryOptions } from "~/domains/users/queries";
+import { authQueryOptions, userQueryOptions } from "~/domains/users/queries";
+import { ratingKeys } from "~/domains/ratings/queries/display";
 import { withTimeout } from "~/utils/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
 
@@ -96,6 +97,14 @@ function RouteComponent() {
 			await queryClient.invalidateQueries({
 				queryKey: authQueryOptions().queryKey,
 			});
+			await queryClient.invalidateQueries({
+				queryKey: ratingKeys.all,
+			});
+			if (user?.username) {
+				await queryClient.invalidateQueries({
+					queryKey: userQueryOptions(user.username).queryKey,
+				});
+			}
 
 			await refetch();
 

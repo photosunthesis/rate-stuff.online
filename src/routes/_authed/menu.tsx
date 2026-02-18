@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import { useSignOut } from "~/domains/users/hooks";
 import { LogOut, ArrowUpRight, UserPen, type LucideIcon } from "lucide-react";
 import { useState } from "react";
@@ -29,10 +28,8 @@ function RouteComponent() {
 
 	if (!user) return null;
 
-	const currentUser = mapToCurrentUser(user);
-
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout>
 			<ConfirmModal
 				destructive
 				isOpen={isSignOutOpen}

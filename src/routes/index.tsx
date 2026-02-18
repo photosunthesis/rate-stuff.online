@@ -8,8 +8,6 @@ import { RouteError } from "~/components/ui/feedback/route-error";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import { MainLayout } from "~/components/layout/main-layout";
 import { authQueryOptions } from "~/domains/users/queries";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import { useUmami } from "@danielgtmn/umami-react";
 
 const MainFeed = lazy(() =>
@@ -113,8 +111,6 @@ export const Route = createFileRoute("/")({
 function App() {
 	const search = useSearch({ from: "/" });
 	const tag = search.tag as string | undefined;
-	const { data: user } = useSuspenseQuery(authQueryOptions());
-	const currentUser = mapToCurrentUser(user);
 	const umami = useUmami();
 
 	useEffect(() => {
@@ -124,7 +120,7 @@ function App() {
 	}, [tag, umami]);
 
 	return (
-		<MainLayout user={currentUser} showDiscoverStrip={tag === undefined}>
+		<MainLayout showDiscoverStrip={tag === undefined}>
 			<Suspense
 				fallback={
 					<div>
@@ -146,7 +142,7 @@ function App() {
 					</div>
 				}
 			>
-				<MainFeed tag={tag} user={currentUser} />
+				<MainFeed tag={tag} />
 			</Suspense>
 		</MainLayout>
 	);

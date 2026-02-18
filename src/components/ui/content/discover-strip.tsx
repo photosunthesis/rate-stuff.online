@@ -5,10 +5,11 @@ import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/domains/ratings/queries/display";
-import type { PublicUser } from "~/domains/users/types";
+import { useAuth } from "~/domains/users/queries";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 
-export function DiscoverStrip({ user }: { user?: PublicUser }) {
+export function DiscoverStrip() {
+	const { data: user } = useAuth();
 	const isAuthenticated = user != null;
 	const { data: recentStuff, isLoading: loadingStuff } =
 		useRecentStuff(isAuthenticated);

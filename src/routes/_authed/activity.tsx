@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useMemo } from "react";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import {
 	activityListQueryOptions,
 	activityKeys,
@@ -76,7 +75,6 @@ export const Route = createFileRoute("/_authed/activity")({
 
 function RouteComponent() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
-	const currentUser = mapToCurrentUser(user);
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useSuspenseInfiniteQuery(activityListQueryOptions(user?.id));
 	const queryClient = useQueryClient();
@@ -131,7 +129,7 @@ function RouteComponent() {
 	});
 
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout>
 			<div className="flex flex-col min-h-screen relative">
 				{allActivities.length > 0 && (
 					<div className="absolute top-4 right-4 z-10">

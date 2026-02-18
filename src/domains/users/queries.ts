@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { getCurrentUserFn, getUserByUsernameFn } from "./functions";
 import type { PublicUser } from "./types";
 
@@ -28,6 +28,11 @@ export const authQueryOptions = () =>
 	queryOptions({
 		queryKey: ["user"],
 		queryFn: ({ signal }) => getCurrentUserFn({ signal }),
+		staleTime: Number.POSITIVE_INFINITY, // Never refetch unless explicitly invalidated
 	});
 
 export type AuthQueryResult = Awaited<ReturnType<typeof getCurrentUserFn>>;
+
+export function useAuth() {
+	return useSuspenseQuery(authQueryOptions());
+}

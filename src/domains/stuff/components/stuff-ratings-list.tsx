@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import type { StuffRating } from "../types";
 import type { PublicUser } from "~/domains/users/types";
+import type { RatingWithRelations } from "~/domains/ratings/types/display";
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPaginatedStuffRatingsFn } from "../functions";
@@ -181,7 +182,10 @@ export function StuffRatingsList({
 								: "border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
 						}
 					>
-						<RatingCard rating={rating} isAuthenticated={isAuthenticated} />
+						<RatingCard
+							rating={rating as RatingWithRelations}
+							isAuthenticated={isAuthenticated}
+						/>
 					</div>
 				))}
 			</div>

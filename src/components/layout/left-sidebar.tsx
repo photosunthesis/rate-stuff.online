@@ -4,11 +4,11 @@ import AppLogo from "~/components/ui/misc/app-logo";
 import { Home, Bell, Menu, LogOut, PencilLine } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
-import type { PublicUser } from "~/domains/users/types";
 import { useSignOut } from "~/domains/users/hooks";
 import { unreadActivityCountQueryOptions } from "~/domains/activity/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useUmami } from "@danielgtmn/umami-react";
+import { useAuth } from "~/domains/users/queries";
 
 const getHeader = () => {
 	const headers = [
@@ -31,7 +31,8 @@ const getHeader = () => {
 	return headers[hourSeed % headers.length];
 };
 
-export function LeftSidebar({ user }: { user?: PublicUser }) {
+export function LeftSidebar() {
+	const { data: user } = useAuth();
 	const umami = useUmami();
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);

@@ -9,7 +9,6 @@ import { getTimeAgo } from "~/utils/datetime";
 import { MainLayout } from "~/components/layout/main-layout";
 import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 
 export const Route = createFileRoute("/_public/user/$username/")({
 	beforeLoad: async ({ params, context }) => {
@@ -17,11 +16,7 @@ export const Route = createFileRoute("/_public/user/$username/")({
 
 		if (!username) throw redirect({ to: "/" });
 
-		const publicUser = await context.queryClient.ensureQueryData(
-			userQueryOptions(username),
-		);
-
-		return { publicUser };
+		await context.queryClient.ensureQueryData(userQueryOptions(username));
 	},
 	component: RouteComponent,
 	head: ({ params, match }) => {
@@ -236,16 +231,16 @@ function UserRatingsList({
 }
 
 function RouteComponent() {
-	const { publicUser } = Route.useRouteContext();
+	const { username } = Route.useParams();
+	const { data: publicUser } = useSuspenseQuery(userQueryOptions(username));
 	const { data: user } = useSuspenseQuery(authQueryOptions());
-	const currentUser = mapToCurrentUser(user);
 
 	if (!publicUser) return <NotFound />;
 
 	const ratingsCount = publicUser.ratingsCount ?? 0;
 
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout>
 			<div className="flex items-center gap-4 m-4">
 				<div>
 					<Avatar

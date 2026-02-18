@@ -25,7 +25,8 @@ function transformToGroupedRating(row: {
 }): RatingWithRelations {
 	return {
 		...row.rating,
-		stuff: row.stuff,
+		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
+		stuff: row.stuff!,
 		user: row.user,
 		tags: row.tags,
 		userVote: row.userVote,

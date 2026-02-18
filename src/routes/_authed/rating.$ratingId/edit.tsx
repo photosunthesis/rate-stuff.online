@@ -9,7 +9,6 @@ import { ratingQueryOptions } from "~/domains/ratings/queries/display";
 import { authQueryOptions } from "~/domains/users/queries";
 import { EditRatingForm } from "~/domains/ratings/components/edit-rating-form";
 import { MainLayout } from "~/components/layout/main-layout";
-import { mapToCurrentUser } from "~/domains/users/utils/user-mapping";
 import {
 	useUpdateRatingMutation,
 	useUploadImageMutation,
@@ -65,11 +64,10 @@ export const Route = createFileRoute("/_authed/rating/$ratingId/edit")({
 });
 
 function RouteComponent() {
-	const { user, rating } = Route.useRouteContext();
+	const { rating } = Route.useRouteContext();
 	const { ratingId } = Route.useParams();
 	const router = useRouter();
 	const canGoBack = useCanGoBack();
-	const currentUser = mapToCurrentUser(user);
 	const updateRatingMutation = useUpdateRatingMutation();
 	const uploadImageMutation = useUploadImageMutation();
 	const [formError, setFormError] = useState<string | null>(null);
@@ -152,7 +150,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<MainLayout user={currentUser}>
+		<MainLayout>
 			<div className="h-full flex flex-col">
 				<div className="border-b border-neutral-800 px-3 py-2">
 					<div className="flex items-center gap-3">
