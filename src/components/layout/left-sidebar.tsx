@@ -1,14 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/misc/app-logo";
-import {
-	Home,
-	Compass,
-	Bell,
-	Settings,
-	LogOut,
-	PencilLine,
-} from "lucide-react";
+import { Home, Bell, Menu, LogOut, PencilLine } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
 import type { PublicUser } from "~/domains/users/types";
@@ -46,8 +39,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 	const [header] = useState(() => getHeader());
 	const location = useLocation();
 	const [signOut] = useSignOut();
-	const showFloatingButton =
-		location.pathname === "/" || location.pathname === "/explore";
+	const showFloatingButton = location.pathname === "/";
 	const { data: unreadCount } = useSuspenseQuery(
 		unreadActivityCountQueryOptions(user?.id),
 	);
@@ -114,18 +106,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								<Home className="w-5 h-5" />
 								<span className="font-medium">Home</span>
 							</Link>
-							<Link
-								to="/explore"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
-								activeProps={{ className: "text-white font-bold" }}
-								onClick={() => {
-									if (umami)
-										umami.track("click_nav", { destination: "explore" });
-								}}
-							>
-								<Compass className="w-5 h-5" />
-								<span className="font-medium">Explore</span>
-							</Link>
+
 							<Link
 								to="/activity"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
@@ -155,8 +136,8 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 										umami.track("click_nav", { destination: "settings" });
 								}}
 							>
-								<Settings className="w-5 h-5" />
-								<span className="font-medium">Settings</span>
+								<Menu className="w-5 h-5" />
+								<span className="font-medium">Menu</span>
 							</Link>
 						</nav>
 
@@ -206,17 +187,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						>
 							<Home className="w-6 h-6" />
 						</Link>
-						<Link
-							to="/explore"
-							title="Explore"
-							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
-							activeProps={{ className: "text-white" }}
-							onClick={() => {
-								if (umami) umami.track("click_nav", { destination: "explore" });
-							}}
-						>
-							<Compass className="w-6 h-6" />
-						</Link>
+
 						<Link
 							to="/activity"
 							title="Activity"
@@ -239,14 +210,14 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						</Link>
 						<Link
 							to="/settings"
-							title="Settings"
+							title="Menu"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							onClick={() => {
 								if (umami)
 									umami.track("click_nav", { destination: "settings" });
 							}}
 						>
-							<Settings className="w-6 h-6" />
+							<Menu className="w-6 h-6" />
 						</Link>
 					</div>
 
@@ -276,7 +247,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 			)}
 
 			{isAuthenticated && (
-				<nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-lg border-t border-white/5 px-6 py-3 flex justify-between md:justify-center md:space-x-24 items-center z-50">
+				<nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-lg border-t border-white/5 px-6 py-3 flex justify-around md:justify-center md:space-x-24 items-center z-50">
 					<div className="absolute inset-0 bg-linear-to-t from-neutral-950/95 via-neutral-950/60 to-neutral-950/10 -z-10" />
 					<Link
 						to="/"
@@ -305,17 +276,7 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							<PencilLine className="w-5 h-5" />
 						</button>
 					)}
-					<Link
-						to="/explore"
-						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
-						activeProps={{ className: "text-white" }}
-						onClick={() => {
-							if (umami) umami.track("click_nav", { destination: "explore" });
-						}}
-					>
-						<Compass className="w-6 h-6" />
-						<span className="text-[10px] font-medium">Explore</span>
-					</Link>
+
 					<Link
 						to="/activity"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
@@ -343,8 +304,8 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							if (umami) umami.track("click_nav", { destination: "settings" });
 						}}
 					>
-						<Settings className="w-6 h-6" />
-						<span className="text-[10px] font-medium">Settings</span>
+						<Menu className="w-6 h-6" />
+						<span className="text-[10px] font-medium">Menu</span>
 					</Link>
 				</nav>
 			)}

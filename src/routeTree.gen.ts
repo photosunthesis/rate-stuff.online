@@ -20,7 +20,6 @@ import { Route as PublicTermsRouteImport } from './routes/_public/terms'
 import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
-import { Route as AuthedExploreRouteImport } from './routes/_authed/explore'
 import { Route as AuthedEmailVerifiedRouteImport } from './routes/_authed/email-verified'
 import { Route as AuthedActivityRouteImport } from './routes/_authed/activity'
 import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
@@ -84,11 +83,6 @@ const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
 const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
   id: '/set-up-profile',
   path: '/set-up-profile',
-  getParentRoute: () => AuthedRouteRoute,
-} as any)
-const AuthedExploreRoute = AuthedExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthedEmailVerifiedRoute = AuthedEmailVerifiedRouteImport.update({
@@ -165,7 +159,6 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
   '/email-verified': typeof AuthedEmailVerifiedRoute
-  '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
   '/privacy': typeof PublicPrivacyRoute
@@ -188,7 +181,6 @@ export interface FileRoutesByTo {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
   '/email-verified': typeof AuthedEmailVerifiedRoute
-  '/explore': typeof AuthedExploreRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/settings': typeof AuthedSettingsRoute
   '/privacy': typeof PublicPrivacyRoute
@@ -215,7 +207,6 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_authed/activity': typeof AuthedActivityRoute
   '/_authed/email-verified': typeof AuthedEmailVerifiedRoute
-  '/_authed/explore': typeof AuthedExploreRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_authed/settings': typeof AuthedSettingsRoute
   '/_public/privacy': typeof PublicPrivacyRoute
@@ -240,7 +231,6 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/activity'
     | '/email-verified'
-    | '/explore'
     | '/set-up-profile'
     | '/settings'
     | '/privacy'
@@ -263,7 +253,6 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/activity'
     | '/email-verified'
-    | '/explore'
     | '/set-up-profile'
     | '/settings'
     | '/privacy'
@@ -289,7 +278,6 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_authed/activity'
     | '/_authed/email-verified'
-    | '/_authed/explore'
     | '/_authed/set-up-profile'
     | '/_authed/settings'
     | '/_public/privacy'
@@ -391,13 +379,6 @@ declare module '@tanstack/react-router' {
       path: '/set-up-profile'
       fullPath: '/set-up-profile'
       preLoaderRoute: typeof AuthedSetUpProfileRouteImport
-      parentRoute: typeof AuthedRouteRoute
-    }
-    '/_authed/explore': {
-      id: '/_authed/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof AuthedExploreRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
     '/_authed/email-verified': {
@@ -510,7 +491,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface AuthedRouteRouteChildren {
   AuthedActivityRoute: typeof AuthedActivityRoute
   AuthedEmailVerifiedRoute: typeof AuthedEmailVerifiedRoute
-  AuthedExploreRoute: typeof AuthedExploreRoute
   AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
   AuthedSettingsRoute: typeof AuthedSettingsRoute
   AuthedRatingRatingIdEditRoute: typeof AuthedRatingRatingIdEditRoute
@@ -519,7 +499,6 @@ interface AuthedRouteRouteChildren {
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedActivityRoute: AuthedActivityRoute,
   AuthedEmailVerifiedRoute: AuthedEmailVerifiedRoute,
-  AuthedExploreRoute: AuthedExploreRoute,
   AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
   AuthedSettingsRoute: AuthedSettingsRoute,
   AuthedRatingRatingIdEditRoute: AuthedRatingRatingIdEditRoute,
