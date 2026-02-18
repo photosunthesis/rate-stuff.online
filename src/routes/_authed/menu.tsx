@@ -11,11 +11,11 @@ import { MainLayout } from "~/components/layout/main-layout";
 import { useUmami } from "@danielgtmn/umami-react";
 import { Button } from "~/components/ui/form/button";
 
-export const Route = createFileRoute("/_authed/settings")({
+export const Route = createFileRoute("/_authed/menu")({
 	component: RouteComponent,
 	head: () => ({
 		meta: [
-			{ title: "Settings - Rate Stuff Online" },
+			{ title: "Menu - Rate Stuff Online" },
 			{ name: "robots", content: "noindex, follow" },
 		],
 	}),
@@ -72,7 +72,7 @@ function RouteComponent() {
 								</p>
 							</div>
 						</Link>
-						<Link to="/set-up-profile" search={{ redirect: "/settings" }}>
+						<Link to="/set-up-profile" search={{ redirect: "/menu" }}>
 							<Button
 								variant="secondary"
 								size="sm"

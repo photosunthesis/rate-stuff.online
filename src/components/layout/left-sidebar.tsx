@@ -128,12 +128,11 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 								<span className="font-medium">Activity</span>
 							</Link>
 							<Link
-								to="/settings"
+								to="/menu"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
 								onClick={() => {
-									if (umami)
-										umami.track("click_nav", { destination: "settings" });
+									if (umami) umami.track("click_nav", { destination: "menu" });
 								}}
 							>
 								<Menu className="w-5 h-5" />
@@ -209,12 +208,11 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 							</div>
 						</Link>
 						<Link
-							to="/settings"
+							to="/menu"
 							title="Menu"
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							onClick={() => {
-								if (umami)
-									umami.track("click_nav", { destination: "settings" });
+								if (umami) umami.track("click_nav", { destination: "menu" });
 							}}
 						>
 							<Menu className="w-6 h-6" />
@@ -297,11 +295,11 @@ export function LeftSidebar({ user }: { user?: PublicUser }) {
 						<span className="text-[10px] font-medium">Activity</span>
 					</Link>
 					<Link
-						to="/settings"
+						to="/menu"
 						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
 						activeProps={{ className: "text-white" }}
 						onClick={() => {
-							if (umami) umami.track("click_nav", { destination: "settings" });
+							if (umami) umami.track("click_nav", { destination: "menu" });
 						}}
 					>
 						<Menu className="w-6 h-6" />

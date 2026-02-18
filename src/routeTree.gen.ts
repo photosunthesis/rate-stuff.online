@@ -18,8 +18,8 @@ import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
 import { Route as ApiImageRouteImport } from './routes/api/image'
 import { Route as PublicTermsRouteImport } from './routes/_public/terms'
 import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
-import { Route as AuthedSettingsRouteImport } from './routes/_authed/settings'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
+import { Route as AuthedMenuRouteImport } from './routes/_authed/menu'
 import { Route as AuthedEmailVerifiedRouteImport } from './routes/_authed/email-verified'
 import { Route as AuthedActivityRouteImport } from './routes/_authed/activity'
 import { Route as AuthVerifyEmailRouteImport } from './routes/_auth/verify-email'
@@ -75,14 +75,14 @@ const PublicPrivacyRoute = PublicPrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => PublicRouteRoute,
 } as any)
-const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthedRouteRoute,
-} as any)
 const AuthedSetUpProfileRoute = AuthedSetUpProfileRouteImport.update({
   id: '/set-up-profile',
   path: '/set-up-profile',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedMenuRoute = AuthedMenuRouteImport.update({
+  id: '/menu',
+  path: '/menu',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthedEmailVerifiedRoute = AuthedEmailVerifiedRouteImport.update({
@@ -159,8 +159,8 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
   '/email-verified': typeof AuthedEmailVerifiedRoute
+  '/menu': typeof AuthedMenuRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/settings': typeof AuthedSettingsRoute
   '/privacy': typeof PublicPrivacyRoute
   '/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
@@ -181,8 +181,8 @@ export interface FileRoutesByTo {
   '/verify-email': typeof AuthVerifyEmailRoute
   '/activity': typeof AuthedActivityRoute
   '/email-verified': typeof AuthedEmailVerifiedRoute
+  '/menu': typeof AuthedMenuRoute
   '/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/settings': typeof AuthedSettingsRoute
   '/privacy': typeof PublicPrivacyRoute
   '/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
@@ -207,8 +207,8 @@ export interface FileRoutesById {
   '/_auth/verify-email': typeof AuthVerifyEmailRoute
   '/_authed/activity': typeof AuthedActivityRoute
   '/_authed/email-verified': typeof AuthedEmailVerifiedRoute
+  '/_authed/menu': typeof AuthedMenuRoute
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
-  '/_authed/settings': typeof AuthedSettingsRoute
   '/_public/privacy': typeof PublicPrivacyRoute
   '/_public/terms': typeof PublicTermsRoute
   '/api/image': typeof ApiImageRoute
@@ -231,8 +231,8 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/activity'
     | '/email-verified'
+    | '/menu'
     | '/set-up-profile'
-    | '/settings'
     | '/privacy'
     | '/terms'
     | '/api/image'
@@ -253,8 +253,8 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/activity'
     | '/email-verified'
+    | '/menu'
     | '/set-up-profile'
-    | '/settings'
     | '/privacy'
     | '/terms'
     | '/api/image'
@@ -278,8 +278,8 @@ export interface FileRouteTypes {
     | '/_auth/verify-email'
     | '/_authed/activity'
     | '/_authed/email-verified'
+    | '/_authed/menu'
     | '/_authed/set-up-profile'
-    | '/_authed/settings'
     | '/_public/privacy'
     | '/_public/terms'
     | '/api/image'
@@ -367,18 +367,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicPrivacyRouteImport
       parentRoute: typeof PublicRouteRoute
     }
-    '/_authed/settings': {
-      id: '/_authed/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthedSettingsRouteImport
-      parentRoute: typeof AuthedRouteRoute
-    }
     '/_authed/set-up-profile': {
       id: '/_authed/set-up-profile'
       path: '/set-up-profile'
       fullPath: '/set-up-profile'
       preLoaderRoute: typeof AuthedSetUpProfileRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/menu': {
+      id: '/_authed/menu'
+      path: '/menu'
+      fullPath: '/menu'
+      preLoaderRoute: typeof AuthedMenuRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
     '/_authed/email-verified': {
@@ -491,16 +491,16 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface AuthedRouteRouteChildren {
   AuthedActivityRoute: typeof AuthedActivityRoute
   AuthedEmailVerifiedRoute: typeof AuthedEmailVerifiedRoute
+  AuthedMenuRoute: typeof AuthedMenuRoute
   AuthedSetUpProfileRoute: typeof AuthedSetUpProfileRoute
-  AuthedSettingsRoute: typeof AuthedSettingsRoute
   AuthedRatingRatingIdEditRoute: typeof AuthedRatingRatingIdEditRoute
 }
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedActivityRoute: AuthedActivityRoute,
   AuthedEmailVerifiedRoute: AuthedEmailVerifiedRoute,
+  AuthedMenuRoute: AuthedMenuRoute,
   AuthedSetUpProfileRoute: AuthedSetUpProfileRoute,
-  AuthedSettingsRoute: AuthedSettingsRoute,
   AuthedRatingRatingIdEditRoute: AuthedRatingRatingIdEditRoute,
 }
 
