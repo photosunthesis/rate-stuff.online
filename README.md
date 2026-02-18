@@ -20,7 +20,7 @@ A tiny corner to rate stuff — quickly create, browse, and score things you fin
 - **Framework**: TanStack Start (React + TypeScript + Vite)
 - **Routing**: TanStack Router
 - **Backend & Edge**: Cloudflare Workers
-- **Real-time**: PartyKit (WebSockets & broadcasting)
+- **Real-time**: Cloudflare Durable Objects (WebSockets)
 - **Database**: PostgreSQL (via Cloudflare Hyperdrive) + Drizzle ORM
 - **Storage**: Cloudflare R2 + ImageKit (CDN & transformations)
 - **Data Fetching**: TanStack Query
@@ -50,14 +50,14 @@ A quick tour of the repo and the domain-driven structure.
 │  │  │  ├─ hooks.ts        # domain-specific React hooks
 │  │  │  ├─ middleware.ts   # auth & request middleware
 │  │  │  └─ types.ts        # domain types & Zod schemas
-│  │  └─ ...                # ratings, comments, stuff, explore, activity
+│  │  └─ ...                # ratings, comments, stuff, activity
 │  ├─ hooks/                # global React hooks
 │  ├─ infrastructure/       # cross-cutting concerns
 │  │  ├─ file-storage/      # R2 file upload handling
-│  │  └─ rate-limit/        # rate limiting utilities
+│  │  ├─ rate-limit/        # rate limiting utilities
+│  │  └─ durable-objects/   # durable objects for real-time features
 │  ├─ integrations/         # third-party integrations
 │  │  └─ tanstack-query/    # query client config
-│  ├─ party/                # PartyKit WebSocket server
 │  ├─ routes/               # TanStack Router file-based routes
 │  ├─ utils/                # global utility functions
 │  ├─ styles.css            # global styles & design system
