@@ -50,17 +50,17 @@ export function ImageGrid({
 
 	if (displayImages.length === 1) {
 		return (
-			<div className={className}>
-				<div className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800 aspect-video">
-					{renderImage(displayImages[0])}
-				</div>
+			<div
+				className={`overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800 aspect-video ${className}`}
+			>
+				{renderImage(displayImages[0])}
 			</div>
 		);
 	}
 
 	if (displayImages.length === 2) {
 		return (
-			<div className={`flex gap-1.5 ${className}`}>
+			<div className={`flex gap-1.5 overflow-hidden ${className}`}>
 				{displayImages.map((src, idx) => (
 					<div
 						key={src}
@@ -81,7 +81,7 @@ export function ImageGrid({
 	if (displayImages.length === 3) {
 		return (
 			<div
-				className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 ${className}`}
+				className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden ${className}`}
 			>
 				<div
 					className="row-span-2 overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800"
@@ -147,7 +147,7 @@ export function ImageGrid({
 
 	return (
 		<div
-			className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 ${className}`}
+			className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden ${className}`}
 		>
 			{displayImages.map((src, idx) => (
 				<div
