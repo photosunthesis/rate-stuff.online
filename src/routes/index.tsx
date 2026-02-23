@@ -76,7 +76,9 @@ export const Route = createFileRoute("/")({
 				{ name: "twitter:description", content: description },
 				{ name: "twitter:image", content: image },
 			],
-			links: [{ rel: "canonical", href: canonical }],
+			links: [
+				{ rel: "canonical", href: `https://rate-stuff.online${canonical}` },
+			],
 			scripts: [
 				{
 					type: "application/ld+json",

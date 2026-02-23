@@ -207,7 +207,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 
 		return {
 			meta: metas,
-			links: [{ rel: "canonical", href: `/rating/${params.ratingId}` }],
+			links: [{ rel: "canonical", href: pageUrl }],
 			scripts,
 		};
 	},

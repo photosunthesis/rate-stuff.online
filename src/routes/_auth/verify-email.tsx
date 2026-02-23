@@ -10,6 +10,12 @@ import { useUmami } from "@danielgtmn/umami-react";
 
 export const Route = createFileRoute("/_auth/verify-email")({
 	component: VerifyEmailPage,
+	head: () => ({
+		meta: [
+			{ title: "Verify Email - Rate Stuff Online" },
+			{ name: "robots", content: "noindex, nofollow" },
+		],
+	}),
 	validateSearch: (search: Record<string, unknown>): { e?: string } => {
 		return {
 			e: search.e as string | undefined,

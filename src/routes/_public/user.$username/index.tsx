@@ -110,7 +110,7 @@ export const Route = createFileRoute("/_public/user/$username/")({
 
 		return {
 			meta: metas,
-			links: [{ rel: "canonical", href: `/user/${params.username}` }],
+			links: [{ rel: "canonical", href: pageUrl }],
 			scripts: [{ type: "application/ld+json", children: JSON.stringify(ld) }],
 		};
 	},

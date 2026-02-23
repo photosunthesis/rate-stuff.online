@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_public/privacy")({
 				{ name: "twitter:description", content: description },
 				{ name: "twitter:image", content: image },
 			],
-			links: [{ rel: "canonical", href: "/privacy" }],
+			links: [{ rel: "canonical", href: "https://rate-stuff.online/privacy" }],
 			scripts: [
 				{
 					type: "application/ld+json",

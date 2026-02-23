@@ -99,8 +99,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			"ratings",
 			"community opinions",
 			"rate stuff online",
-		].join(", "
-);
+		].join(", ");
 
 		const metas: Record<string, string | undefined>[] = [
 			{ title },

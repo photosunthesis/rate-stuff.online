@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_public/terms")({
 				{ name: "twitter:description", content: description },
 				{ name: "twitter:image", content: image },
 			],
-			links: [{ rel: "canonical", href: "/terms" }],
+			links: [{ rel: "canonical", href: "https://rate-stuff.online/terms" }],
 			scripts: [
 				{
 					type: "application/ld+json",
