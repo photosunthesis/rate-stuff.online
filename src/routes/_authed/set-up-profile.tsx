@@ -17,7 +17,13 @@ export const Route = createFileRoute("/_authed/set-up-profile")({
 	validateSearch: (search) =>
 		z
 			.object({
-				redirect: z.string().optional(),
+				// Only allow relative paths — blocks open redirect attacks.
+				// Valid: /foo, /foo/bar — Invalid: https://evil.com, //evil.com
+				redirect: z
+					.string()
+					.regex(/^\/([^/].*)?$/)
+					.optional()
+					.catch(undefined),
 			})
 			.parse(search),
 	head: () => ({
