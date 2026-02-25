@@ -20,6 +20,7 @@ A tiny corner to rate stuff — quickly create, browse, and score things you fin
 - **Framework**: TanStack Start (React + TypeScript + Vite)
 - **Routing**: TanStack Router
 - **Backend & Edge**: Cloudflare Workers
+- **Caching**: Cloudflare KV (edge cache for public data)
 - **Real-time**: Cloudflare Durable Objects (WebSockets)
 - **Database**: PostgreSQL (via Cloudflare Hyperdrive) + Drizzle ORM
 - **Storage**: Cloudflare R2 + ImageKit (CDN & transformations)
@@ -54,6 +55,7 @@ A quick tour of the repo and the domain-driven structure.
 │  ├─ hooks/                # global React hooks
 │  ├─ infrastructure/       # cross-cutting concerns
 │  │  ├─ file-storage/      # R2 file upload handling
+│  │  ├─ kv/                # Cloudflare KV edge caching
 │  │  ├─ rate-limit/        # rate limiting utilities
 │  │  └─ durable-objects/   # durable objects for real-time features
 │  ├─ integrations/         # third-party integrations
