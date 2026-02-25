@@ -10,6 +10,7 @@ import {
 import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { StuffRating } from "./types";
+import { cached } from "~/infrastructure/kv/cache";
 
 function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
@@ -101,49 +102,55 @@ async function extractImagesForStuff(
 }
 
 export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
-	const db = getDatabase();
-	const rows = await db
-		.select({
-			id: stuffTable.id,
-			name: stuffTable.name,
-			slug: stuffTable.slug,
-			createdAt: stuffTable.createdAt,
-			updatedAt: stuffTable.updatedAt,
-			ratingCount: sql<number>`COUNT(${ratings.id})`,
-			avgScore: sql<number>`AVG(${ratings.score})`,
-		})
-		.from(stuffTable)
-		.leftJoin(
-			ratings,
-			and(eq(ratings.stuffId, stuffTable.id), isNull(ratings.deletedAt)),
-		)
-		.where(eq(stuffTable.slug, slug))
-		.groupBy(
-			stuffTable.id,
-			stuffTable.name,
-			stuffTable.slug,
-			stuffTable.createdAt,
-			stuffTable.updatedAt,
-		)
-		.limit(1);
+	return cached(
+		`stuff:${slug}`,
+		async () => {
+			const db = getDatabase();
+			const rows = await db
+				.select({
+					id: stuffTable.id,
+					name: stuffTable.name,
+					slug: stuffTable.slug,
+					createdAt: stuffTable.createdAt,
+					updatedAt: stuffTable.updatedAt,
+					ratingCount: sql<number>`COUNT(${ratings.id})`,
+					avgScore: sql<number>`AVG(${ratings.score})`,
+				})
+				.from(stuffTable)
+				.leftJoin(
+					ratings,
+					and(eq(ratings.stuffId, stuffTable.id), isNull(ratings.deletedAt)),
+				)
+				.where(eq(stuffTable.slug, slug))
+				.groupBy(
+					stuffTable.id,
+					stuffTable.name,
+					stuffTable.slug,
+					stuffTable.createdAt,
+					stuffTable.updatedAt,
+				)
+				.limit(1);
 
-	if (rows.length === 0) return null;
+			if (rows.length === 0) return null;
 
-	const row = rows[0];
-	const ratingCount = Number(row.ratingCount ?? 0);
-	const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
-	const images = await extractImagesForStuff(db, row.id);
+			const row = rows[0];
+			const ratingCount = Number(row.ratingCount ?? 0);
+			const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
+			const images = await extractImagesForStuff(db, row.id);
 
-	return {
-		id: row.id,
-		name: row.name,
-		slug: row.slug,
-		createdAt: row.createdAt,
-		updatedAt: row.updatedAt,
-		averageRating,
-		ratingCount,
-		images,
-	};
+			return {
+				id: row.id,
+				name: row.name,
+				slug: row.slug,
+				createdAt: row.createdAt,
+				updatedAt: row.updatedAt,
+				averageRating,
+				ratingCount,
+				images,
+			};
+		},
+		600, // 10 minutes
+	);
 });
 
 export const getStuffRatingsBySlug = createServerOnlyFn(

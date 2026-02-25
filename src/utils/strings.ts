@@ -1,4 +1,4 @@
-export function maskEmail(email: string): string {
+export const maskEmail = (email: string): string => {
 	const [local, domain] = email.split("@");
 	if (!local || !domain) return email;
 
@@ -14,7 +14,7 @@ export function maskEmail(email: string): string {
 			: `${domainName}***`;
 
 	return `${maskedLocal}@${[maskedDomainName, ...domainRest].join(".")}`;
-}
+};
 
 export const slugify = (s: string) => {
 	return s

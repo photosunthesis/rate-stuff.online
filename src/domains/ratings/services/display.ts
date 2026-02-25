@@ -10,6 +10,7 @@ import { and, isNull, desc, lt, eq, gte, sql, or, exists } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { RatingWithRelations } from "../types/display";
 import { getDatabase } from "~/db";
+import { cached } from "~/infrastructure/kv/cache";
 
 function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
@@ -166,75 +167,87 @@ export const getRatingById = createServerOnlyFn(
 );
 
 export const getRecentTags = createServerOnlyFn(async (limit = 10) => {
-	const db = getDatabase();
-	const now = Date.now();
-	const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-	const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
-	const yearAgo = new Date(now - 365 * 24 * 60 * 60 * 1000);
+	return cached(
+		"discover:tags",
+		async () => {
+			const db = getDatabase();
+			const now = Date.now();
+			const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+			const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+			const yearAgo = new Date(now - 365 * 24 * 60 * 60 * 1000);
 
-	const timeRanges = [weekAgo, monthAgo, yearAgo, null];
+			const timeRanges = [weekAgo, monthAgo, yearAgo, null];
 
-	for (const range of timeRanges) {
-		const timeFilter = range ? gte(ratings.createdAt, range) : undefined;
+			for (const range of timeRanges) {
+				const timeFilter = range ? gte(ratings.createdAt, range) : undefined;
 
-		const rows = await db
-			.select({
-				name: tags.name,
-				count: sql<number>`count(${ratingsToTags.ratingId})`,
-			})
-			.from(ratingsToTags)
-			.innerJoin(tags, eq(tags.id, ratingsToTags.tagId))
-			.innerJoin(ratings, eq(ratings.id, ratingsToTags.ratingId))
-			.where(and(isNull(ratings.deletedAt), timeFilter))
-			.groupBy(tags.name)
-			.orderBy(desc(sql`count(${ratingsToTags.ratingId})`))
-			.limit(limit);
+				const rows = await db
+					.select({
+						name: tags.name,
+						count: sql<number>`count(${ratingsToTags.ratingId})`,
+					})
+					.from(ratingsToTags)
+					.innerJoin(tags, eq(tags.id, ratingsToTags.tagId))
+					.innerJoin(ratings, eq(ratings.id, ratingsToTags.ratingId))
+					.where(and(isNull(ratings.deletedAt), timeFilter))
+					.groupBy(tags.name)
+					.orderBy(desc(sql`count(${ratingsToTags.ratingId})`))
+					.limit(limit);
 
-		if (rows.length > 0) {
-			return rows.map((r) => ({ name: r.name, count: Number(r.count) }));
-		}
-	}
+				if (rows.length > 0) {
+					return rows.map((r) => ({ name: r.name, count: Number(r.count) }));
+				}
+			}
 
-	return [];
+			return [];
+		},
+		600, // 10 minutes
+	);
 });
 
 export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
-	const db = getDatabase();
-	const now = Date.now();
-	const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-	const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
-	const yearAgo = new Date(now - 365 * 24 * 60 * 60 * 1000);
+	return cached(
+		"discover:stuff",
+		async () => {
+			const db = getDatabase();
+			const now = Date.now();
+			const weekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+			const monthAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
+			const yearAgo = new Date(now - 365 * 24 * 60 * 60 * 1000);
 
-	const timeRanges = [weekAgo, monthAgo, yearAgo, null];
+			const timeRanges = [weekAgo, monthAgo, yearAgo, null];
 
-	for (const range of timeRanges) {
-		const timeFilter = range ? gte(ratings.createdAt, range) : undefined;
+			for (const range of timeRanges) {
+				const timeFilter = range ? gte(ratings.createdAt, range) : undefined;
 
-		const rows = await db
-			.select({
-				id: stuff.id,
-				name: stuff.name,
-				slug: stuff.slug,
-				count: sql<number>`count(${ratings.id})`,
-			})
-			.from(ratings)
-			.innerJoin(stuff, eq(stuff.id, ratings.stuffId))
-			.where(and(isNull(ratings.deletedAt), timeFilter))
-			.groupBy(stuff.id, stuff.name, stuff.slug)
-			.orderBy(desc(sql`count(${ratings.id})`))
-			.limit(limit);
+				const rows = await db
+					.select({
+						id: stuff.id,
+						name: stuff.name,
+						slug: stuff.slug,
+						count: sql<number>`count(${ratings.id})`,
+					})
+					.from(ratings)
+					.innerJoin(stuff, eq(stuff.id, ratings.stuffId))
+					.where(and(isNull(ratings.deletedAt), timeFilter))
+					.groupBy(stuff.id, stuff.name, stuff.slug)
+					.orderBy(desc(sql`count(${ratings.id})`))
+					.limit(limit);
 
-		if (rows.length > 0) {
-			return rows.map((r) => ({
-				id: r.id,
-				slug: r.slug,
-				name: r.name,
-				count: Number(r.count),
-			}));
-		}
-	}
+				if (rows.length > 0) {
+					return rows.map((r) => ({
+						id: r.id,
+						slug: r.slug,
+						name: r.name,
+						count: Number(r.count),
+					}));
+				}
+			}
 
-	return [];
+			return [];
+		},
+		600, // 10 minutes
+	);
 });
 
 export const getUserRatingsCount = createServerOnlyFn(

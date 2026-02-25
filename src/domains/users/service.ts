@@ -6,6 +6,7 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
+import { cached, invalidate } from "~/infrastructure/kv/cache";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
@@ -26,44 +27,58 @@ export const updateUserProfile = createServerOnlyFn(
 			throw new Error("User not found");
 		}
 
-		return updatedUser[0];
+		const user = updatedUser[0];
+
+		if (user.username) {
+			invalidate(`user:${user.username}`);
+		}
+
+		return user;
 	},
 );
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
-		const db = getDatabase();
-		const ratingCountSq = db
-			.select({ count: sql`count(*)` })
-			.from(ratings)
-			.where(and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)));
+		return cached(
+			`user:${username}`,
+			async () => {
+				const db = getDatabase();
+				const ratingCountSq = db
+					.select({ count: sql`count(*)` })
+					.from(ratings)
+					.where(and(eq(ratings.userId, users.id), isNull(ratings.deletedAt)));
 
-		const rows = await db
-			.select({
-				id: users.id,
-				username: users.username,
-				name: users.name,
-				image: users.image,
-				createdAt: users.createdAt,
-				ratingCount: sql<number>`(${ratingCountSq})`,
-			})
-			.from(users)
-			.where(eq(users.username, username))
-			.limit(1);
+				const rows = await db
+					.select({
+						id: users.id,
+						username: users.username,
+						name: users.name,
+						image: users.image,
+						createdAt: users.createdAt,
+						ratingCount: sql<number>`(${ratingCountSq})`,
+					})
+					.from(users)
+					.where(eq(users.username, username))
+					.limit(1);
 
-		if (!rows || rows.length === 0) return null;
+				if (!rows || rows.length === 0) return null;
 
-		const row = rows[0];
+				const row = rows[0];
 
-		return {
-			id: row.id,
-			username: row.username,
-			name: row.name,
-			image: row.image,
-			createdAt: row.createdAt ? new Date(row.createdAt).toISOString() : null,
+				return {
+					id: row.id,
+					username: row.username,
+					name: row.name,
+					image: row.image,
+					createdAt: row.createdAt
+						? new Date(row.createdAt).toISOString()
+						: null,
 
-			ratingsCount: numberWithCommas(Number(row.ratingCount ?? 0)),
-		};
+					ratingsCount: numberWithCommas(Number(row.ratingCount ?? 0)),
+				};
+			},
+			600, // 10 minutes
+		);
 	},
 );
 

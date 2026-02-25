@@ -55,5 +55,11 @@
 			"id": "68d6bfde15e24842bfaa9c9150bea8b0",
 			"localConnectionString": "postgresql://sun:securePassword@localhost:5432/rate-stuff-online-db"
 		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "KV_CACHE",
+			"id": "b118cb2e631748f88d552aabf1b5f7bf"
+		}
 	]
 }

@@ -10,6 +10,7 @@ import { env } from "cloudflare:workers";
 import type { CreateRatingInput } from "../types/create";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
+import { invalidate } from "~/infrastructure/kv/cache";
 
 interface UpdateRatingInput {
 	score: number;
@@ -98,7 +99,7 @@ export const createRating = createServerOnlyFn(
 	async (userId: string, input: CreateRatingInput) => {
 		const db = getDatabase();
 
-		return db.transaction(async (tx) => {
+		const rating = await db.transaction(async (tx) => {
 			let resolvedStuffId = input.stuffId;
 
 			if (!resolvedStuffId && input.stuffName) {
@@ -139,14 +140,12 @@ export const createRating = createServerOnlyFn(
 				throw new Error(`Failed to determine the "stuff" for the rating`);
 			}
 
-			// Normalize and dedupe tag names
 			const rawNames = input.tags ?? [];
 			const normalizedNames = rawNames
 				.map((n) => n?.toLowerCase().trim())
 				.filter(Boolean) as string[];
 			const uniqueNames = Array.from(new Set(normalizedNames));
 
-			// Insert any missing tags (compare by lower-cased name)
 			if (uniqueNames.length > 0) {
 				const existingTags = await tx
 					.select()
@@ -167,7 +166,6 @@ export const createRating = createServerOnlyFn(
 				}
 			}
 
-			// Re-select tag objects for associations (if any)
 			const tagObjects =
 				uniqueNames.length > 0
 					? await tx
@@ -176,7 +174,6 @@ export const createRating = createServerOnlyFn(
 							.where(inArray(sql`LOWER(${tags.name})`, uniqueNames))
 					: [];
 
-			// create a slug based on the stuff name (or provided stuffName) plus a short random suffix
 			const imagesJson = JSON.stringify(input.images ?? []);
 
 			const [rating] = await tx
@@ -205,6 +202,24 @@ export const createRating = createServerOnlyFn(
 
 			return rating;
 		});
+
+		const stuffRow = await db
+			.select({ slug: stuff.slug })
+			.from(stuff)
+			.where(eq(stuff.id, rating.stuffId))
+			.limit(1)
+			.then((r) => r[0]);
+
+		if (stuffRow) {
+			invalidate(
+				`stuff:${stuffRow.slug}`,
+				"discover:tags",
+				"discover:stuff",
+				"sitemap",
+			);
+		}
+
+		return rating;
 	},
 );
 
@@ -261,8 +276,7 @@ export const updateRating = createServerOnlyFn(
 	async (userId: string, ratingId: string, input: UpdateRatingInput) => {
 		const db = getDatabase();
 
-		return db.transaction(async (tx) => {
-			// 1. Verify ownership
+		const updated = await db.transaction(async (tx) => {
 			const existingRating = await tx
 				.select()
 				.from(ratings)
@@ -282,15 +296,12 @@ export const updateRating = createServerOnlyFn(
 				);
 			}
 
-			// 2. Handle Tags
-			// Normalize and dedupe tag names
 			const rawNames = input.tags ?? [];
 			const normalizedNames = rawNames
 				.map((n) => n?.toLowerCase().trim())
 				.filter(Boolean) as string[];
 			const uniqueNames = Array.from(new Set(normalizedNames));
 
-			// Insert any missing tags
 			if (uniqueNames.length > 0) {
 				const existingTags = await tx
 					.select()
@@ -311,7 +322,6 @@ export const updateRating = createServerOnlyFn(
 				}
 			}
 
-			// Get all tag objects (old and new)
 			const tagObjects =
 				uniqueNames.length > 0
 					? await tx
@@ -320,8 +330,6 @@ export const updateRating = createServerOnlyFn(
 							.where(inArray(sql`LOWER(${tags.name})`, uniqueNames))
 					: [];
 
-			// Update associations: Delete old ones, insert new ones
-			// Simplest approach: Delete all for this rating and re-insert
 			await tx
 				.delete(ratingsToTags)
 				.where(eq(ratingsToTags.ratingId, ratingId));
@@ -336,10 +344,9 @@ export const updateRating = createServerOnlyFn(
 					.execute();
 			}
 
-			// 3. Update Rating
 			const imagesJson = JSON.stringify(input.images ?? []);
 
-			const [updated] = await tx
+			const [updatedRating] = await tx
 				.update(ratings)
 				.set({
 					score: input.score,
@@ -350,8 +357,22 @@ export const updateRating = createServerOnlyFn(
 				.where(eq(ratings.id, ratingId))
 				.returning();
 
-			return updated;
+			return updatedRating;
 		});
+
+		const stuffRow = await db
+			.select({ slug: stuff.slug })
+			.from(stuff)
+			.innerJoin(ratings, eq(ratings.stuffId, stuff.id))
+			.where(eq(ratings.id, ratingId))
+			.limit(1)
+			.then((r) => r[0]);
+
+		if (stuffRow) {
+			invalidate(`stuff:${stuffRow.slug}`);
+		}
+
+		return updated;
 	},
 );
 
@@ -359,56 +380,43 @@ export const deleteRating = createServerOnlyFn(
 	async (ratingId: string, userId: string) => {
 		const db = getDatabase();
 
-		return db.transaction(async (tx) => {
-			const existing = await tx
-				.select()
-				.from(ratings)
-				.where(
-					and(
-						eq(ratings.id, ratingId),
-						eq(ratings.userId, userId),
-						isNull(ratings.deletedAt),
-					),
-				)
-				.limit(1)
-				.then((rows) => rows[0]);
+		const existing = await db
+			.select({ stuffId: ratings.stuffId })
+			.from(ratings)
+			.where(
+				and(
+					eq(ratings.id, ratingId),
+					eq(ratings.userId, userId),
+					isNull(ratings.deletedAt),
+				),
+			)
+			.limit(1)
+			.then((rows) => rows[0]);
 
-			if (!existing) {
-				throw new Error(
-					"Rating not found or you don't have permission to delete it",
-				);
-			}
+		if (!existing) {
+			throw new Error(
+				"Rating not found or you don't have permission to delete it",
+			);
+		}
 
-			await tx.delete(ratings).where(eq(ratings.id, ratingId));
+		await db.delete(ratings).where(eq(ratings.id, ratingId));
 
-			// Not sure yet if about this :D
-			// let imagesToDelete: string[] = [];
+		const stuffRow = await db
+			.select({ slug: stuff.slug })
+			.from(stuff)
+			.where(eq(stuff.id, existing.stuffId))
+			.limit(1)
+			.then((r) => r[0]);
 
-			// if (existing.images) {
-			// 	const parsed =
-			// 		typeof existing.images === "string"
-			// 			? JSON.parse(existing.images)
-			// 			: existing.images;
+		if (stuffRow) {
+			invalidate(
+				`stuff:${stuffRow.slug}`,
+				"discover:tags",
+				"discover:stuff",
+				"sitemap",
+			);
+		}
 
-			// 	if (Array.isArray(parsed)) {
-			// 		imagesToDelete = parsed;
-			// 	}
-			// }
-
-			// if (imagesToDelete.length > 0) {
-			// 	await Promise.all(
-			// 		imagesToDelete.map(async (imgUrl) => {
-			// 			const parts = imgUrl.split("/");
-			// 			const keyIndex = parts.indexOf("ratings");
-			// 			if (keyIndex !== -1) {
-			// 				const key = parts.slice(keyIndex).join("/");
-			// 				await deleteFile(env.R2_BUCKET, key);
-			// 			}
-			// 		}),
-			// 	);
-			// }
-
-			return { success: true };
-		});
+		return { success: true };
 	},
 );
