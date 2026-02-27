@@ -28,15 +28,15 @@ export const Route = createFileRoute("/_public/user/$username/")({
 
 		const title = user
 			? user.name
-				? `${user.name} (@${user.username}) — Rate Stuff`
-				: `@${user.username} — Rate Stuff`
-			: `@${params.username} — Rate Stuff`;
+				? `${user.name} (@${user.username}) — Rate Stuff Online`
+				: `@${user.username} — Rate Stuff Online`
+			: `@${params.username} — Rate Stuff Online`;
 
 		const description = user
 			? `${user.name ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
 					(user.ratingsCount ?? 0) === "1" ? "rating" : "ratings"
-				} on Rate Stuff.`
-			: `View ratings and profile for @${params.username} on Rate Stuff.`;
+				} on Rate Stuff Online.`
+			: `View ratings and profile for @${params.username} on Rate Stuff Online.`;
 
 		const pageUrl = `https://rate-stuff.online/user/${params.username}`;
 		const userImage = user?.image ?? null;
