@@ -5,7 +5,7 @@ import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton
 import { usePublicUserRatings } from "~/domains/ratings/queries/display";
 import { RatingCard } from "~/components/ui/content/rating-card";
 import { useEffect, useRef, useMemo } from "react";
-import { getTimeAgo } from "~/utils/datetime";
+import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { MainLayout } from "~/components/layout/main-layout";
 import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -266,7 +266,7 @@ function RouteComponent() {
 					<div className="text-neutral-500 text-base">
 						{publicUser.createdAt ? (
 							<>
-								Joined {getTimeAgo(publicUser.createdAt)} · {ratingsCount}{" "}
+								Joined <TimeAgo date={publicUser.createdAt} /> · {ratingsCount}{" "}
 								{ratingsCount === "1" ? "rating" : "ratings"}
 							</>
 						) : null}

@@ -18,7 +18,8 @@ import {
 	markActivityAsReadFn,
 } from "~/domains/activity/functions";
 import { useEffect } from "react";
-import { getTimeAgo, getDateGroupLabel } from "~/utils/datetime";
+import { getDateGroupLabel } from "~/utils/datetime";
+import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { Button } from "~/components/ui/form/button";
 import { CheckCheck } from "lucide-react";
@@ -236,7 +237,10 @@ function RouteComponent() {
 															</div>
 														)}
 														<p className="text-xs text-neutral-500 mt-1">
-															{getTimeAgo(new Date(activity.createdAt))}
+															<TimeAgo
+																date={new Date(activity.createdAt)}
+																className="text-xs text-neutral-500 mt-1"
+															/>
 														</p>
 													</div>
 													{!activity.isRead && (

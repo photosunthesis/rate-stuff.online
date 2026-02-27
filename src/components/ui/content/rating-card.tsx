@@ -9,7 +9,7 @@ import { getPlainTextFromContent } from "~/utils/rich-text";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
-import { getTimeAgo } from "~/utils/datetime";
+import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { useUmami } from "@danielgtmn/umami-react";
 import { getRatingEmoji } from "~/utils/ratings";
 
@@ -38,7 +38,7 @@ export const RatingCard = memo(function RatingCard({
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
 	const displayText = name ? name : `@${usernameHandle}`;
-	const timeAgo = getTimeAgo(rating.createdAt);
+
 	const umami = useUmami();
 
 	let parsedImages: string[] = [];
@@ -116,7 +116,7 @@ export const RatingCard = memo(function RatingCard({
 								{rating.stuff.name}
 							</Link>
 							<span className="text-neutral-500"> • </span>
-							<span className="text-neutral-500">{timeAgo}</span>
+							<TimeAgo date={rating.createdAt} className="text-neutral-500" />
 							{rating.updatedAt &&
 								new Date(rating.updatedAt).getTime() >
 									new Date(rating.createdAt).getTime() + 1000 && (
@@ -136,7 +136,8 @@ export const RatingCard = memo(function RatingCard({
 					>
 						{rating.stuff.name}
 					</Link>{" "}
-					<span>•</span> <span className="text-neutral-500">{timeAgo}</span>
+					<span>•</span>{" "}
+					<TimeAgo date={rating.createdAt} className="text-neutral-500" />
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
