@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getImageKit } from "~/infrastructure/file-storage/service";
+import { buildImageUrl } from "~/infrastructure/file-storage/service";
 import { optionalAuthMiddleware } from "~/domains/users/middleware";
 
 const PRESETS = {
@@ -35,11 +35,7 @@ export const Route = createFileRoute("/api/image")({
 						if (!path) return new Response("Missing path", { status: 400 });
 
 						const preset = PRESETS[variant] || PRESETS.card;
-						const imagekit = getImageKit();
-						const signedUrl = imagekit.url({
-							path,
-							transformation: preset.transformation,
-						});
+						const signedUrl = buildImageUrl(path, preset.transformation);
 
 						return new Response(null, {
 							status: 302,

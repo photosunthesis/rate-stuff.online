@@ -27,6 +27,7 @@ export function getRouter() {
 		defaultErrorComponent: ErrorOccurred,
 		scrollRestoration: true,
 		defaultStructuralSharing: true,
+		trailingSlash: "never",
 	});
 
 	setupRouterSsrQueryIntegration({

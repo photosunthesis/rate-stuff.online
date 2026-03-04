@@ -167,9 +167,9 @@ export interface FileRoutesByFullPath {
   '/api/image-upload': typeof ApiImageUploadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
-  '/rating/$ratingId': typeof PublicRatingRatingIdIndexRoute
-  '/stuff/$stuffSlug': typeof PublicStuffStuffSlugIndexRoute
-  '/user/$username': typeof PublicUserUsernameIndexRoute
+  '/rating/$ratingId/': typeof PublicRatingRatingIdIndexRoute
+  '/stuff/$stuffSlug/': typeof PublicStuffStuffSlugIndexRoute
+  '/user/$username/': typeof PublicUserUsernameIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -239,9 +239,9 @@ export interface FileRouteTypes {
     | '/api/image-upload'
     | '/api/auth/$'
     | '/rating/$ratingId/edit'
-    | '/rating/$ratingId'
-    | '/stuff/$stuffSlug'
-    | '/user/$username'
+    | '/rating/$ratingId/'
+    | '/stuff/$stuffSlug/'
+    | '/user/$username/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -314,21 +314,21 @@ declare module '@tanstack/react-router' {
     '/_public': {
       id: '/_public'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof PublicRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authed': {
       id: '/_authed'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
       id: '/_auth'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -440,21 +440,21 @@ declare module '@tanstack/react-router' {
     '/_public/user/$username/': {
       id: '/_public/user/$username/'
       path: '/user/$username'
-      fullPath: '/user/$username'
+      fullPath: '/user/$username/'
       preLoaderRoute: typeof PublicUserUsernameIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/stuff/$stuffSlug/': {
       id: '/_public/stuff/$stuffSlug/'
       path: '/stuff/$stuffSlug'
-      fullPath: '/stuff/$stuffSlug'
+      fullPath: '/stuff/$stuffSlug/'
       preLoaderRoute: typeof PublicStuffStuffSlugIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }
     '/_public/rating/$ratingId/': {
       id: '/_public/rating/$ratingId/'
       path: '/rating/$ratingId'
-      fullPath: '/rating/$ratingId'
+      fullPath: '/rating/$ratingId/'
       preLoaderRoute: typeof PublicRatingRatingIdIndexRouteImport
       parentRoute: typeof PublicRouteRoute
     }

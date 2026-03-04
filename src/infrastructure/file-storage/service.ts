@@ -1,5 +1,5 @@
 import { createServerOnlyFn } from "@tanstack/react-start";
-import ImageKit from "imagekit";
+import ImageKit from "@imagekit/nodejs";
 
 export const imagesBucketUrl = "https://images.rate-stuff.online";
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -103,23 +103,32 @@ export const deleteFile = async (r2Bucket: R2Bucket, key: string) => {
 };
 
 let imagekit: ImageKit;
+let imagekitUrlEndpoint: string;
 
 export function getImageKit() {
 	if (!imagekit) {
-		const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
 		const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
 		const urlEndpoint = process.env.VITE_IMAGEKIT_URL_ENDPOINT;
 
-		if (!publicKey || !privateKey || !urlEndpoint) {
+		if (!privateKey || !urlEndpoint) {
 			throw new Error("Missing ImageKit configuration");
 		}
 
-		imagekit = new ImageKit({
-			publicKey,
-			privateKey,
-			urlEndpoint,
-		});
+		imagekitUrlEndpoint = urlEndpoint;
+		imagekit = new ImageKit({ privateKey });
 	}
 
 	return imagekit;
+}
+
+export function buildImageUrl(
+	path: string,
+	transformation: Record<string, string | number>[],
+) {
+	const client = getImageKit();
+	return client.helper.buildSrc({
+		urlEndpoint: imagekitUrlEndpoint,
+		src: path,
+		transformation,
+	});
 }

@@ -11,7 +11,7 @@ import {
 	authQueryOptions,
 	type AuthQueryResult,
 } from "~/domains/users/queries";
-import { IKContext } from "imagekitio-react";
+import { ImageKitProvider } from "@imagekit/react";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -123,9 +123,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<IKContext urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}>
+				<ImageKitProvider urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}>
 					{children}
-				</IKContext>
+				</ImageKitProvider>
 				<UmamiAnalytics
 					url={import.meta.env.VITE_UMAMI_URL}
 					websiteId={import.meta.env.VITE_UMAMI_WEBSITE_ID}
