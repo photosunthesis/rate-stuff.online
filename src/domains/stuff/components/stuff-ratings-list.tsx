@@ -2,11 +2,11 @@ import { RatingCard } from "~/components/ui/content/rating-card";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import type { StuffRating } from "../types";
-import type { PublicUser } from "~/domains/users/types";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
-import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { type InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPaginatedStuffRatingsFn } from "../functions";
+import { authQueryOptions } from "~/domains/users/queries";
 
 type PageResult = {
 	success: boolean;
@@ -54,13 +54,8 @@ const useStuffRatingsInfinite = (slug: string, limit = 10, enabled = true) => {
 	});
 };
 
-export function StuffRatingsList({
-	slug,
-	user,
-}: {
-	slug: string;
-	user?: PublicUser;
-}) {
+export function StuffRatingsList({ slug }: { slug: string }) {
+	const { data: user } = useQuery(authQueryOptions());
 	const isAuthenticated = user != null;
 	const {
 		data,

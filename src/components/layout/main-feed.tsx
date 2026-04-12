@@ -3,11 +3,13 @@ import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton
 import { useFeedRatings } from "~/domains/ratings/queries/display";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
-import type { PublicUser } from "~/domains/users/types";
 import { ArrowLeft } from "lucide-react";
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { authQueryOptions } from "~/domains/users/queries";
 
-export function MainFeed({ tag, user }: { tag?: string; user?: PublicUser }) {
+export function MainFeed({ tag }: { tag?: string }) {
+	const { data: user } = useQuery(authQueryOptions());
 	const isAuthenticated = user != null;
 	const {
 		data,
