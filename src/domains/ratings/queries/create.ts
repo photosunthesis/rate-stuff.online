@@ -29,11 +29,13 @@ export function useCreateRatingMutation() {
 
 	return useMutation({
 		mutationFn: (data: CreateRatingInput) => createRatingMutationFn({ data }),
-		onSuccess: (data) => {
+		onSuccess: async (data) => {
 			if (data && (data as { success?: boolean }).success) {
-				queryClient.invalidateQueries({ queryKey: ratingKeys.all });
-				queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] });
-				queryClient.invalidateQueries({ queryKey: ["recent", "tags"] });
+				await Promise.all([
+					queryClient.invalidateQueries({ queryKey: ratingKeys.all }),
+					queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] }),
+					queryClient.invalidateQueries({ queryKey: ["recent", "tags"] }),
+				]);
 			}
 		},
 	});
