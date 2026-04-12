@@ -123,7 +123,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<ImageKitProvider urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}>
+				<ImageKitProvider
+					urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}
+				>
 					{children}
 				</ImageKitProvider>
 				<UmamiAnalytics

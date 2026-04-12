@@ -29,7 +29,6 @@ export const Route = createFileRoute("/sitemap.xml")({
 
 						let dynamicEntries = "";
 
-							
 						try {
 							// Get top 100 stuff
 							const stuffRows = await db

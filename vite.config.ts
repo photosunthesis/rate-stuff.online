@@ -1,16 +1,16 @@
 import { defineConfig } from 'vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
-import viteTsConfigPaths from 'vite-tsconfig-paths'
+
 import tailwindcss from '@tailwindcss/vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
 
 const config = defineConfig({
+  resolve: {
+    tsconfigPaths: true,
+  },
   plugins: [
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
-    viteTsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
@@ -18,19 +18,18 @@ const config = defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'tanstack-vendor': [
-            '@tanstack/react-router',
-            '@tanstack/react-query',
-            '@tanstack/react-start',
-            '@tanstack/react-form',
-          ],
-
-          'ui-vendor': [
-            'lucide-react',
-            'react-intersection-observer',
-          ],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@tanstack')) {
+              return 'tanstack-vendor';
+            }
+            if (id.includes('lucide-react') || id.includes('react-intersection-observer')) {
+              return 'ui-vendor';
+            }
+          }
         },
       },
     },
