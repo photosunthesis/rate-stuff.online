@@ -156,18 +156,20 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 
 						<div className="mb-1">
 							{shouldTruncate && !isExpanded ? (
-								<div className="text-slate-200 text-base leading-normal line-clamp-4 relative">
-									<RichTextRenderer
-										content={comment.content}
-										className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
-									/>
+								<div className="relative">
+									<div className="text-slate-200 text-base leading-normal line-clamp-4 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">
+										<RichTextRenderer
+											content={comment.content}
+											className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
+										/>
+									</div>
 									<button
 										type="button"
 										onClick={(e) => {
 											e.stopPropagation();
 											setIsExpanded(true);
 										}}
-										className="absolute bottom-0 right-0 pl-12 bg-linear-to-l from-neutral-950 via-neutral-950 to-transparent text-neutral-500 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer ml-1"
+										className="mt-1 text-neutral-500/80 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer block"
 									>
 										See more
 									</button>

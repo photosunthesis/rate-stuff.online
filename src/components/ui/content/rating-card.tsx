@@ -176,16 +176,18 @@ export const RatingCard = memo(function RatingCard({
 			)}
 
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-				<div className="text-slate-200 text-base leading-normal line-clamp-4">
+				<div className={`text-slate-200 text-base leading-normal ${shouldTruncate ? "line-clamp-4 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]" : "line-clamp-4"}`}>
 					<RichTextRenderer
 						content={rating.content}
 						className="[&_p]:mt-3 [&_p]:last:inline [&_p]:first:mt-0"
 					/>
 				</div>
 				{shouldTruncate && (
-					<span className="text-neutral-500 text-base font-semibold hover:text-neutral-400">
-						See more
-					</span>
+					<div className="mt-1">
+						<span className="text-neutral-500/80 text-base font-semibold hover:text-neutral-400 transition-colors cursor-pointer">
+							See more
+						</span>
+					</div>
 				)}
 			</div>
 
