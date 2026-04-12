@@ -25,7 +25,7 @@ export function MainLayout({
 				<div className="w-full max-w-2xl flex flex-col">
 					{showDiscoverStrip && <DiscoverStrip />}
 
-					<main className="flex-1 md:border-x border-neutral-800 w-full pb-16 lg:pb-0 overflow-hidden">
+					<main className="flex-1 md:border-x border-neutral-800 w-full pb-28 lg:pb-0 overflow-hidden">
 						{children}
 					</main>
 				</div>

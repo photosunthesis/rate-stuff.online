@@ -246,22 +246,79 @@ export function LeftSidebar() {
 			)}
 
 			{isAuthenticated && (
-				<nav className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-lg border-t border-white/5 px-6 py-3 flex justify-around md:justify-center md:space-x-24 items-center z-50">
-					<div className="absolute inset-0 bg-linear-to-t from-neutral-950/95 via-neutral-950/60 to-neutral-950/10 -z-10" />
-					<Link
-						to="/"
-						activeOptions={{ exact: true }}
-						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
-						activeProps={{ className: "text-white" }}
-						onClick={() => {
-							if (umami) umami.track("click_nav", { destination: "home" });
-						}}
-					>
-						<Home className="w-6 h-6" />
-						<span className="text-[10px] font-medium">Home</span>
-					</Link>
+				<div
+					className="md:hidden fixed left-0 right-0 flex items-center justify-center gap-3 z-50 pointer-events-none"
+					style={{ bottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}
+				>
+					<div className="flex items-center gap-2.5 pointer-events-auto">
+						{/* Liquid glass pill */}
+						<nav
+							className="relative flex items-center gap-0.5 px-1.5 py-1 h-14 rounded-full"
+							style={{
+								background: "rgba(22, 22, 26, 0.72)",
+								backdropFilter: "blur(28px) saturate(200%)",
+								WebkitBackdropFilter: "blur(28px) saturate(200%)",
+								border: "1px solid rgba(255,255,255,0.05)",
+								boxShadow:
+									"0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
+							}}
+						>
+							<Link
+								to="/"
+								activeOptions={{ exact: true }}
+								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
+								activeProps={{
+									className: "text-white",
+									style: { background: "rgba(255,255,255,0.10)" },
+								}}
+								onClick={() => {
+									if (umami) umami.track("click_nav", { destination: "home" });
+								}}
+							>
+								<Home className="w-[22px] h-[22px] mt-0.5" />
+								<span className="text-[10px] font-medium tracking-wide">Home</span>
+							</Link>
 
-					{showFloatingButton && (
+							<Link
+								to="/activity"
+								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
+								activeProps={{
+									className: "text-white",
+									style: { background: "rgba(255,255,255,0.10)" },
+								}}
+								onClick={() => {
+									if (umami) umami.track("click_nav", { destination: "activity" });
+								}}
+							>
+								<div className="relative mt-0.5">
+									<Bell className="w-[22px] h-[22px]" />
+									{unreadCount > 0 && (
+										<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+											<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+											<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+										</span>
+									)}
+								</div>
+								<span className="text-[10px] font-medium tracking-wide">Activity</span>
+							</Link>
+
+							<Link
+								to="/menu"
+								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
+								activeProps={{
+									className: "text-white",
+									style: { background: "rgba(255,255,255,0.10)" },
+								}}
+								onClick={() => {
+									if (umami) umami.track("click_nav", { destination: "menu" });
+								}}
+							>
+								<Menu className="w-[22px] h-[22px] mt-0.5" />
+								<span className="text-[10px] font-medium tracking-wide">Menu</span>
+							</Link>
+						</nav>
+
+						{/* Green FAB — right side for thumb reach */}
 						<button
 							type="button"
 							onClick={() => {
@@ -269,44 +326,17 @@ export function LeftSidebar() {
 								setIsCreateOpen(true);
 							}}
 							aria-label="New Rating"
-							title="New Rating"
-							className="absolute -top-18 right-4 md:-right-16 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50"
+							className="w-14 h-14 rounded-full text-white flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0"
+							style={{
+								background: "linear-gradient(145deg, #34d399 0%, #059669 100%)",
+								boxShadow:
+									"0 6px 28px rgba(16,185,129,0.50), inset 0 1px 0 rgba(255,255,255,0.28)",
+							}}
 						>
 							<PencilLine className="w-5 h-5" />
 						</button>
-					)}
-
-					<Link
-						to="/activity"
-						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
-						activeProps={{ className: "text-white" }}
-						onClick={() => {
-							if (umami) umami.track("click_nav", { destination: "activity" });
-						}}
-					>
-						<div className="relative">
-							<Bell className="w-6 h-6" />
-							{unreadCount > 0 && (
-								<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-									<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-									<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-								</span>
-							)}
-						</div>
-						<span className="text-[10px] font-medium">Activity</span>
-					</Link>
-					<Link
-						to="/menu"
-						className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
-						activeProps={{ className: "text-white" }}
-						onClick={() => {
-							if (umami) umami.track("click_nav", { destination: "menu" });
-						}}
-					>
-						<Menu className="w-6 h-6" />
-						<span className="text-[10px] font-medium">Menu</span>
-					</Link>
-				</nav>
+					</div>
+				</div>
 			)}
 		</>
 	);
