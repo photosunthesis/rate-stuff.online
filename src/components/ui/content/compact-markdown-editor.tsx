@@ -207,31 +207,31 @@ export function CompactMarkdownEditor({
 							<ToolbarButton
 								onClick={() => toggleFormat("bold")}
 								isActive={activeFormats.bold}
-								icon={<Bold className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								icon={<Bold className="w-5 h-5 sm:w-4 sm:h-4" />}
 								title="Bold"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("italic")}
 								isActive={activeFormats.italic}
-								icon={<Italic className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								icon={<Italic className="w-5 h-5 sm:w-4 sm:h-4" />}
 								title="Italic"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("strike")}
 								isActive={activeFormats.strike}
-								icon={<Strikethrough className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								icon={<Strikethrough className="w-5 h-5 sm:w-4 sm:h-4" />}
 								title="Strikethrough"
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("underline")}
 								isActive={activeFormats.underline}
-								icon={<UnderlineIcon className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								icon={<UnderlineIcon className="w-5 h-5 sm:w-4 sm:h-4" />}
 								title="Underline"
 							/>
 							<ToolbarButton
 								onClick={toggleList}
 								isActive={activeFormats.list}
-								icon={<List className="w-4 h-4 sm:w-3.5 sm:h-3.5" />}
+								icon={<List className="w-5 h-5 sm:w-4 sm:h-4" />}
 								title="Bullet List"
 							/>
 						</div>
@@ -246,7 +246,13 @@ export function CompactMarkdownEditor({
 			<style>{`
 				.ql-toolbar { display: none !important; }
 				.ql-container.ql-snow { border: none !important; }
-				.ql-editor.ql-blank::before { color: #737373; font-style: normal; }
+				.ql-editor.ql-blank::before { 
+					color: #737373 !important; 
+					font-style: normal !important; 
+					content: attr(data-placeholder) !important;
+					pointer-events: none;
+					position: absolute;
+				}
 				[data-instance-id='${uniqueId}'] .ql-container,
 				[data-instance-id='${uniqueId}'] .ql-editor {
 					font-family: var(--font-sans) !important;
@@ -320,7 +326,7 @@ const ToolbarButton = ({
 				e.preventDefault();
 				onClick();
 			}}
-			className={`p-2 sm:p-1 rounded transition-all duration-200 ${
+			className={`p-2 sm:p-1.5 rounded transition-all duration-200 ${
 				isActive
 					? "text-emerald-500"
 					: "text-neutral-400 hover:text-neutral-300"
