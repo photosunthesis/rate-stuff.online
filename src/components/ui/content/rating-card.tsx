@@ -146,7 +146,7 @@ export const RatingCard = memo(function RatingCard({
 				</div>
 			)}
 
-			<div className="flex items-baseline gap-2 mb-2">
+			<div className="flex items-baseline gap-2 mb-3">
 				<h3
 					className={`text-2xl md:text-3xl font-semibold text-white ${
 						noIndent ? "" : "ml-11"
