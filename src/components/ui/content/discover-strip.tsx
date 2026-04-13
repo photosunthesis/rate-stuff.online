@@ -57,7 +57,7 @@ export function DiscoverStrip() {
 						{skeletonStuffKeys.map((sKey) => (
 							<div
 								key={sKey}
-								className="inline-flex items-center bg-neutral-800/40 rounded-md animate-pulse"
+								className="inline-flex items-center bg-neutral-800/40 rounded-md animate-skeleton-pulse"
 							>
 								<div className="h-6 w-24" />
 							</div>
@@ -68,7 +68,7 @@ export function DiscoverStrip() {
 									// biome-ignore lint/suspicious/noArrayIndexKey: safe
 									i
 								}`}
-								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-md animate-pulse`}
+								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-md animate-skeleton-pulse`}
 							/>
 						))}
 					</>

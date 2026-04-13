@@ -41,7 +41,7 @@ export function RatingCardSkeleton({
 	) : null;
 
 	return (
-		<div className="px-8 py-4 animate-pulse pointer-events-none">
+		<div className="px-8 py-4 animate-skeleton-pulse pointer-events-none">
 			{header}
 
 			<div className={`${titleMargin} ${indent}`}>

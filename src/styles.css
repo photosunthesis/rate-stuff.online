@@ -36,8 +36,14 @@
     to { transform: scale(0.98); opacity: 0; }
   }
 
+  @keyframes skeletonPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+
   .animate-fade-in { animation: fadeIn 250ms ease-out !important; }
   .animate-skeleton-reveal { animation: fadeIn 120ms ease-out both; }
+  .animate-skeleton-pulse { animation: skeletonPulse 1.6s ease-in-out infinite; }
   .animate-fade-out { animation: fadeOut 200ms ease-in forwards !important; }
   .animate-zoom-in { animation: zoomIn 220ms cubic-bezier(.2,.9,.3,1) !important; }
   .animate-zoom-out { animation: zoomOut 180ms cubic-bezier(.4,.0,.2,1) forwards !important; }

@@ -1,6 +1,6 @@
 export function CommentSkeleton() {
 	return (
-		<div className="flex gap-3 py-3 px-2 animate-pulse pointer-events-none">
+		<div className="flex gap-3 py-3 px-2 animate-skeleton-pulse pointer-events-none">
 			<div className="w-8 h-8 rounded-full bg-neutral-800/40 shrink-0" />
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-2 h-8 mb-2">
