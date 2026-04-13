@@ -3,6 +3,7 @@ import { activities, comments, users } from "~/db/schema";
 import { eq, desc, and, count, or, lt, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import * as Sentry from "@sentry/tanstackstart-react";
 
 type Transaction = Parameters<
 	Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]
@@ -34,15 +35,15 @@ export const createActivity = createServerOnlyFn(
 		try {
 			const id = env.ACTIVITY_NOTIFICATIONS.idFromName(`user-${input.userId}`);
 			const stub = env.ACTIVITY_NOTIFICATIONS.get(id);
-			stub
-				.fetch(
-					new Request("https://do/broadcast", {
-						method: "POST",
-						body: JSON.stringify({ message: "NEW_ACTIVITY" }),
-					}),
-				)
-				.catch(() => {});
-		} catch (_) {}
+			await stub.fetch(
+				new Request("https://do/broadcast", {
+					method: "POST",
+					body: JSON.stringify({ message: "NEW_ACTIVITY" }),
+				}),
+			);
+		} catch (error) {
+			Sentry.captureException(error);
+		}
 	},
 );
 
