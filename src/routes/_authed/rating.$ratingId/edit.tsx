@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authed/rating/$ratingId/edit")({
 			throw redirect({ to: "/" });
 		}
 
-		if (!ratingRes || !ratingRes.success || !ratingRes.data) {
+		if (!ratingRes?.success || !ratingRes.data) {
 			throw new Error("Rating not found");
 		}
 

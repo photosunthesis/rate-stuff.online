@@ -134,7 +134,7 @@ export const useVoteComment = () => {
 					nextCursor?: string | undefined;
 				}>
 			>({ queryKey: commentKeys.lists() }, (old) => {
-				if (!old || !old.pages) return old;
+				if (!old?.pages) return old;
 
 				return {
 					...old,

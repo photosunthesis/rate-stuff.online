@@ -98,9 +98,9 @@ export function ImageField({
 			</label>
 
 			<div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-				{images.map((file, index) => (
+				{images.map((file) => (
 					<div
-						key={`${typeof file === "string" ? file : file.name}-${index}`}
+						key={typeof file === "string" ? file : `${file.name}-${file.size}-${file.lastModified}`}
 						className="relative aspect-square rounded-lg overflow-hidden group border border-white/5 bg-neutral-900"
 					>
 						<UiImage
@@ -112,7 +112,7 @@ export function ImageField({
 						/>
 						<button
 							type="button"
-							onClick={() => handleRemove(index)}
+							onClick={() => handleRemove(images.indexOf(file))}
 							className="absolute top-2 right-2 p-1 bg-black/60 backdrop-blur-sm hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
 						>
 							<X size={14} />

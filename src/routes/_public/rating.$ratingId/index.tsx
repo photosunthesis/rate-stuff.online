@@ -62,7 +62,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 			ratingQueryOptions(ratingId),
 		);
 
-		if (!rating || !rating.success) {
+		if (!rating?.success) {
 			throw notFound();
 		}
 
@@ -458,7 +458,7 @@ function RouteComponent() {
 	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const umami = useUmami();
 
-	if (!ratingRes || !ratingRes.success || !ratingRes.data) return <NotFound />;
+	if (!ratingRes?.success || !ratingRes.data) return <NotFound />;
 
 	const rating = ratingRes.data;
 	const ratingTyped = rating as RatingWithRelations;

@@ -54,7 +54,7 @@ export function useVoteRating() {
 			queryClient.setQueryData(
 				["rating", newVote.ratingId],
 				(old: { success: boolean; data: RatingWithRelations } | undefined) => {
-					if (!old || !old.data) return old;
+					if (!old?.data) return old;
 					return {
 						...old,
 						data: calculateNewStats(old.data),

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/misc/app-logo";
 import { Home, Bell, Menu, LogOut, Plus } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
@@ -38,9 +38,9 @@ export function LeftSidebar() {
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const isAuthenticated = user != null;
 	const [header] = useState(() => getHeader());
-	const location = useLocation();
+
 	const [signOut] = useSignOut();
-	const showFloatingButton = location.pathname === "/";
+
 	const { data: unreadCount } = useSuspenseQuery(
 		unreadActivityCountQueryOptions(user?.id),
 	);
