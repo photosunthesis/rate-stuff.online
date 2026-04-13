@@ -213,9 +213,7 @@ function RouteComponent() {
 														src={activity.actor?.image ?? null}
 														alt={activity.actor?.name ?? "User"}
 														username={
-															activity.actor?.name ??
-															activity.actor?.username ??
-															undefined
+															activity.actor?.username ?? undefined
 														}
 													/>
 													<div className="flex-1 space-y-1">
