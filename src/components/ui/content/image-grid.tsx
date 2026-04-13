@@ -1,9 +1,11 @@
 import { Image } from "~/components/ui/content/image";
+import type { SignedImage } from "~/infrastructure/imagekit/sign";
 
 interface ImageGridProps {
-	images: string[];
+	images: SignedImage[];
 	alt?: string;
 	maxImages?: number;
+	/** Called with the lightbox-quality signed URL when an image is clicked. */
 	onImageClick?: (src: string) => void;
 	className?: string;
 }
@@ -19,12 +21,11 @@ export function ImageGrid({
 
 	const displayImages = images.slice(0, Math.min(maxImages, 4));
 
-	const renderImage = (src: string) => {
+	const renderImage = (image: SignedImage) => {
 		const img = (
 			<Image
-				src={src}
+				src={image.card}
 				alt={alt}
-				variant="card"
 				noBorder
 				className="w-full h-full object-cover object-center"
 			/>
@@ -36,7 +37,7 @@ export function ImageGrid({
 					type="button"
 					onClick={(e) => {
 						e.stopPropagation();
-						onImageClick(src);
+						onImageClick(image.lightbox);
 					}}
 					className="block w-full h-full cursor-pointer"
 				>
@@ -61,9 +62,9 @@ export function ImageGrid({
 	if (displayImages.length === 2) {
 		return (
 			<div className={`flex gap-1.5 overflow-hidden ${className}`}>
-				{displayImages.map((src, idx) => (
+				{displayImages.map((image, idx) => (
 					<div
-						key={src}
+						key={image.card}
 						className={`flex-1 overflow-hidden border border-neutral-700/50 bg-neutral-800 ${
 							idx === 0
 								? "rounded-xl rounded-tr-sm rounded-br-sm"
@@ -71,7 +72,7 @@ export function ImageGrid({
 						}`}
 						style={{ aspectRatio: "1 / 1" }}
 					>
-						{renderImage(src)}
+						{renderImage(image)}
 					</div>
 				))}
 			</div>
@@ -149,13 +150,13 @@ export function ImageGrid({
 		<div
 			className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden ${className}`}
 		>
-			{displayImages.map((src, idx) => (
+			{displayImages.map((image, idx) => (
 				<div
-					key={src}
+					key={image.card}
 					className="overflow-hidden border border-neutral-700/50 bg-neutral-800"
 					style={cornerStyles[idx]}
 				>
-					{renderImage(src)}
+					{renderImage(image)}
 				</div>
 			))}
 		</div>

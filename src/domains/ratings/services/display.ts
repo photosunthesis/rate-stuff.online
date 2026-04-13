@@ -11,8 +11,9 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import type { RatingWithRelations } from "../types/display";
 import { getDatabase } from "~/db";
 import { cached } from "~/infrastructure/kv/cache";
+import { buildSignedImages } from "~/infrastructure/imagekit/sign";
 
-function transformToGroupedRating(row: {
+async function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
 	stuff: typeof stuff.$inferSelect | null;
 	user: {
@@ -23,7 +24,7 @@ function transformToGroupedRating(row: {
 	} | null;
 	tags: string[];
 	userVote: "up" | "down" | null;
-}): RatingWithRelations {
+}): Promise<RatingWithRelations> {
 	return {
 		...row.rating,
 		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
@@ -31,6 +32,7 @@ function transformToGroupedRating(row: {
 		user: row.user,
 		tags: row.tags,
 		userVote: row.userVote,
+		signedImages: await buildSignedImages(row.rating.images),
 	};
 }
 
@@ -92,7 +94,7 @@ export const getUserRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return results.map(transformToGroupedRating);
+		return Promise.all(results.map(transformToGroupedRating));
 	},
 );
 
@@ -142,7 +144,7 @@ export const getFeedRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return results.map(transformToGroupedRating);
+		return Promise.all(results.map(transformToGroupedRating));
 	},
 );
 

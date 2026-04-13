@@ -1,11 +1,12 @@
 import type { ratings, stuff } from "~/db/schema";
+import type { SignedImage } from "~/infrastructure/imagekit/sign";
 
 export type Stuff = typeof stuff.$inferSelect;
 
 export type StuffWithAggregates = Stuff & {
 	averageRating: number;
 	ratingCount: number;
-	images: string[];
+	images: SignedImage[];
 };
 
 export type StuffRating = typeof ratings.$inferSelect & {
@@ -18,6 +19,7 @@ export type StuffRating = typeof ratings.$inferSelect & {
 	} | null;
 	tags: string[];
 	userVote: "up" | "down" | null;
+	signedImages: SignedImage[];
 };
 
 export type StuffRatingsPage = {

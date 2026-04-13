@@ -23,9 +23,6 @@ importers:
       '@fontsource/ibm-plex-serif':
         specifier: ^5.2.7
         version: 5.2.7
-      '@imagekit/nodejs':
-        specifier: ^7.4.0
-        version: 7.4.0
       '@imagekit/react':
         specifier: ^5.0.2
         version: 5.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -1187,9 +1184,6 @@ packages:
 
   '@imagekit/javascript@5.3.0':
     resolution: {integrity: sha512-jMptcXxQlg7BfZxVS9E2azkjfVieaKZD851XJSQLlR6kzoCg1HTTDscwUwdpHDpmt2MkTdGazo+BrsnxHrlyzA==}
-
-  '@imagekit/nodejs@7.4.0':
-    resolution: {integrity: sha512-YDuCu6HjEuLzxujfyxXmQw8OJbXEhIbBMflCz0fRbNSCZOmlZkwIPY07oK635tYDii5clZKsyom4fLv60dKz0A==}
 
   '@imagekit/react@5.0.2':
     resolution: {integrity: sha512-xsZNEa0FLkgdIs9KbWLwsY4ZjFsTsueyXdqq6Ei+TX9ynAX5u6Nuz+MQ9fXV6mh3fPELZPQKTKF9VcURvFdExg==}
@@ -5085,10 +5079,6 @@ snapshots:
     optional: true
 
   '@imagekit/javascript@5.3.0': {}
-
-  '@imagekit/nodejs@7.4.0':
-    dependencies:
-      standardwebhooks: 1.0.0
 
   '@imagekit/react@5.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:

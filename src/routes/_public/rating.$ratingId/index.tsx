@@ -84,24 +84,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 			? excerptFromMarkdown(rating.content, 160)
 			: "View a community rating on Rate Stuff Online.";
 
-		let image: string | undefined;
-
-		if (rating?.images) {
-			if (typeof rating.images === "string") {
-				try {
-					const imgs = JSON.parse(rating.images);
-					if (Array.isArray(imgs) && imgs.length > 0) image = imgs[0];
-					else if (typeof imgs === "string") image = imgs;
-				} catch {
-					image = rating.images;
-				}
-			} else {
-				const maybeArray = rating.images as unknown;
-				if (Array.isArray(maybeArray) && maybeArray.length > 0) {
-					image = (maybeArray as string[])[0];
-				}
-			}
-		}
+		const image = rating?.signedImages?.[0]?.card;
 
 		const pageUrl = `https://rate-stuff.online/rating/${params.ratingId}`;
 		const fallbackImage =
@@ -462,17 +445,7 @@ function RouteComponent() {
 
 	const rating = ratingRes.data;
 	const ratingTyped = rating as RatingWithRelations;
-	let parsedImages: string[] = [];
-
-	if (typeof rating.images === "string") {
-		try {
-			parsedImages = JSON.parse(rating.images);
-		} catch {
-			parsedImages = [];
-		}
-	} else if (Array.isArray(rating.images)) {
-		parsedImages = rating.images;
-	}
+	const parsedImages = rating.signedImages;
 
 	const handleImageClick = (src: string) => {
 		setLightboxSrc(src);

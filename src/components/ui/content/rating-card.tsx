@@ -41,16 +41,7 @@ export const RatingCard = memo(function RatingCard({
 
 	const umami = useUmami();
 
-	let parsedImages: string[] = [];
-	if (typeof rating.images === "string") {
-		try {
-			parsedImages = JSON.parse(rating.images);
-		} catch {
-			parsedImages = [];
-		}
-	} else if (Array.isArray(rating.images)) {
-		parsedImages = rating.images;
-	}
+	const parsedImages = rating.signedImages;
 
 	const parsedTags: string[] = Array.isArray(rating.tags) ? rating.tags : [];
 

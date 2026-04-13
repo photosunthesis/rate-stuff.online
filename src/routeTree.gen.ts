@@ -15,7 +15,6 @@ import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiImageUploadRouteImport } from './routes/api/image-upload'
-import { Route as ApiImageRouteImport } from './routes/api/image'
 import { Route as PublicTermsRouteImport } from './routes/_public/terms'
 import { Route as PublicPrivacyRouteImport } from './routes/_public/privacy'
 import { Route as AuthedSetUpProfileRouteImport } from './routes/_authed/set-up-profile'
@@ -58,11 +57,6 @@ const IndexRoute = IndexRouteImport.update({
 const ApiImageUploadRoute = ApiImageUploadRouteImport.update({
   id: '/api/image-upload',
   path: '/api/image-upload',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiImageRoute = ApiImageRouteImport.update({
-  id: '/api/image',
-  path: '/api/image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PublicTermsRoute = PublicTermsRouteImport.update({
@@ -163,7 +157,6 @@ export interface FileRoutesByFullPath {
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/privacy': typeof PublicPrivacyRoute
   '/terms': typeof PublicTermsRoute
-  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
@@ -185,7 +178,6 @@ export interface FileRoutesByTo {
   '/set-up-profile': typeof AuthedSetUpProfileRoute
   '/privacy': typeof PublicPrivacyRoute
   '/terms': typeof PublicTermsRoute
-  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
@@ -211,7 +203,6 @@ export interface FileRoutesById {
   '/_authed/set-up-profile': typeof AuthedSetUpProfileRoute
   '/_public/privacy': typeof PublicPrivacyRoute
   '/_public/terms': typeof PublicTermsRoute
-  '/api/image': typeof ApiImageRoute
   '/api/image-upload': typeof ApiImageUploadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_authed/rating/$ratingId/edit': typeof AuthedRatingRatingIdEditRoute
@@ -235,7 +226,6 @@ export interface FileRouteTypes {
     | '/set-up-profile'
     | '/privacy'
     | '/terms'
-    | '/api/image'
     | '/api/image-upload'
     | '/api/auth/$'
     | '/rating/$ratingId/edit'
@@ -257,7 +247,6 @@ export interface FileRouteTypes {
     | '/set-up-profile'
     | '/privacy'
     | '/terms'
-    | '/api/image'
     | '/api/image-upload'
     | '/api/auth/$'
     | '/rating/$ratingId/edit'
@@ -282,7 +271,6 @@ export interface FileRouteTypes {
     | '/_authed/set-up-profile'
     | '/_public/privacy'
     | '/_public/terms'
-    | '/api/image'
     | '/api/image-upload'
     | '/api/auth/$'
     | '/_authed/rating/$ratingId/edit'
@@ -297,7 +285,6 @@ export interface RootRouteChildren {
   AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
   PublicRouteRoute: typeof PublicRouteRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiImageRoute: typeof ApiImageRoute
   ApiImageUploadRoute: typeof ApiImageUploadRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -344,13 +331,6 @@ declare module '@tanstack/react-router' {
       path: '/api/image-upload'
       fullPath: '/api/image-upload'
       preLoaderRoute: typeof ApiImageUploadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/image': {
-      id: '/api/image'
-      path: '/api/image'
-      fullPath: '/api/image'
-      preLoaderRoute: typeof ApiImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_public/terms': {
@@ -534,7 +514,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthedRouteRoute: AuthedRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiImageRoute: ApiImageRoute,
   ApiImageUploadRoute: ApiImageUploadRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

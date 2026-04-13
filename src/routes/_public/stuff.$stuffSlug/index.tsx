@@ -33,31 +33,20 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			stuffQueryOptions(params.stuffSlug).queryKey,
 		);
 
-		let cached: {
+		type CachedStuff = {
 			id?: string;
 			name?: string;
-			images?: string[];
+			images?: { card: string; lightbox: string }[];
 			averageRating?: number;
 			ratingCount?: number;
-		} | null = null;
+		};
+		let cached: CachedStuff | null = null;
 		if (cachedRaw && typeof cachedRaw === "object") {
 			const maybeWrapper = cachedRaw as Record<string, unknown>;
 			if ("data" in maybeWrapper && typeof maybeWrapper.data === "object") {
-				cached = maybeWrapper.data as {
-					id?: string;
-					name?: string;
-					images?: string[];
-					averageRating?: number;
-					ratingCount?: number;
-				};
+				cached = maybeWrapper.data as CachedStuff;
 			} else {
-				cached = maybeWrapper as {
-					id?: string;
-					name?: string;
-					images?: string[];
-					averageRating?: number;
-					ratingCount?: number;
-				};
+				cached = maybeWrapper as CachedStuff;
 			}
 		}
 
@@ -66,9 +55,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			? `${stuff.name} - Rate Stuff Online`
 			: "Stuff - Rate Stuff Online";
 
-		const images = Array.isArray(stuff?.images)
-			? (stuff.images as string[])
-			: [];
+		const images = Array.isArray(stuff?.images) ? stuff.images : [];
 		const hasImages = images.length > 0;
 
 		const ratingCount =
@@ -90,7 +77,7 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 
 		const pageUrl = `https://rate-stuff.online/stuff/${params.stuffSlug}`;
 		const finalImage = hasImages
-			? images[0]
+			? images[0].card
 			: "https://rate-stuff.online/web-app-manifest-512x512.png";
 
 		const keywords = [
@@ -155,19 +142,10 @@ function RouteComponent() {
 	const { stuff } = Route.useRouteContext();
 
 	// Normalize to safe shape to avoid runtime errors
-	const imagesForSafe = Array.isArray(
-		(stuff as unknown as { images?: unknown })?.images,
-	)
-		? ((stuff as { images?: string[] }).images ?? [])
-		: [];
 	const safeStuff = {
 		...stuff,
-		images: imagesForSafe,
+		images: Array.isArray(stuff?.images) ? stuff.images : [],
 	};
-
-	if (!Array.isArray(safeStuff.images)) {
-		safeStuff.images = [];
-	}
 
 	return (
 		<MainLayout>

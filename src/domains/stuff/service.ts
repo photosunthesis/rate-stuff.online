@@ -11,8 +11,9 @@ import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { StuffRating } from "./types";
 import { cached } from "~/infrastructure/kv/cache";
+import { buildSignedImages, buildSignedImagesFromUrls } from "~/infrastructure/imagekit/sign";
 
-function transformToGroupedRating(row: {
+async function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
 	stuff: typeof stuffTable.$inferSelect | null;
 	user: {
@@ -23,13 +24,14 @@ function transformToGroupedRating(row: {
 	} | null;
 	tags: string[];
 	userVote: "up" | "down" | null;
-}): StuffRating {
+}): Promise<StuffRating> {
 	return {
 		...row.rating,
 		stuff: row.stuff,
 		user: row.user,
 		tags: row.tags,
 		userVote: row.userVote,
+		signedImages: await buildSignedImages(row.rating.images),
 	};
 }
 
@@ -136,7 +138,8 @@ export const getStuffBySlug = createServerOnlyFn(async (slug: string) => {
 			const row = rows[0];
 			const ratingCount = Number(row.ratingCount ?? 0);
 			const averageRating = ratingCount === 0 ? 0 : Number(row.avgScore ?? 0);
-			const images = await extractImagesForStuff(db, row.id);
+			const r2Images = await extractImagesForStuff(db, row.id);
+			const images = await buildSignedImagesFromUrls(r2Images);
 
 			return {
 				id: row.id,
@@ -195,7 +198,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 			return { ratings: [], nextCursor: undefined };
 		}
 
-		const mapped = results.map(transformToGroupedRating);
+		const mapped = await Promise.all(results.map(transformToGroupedRating));
 
 		let nextCursor: string | undefined;
 		if (mapped.length === limit) {

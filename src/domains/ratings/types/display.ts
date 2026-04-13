@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { ratings, stuff } from "~/db/schema";
+import type { SignedImage } from "~/infrastructure/imagekit/sign";
 
 export type Stuff = typeof stuff.$inferSelect;
 
@@ -19,6 +20,8 @@ export type RatingWithRelations = typeof ratings.$inferSelect & {
 	} | null;
 	stuff: typeof stuff.$inferSelect;
 	userVote: "up" | "down" | null;
+	/** Pre-signed ImageKit URLs for display. Use these in components instead of `images`. */
+	signedImages: SignedImage[];
 };
 
 export const createRatingSchema = z

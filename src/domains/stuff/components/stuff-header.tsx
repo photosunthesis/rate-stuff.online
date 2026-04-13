@@ -7,7 +7,7 @@ import { getRatingEmoji } from "~/utils/ratings";
 
 export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
-	const images = Array.isArray(stuff.images) ? stuff.images.slice(0, 3) : [];
+	const images = stuff.images.slice(0, 3);
 
 	return (
 		<div className="w-full max-w-4xl mx-auto p-4">
