@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useSkeletonFade(isLoading: boolean) {
-	const [showSkeleton, setShowSkeleton] = useState(true);
+	const [showSkeleton, setShowSkeleton] = useState(isLoading);
 	const [skeletonFading, setSkeletonFading] = useState(false);
 	const [contentKey, setContentKey] = useState(0);
-	const seenLoading = useRef(false);
+	const seenLoading = useRef(isLoading);
 
 	useEffect(() => {
 		if (isLoading) {
