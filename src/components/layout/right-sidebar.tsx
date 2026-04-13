@@ -8,6 +8,7 @@ import {
 } from "~/domains/ratings/queries/display";
 import { useAuth } from "~/domains/users/queries";
 import { AuthModal } from "~/domains/users/components/auth-modal";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 export function RightSidebar() {
 	const { data: user } = useAuth();
@@ -27,6 +28,8 @@ export function RightSidebar() {
 	}, []);
 
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const stuffFade = useSkeletonFade(loadingStuff);
+	const tagsFade = useSkeletonFade(loadingTags);
 
 	return (
 		<aside className="w-80 px-4 py-6 hidden lg:block sticky top-0 h-screen overflow-y-auto">
@@ -41,8 +44,9 @@ export function RightSidebar() {
 							</div>
 
 							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
-								{loadingStuff
-									? skeletonStuffKeys.map((sKey, i) => (
+								{stuffFade.showSkeleton ? (
+									<div className={stuffFade.skeletonClass}>
+										{skeletonStuffKeys.map((sKey, i) => (
 											<div
 												key={sKey}
 												className={`flex items-center gap-3 px-4 py-3 ${
@@ -56,8 +60,11 @@ export function RightSidebar() {
 												</div>
 												<div className="w-4 h-4 bg-neutral-800 rounded" />
 											</div>
-										))
-									: (recentStuff ?? []).map((thing, i) => (
+										))}
+									</div>
+								) : (
+									<div key={stuffFade.contentKey} className="animate-skeleton-reveal">
+										{(recentStuff ?? []).map((thing, i) => (
 											<Link
 												key={thing.id}
 												to="/stuff/$stuffSlug"
@@ -82,6 +89,8 @@ export function RightSidebar() {
 												</div>
 											</Link>
 										))}
+									</div>
+								)}
 							</div>
 						</section>
 
@@ -90,8 +99,9 @@ export function RightSidebar() {
 								Trending Tags
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">
-								{loadingTags
-									? skeletonTagWidths.map((w, i) => (
+								{tagsFade.showSkeleton ? (
+									<div className={`flex flex-wrap gap-1.5 ${tagsFade.skeletonClass}`}>
+										{skeletonTagWidths.map((w, i) => (
 											<div
 												key={`${w}-${
 													// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
@@ -99,8 +109,11 @@ export function RightSidebar() {
 												}`}
 												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-md`}
 											/>
-										))
-									: (recentTags ?? []).map((tag) =>
+										))}
+									</div>
+								) : (
+									<div key={tagsFade.contentKey} className="flex flex-wrap gap-1.5 animate-skeleton-reveal">
+										{(recentTags ?? []).map((tag) =>
 											isAuthenticated ? (
 												<Link
 													key={tag.name}
@@ -121,6 +134,8 @@ export function RightSidebar() {
 												</button>
 											),
 										)}
+									</div>
+								)}
 							</div>
 						</section>
 					</>

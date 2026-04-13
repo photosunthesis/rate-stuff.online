@@ -43,6 +43,7 @@
   }
 
   .animate-fade-in { animation: fadeIn 250ms ease-out !important; }
+  .animate-skeleton-reveal { animation: fadeIn 120ms ease-out both; }
   .animate-fade-out { animation: fadeOut 200ms ease-in forwards !important; }
   .animate-zoom-in { animation: zoomIn 220ms cubic-bezier(.2,.9,.3,1) !important; }
   .animate-zoom-out { animation: zoomOut 180ms cubic-bezier(.4,.0,.2,1) forwards !important; }

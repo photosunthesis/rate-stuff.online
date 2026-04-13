@@ -5,6 +5,7 @@ import { CommentItem } from "./comment-item";
 import { CommentSkeleton } from "./comment-skeleton";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 interface CommentListProps {
 	ratingId: string;
@@ -20,6 +21,8 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 		isLoading,
 		error,
 	} = useInfiniteQuery(commentsQueryOptions(ratingId));
+
+	const { showSkeleton, skeletonClass, contentKey } = useSkeletonFade(isLoading);
 
 	const location = useLocation();
 	const [hasScrolled, setHasScrolled] = useState(false);
@@ -55,9 +58,9 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 		}
 	}, [isLoading, location.hash, hasScrolled]);
 
-	if (isLoading) {
+	if (showSkeleton) {
 		return (
-			<div className="flex flex-col">
+			<div className={`flex flex-col ${skeletonClass}`}>
 				<CommentSkeleton />
 				<CommentSkeleton />
 				<CommentSkeleton />
@@ -87,7 +90,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 	}
 
 	return (
-		<div className="flex flex-col">
+		<div key={contentKey} className="flex flex-col animate-skeleton-reveal">
 			{allComments.map((comment: CommentWithRelations) => (
 				<CommentItem
 					key={comment.id}

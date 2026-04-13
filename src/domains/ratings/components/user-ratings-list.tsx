@@ -2,6 +2,7 @@ import { useUserRatings } from "~/domains/ratings/queries/display";
 import { RatingCard } from "../../../components/ui/content/rating-card";
 import { useEffect, useRef, useMemo } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 export function UserRatingsList() {
 	const {
@@ -41,9 +42,11 @@ export function UserRatingsList() {
 		[data?.pages],
 	);
 
-	if (isLoading) {
+	const { showSkeleton, skeletonClass, contentKey } = useSkeletonFade(isLoading);
+
+	if (showSkeleton) {
 		return (
-			<div>
+			<div className={skeletonClass}>
 				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
@@ -80,7 +83,7 @@ export function UserRatingsList() {
 	}
 
 	return (
-		<>
+		<div key={contentKey} className="animate-skeleton-reveal">
 			<div className="divide-y divide-neutral-800">
 				{allRatings.map((rating) => (
 					<RatingCard key={rating.id} rating={rating} isAuthenticated={true} />
@@ -98,6 +101,6 @@ export function UserRatingsList() {
 					)}
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

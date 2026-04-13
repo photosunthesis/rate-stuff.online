@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 export function MainFeed({ tag }: { tag?: string }) {
 	const { data: user } = useQuery(authQueryOptions());
@@ -23,6 +24,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 	const { ref, inView } = useInView();
 	const router = useRouter();
 	const canGoBack = useCanGoBack();
+	const { showSkeleton, skeletonClass, contentKey } = useSkeletonFade(isLoading);
 
 	useEffect(() => {
 		if (inView && hasNextPage) {
@@ -35,9 +37,9 @@ export function MainFeed({ tag }: { tag?: string }) {
 		[data?.pages],
 	);
 
-	if (isLoading) {
+	if (showSkeleton) {
 		return (
-			<div>
+			<div className={skeletonClass}>
 				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
 					<div
 						key={n}
@@ -64,7 +66,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 	}
 
 	return (
-		<>
+		<div key={contentKey} className="animate-skeleton-reveal">
 			{tag && (
 				<div className="border-b border-neutral-800 px-3 py-2">
 					<div className="flex items-center justify-between">
@@ -132,6 +134,6 @@ export function MainFeed({ tag }: { tag?: string }) {
 					</div>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

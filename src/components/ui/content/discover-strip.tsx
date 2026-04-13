@@ -7,6 +7,7 @@ import {
 } from "~/domains/ratings/queries/display";
 import { useAuth } from "~/domains/users/queries";
 import { AuthModal } from "~/domains/users/components/auth-modal";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 export function DiscoverStrip() {
 	const { data: user } = useAuth();
@@ -27,6 +28,7 @@ export function DiscoverStrip() {
 
 	const [isRoot, setIsRoot] = useState(false);
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const stripFade = useSkeletonFade(loadingStuff || loadingTags);
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
@@ -38,14 +40,19 @@ export function DiscoverStrip() {
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">
 			<div
-				className="overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3"
+				key={stripFade.contentKey}
+				className={`overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3 ${
+					stripFade.showSkeleton
+						? stripFade.skeletonClass
+						: "animate-skeleton-reveal"
+				}`}
 				style={{
 					maskImage: "linear-gradient(to right, black 80%, transparent 100%)",
 					WebkitMaskImage:
 						"linear-gradient(to right, black 80%, transparent 100%)",
 				}}
 			>
-				{loadingStuff || loadingTags ? (
+				{stripFade.showSkeleton ? (
 					<>
 						{skeletonStuffKeys.map((sKey) => (
 							<div

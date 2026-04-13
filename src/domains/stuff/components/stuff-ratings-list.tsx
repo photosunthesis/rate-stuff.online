@@ -1,5 +1,5 @@
 import { RatingCard } from "~/components/ui/content/rating-card";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
 import type { StuffRating } from "../types";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
@@ -7,6 +7,7 @@ import { type InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-q
 import { useServerFn } from "@tanstack/react-start";
 import { getPaginatedStuffRatingsFn } from "../functions";
 import { authQueryOptions } from "~/domains/users/queries";
+import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
 type PageResult = {
 	success: boolean;
@@ -94,45 +95,12 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 		};
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-	const [showSkeleton, setShowSkeleton] = useState(true);
-	const [skeletonFading, setSkeletonFading] = useState(false);
-	const [loadingSeenOnce, setLoadingSeenOnce] = useState(false);
-
-	useEffect(() => {
-		if (isLoading) {
-			setLoadingSeenOnce(true);
-			setShowSkeleton(true);
-			setSkeletonFading(false);
-		}
-	}, [isLoading]);
-
-	useEffect(() => {
-		if (!isLoading && showSkeleton && loadingSeenOnce) {
-			setSkeletonFading(true);
-			const t = setTimeout(() => {
-				setShowSkeleton(false);
-				setSkeletonFading(false);
-			}, 300);
-			return () => clearTimeout(t);
-		}
-	}, [isLoading, showSkeleton, loadingSeenOnce]);
-
-	useEffect(() => {
-		const ratingsPresent = allRatings.length > 0;
-		if (ratingsPresent) {
-			setShowSkeleton(false);
-			setSkeletonFading(false);
-		}
-
-		if (!ratingsPresent && isLoading) {
-			setShowSkeleton(true);
-		}
-	}, [allRatings, isLoading]);
+	const { showSkeleton, skeletonClass, contentKey } = useSkeletonFade(isLoading);
 
 	if (showSkeleton) {
 		return (
 			<div
-				className={`py-2 transition-opacity duration-300 ${skeletonFading ? "opacity-0" : "opacity-100"}`}
+				className={`py-2 ${skeletonClass}`}
 				data-skeleton
 			>
 				{[0, 1, 2, 3, 4, 5].map((n, idx) => (
@@ -166,7 +134,7 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 	}
 
 	return (
-		<>
+		<div key={contentKey} className="animate-skeleton-reveal">
 			<div>
 				{allRatings.map((rating: StuffRating, idx) => (
 					<div
@@ -202,6 +170,6 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 					</div>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }
