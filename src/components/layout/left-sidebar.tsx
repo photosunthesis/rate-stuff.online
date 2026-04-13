@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/misc/app-logo";
-import { Home, Bell, Menu, LogOut, PencilLine } from "lucide-react";
+import { Home, Bell, Menu, LogOut, Plus } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
 import { useSignOut } from "~/domains/users/hooks";
@@ -150,7 +150,7 @@ export function LeftSidebar() {
 								}}
 								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
-								<PencilLine className="w-4 h-4 shrink-0" />
+								<Plus className="w-5 h-5 shrink-0" />
 								<span className="truncate">New Rating</span>
 							</button>
 						</div>
@@ -231,7 +231,7 @@ export function LeftSidebar() {
 							title="New Rating"
 							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
 						>
-							<PencilLine className="w-4 h-4" />
+							<Plus className="w-5 h-5" />
 						</button>
 					</div>
 
@@ -248,7 +248,7 @@ export function LeftSidebar() {
 			{isAuthenticated && (
 				<div
 					className="md:hidden fixed left-0 right-0 flex items-center justify-center gap-3 z-50 pointer-events-none"
-					style={{ bottom: "max(1.5rem, env(safe-area-inset-bottom, 1.5rem))" }}
+					style={{ bottom: "max(0.375rem, env(safe-area-inset-bottom, 0.375rem))" }}
 				>
 					<div className="flex items-center gap-2.5 pointer-events-auto">
 						{/* Liquid glass pill */}
@@ -260,7 +260,7 @@ export function LeftSidebar() {
 								WebkitBackdropFilter: "blur(28px) saturate(200%)",
 								border: "1px solid rgba(255,255,255,0.05)",
 								boxShadow:
-									"0 8px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
+									"inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
 							}}
 						>
 							<Link
@@ -329,11 +329,10 @@ export function LeftSidebar() {
 							className="w-14 h-14 rounded-full text-white flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0"
 							style={{
 								background: "linear-gradient(145deg, #34d399 0%, #059669 100%)",
-								boxShadow:
-									"0 6px 28px rgba(16,185,129,0.50), inset 0 1px 0 rgba(255,255,255,0.28)",
+								boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28)",
 							}}
 						>
-							<PencilLine className="w-5 h-5" />
+							<Plus className="w-5 h-5" />
 						</button>
 					</div>
 				</div>
