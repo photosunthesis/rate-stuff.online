@@ -16,6 +16,7 @@ import type {
 } from "./types";
 import { createActivity } from "~/domains/activity/service";
 import { getQuillTextPreview } from "~/utils/rich-text";
+import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 export const createComment = createServerOnlyFn(
 	async (userId: string, input: CreateCommentInput) => {
@@ -72,7 +73,9 @@ export const createComment = createServerOnlyFn(
 
 			return {
 				...comment,
-				user: user || null,
+				user: user
+					? { ...user, image: await buildSignedAvatarUrl(user.image) }
+					: null,
 			};
 		});
 	},
@@ -113,7 +116,9 @@ export const updateComment = createServerOnlyFn(
 
 			return {
 				...updatedComment,
-				user: user || null,
+				user: user
+					? { ...user, image: await buildSignedAvatarUrl(user.image) }
+					: null,
 			};
 		});
 	},
@@ -310,10 +315,14 @@ export const getComments = createServerOnlyFn(
 			.orderBy(desc(comments.createdAt), desc(comments.id))
 			.limit(limit);
 
-		return results.map((r) => ({
-			...r.comment,
-			user: r.user,
-			userVote: r.userVote,
-		}));
+		return Promise.all(
+			results.map(async (r) => ({
+				...r.comment,
+				user: r.user
+					? { ...r.user, image: await buildSignedAvatarUrl(r.user.image) }
+					: null,
+				userVote: r.userVote,
+			})),
+		);
 	},
 );
