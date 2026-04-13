@@ -11,7 +11,7 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import type { RatingWithRelations } from "../types/display";
 import { getDatabase } from "~/db";
 import { cached } from "~/infrastructure/kv/cache";
-import { buildSignedImages } from "~/infrastructure/imagekit/sign";
+import { buildSignedImages, buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 async function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
@@ -25,11 +25,14 @@ async function transformToGroupedRating(row: {
 	tags: string[];
 	userVote: "up" | "down" | null;
 }): Promise<RatingWithRelations> {
+	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
 	return {
 		...row.rating,
 		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
 		stuff: row.stuff!,
-		user: row.user,
+		user: row.user
+			? { ...row.user, image: signedAvatarUrl }
+			: null,
 		tags: row.tags,
 		userVote: row.userVote,
 		signedImages: await buildSignedImages(row.rating.images),

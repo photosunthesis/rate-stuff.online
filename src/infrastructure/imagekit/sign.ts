@@ -4,6 +4,7 @@ import { imagesBucketUrl } from "~/infrastructure/file-storage/service";
 const TRANSFORMATIONS = {
 	card: "tr:w-640,q-80,f-webp",
 	lightbox: "tr:q-90,f-webp",
+	avatar: "tr:h-240,w-240,q-60,f-webp",
 } as const;
 
 export type SignedImage = {
@@ -102,4 +103,30 @@ export async function buildSignedImagesFromUrls(
 	r2Urls: string[],
 ): Promise<SignedImage[]> {
 	return buildSignedImagesFromArray(r2Urls);
+}
+
+/**
+ * Signs an avatar image URL for use in the Image component.
+ * - R2 URLs (images.rate-stuff.online) → signed ImageKit avatar URL
+ * - OAuth URLs (Google, GitHub, etc.) → returned unchanged
+ * - null/undefined → null
+ *
+ * Called server-side only so the private key never reaches the client.
+ */
+export async function buildSignedAvatarUrl(
+	imageUrl: string | null | undefined,
+): Promise<string | null> {
+	if (!imageUrl) return null;
+
+	// Non-R2 URLs (OAuth avatars from Google, GitHub, etc.) need no signing
+	if (!imageUrl.startsWith(imagesBucketUrl)) return imageUrl;
+
+	const endpoint = (
+		import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string
+	).replace(/\/$/, "");
+
+	const path = imageUrl.replace(`${imagesBucketUrl}/`, "");
+	const avatarUrl = `${endpoint}/${TRANSFORMATIONS.avatar}/${path}`;
+
+	return signUrl(avatarUrl);
 }

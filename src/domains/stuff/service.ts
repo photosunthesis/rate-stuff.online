@@ -11,7 +11,7 @@ import { and, isNull, desc, lt, eq, or, sql } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { StuffRating } from "./types";
 import { cached } from "~/infrastructure/kv/cache";
-import { buildSignedImages, buildSignedImagesFromUrls } from "~/infrastructure/imagekit/sign";
+import { buildSignedImages, buildSignedImagesFromUrls, buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 async function transformToGroupedRating(row: {
 	rating: typeof ratings.$inferSelect;
@@ -25,10 +25,13 @@ async function transformToGroupedRating(row: {
 	tags: string[];
 	userVote: "up" | "down" | null;
 }): Promise<StuffRating> {
+	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
 	return {
 		...row.rating,
 		stuff: row.stuff,
-		user: row.user,
+		user: row.user
+			? { ...row.user, image: signedAvatarUrl }
+			: null,
 		tags: row.tags,
 		userVote: row.userVote,
 		signedImages: await buildSignedImages(row.rating.images),

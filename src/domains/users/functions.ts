@@ -10,6 +10,7 @@ import {
 import { getRequest, setResponseHeader } from "@tanstack/react-start/server";
 import { setPublicCacheHeader } from "~/utils/cache";
 import { getAuth } from "~/domains/users/auth/server";
+import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, generalRateLimitMiddleware])
@@ -103,5 +104,9 @@ export const getCurrentUserFn = createServerFn({ method: "GET" })
 			setResponseHeader("Set-Cookie", cookies);
 		}
 
-		return session.response?.user || null;
+		const sessionUser = session.response?.user || null;
+		if (!sessionUser) return null;
+
+		const signedImage = await buildSignedAvatarUrl(sessionUser.image);
+		return { ...sessionUser, image: signedImage };
 	});

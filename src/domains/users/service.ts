@@ -7,6 +7,7 @@ import { env } from "cloudflare:workers";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
 import { cached, invalidate } from "~/infrastructure/kv/cache";
+import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 export const updateUserProfile = createServerOnlyFn(
 	async (userId: string, updates: { name?: string; image?: string | null }) => {
@@ -39,7 +40,11 @@ export const updateUserProfile = createServerOnlyFn(
 
 export const getUserByUsername = createServerOnlyFn(
 	async (username: string) => {
-		return cached(
+		// Raw user data (with the original image URL) is cached so the DB is
+		// not hit on every request.  Signing happens OUTSIDE the cache so that
+		// stale cache entries (stored before signing was introduced) still get
+		// a valid signed URL on every response.
+		const userData = await cached(
 			`user:${username}`,
 			async () => {
 				const db = getDatabase();
@@ -79,6 +84,13 @@ export const getUserByUsername = createServerOnlyFn(
 			},
 			600, // 10 minutes
 		);
+
+		if (!userData) return null;
+
+		return {
+			...userData,
+			image: await buildSignedAvatarUrl(userData.image),
+		};
 	},
 );
 
