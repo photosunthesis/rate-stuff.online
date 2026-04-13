@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_public/privacy")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/privacy",
-						dateModified: "2026-01-25",
+						dateModified: "2026-04-13",
 						image,
 						publisher: {
 							"@type": "Organization",
@@ -68,6 +68,12 @@ function RouteComponent() {
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Information we collect</h2>
+			<p className="mb-2">
+				We only collect information that is strictly necessary to operate the
+				service. Because we do not use tracking cookies, targeted advertising,
+				or sell personal data, we treat all users as having Do Not Track /
+				Global Privacy Control enabled by default.
+			</p>
 			<ul className="list-disc pl-6 mb-4">
 				<li>Account information (email, username).</li>
 				<li>Profile details you choose to provide.</li>
@@ -132,7 +138,9 @@ function RouteComponent() {
 				You keep ownership of any content you post and are responsible for
 				ensuring you have the right to share it. By uploading content you grant
 				the site a non-exclusive license to host, display, and transmit it as
-				part of the service.
+				part of the service. We do not sell, license, or use your personal data
+				or uploaded content to train artificial intelligence or machine learning
+				models.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">
@@ -144,10 +152,11 @@ function RouteComponent() {
 			</p>
 			<ul className="list-disc pl-6 mb-4 space-y-1">
 				<li>
-					<strong>Cloudflare:</strong> For hosting, security, and global content
-					delivery. Cloudflare may set cookies (<code>__cf_bm</code>,{" "}
-					<code>cf_clearance</code>) for security and performance. These are
-					necessary for the site to function and cannot be disabled. See{" "}
+					<strong>Cloudflare:</strong> For hosting, security, caching, object
+					storage, and global content delivery. Cloudflare may set cookies (
+					<code>__cf_bm</code>, <code>cf_clearance</code>) for security and
+					performance. These are necessary for the site to function and cannot
+					be disabled. See{" "}
 					<a
 						className="underline underline-offset-2"
 						href="https://www.cloudflare.com/privacypolicy/"
@@ -157,6 +166,19 @@ function RouteComponent() {
 						Cloudflare's privacy policy
 					</a>{" "}
 					for details.
+				</li>
+				<li>
+					<strong>ImageKit:</strong> Serves as our image content delivery
+					network (CDN) to process and optimize user-uploaded images.
+				</li>
+				<li>
+					<strong>Resend:</strong> Provides transactional email services for
+					sending secure verification and password reset emails.
+				</li>
+				<li>
+					<strong>Authentication:</strong> We use an internal secure
+					authentication layer that requires essential <code>httpOnly</code>{" "}
+					session cookies to verify returning users.
 				</li>
 				<li>
 					<strong>Umami:</strong> For privacy-focused, anonymous analytics (no
@@ -201,8 +223,9 @@ function RouteComponent() {
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Changes</h2>
 			<p className="mb-4">
-				We may update this policy occasionally; please check it from time to
-				time.
+				We may update this policy occasionally. Material changes will be
+				reflected in the "Last updated" date on this page, so please check it
+				from time to time.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Contact</h2>
@@ -218,7 +241,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 25, 2026
+				Last updated: April 13, 2026
 			</div>
 		</main>
 	);

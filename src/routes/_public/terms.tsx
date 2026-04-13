@@ -39,7 +39,7 @@ export const Route = createFileRoute("/_public/terms")({
 						name: title,
 						description,
 						url: "https://rate-stuff.online/terms",
-						dateModified: "2026-01-25",
+						dateModified: "2026-04-13",
 						image,
 						publisher: {
 							"@type": "Organization",
@@ -71,7 +71,7 @@ function RouteComponent() {
 			<p className="mb-4">
 				Rate Stuff Online is a small hobby project. We (the site maintainers)
 				operate and maintain the service. This site is provided "as-is" for
-				personal and community use. Registration is currently invite-only.
+				personal and community use.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Eligibility</h2>
@@ -88,8 +88,10 @@ function RouteComponent() {
 				solely responsible for anything you post. You represent that you own or
 				have the necessary rights to share the content you post, including any
 				images. We do not claim ownership of your content, but by posting it you
-				grant the site a license to display and transmit it as part of the
-				service.
+				grant the site a worldwide, royalty-free, non-exclusive, sub-licensable
+				license to host, store, display, reproduce, modify (e.g., resizing or
+				reformatting), and transmit your content solely as necessary to operate
+				and improve the service.
 			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Prohibited Conduct</h2>
@@ -100,6 +102,11 @@ function RouteComponent() {
 				<li>Spam, phish, or distribute malware.</li>
 				<li>
 					Attempt to bypass security measures or reverse engineer the site.
+				</li>
+				<li>
+					Use automated scripts, bots, or scrapers to harvest data from the
+					site, including for the purpose of training artificial intelligence or
+					machine learning models.
 				</li>
 			</ul>
 			<p className="mb-4">
@@ -164,6 +171,29 @@ function RouteComponent() {
 				reserve the right to remove any content alleged to be infringing without
 				prior notice.
 			</p>
+			<p className="mb-4 uppercase text-sm">
+				The service is provided "As-Is" and "As-Available." We make no
+				warranties of any kind, express or implied, including but not limited to
+				merchantability, fitness for a particular purpose, or non-infringement.
+				We do not guarantee uptime, availability, or that the service will be
+				error-free.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">
+				Service Modification &amp; Termination
+			</h2>
+			<p className="mb-4">
+				We reserve the right to modify, suspend, or discontinue the service (or
+				any part of it) at any time, temporarily or permanently, with or without
+				notice. We will not be liable to you or any third party for any
+				modification, suspension, or discontinuation.
+			</p>
+
+			<h2 className="text-lg font-medium mt-4 mb-2">Severability</h2>
+			<p className="mb-4">
+				If any provision of these Terms is found to be unenforceable, the
+				remaining provisions will continue in full force and effect.
+			</p>
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Governing Law</h2>
 			<p className="mb-4">
@@ -174,7 +204,8 @@ function RouteComponent() {
 
 			<h2 className="text-lg font-medium mt-4 mb-2">Changes</h2>
 			<p className="mb-4">
-				We may update these terms occasionally. Continued use of the site after
+				We may update these terms occasionally. Material changes will be
+				reflected in the "Last updated" date. Continued use of the site after
 				changes means you accept the new terms.
 			</p>
 
@@ -191,7 +222,7 @@ function RouteComponent() {
 			</p>
 
 			<div className="mt-6 text-base text-neutral-500">
-				Last updated: January 25, 2026
+				Last updated: April 13, 2026
 			</div>
 		</main>
 	);
