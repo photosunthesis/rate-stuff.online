@@ -25,6 +25,9 @@
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.31.2",
     "@danielgtmn/umami-react": "^1.1.6",
+    "@fontsource-variable/ibm-plex-sans": "^5.2.8",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/ibm-plex-serif": "^5.2.7",
     "@imagekit/nodejs": "^7.4.0",
     "@imagekit/react": "^5.0.2",
     "@sentry/tanstackstart-react": "^10.48.0",
