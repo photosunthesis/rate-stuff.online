@@ -8,6 +8,7 @@ import { TagSelector } from "~/domains/ratings/components/tag-selector";
 import { ImageField } from "~/domains/ratings/components/image-field";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
 
 interface EditRatingFormProps {
@@ -155,7 +156,7 @@ export function EditRatingForm({
 				>
 					{hasGlobalError && (
 						<div className="mb-6">
-							<FormError message={errorMessage ?? "Something went wrong"} />
+							<FormError message={errorMessage ?? m.rating_edit_error()} />
 						</div>
 					)}
 
@@ -164,7 +165,7 @@ export function EditRatingForm({
 							{initialData.stuffName}
 						</h3>
 						<div className="text-xs text-neutral-500">
-							You can't change the stuff being rated.
+							{m.rating_edit_stuff_readonly()}
 						</div>
 					</div>
 
@@ -184,13 +185,13 @@ export function EditRatingForm({
 						>
 							{(field) => (
 								<TextField
-									label="Rating"
+									label={m.rating_edit_score_label()}
 									name={field.name}
 									type="number"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="1 to 10"
+									placeholder={m.rating_edit_score_placeholder()}
 									min="1"
 									max="10"
 									step="0.1"
@@ -222,7 +223,7 @@ export function EditRatingForm({
 										htmlFor={contentEditorId}
 										className="block text-base font-medium text-neutral-300 mb-2"
 									>
-										Your thoughts
+										{m.rating_edit_thoughts_label()}
 									</label>
 									<CompactMarkdownEditor
 										id={contentEditorId}
@@ -233,7 +234,7 @@ export function EditRatingForm({
 											mergedValidationErrors.content
 										}
 										charLimit={5000}
-										placeholder="Elaborate on your rating..."
+										placeholder={m.rating_edit_thoughts_placeholder()}
 										minHeightClass="min-h-[160px]"
 									/>
 								</>
@@ -272,16 +273,16 @@ export function EditRatingForm({
 								className="w-auto! px-4 py-1.5 text-base"
 								variant="secondary"
 							>
-								Cancel
+								{m.rating_edit_cancel()}
 							</Button>
 							<Button
 								type="submit"
-								loadingLabel="Updating..."
+								loadingLabel={m.rating_edit_loading()}
 								disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 								isLoading={isPending || isSubmitting || isSuccess}
 								className="w-auto! px-6 py-1.5 text-base"
 							>
-								{isSuccess ? "Updated!" : "Update Rating"}
+								{isSuccess ? m.rating_edit_success() : m.rating_edit_button()}
 							</Button>
 						</div>
 					)}

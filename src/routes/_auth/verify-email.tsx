@@ -7,6 +7,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
 import { maskEmail } from "~/utils/strings";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_auth/verify-email")({
 	component: VerifyEmailPage,
@@ -84,15 +85,15 @@ function VerifyEmailPage() {
 			});
 
 			if (error) {
-				setMessage(error.message || "Failed to resend email");
+				setMessage(error.message || m.verify_email_resend_failure());
 			} else {
 				localStorage.setItem(STORAGE_KEY, Date.now().toString());
-				setMessage("Verification email sent! Please check your inbox.");
+				setMessage(m.verify_email_resent_success());
 				setCanResend(false);
 				setTimeRemaining(60);
 			}
 		} catch {
-			setMessage("An unexpected error occurred");
+			setMessage(m.verify_email_unexpected_error());
 		} finally {
 			setIsLoading(false);
 		}
@@ -100,14 +101,13 @@ function VerifyEmailPage() {
 
 	return (
 		<AuthLayout
-			title="Check your mail"
-			description={`A link is on its way to ${email ? maskEmail(email) : "you"}. Please check your inbox.`}
+			title={m.verify_email_page_title()}
+			description={m.verify_email_description({ recipient: email ? maskEmail(email) : "you" })}
 		>
 			<div className="space-y-6">
 				<div className="bg-neutral-900/50 p-4 rounded-lg border border-neutral-800 text-sm text-neutral-400">
 					<p>
-						If you don't see the email, check your spam folder or click the
-						button below to resend.
+						{m.verify_email_help()}
 					</p>
 				</div>
 
@@ -127,9 +127,7 @@ function VerifyEmailPage() {
 						variant="secondary"
 						className="flex-1"
 					>
-						{canResend
-							? "Resend Verification Email"
-							: `Resend in ${timeRemaining}s`}
+						{canResend ? m.verify_email_resend_button() : m.verify_email_resend_cooldown({ seconds: timeRemaining })}
 					</Button>
 
 					<Button
@@ -137,7 +135,7 @@ function VerifyEmailPage() {
 						variant="secondary"
 						className="flex-1"
 					>
-						I've verified my email
+						{m.verify_email_verified_button()}
 					</Button>
 				</div>
 			</div>

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { m } from "~/paraglide/messages";
 import { TrendingUp } from "lucide-react";
 import { Footer } from "~/components/layout/footer";
 import { useMemo, useState } from "react";
@@ -39,7 +40,7 @@ export function RightSidebar() {
 						<section>
 							<div className="flex items-center justify-between mb-2 px-1">
 								<p className="text-md font-semibold text-white">
-									Recent Ratings
+									{m.right_sidebar_recent_ratings()}
 								</p>
 							</div>
 
@@ -96,7 +97,7 @@ export function RightSidebar() {
 
 						<section>
 							<p className="text-md font-semibold text-white mb-2 px-1">
-								Trending Tags
+								{m.right_sidebar_trending_tags()}
 							</p>
 							<div className="flex flex-wrap gap-1.5 px-1">
 								{tagsFade.showSkeleton ? (

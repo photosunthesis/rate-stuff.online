@@ -10,6 +10,7 @@ import { TagSelector } from "~/domains/ratings/components/tag-selector";
 import { ImageField } from "~/domains/ratings/components/image-field";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
 
 interface CreateRatingFormProps {
@@ -195,14 +196,14 @@ export function CreateRatingForm({
 				>
 					{hasGlobalError && (
 						<div className="mb-6">
-							<FormError message={errorMessage ?? "Something went wrong"} />
+							<FormError message={errorMessage ?? m.rating_create_error()} />
 						</div>
 					)}
 
 					<div>
 						{showCacheNotification && (
 							<div className="text-xs text-neutral-500 animate-in fade-in slide-in-from-bottom-1 duration-300 mb-3">
-								Data loaded from cache (・_・)ノ
+								{m.rating_create_cache_notice()}
 							</div>
 						)}
 						<StuffSelector
@@ -228,13 +229,13 @@ export function CreateRatingForm({
 						>
 							{(field) => (
 								<TextField
-									label="Rating"
+									label={m.rating_create_score_label()}
 									name={field.name}
 									type="number"
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="1 to 10"
+									placeholder={m.rating_create_score_placeholder()}
 									min="1"
 									max="10"
 									step="0.1"
@@ -266,7 +267,7 @@ export function CreateRatingForm({
 										htmlFor={contentEditorId}
 										className="block text-base font-medium text-neutral-300 mb-2"
 									>
-										Your thoughts
+										{m.rating_create_thoughts_label()}
 									</label>
 									<CompactMarkdownEditor
 										id={contentEditorId}
@@ -277,7 +278,7 @@ export function CreateRatingForm({
 											mergedValidationErrors.content
 										}
 										charLimit={5000}
-										placeholder="Elaborate on your rating..."
+										placeholder={m.rating_create_thoughts_placeholder()}
 										minHeightClass="min-h-[160px]"
 									/>
 								</>
@@ -316,16 +317,16 @@ export function CreateRatingForm({
 								className="w-auto! px-4 py-1.5 text-base"
 								variant="secondary"
 							>
-								Cancel
+								{m.rating_create_cancel()}
 							</Button>
 							<Button
 								type="submit"
-								loadingLabel="Creating..."
+								loadingLabel={m.rating_create_loading()}
 								disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 								isLoading={isPending || isSubmitting || isSuccess}
 								className="w-auto! px-6 py-1.5 text-base"
 							>
-								{isSuccess ? "Created!" : "Create Rating"}
+								{isSuccess ? m.rating_create_success() : m.rating_create_button()}
 							</Button>
 						</div>
 					)}

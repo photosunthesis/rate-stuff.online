@@ -4,6 +4,7 @@ import { AuthModal } from "~/domains/users/components/auth-modal";
 import { CompactMarkdownEditor } from "~/components/ui/content/compact-markdown-editor";
 import { useUmami } from "@danielgtmn/umami-react";
 
+import { m } from "~/paraglide/messages";
 interface CommentFormProps {
 	ratingId: string;
 	currentUser:
@@ -89,7 +90,7 @@ export function CommentForm({
 							className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
 							onClick={() => setIsAuthModalOpen(true)}
 						>
-							<span className="sr-only">Sign in to comment</span>
+							<span className="sr-only">{m.comment_sign_in_placeholder()}</span>
 						</button>
 					)}
 					<div className="w-full">
@@ -97,7 +98,7 @@ export function CommentForm({
 							value={content}
 							onChange={setContent}
 							placeholder={
-								isAuthenticated ? "Add a comment..." : "Sign in to comment..."
+								isAuthenticated ? m.comment_placeholder() : m.comment_sign_in_placeholder()
 							}
 							charLimit={2000}
 							minHeightClass="min-h-[80px]"
@@ -120,16 +121,16 @@ export function CommentForm({
 										onClick={onCancel}
 										className="px-3 py-1.5 text-base font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
 									>
-										Cancel
-									</button>
+										{m.comment_cancel()}
+</button>
 									<button
 										type="button"
 										onClick={handleSubmit}
 										disabled={!content.trim() || isPending}
 										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
 									>
-										Update
-									</button>
+										{m.comment_update()}
+</button>
 								</div>
 							) : (
 								<div className="flex w-full justify-end">
@@ -139,8 +140,8 @@ export function CommentForm({
 										disabled={!content.trim() || isPending}
 										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
 									>
-										Add comment
-									</button>
+										{m.comment_add()}
+</button>
 								</div>
 							)}
 						</div>

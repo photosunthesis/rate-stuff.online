@@ -26,6 +26,7 @@ import { CheckCheck } from "lucide-react";
 import type { activities } from "~/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
 import { getPreviewText } from "~/utils/rich-text";
+import { m } from "~/paraglide/messages";
 
 type Activity = InferSelectModel<typeof activities> & {
 	metadata: Record<string, unknown>;
@@ -146,14 +147,14 @@ function RouteComponent() {
 							className="w-auto! gap-1 flex items-center shadow-lg text-xs! font-medium!"
 						>
 							<CheckCheck className="w-4 h-4" />
-							Mark all as read
+							{m.activity_mark_all_read()}
 						</Button>
 					</div>
 				)}
 				<div className="flex flex-col flex-1 mt-4">
 					{allActivities.length === 0 ? (
 						<div className="flex-1 flex items-center justify-center p-8 text-center text-neutral-500">
-							No activity yet ヽ(*・ω・)ﾉ
+							{m.activity_no_activity()}
 						</div>
 					) : (
 						<>
@@ -256,7 +257,7 @@ function RouteComponent() {
 										<div className="h-6 w-6 rounded-full border-2 border-neutral-600 border-t-white animate-spin" />
 									) : (
 										<span className="text-base text-neutral-500">
-											Load more events
+											{m.activity_load_more()}
 										</span>
 									)}
 								</div>
@@ -274,15 +275,15 @@ const getActivityText = (activity: Activity) => {
 	switch (activity.type) {
 		case "rating_vote":
 			return metadata?.vote === "up"
-				? "upvoted your rating"
-				: "downvoted your rating";
+				? m.activity_upvoted_rating()
+				: m.activity_downvoted_rating();
 		case "comment_vote":
 			return metadata?.vote === "up"
-				? "upvoted your comment"
-				: "downvoted your comment";
+				? m.activity_upvoted_comment()
+				: m.activity_downvoted_comment();
 		case "comment_create":
-			return "commented on your rating";
+			return m.activity_commented();
 		default:
-			return "interacted with you";
+			return m.activity_generic();
 	}
 };

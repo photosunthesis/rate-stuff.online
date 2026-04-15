@@ -1,4 +1,5 @@
 import { useRef, useId, useState } from "react";
+import { m } from "~/paraglide/messages";
 import { X, Upload } from "lucide-react";
 import { Image as UiImage } from "~/components/ui/content/image";
 
@@ -94,7 +95,7 @@ export function ImageField({
 				htmlFor={inputId}
 				className="block text-base font-medium text-neutral-300 mb-2"
 			>
-				Images
+				{m.image_field_label()}
 			</label>
 
 			<div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
@@ -142,7 +143,7 @@ export function ImageField({
 							size={20}
 							className={dragActive ? "text-emerald-500" : "text-neutral-500"}
 						/>
-						<span className="text-xs text-neutral-500 mt-2">Add Image</span>
+						<span className="text-xs text-neutral-500 mt-2">{m.image_field_add()}</span>
 						<input
 							ref={fileInputRef}
 							type="file"

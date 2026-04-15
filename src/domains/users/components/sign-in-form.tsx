@@ -4,6 +4,7 @@ import { TextField } from "~/components/ui/form/text-field";
 import { Button } from "~/components/ui/form/button";
 import { FormError } from "~/components/ui/form/form-error";
 import { loginSchema } from "../types";
+import { m } from "~/paraglide/messages";
 
 interface SignInFormProps {
 	onSubmit: (data: { identifier: string; password: string }) => Promise<void>;
@@ -93,12 +94,12 @@ export function SignInForm({
 					>
 						{(field) => (
 							<TextField
-								label="Email or Username"
+								label={m.sign_in_identifier_label()}
 								name={field.name}
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="you@example.com or your-username"
+								placeholder={m.sign_in_identifier_placeholder()}
 								error={
 									field.state.meta.errors[0]?.toString() ||
 									mergedValidationErrors.identifier
@@ -128,7 +129,7 @@ export function SignInForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Your password"
+									placeholder={m.sign_in_password_placeholder()}
 									error={
 										field.state.meta.errors[0]?.toString() ||
 										mergedValidationErrors.password
@@ -140,7 +141,7 @@ export function SignInForm({
 										href="/forget-password"
 										className="text-xs text-neutral-400 hover:text-white transition-colors"
 									>
-										Forgot password?
+										{m.sign_in_forgot_password()}
 									</a>
 								</div>
 							</div>
@@ -157,9 +158,9 @@ export function SignInForm({
 							disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 							isLoading={isPending || isSubmitting || isSuccess}
 							className="mt-6"
-							loadingLabel="Signing in..."
+							loadingLabel={m.sign_in_loading()}
 						>
-							{isSuccess ? "Signed In" : "Sign In"}
+							{isSuccess ? m.sign_in_success() : m.sign_in_button()}
 						</Button>
 					)}
 				</form.Subscribe>

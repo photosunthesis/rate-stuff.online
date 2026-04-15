@@ -3,6 +3,7 @@ import { AppLogo } from "~/components/ui/misc/app-logo";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/form/button";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 interface ErrorOccurredProps {
 	error?: Error;
@@ -75,7 +76,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 				</div>
 				<p className="text-neutral-500 text-base mx-auto leading-[1.6] mb-4">
 					{error?.message ||
-						"Something went wrong, but we're on it. Try again shortly."}
+						m.error_message()}
 				</p>
 
 				{process.env.NODE_ENV === "development" && error?.stack && (
@@ -93,7 +94,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 							className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
 							onClick={reset}
 						>
-							Try again
+							{m.error_try_again()}
 						</Button>
 					)}
 					<Button
@@ -101,7 +102,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 						className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
-						Go to homepage
+						{m.error_go_home()}
 					</Button>
 				</div>
 			</div>

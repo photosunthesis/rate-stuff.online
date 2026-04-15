@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/form/button";
 import { FormError } from "~/components/ui/form/form-error";
 import { User as UserIcon, Camera, X } from "lucide-react";
 import { Image as UiImage } from "~/components/ui/content/image";
+import { m } from "~/paraglide/messages";
 
 interface Props {
 	onSubmit: (data: { avatar?: File | string; name?: string }) => Promise<void>;
@@ -139,13 +140,13 @@ export function SetUpProfileForm({
 									}
 
 									if (!file.type?.startsWith("image/")) {
-										setFileError("Please select an image file.");
+										setFileError(m.setup_profile_avatar_invalid_type());
 										return;
 									}
 									const maxClientSize = 10 * 1024 * 1024;
 									if (file.size > maxClientSize) {
 										setFileError(
-											"Selected file is too large. Maximum allowed is 10MB.",
+											m.setup_profile_avatar_too_large(),
 										);
 										return;
 									}
@@ -198,7 +199,7 @@ export function SetUpProfileForm({
 						validators={{
 							onChange: ({ value }) => {
 								if (value && value.length > 50)
-									return "Display name must be at most 50 characters";
+									return m.setup_profile_name_too_long();
 								return undefined;
 							},
 						}}
@@ -206,7 +207,7 @@ export function SetUpProfileForm({
 						{(field) => (
 							<div className="w-full">
 								<TextField
-									label="Display Name"
+									label={m.setup_profile_display_name_label()}
 									name={field.name}
 									value={field.state.value}
 									onBlur={field.handleBlur}
@@ -214,14 +215,14 @@ export function SetUpProfileForm({
 										field.handleChange(e.target.value);
 										setDisplayNameValue(e.target.value ?? "");
 									}}
-									placeholder="How should we call you?"
+									placeholder={m.setup_profile_display_name_placeholder()}
 									error={
 										field.state.meta.errors[0]?.toString() ||
 										validationErrors?.name
 									}
 								/>
 								<p className="text-neutral-500 text-xs mt-1.5">
-									{field.state.value?.length || 0}/50 characters
+									{m.setup_profile_char_count({ count: field.state.value?.length || 0 })}
 								</p>
 							</div>
 						)}
@@ -246,13 +247,13 @@ export function SetUpProfileForm({
 						onClick={() => onSkip()}
 						disabled={isPending || isSuccess}
 					>
-						Skip for now
+						{m.setup_profile_skip()}
 					</Button>
 					<form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
 						{([canSubmit, isSubmitting]) => (
 							<Button
 								type="submit"
-								loadingLabel="Setting up..."
+								loadingLabel={m.setup_profile_loading()}
 								disabled={
 									!hasValues ||
 									!canSubmit ||
@@ -263,7 +264,7 @@ export function SetUpProfileForm({
 								}
 								isLoading={isPending || isSubmitting || isSuccess}
 							>
-								{isSuccess ? "Profile Ready!" : "Set Up Profile"}
+								{isSuccess ? m.setup_profile_success() : m.setup_profile_button()}
 							</Button>
 						)}
 					</form.Subscribe>

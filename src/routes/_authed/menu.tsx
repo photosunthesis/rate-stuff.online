@@ -9,6 +9,7 @@ import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
 import { MainLayout } from "~/components/layout/main-layout";
 import { useUmami } from "@danielgtmn/umami-react";
 import { Button } from "~/components/ui/form/button";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_authed/menu")({
 	component: RouteComponent,
@@ -34,9 +35,9 @@ function RouteComponent() {
 				destructive
 				isOpen={isSignOutOpen}
 				onClose={() => setIsSignOutOpen(false)}
-				title="Ready to sign out?"
-				description="After signing out, you can sign back in anytime."
-				confirmLabel="Sign out"
+				title={m.sign_out_modal_title()}
+				description={m.sign_out_modal_description()}
+				confirmLabel={m.sign_out_modal_confirm()}
 				onConfirm={() => {
 					signOut();
 					if (umami) umami.track("sign_out");
@@ -76,7 +77,7 @@ function RouteComponent() {
 								className="w-auto! shrink-0 shadow-lg flex items-center gap-1.5"
 							>
 								<UserPen className="w-4 h-4" />
-								Edit Profile
+								{m.menu_edit_profile()}
 							</Button>
 						</Link>
 					</div>
@@ -84,30 +85,30 @@ function RouteComponent() {
 					{/* Main Settings Card */}
 					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl">
 						<SettingsRow
-							label="Terms of Service"
-							description="Read our terms and conditions"
+							label={m.terms_of_service()}
+							description={m.menu_terms_description()}
 							to="/terms"
 							icon={ArrowUpRight}
 							isFirst
 						/>
 
 						<SettingsRow
-							label="Privacy Policy"
-							description="How we handle your data"
+							label={m.privacy_policy()}
+							description={m.menu_privacy_description()}
 							to="/privacy"
 							icon={ArrowUpRight}
 						/>
 
 						<SettingsRow
-							label="Contact"
-							description="Reach out to us for support"
+							label={m.menu_contact_label()}
+							description={m.menu_contact_description()}
 							href="mailto:hello@rate-stuff.online"
 							icon={ArrowUpRight}
 						/>
 
 						<SettingsRow
-							label="GitHub"
-							description="View the source code"
+							label={m.menu_github_label()}
+							description={m.menu_github_description()}
 							href="https://github.com/photosunthesis/rate-stuff.online"
 							icon={ArrowUpRight}
 							external
@@ -117,8 +118,8 @@ function RouteComponent() {
 					{/* Sign Out Card */}
 					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl">
 						<SettingsRow
-							label="Sign Out"
-							description="Sign out of your account"
+							label={m.menu_sign_out_label()}
+							description={m.menu_sign_out_description()}
 							onClick={() => setIsSignOutOpen(true)}
 							icon={LogOut}
 							isFirst
@@ -129,7 +130,7 @@ function RouteComponent() {
 
 					<div className="flex flex-col items-center justify-center pt-4 pb-2 space-y-2">
 						<span className="text-xs font-medium text-neutral-500">
-							{`© 2025-${new Date().getFullYear()} Rate Stuff Online`}
+							{m.copyright({ year: new Date().getFullYear() })}
 						</span>
 					</div>
 				</div>

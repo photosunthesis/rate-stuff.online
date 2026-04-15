@@ -3,6 +3,7 @@ import { Search, Plus } from "lucide-react";
 import { useDebounce } from "~/hooks/use-debounce";
 import { useUmami } from "@danielgtmn/umami-react";
 import { useStuffSearchQuery } from "~/domains/ratings/queries/create";
+import { m } from "~/paraglide/messages";
 
 const useStuffSearch = (query: string) => {
 	const debouncedQuery = useDebounce(query, 300);
@@ -132,7 +133,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					htmlFor={inputId}
 					className="block text-base font-medium text-neutral-300 mb-2"
 				>
-					Stuff to Rate
+					{m.stuff_selector_label()}
 				</label>
 				<div
 					className={`p-4 bg-emerald-500/10 border ${error ? "border-red-400" : "border-emerald-500/50"} rounded-xl flex items-center justify-between`}
@@ -140,7 +141,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					<div>
 						<div className="font-medium text-emerald-600">{value.name}</div>
 						<div className="text-xs text-emerald-500/70">
-							{value.id ? "Existing Item" : "New Item"}
+							{value.id ? m.stuff_selector_existing() : m.stuff_selector_new()}
 						</div>
 					</div>
 					<button
@@ -148,7 +149,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 						onClick={handleClear}
 						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-lg transition-colors"
 					>
-						Change
+						{m.stuff_selector_change()}
 					</button>
 				</div>
 				{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
@@ -162,7 +163,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 				htmlFor={inputId}
 				className="block text-base font-medium text-neutral-300 mb-2"
 			>
-				Stuff to Rate
+				{m.stuff_selector_label()}
 			</label>
 
 			<div
@@ -193,7 +194,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 								}
 							}
 						}}
-						placeholder="Type something to rate..."
+						placeholder={m.stuff_selector_placeholder()}
 						className="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none"
 						autoComplete="off"
 					/>
@@ -216,7 +217,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 									<span className="text-white group-hover:text-emerald-600 transition-colors">
 										{stuff.name}
 									</span>
-									<span className="text-xs text-neutral-500">Select</span>
+									{m.stuff_selector_select()}
 								</button>
 							))}
 					</div>
@@ -228,13 +229,13 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 							className="w-full text-left px-4 py-3 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-emerald-600 border-t border-neutral-800"
 						>
 							<Plus size={16} />
-							<span>Create "{searchInput}"</span>
+							<span>{m.stuff_selector_create({ name: searchInput })}</span>
 						</button>
 					)}
 
 					{isLoading && (
 						<div className="p-3 text-center text-neutral-500 text-base border-t border-neutral-800">
-							Searching...
+							{m.stuff_selector_searching()}
 						</div>
 					)}
 				</div>

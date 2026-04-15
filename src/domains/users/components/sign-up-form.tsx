@@ -5,6 +5,7 @@ import { Button } from "~/components/ui/form/button";
 import { Checkbox } from "~/components/ui/form/checkbox";
 import { FormError } from "~/components/ui/form/form-error";
 import { registerSchema } from "../types";
+import { m } from "~/paraglide/messages";
 
 interface SignUpFormProps {
 	onSubmit: (data: {
@@ -104,12 +105,12 @@ export function SignUpForm({
 					>
 						{(field) => (
 							<TextField
-								label="Username"
+								label={m.sign_up_username_label()}
 								name={field.name}
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="coolusername123"
+								placeholder={m.sign_up_username_placeholder()}
 								error={
 									field.state.meta.errors[0]?.toString() ||
 									mergedValidationErrors.username
@@ -138,7 +139,7 @@ export function SignUpForm({
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="your@email.com"
+								placeholder={m.sign_up_email_placeholder()}
 								error={
 									field.state.meta.errors[0]?.toString() ||
 									mergedValidationErrors.email
@@ -167,7 +168,7 @@ export function SignUpForm({
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="Secret password"
+								placeholder={m.sign_up_password_placeholder()}
 								error={
 									field.state.meta.errors[0]?.toString() ||
 									mergedValidationErrors.password
@@ -182,7 +183,7 @@ export function SignUpForm({
 						validators={{
 							onChange: ({ value, fieldApi }) => {
 								if (value !== fieldApi.form.getFieldValue("password")) {
-									return "Passwords do not match";
+									return m.passwords_do_not_match();
 								}
 								return undefined;
 							},
@@ -190,13 +191,13 @@ export function SignUpForm({
 					>
 						{(field) => (
 							<TextField
-								label="Confirm Password"
+								label={m.sign_up_confirm_label()}
 								type="password"
 								name={field.name}
 								value={field.state.value}
 								onBlur={field.handleBlur}
 								onChange={(e) => field.handleChange(e.target.value)}
-								placeholder="Confirm password"
+								placeholder={m.sign_up_confirm_placeholder()}
 								error={
 									field.state.meta.errors[0]?.toString() ||
 									mergedValidationErrors.confirmPassword
@@ -230,23 +231,23 @@ export function SignUpForm({
 								}
 								label={
 									<span className="text-neutral-400">
-										I am 13 years or older and agree to the{" "}
+										{m.sign_up_agree_prefix()}{" "}
 										<a
 											href="/terms"
 											className="underline underline-offset-2 hover:text-neutral-200"
 											target="_blank"
 											rel="noopener noreferrer"
 										>
-											Terms of Service
+											{m.terms_of_service()}
 										</a>{" "}
-										and{" "}
+										{m.sign_up_agree_and()}{" "}
 										<a
 											href="/privacy"
 											className="underline underline-offset-2 hover:text-neutral-200"
 											target="_blank"
 											rel="noopener noreferrer"
 										>
-											Privacy Policy
+											{m.privacy_policy()}
 										</a>
 										.
 									</span>
@@ -262,12 +263,12 @@ export function SignUpForm({
 					{([canSubmit, isSubmitting]) => (
 						<Button
 							type="submit"
-							loadingLabel="Creating Account..."
+							loadingLabel={m.sign_up_loading()}
 							disabled={!canSubmit || isPending || isSubmitting || isSuccess}
 							isLoading={isPending || isSubmitting || isSuccess}
 							className="mt-6"
 						>
-							{isSuccess ? "Welcome!" : "Create Account"}
+							{isSuccess ? m.sign_up_success() : m.sign_up_button()}
 						</Button>
 					)}
 				</form.Subscribe>

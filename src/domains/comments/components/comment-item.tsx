@@ -20,6 +20,7 @@ import { CommentForm } from "./comment-form";
 import { useDeleteComment, useUpdateComment } from "../queries";
 import { useUmami } from "@danielgtmn/umami-react";
 
+import { m } from "~/paraglide/messages";
 interface CommentItemProps {
 	comment: typeof comments.$inferSelect & {
 		user: typeof users.$inferSelect | null;
@@ -144,7 +145,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 								{comment.updatedAt &&
 									comment.updatedAt.getTime() >
 										comment.createdAt.getTime() + 1000 && (
-										<span className="text-neutral-500 text-base">(edited)</span>
+										<span className="text-neutral-500 text-base">{m.comment_edited()}</span>
 									)}
 							</div>
 						</div>
@@ -192,7 +193,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 												className="flex items-center gap-2 px-3 py-2 text-base text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors w-full text-left"
 											>
 												<Pencil className="w-3.5 h-3.5" />
-												Edit
+												{m.comment_edit_action()}
 											</button>
 											<button
 												type="button"
@@ -203,7 +204,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 												className="flex items-center gap-2 px-3 py-2 text-base text-red-400 hover:text-red-300 hover:bg-neutral-800 transition-colors w-full text-left"
 											>
 												<Trash2 className="w-3.5 h-3.5" />
-												Delete
+												{m.comment_delete_action()}
 											</button>
 										</div>
 									)}
@@ -220,10 +221,9 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 			>
 				<ModalContent width="sm">
 					<ModalHeader>
-						<ModalTitle>Delete this comment?</ModalTitle>
+						<ModalTitle>{m.comment_delete_modal_title()}</ModalTitle>
 						<ModalDescription>
-							Are you sure you want to delete this comment? This action cannot
-							be undone.
+							{m.comment_delete_modal_description()}
 						</ModalDescription>
 					</ModalHeader>
 					<ModalFooter>
@@ -234,7 +234,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 								onClick={() => setIsDeleteModalOpen(false)}
 								disabled={isDeletePending}
 							>
-								Cancel
+								{m.comment_delete_cancel()}
 							</Button>
 							<Button
 								variant="destructive"
@@ -242,7 +242,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 								onClick={handleDelete}
 								isLoading={isDeletePending}
 							>
-								Delete
+								{m.comment_delete_confirm()}
 							</Button>
 						</div>
 					</ModalFooter>

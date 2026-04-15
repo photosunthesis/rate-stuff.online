@@ -8,6 +8,7 @@ import { SignInForm } from "~/domains/users/components/sign-in-form";
 import { authQueryOptions } from "~/domains/users/queries";
 import { isEmail } from "~/utils/strings";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 import { useServerFn } from "@tanstack/react-start";
 import { getEmailForUnverifiedUserFn } from "~/domains/users/functions";
 
@@ -149,10 +150,10 @@ function RouteComponent() {
 
 	return (
 		<AuthLayout
-			title="Welcome back"
-			description="The universe is peer-reviewed. Jump back in."
-			footerText="New here?"
-			footerLinkText="Create an account"
+			title={m.sign_in_page_title()}
+			description={m.sign_in_page_description()}
+			footerText={m.sign_in_page_footer_text()}
+			footerLinkText={m.sign_in_page_footer_link()}
 			footerLinkTo="/sign-up"
 		>
 			<SignInForm

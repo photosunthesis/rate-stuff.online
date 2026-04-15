@@ -4,6 +4,7 @@ import { useVoteRating } from "~/domains/ratings/queries/vote";
 import { formatCompactNumber } from "~/utils/numbers";
 import { useUmami } from "@danielgtmn/umami-react";
 import { AuthModal } from "~/domains/users/components/auth-modal";
+import { m } from "~/paraglide/messages";
 import type { RatingWithRelations } from "~/domains/ratings/types/display";
 
 interface VoteSectionProps {
@@ -141,7 +142,7 @@ export function VoteSection({
 			</div>
 			{isOwner && (
 				<div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-					You cannot vote on your own rating
+					{m.vote_own_rating()}
 				</div>
 			)}
 			<AuthModal

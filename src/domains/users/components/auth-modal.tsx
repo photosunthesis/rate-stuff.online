@@ -7,6 +7,7 @@ import {
 	ModalDescription,
 } from "~/components/ui/modal/modal";
 import { Button } from "~/components/ui/form/button";
+import { m } from "~/paraglide/messages";
 
 interface AuthModalProps {
 	isOpen: boolean;
@@ -18,8 +19,8 @@ interface AuthModalProps {
 export function AuthModal({
 	isOpen,
 	onClose,
-	title = "Join the swarm",
-	description = "We have opinions, ratings, and slightly better vibes.",
+	title = m.auth_modal_title(),
+	description = m.auth_modal_description(),
 }: AuthModalProps) {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>
@@ -32,10 +33,10 @@ export function AuthModal({
 
 				<div className="p-4 flex justify-end gap-3">
 					<Link to="/sign-in">
-						<Button variant="secondary">Sign In</Button>
+						<Button variant="secondary">{m.nav_sign_in()}</Button>
 					</Link>
 					<Link to="/sign-up">
-						<Button variant="primary">Create Account</Button>
+						<Button variant="primary">{m.nav_create_account()}</Button>
 					</Link>
 				</div>
 			</ModalContent>

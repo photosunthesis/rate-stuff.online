@@ -8,6 +8,7 @@ import { ResetPasswordForm } from "~/domains/users/components/reset-password-for
 import { resetPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_auth/reset-password")({
 	component: RouteComponent,
@@ -57,7 +58,7 @@ function RouteComponent() {
 			}
 
 			if (!token) {
-				setErrorMessage("Invalid or missing reset token.");
+				setErrorMessage(m.reset_password_invalid_token());
 				throw new Error("Invalid or missing reset token.");
 			}
 
@@ -90,16 +91,15 @@ function RouteComponent() {
 
 	return (
 		<AuthLayout
-			title="Reset Password"
-			description="Enter your new password below."
-			footerText="Remember your password?"
-			footerLinkText="Sign in"
+			title={m.reset_password_page_title()}
+			description={m.reset_password_page_description()}
+			footerText={m.reset_password_page_footer_text()}
+			footerLinkText={m.sign_in_page_footer_link()}
 			footerLinkTo="/sign-in"
 		>
 			{!token ? (
 				<div className="text-red-500 text-center py-4">
-					Invalid or missing reset token. Please request a new password reset
-					link.
+					{m.reset_password_invalid_token_description()}
 				</div>
 			) : (
 				<ResetPasswordForm

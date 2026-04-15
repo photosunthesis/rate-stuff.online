@@ -11,6 +11,7 @@ import { MessageSquare } from "lucide-react";
 import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { useUmami } from "@danielgtmn/umami-react";
 import { getRatingEmoji } from "~/utils/ratings";
+import { m } from "~/paraglide/messages";
 
 interface RatingCardProps {
 	rating: RatingWithRelations;
@@ -93,7 +94,7 @@ export const RatingCard = memo(function RatingCard({
 									{displayText}
 								</span>
 							)}
-							<span className="text-neutral-500"> rated </span>
+							<span className="text-neutral-500">{m.rating_card_rated()}</span>
 							<Link
 								to="/stuff/$stuffSlug"
 								params={{ stuffSlug: rating.stuff.slug }}
@@ -107,14 +108,14 @@ export const RatingCard = memo(function RatingCard({
 							{rating.updatedAt &&
 								new Date(rating.updatedAt).getTime() >
 									new Date(rating.createdAt).getTime() + 1000 && (
-									<span className="text-neutral-500"> (edited)</span>
+									<span className="text-neutral-500">{m.rating_card_edited()}</span>
 								)}
 						</div>
 					</div>
 				</div>
 			) : (
 				<div className="text-base text-neutral-500 mb-2 leading-relaxed">
-					<span className="text-neutral-400">A rating of</span>{" "}
+					<span className="text-neutral-400">{m.rating_card_a_rating_of()}</span>{" "}
 					<Link
 						to="/stuff/$stuffSlug"
 						params={{ stuffSlug: rating.stuff.slug }}
@@ -128,7 +129,7 @@ export const RatingCard = memo(function RatingCard({
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
-							<span> (edited)</span>
+							<span>{m.rating_card_edited()}</span>
 						)}
 				</div>
 			)}

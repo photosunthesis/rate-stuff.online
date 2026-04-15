@@ -1,6 +1,7 @@
 import AppLogo from "~/components/ui/misc/app-logo";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "~/domains/users/queries";
+import { m } from "~/paraglide/messages";
 
 export function MobileHeader() {
 	const { data: user } = useAuth();
@@ -19,14 +20,14 @@ export function MobileHeader() {
 						to="/sign-up"
 						className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center"
 					>
-						Create Account
+						{m.nav_create_account()}
 					</Link>
 					<Link
 						to="/sign-in"
 						search={{ redirect: undefined }}
 						className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
 					>
-						Sign In
+						{m.nav_sign_in()}
 					</Link>
 				</div>
 			</div>

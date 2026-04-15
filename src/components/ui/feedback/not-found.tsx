@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { AppLogo } from "~/components/ui/misc/app-logo";
 import { useEffect } from "react";
 import { Button } from "~/components/ui/form/button";
+import { m } from "~/paraglide/messages";
 
 export function NotFound() {
 	useEffect(() => {
@@ -61,8 +62,7 @@ export function NotFound() {
 					<AppLogo size={40} />
 				</div>
 				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
-					We searched everywhere. This page is either invalid or just doesn't
-					exist.
+					{m.not_found_description()}
 				</p>
 				<div className="mt-4">
 					<Button
@@ -70,7 +70,7 @@ export function NotFound() {
 						className="w-auto! inline-flex px-3 py-1 text-base rounded-md justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
-						Go to homepage
+						{m.not_found_go_home()}
 					</Button>
 				</div>
 			</div>

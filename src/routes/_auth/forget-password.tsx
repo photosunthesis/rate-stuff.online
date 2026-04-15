@@ -7,6 +7,7 @@ import { ForgotPasswordForm } from "~/domains/users/components/forget-password-f
 import { forgotPasswordSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_auth/forget-password")({
 	component: RouteComponent,
@@ -83,10 +84,10 @@ function RouteComponent() {
 
 	return (
 		<AuthLayout
-			title="Forgot password?"
-			description="No worries, we'll send you reset instructions."
-			footerText="Remember your password?"
-			footerLinkText="Sign in"
+			title={m.forgot_password_page_title()}
+			description={m.forgot_password_page_description()}
+			footerText={m.forgot_password_page_footer_text()}
+			footerLinkText={m.forgot_password_page_footer_link()}
 			footerLinkTo="/sign-in"
 		>
 			<ForgotPasswordForm

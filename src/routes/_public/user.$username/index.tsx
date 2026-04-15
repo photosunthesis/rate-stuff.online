@@ -9,6 +9,7 @@ import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { MainLayout } from "~/components/layout/main-layout";
 import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_public/user/$username/")({
 	beforeLoad: async ({ params, context }) => {
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/_public/user/$username/")({
 
 		const description = user
 			? `${user.name ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
-					(user.ratingsCount ?? 0) === "1" ? "rating" : "ratings"
+					(user.ratingsCount ?? 0) === "1" ? m.rating_singular() : m.rating_plural()
 				} on Rate Stuff Online.`
 			: `View ratings and profile for @${params.username} on Rate Stuff Online.`;
 
@@ -188,7 +189,7 @@ function UserRatingsList({
 	if (allRatings.length === 0) {
 		return (
 			<div className="text-center py-12">
-				<p className="text-neutral-500">No ratings yet.</p>
+				<p className="text-neutral-500">{m.user_profile_no_ratings()}</p>
 			</div>
 		);
 	}
@@ -217,7 +218,7 @@ function UserRatingsList({
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-base">Scroll for more...</p>
+					<p className="text-neutral-500 text-base">{m.user_profile_scroll_for_more()}</p>
 				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
@@ -267,7 +268,7 @@ function RouteComponent() {
 						{publicUser.createdAt ? (
 							<>
 								Joined <TimeAgo date={publicUser.createdAt} /> · {ratingsCount}{" "}
-								{ratingsCount === "1" ? "rating" : "ratings"}
+								{ratingsCount === "1" ? m.rating_singular() : m.rating_plural()}
 							</>
 						) : null}
 					</div>

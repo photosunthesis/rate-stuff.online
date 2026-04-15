@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { m } from "~/paraglide/messages";
 
 export function Footer() {
 	return (
@@ -8,19 +9,19 @@ export function Footer() {
 					to="/terms"
 					className="hover:underline underline-offset-2 hover:text-neutral-400 transition-colors"
 				>
-					Terms of Service
+					{m.terms_of_service()}
 				</Link>
 				<Link
 					to="/privacy"
 					className="hover:underline underline-offset-2 hover:text-neutral-400 transition-colors"
 				>
-					Privacy Policy
+					{m.privacy_policy()}
 				</Link>
 				<a
 					href="mailto:hello@rate-stuff.online"
 					className="hover:underline underline-offset-2 hover:text-neutral-400 transition-colors"
 				>
-					Contact
+					{m.footer_contact()}
 				</a>
 				<span>
 					<a
@@ -29,10 +30,10 @@ export function Footer() {
 						rel="noopener noreferrer"
 						className="hover:underline underline-offset-2 hover:text-neutral-400 transition-colors"
 					>
-						GitHub
+						{m.footer_github()}
 					</a>
 				</span>
-				<span>{`© 2025-${new Date().getFullYear()} Rate Stuff Online`}</span>
+				<span>{m.copyright({ year: new Date().getFullYear() })}</span>
 			</div>
 		</footer>
 	);

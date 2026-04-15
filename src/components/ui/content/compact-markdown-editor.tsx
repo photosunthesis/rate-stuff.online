@@ -8,6 +8,7 @@ import {
 	Underline as UnderlineIcon,
 	List,
 } from "lucide-react";
+import { m } from "~/paraglide/messages";
 
 interface CompactMarkdownEditorProps {
 	label?: string;
@@ -31,7 +32,7 @@ export function CompactMarkdownEditor({
 	charLimit = 5000,
 	minHeightClass = "min-h-[80px]",
 	maxHeightClass = "max-h-[300px]",
-	placeholder = "Share your thoughts...",
+	placeholder = m.editor_placeholder(),
 	onSubmit,
 }: CompactMarkdownEditorProps) {
 	const editorRef = useRef<HTMLDivElement>(null);
@@ -208,31 +209,31 @@ export function CompactMarkdownEditor({
 								onClick={() => toggleFormat("bold")}
 								isActive={activeFormats.bold}
 								icon={<Bold className="w-5 h-5 sm:w-4 sm:h-4" />}
-								title="Bold"
+								title={m.editor_bold()}
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("italic")}
 								isActive={activeFormats.italic}
 								icon={<Italic className="w-5 h-5 sm:w-4 sm:h-4" />}
-								title="Italic"
+								title={m.editor_italic()}
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("strike")}
 								isActive={activeFormats.strike}
 								icon={<Strikethrough className="w-5 h-5 sm:w-4 sm:h-4" />}
-								title="Strikethrough"
+								title={m.editor_strikethrough()}
 							/>
 							<ToolbarButton
 								onClick={() => toggleFormat("underline")}
 								isActive={activeFormats.underline}
 								icon={<UnderlineIcon className="w-5 h-5 sm:w-4 sm:h-4" />}
-								title="Underline"
+								title={m.editor_underline()}
 							/>
 							<ToolbarButton
 								onClick={toggleList}
 								isActive={activeFormats.list}
 								icon={<List className="w-5 h-5 sm:w-4 sm:h-4" />}
-								title="Bullet List"
+								title={m.editor_bullet_list()}
 							/>
 						</div>
 						<div className="text-xs text-neutral-500 font-mono">

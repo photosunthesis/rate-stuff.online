@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal, useModal } from "~/components/ui/modal/modal";
 import { X } from "lucide-react";
 import { Image } from "~/components/ui/content/image";
+import { m } from "~/paraglide/messages";
 
 interface LightboxProps {
 	src: string | null;
@@ -24,7 +25,7 @@ function LightboxContent({ src, alt }: { src: string; alt?: string }) {
 		>
 			<button
 				type="button"
-				aria-label="Close"
+				aria-label={m.action_close()}
 				onClick={onClose}
 				className="absolute top-3 right-3 z-50 p-1.5 md:p-3 rounded-full text-neutral-200 hover:text-white transition-colors backdrop-blur-sm bg-neutral-900/30 hover:bg-neutral-900/40 shadow-sm cursor-pointer"
 			>

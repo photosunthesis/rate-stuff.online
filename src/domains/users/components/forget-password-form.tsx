@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/form/button";
 import { FormError } from "~/components/ui/form/form-error";
 import { TextField } from "~/components/ui/form/text-field";
 import { forgotPasswordSchema } from "../types";
+import { m } from "~/paraglide/messages";
 
 interface ForgotPasswordFormProps {
 	onSubmit: (data: { email: string }) => Promise<void>;
@@ -45,11 +46,10 @@ export function ForgotPasswordForm({
 				<div className="text-center space-y-4">
 					<div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-6">
 						<h3 className="text-lg font-medium text-white mb-2">
-							Check your email
+							{m.forgot_password_success_title()}
 						</h3>
 						<p className="text-neutral-400 text-base">
-							We've sent a password reset link to your email address. Please
-							check your inbox (and spam folder) to continue.
+							{m.forgot_password_success_description()}
 						</p>
 					</div>
 					<Button
@@ -57,7 +57,7 @@ export function ForgotPasswordForm({
 						className="mt-4 w-full"
 						onClick={() => setIsSuccess(false)}
 					>
-						Try another email
+						{m.forgot_password_try_another()}
 					</Button>
 				</div>
 			) : (
@@ -94,7 +94,7 @@ export function ForgotPasswordForm({
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="you@example.com"
+									placeholder={m.forgot_password_email_placeholder()}
 									error={
 										field.state.meta.errors[0]?.toString() ||
 										mergedValidationErrors.email
@@ -114,9 +114,9 @@ export function ForgotPasswordForm({
 								disabled={!canSubmit || isPending || isSubmitting}
 								isLoading={isPending || isSubmitting}
 								className="mt-6"
-								loadingLabel="Sending Link..."
+								loadingLabel={m.forgot_password_loading()}
 							>
-								Send Reset Link
+								{m.forgot_password_button()}
 							</Button>
 						)}
 					</form.Subscribe>

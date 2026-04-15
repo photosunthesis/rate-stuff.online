@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
 
+import { m } from "~/paraglide/messages";
 interface CommentListProps {
 	ratingId: string;
 	currentUser: { id: string } | null | undefined;
@@ -71,8 +72,8 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 	if (error) {
 		return (
 			<div className="text-center py-8 text-neutral-500 text-base">
-				Failed to load comments.
-			</div>
+				{m.comment_error_loading()}
+</div>
 		);
 	}
 
@@ -84,7 +85,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 	if (allComments.length === 0) {
 		return (
 			<div className="text-center py-8 text-neutral-600 text-base">
-				No comments yet ⸜( ´ ꒳ ` )⸝
+				{m.comment_no_comments()}
 			</div>
 		);
 	}

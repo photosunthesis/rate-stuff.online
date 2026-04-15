@@ -8,6 +8,7 @@ import { useCanGoBack, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/domains/users/queries";
 import { useSkeletonFade } from "~/hooks/use-skeleton-fade";
+import { m } from "~/paraglide/messages";
 
 export function MainFeed({ tag }: { tag?: string }) {
 	const { data: user } = useQuery(authQueryOptions());
@@ -60,7 +61,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 	if (error) {
 		return (
 			<div className="p-4 text-center text-neutral-500">
-				Error loading ratings: {error.message}
+				{m.feed_error_loading({ message: error.message })}
 			</div>
 		);
 	}
@@ -86,7 +87,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 								<ArrowLeft className="h-5 w-5 shrink-0" />
 							</button>
 							<h2 className="text-lg font-semibold text-white">
-								Ratings with the
+								{m.feed_tag_header_prefix()}
 								<span className="inline-flex items-center px-1 py-0.2 bg-neutral-800/70 text-neutral-300 text-base font-medium transition-colors rounded-md ml-1 font-sans">
 									#{tag}
 								</span>{" "}
@@ -130,7 +131,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
 					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
-						All caught up \(￣▽￣)/
+						{m.feed_all_caught_up()}
 					</div>
 				</div>
 			)}

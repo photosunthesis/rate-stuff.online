@@ -8,6 +8,7 @@ import {
 	ModalFooter,
 } from "~/components/ui/modal/modal";
 import { Button } from "~/components/ui/form/button";
+import { m } from "~/paraglide/messages";
 
 interface ConfirmModalProps {
 	isOpen: boolean;
@@ -15,6 +16,7 @@ interface ConfirmModalProps {
 	title?: string;
 	description?: string;
 	confirmLabel?: string;
+	cancelLabel?: string;
 	destructive?: boolean;
 	onConfirm: () => Promise<void> | void;
 }
@@ -25,6 +27,7 @@ export function ConfirmModal({
 	title = "Are you sure?",
 	description,
 	confirmLabel = "Confirm",
+	cancelLabel = m.action_cancel(),
 	destructive = false,
 	onConfirm,
 }: ConfirmModalProps) {
@@ -56,7 +59,7 @@ export function ConfirmModal({
 						className="w-auto!"
 						disabled={isPending}
 					>
-						Cancel
+						{cancelLabel}
 					</Button>
 					<Button
 						type="button"

@@ -11,6 +11,7 @@ import { authQueryOptions, userQueryOptions } from "~/domains/users/queries";
 import { ratingKeys } from "~/domains/ratings/queries/display";
 import { withTimeout } from "~/utils/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_authed/set-up-profile")({
 	component: RouteComponent,
@@ -129,8 +130,8 @@ function RouteComponent() {
 
 	return (
 		<AuthLayout
-			title="Set up your profile"
-			description="Personalize your account with a photo and display name."
+			title={m.setup_profile_page_title()}
+			description={m.setup_profile_page_description()}
 		>
 			<SetUpProfileForm
 				onSubmit={handleSubmit}

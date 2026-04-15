@@ -8,6 +8,7 @@ import { authQueryOptions } from "~/domains/users/queries";
 import { registerSchema } from "~/domains/users/types";
 import { withTimeout } from "~/utils/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
+import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
@@ -112,10 +113,10 @@ function RouteComponent() {
 
 	return (
 		<AuthLayout
-			title="Join the community"
-			description="Your account. Your ratings. One to ten. Start here."
-			footerText="Already have an account?"
-			footerLinkText="Sign in"
+			title={m.sign_up_page_title()}
+			description={m.sign_up_page_description()}
+			footerText={m.sign_up_page_footer_text()}
+			footerLinkText={m.sign_up_page_footer_link()}
 			footerLinkTo="/sign-in"
 		>
 			<SignUpForm

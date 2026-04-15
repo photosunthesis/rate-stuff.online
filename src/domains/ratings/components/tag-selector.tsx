@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useId } from "react";
 import { Search, Plus, X } from "lucide-react";
 import { useDebounce } from "~/hooks/use-debounce";
 import { useTagSearchQuery } from "~/domains/ratings/queries/create";
+import { m } from "~/paraglide/messages";
 
 const useTagSearch = (query: string) => {
 	const debouncedQuery = useDebounce(query, 300);
@@ -105,7 +106,7 @@ export function TagSelector({
 					Tags
 				</label>
 				<span className="text-xs text-neutral-500">
-					{selectedTags.length}/{maxTags} tags
+					{m.tag_selector_count({ count: selectedTags.length, max: maxTags })}
 				</span>
 			</div>
 
@@ -178,7 +179,7 @@ export function TagSelector({
 					<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
 						{isLoading ? (
 							<div className="p-4 text-center text-neutral-500 text-base">
-								Searching...
+								{m.stuff_selector_searching()}
 							</div>
 						) : (
 							<>
@@ -190,7 +191,7 @@ export function TagSelector({
 										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center justify-between"
 									>
 										<span className="text-neutral-400">#{tag.name}</span>
-										<span className="text-xs text-neutral-500">Add</span>
+										{m.tag_selector_add()}
 									</button>
 								))}
 
@@ -201,7 +202,7 @@ export function TagSelector({
 										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-neutral-400 hover:text-neutral-300 border-t border-neutral-800"
 									>
 										<Plus size={14} />
-										<span>Create tag "{searchInput}"</span>
+										<span>{m.tag_selector_create({ tag: searchInput })}</span>
 									</button>
 								)}
 							</>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
+import { m } from "~/paraglide/messages";
 import AppLogo from "~/components/ui/misc/app-logo";
 import { Home, Bell, Menu, LogOut, Plus } from "lucide-react";
 import { CreateRatingModal } from "~/domains/ratings/components/create-rating-modal";
@@ -12,13 +13,13 @@ import { useAuth } from "~/domains/users/queries";
 
 const getHeader = () => {
 	const headers = [
-		"Rate literally anything.",
-		"Give something a score.",
-		"Rate reality, one to ten.",
-		"Everything gets a score.",
-		"The world, out of ten.",
-		"Rate the whole universe.",
-		"Your opinion, now numbered.",
+		m.sidebar_tagline_0(),
+		m.sidebar_tagline_1(),
+		m.sidebar_tagline_2(),
+		m.sidebar_tagline_3(),
+		m.sidebar_tagline_4(),
+		m.sidebar_tagline_5(),
+		m.sidebar_tagline_6(),
 	];
 
 	const now = new Date();
@@ -70,9 +71,9 @@ export function LeftSidebar() {
 						destructive
 						isOpen={isSignOutOpen}
 						onClose={() => setIsSignOutOpen(false)}
-						title="Ready to sign out?"
-						description="After signing out, you can sign back in anytime."
-						confirmLabel="Sign out"
+						title={m.sign_out_modal_title()}
+						description={m.sign_out_modal_description()}
+						confirmLabel={m.sign_out_modal_confirm()}
 						onConfirm={signOut}
 					/>
 				</>
@@ -95,14 +96,14 @@ export function LeftSidebar() {
 							to="/sign-up"
 							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center"
 						>
-							Create Account
+							{m.nav_create_account()}
 						</Link>
 						<Link
 							to="/sign-in"
 							search={{ redirect: undefined }}
 							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
 						>
-							Sign In
+							{m.nav_sign_in()}
 						</Link>
 					</div>
 				) : (
@@ -118,7 +119,7 @@ export function LeftSidebar() {
 								}}
 							>
 								<Home className="w-6 h-6" />
-								<span className="font-medium">Home</span>
+								<span className="font-medium">{m.nav_home()}</span>
 							</Link>
 
 							<Link
@@ -139,7 +140,7 @@ export function LeftSidebar() {
 										</span>
 									)}
 								</div>
-								<span className="font-medium">Activity</span>
+								<span className="font-medium">{m.nav_activity()}</span>
 							</Link>
 							<Link
 								to="/menu"
@@ -150,7 +151,7 @@ export function LeftSidebar() {
 								}}
 							>
 								<Menu className="w-6 h-6" />
-								<span className="font-medium">Menu</span>
+								<span className="font-medium">{m.nav_menu()}</span>
 							</Link>
 						</nav>
 
@@ -164,7 +165,7 @@ export function LeftSidebar() {
 								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
 								<Plus className="w-5 h-5 shrink-0" />
-								<span className="truncate">New Rating</span>
+								<span className="truncate">{m.nav_new_rating()}</span>
 							</button>
 						</div>
 
@@ -175,7 +176,7 @@ export function LeftSidebar() {
 								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-xl transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-6 h-6" />
-								<span className="font-medium">Sign Out</span>
+								<span className="font-medium">{m.nav_sign_out()}</span>
 							</button>
 						</div>
 					</div>
@@ -191,7 +192,7 @@ export function LeftSidebar() {
 						<Link
 							to="/"
 							activeOptions={{ exact: true }}
-							title="Home"
+							title={m.nav_home()}
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
@@ -203,7 +204,7 @@ export function LeftSidebar() {
 
 						<Link
 							to="/activity"
-							title="Activity"
+							title={m.nav_activity()}
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
@@ -223,7 +224,7 @@ export function LeftSidebar() {
 						</Link>
 						<Link
 							to="/menu"
-							title="Menu"
+							title={m.nav_menu()}
 							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "menu" });
@@ -240,8 +241,8 @@ export function LeftSidebar() {
 								if (umami) umami.track("click_create_rating");
 								setIsCreateOpen(true);
 							}}
-							aria-label="New Rating"
-							title="New Rating"
+							aria-label={m.nav_new_rating()}
+							title={m.nav_new_rating()}
 							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
 						>
 							<Plus className="w-6 h-6" />
@@ -279,7 +280,7 @@ export function LeftSidebar() {
 							className="flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm active:scale-95 cursor-pointer pointer-events-auto transition-all"
 						>
 							<Plus className="w-4 h-4 shrink-0" />
-							New Rating
+							{m.nav_new_rating()}
 						</button>
 					</div>
 
@@ -311,7 +312,7 @@ export function LeftSidebar() {
 							}}
 						>
 							<Home className="w-6 h-6" />
-							<span className="text-xs font-medium">Home</span>
+							<span className="text-xs font-medium">{m.nav_home()}</span>
 						</Link>
 
 						<Link
@@ -331,7 +332,7 @@ export function LeftSidebar() {
 									</span>
 								)}
 							</div>
-							<span className="text-xs font-medium">Activity</span>
+							<span className="text-xs font-medium">{m.nav_activity()}</span>
 						</Link>
 
 						<Link
@@ -343,7 +344,7 @@ export function LeftSidebar() {
 							}}
 						>
 							<Menu className="w-6 h-6" />
-							<span className="text-xs font-medium">Menu</span>
+							<span className="text-xs font-medium">{m.nav_menu()}</span>
 						</Link>
 					</nav>
 				</div>

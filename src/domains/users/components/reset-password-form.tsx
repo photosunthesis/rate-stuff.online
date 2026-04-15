@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/form/button";
 import { FormError } from "~/components/ui/form/form-error";
 import { TextField } from "~/components/ui/form/text-field";
 import { resetPasswordSchema } from "../types";
+import { m } from "~/paraglide/messages";
 
 interface ResetPasswordFormProps {
 	onSubmit: (data: { password: string }) => Promise<void>;
@@ -46,11 +47,10 @@ export function ResetPasswordForm({
 				<div className="text-center space-y-4">
 					<div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-6">
 						<h3 className="text-lg font-medium text-white mb-2">
-							Password Reset!
+							{m.reset_password_success_title()}
 						</h3>
 						<p className="text-neutral-400 text-base">
-							Your password has been successfully updated. You can now sign in
-							with your new password.
+							{m.reset_password_success_description()}
 						</p>
 					</div>
 					<Button
@@ -59,7 +59,7 @@ export function ResetPasswordForm({
 							window.location.href = "/sign-in";
 						}}
 					>
-						Sign In
+						{m.reset_password_sign_in()}
 					</Button>
 				</div>
 			) : (
@@ -90,13 +90,13 @@ export function ResetPasswordForm({
 						>
 							{(field) => (
 								<TextField
-									label="New Password"
+									label={m.reset_password_new_label()}
 									type="password"
 									name={field.name}
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="New password"
+									placeholder={m.reset_password_new_placeholder()}
 									error={
 										field.state.meta.errors[0]?.toString() ||
 										mergedValidationErrors.password
@@ -111,7 +111,7 @@ export function ResetPasswordForm({
 							validators={{
 								onChange: ({ value, fieldApi }) => {
 									if (value !== fieldApi.form.getFieldValue("password")) {
-										return "Passwords do not match";
+										return m.passwords_do_not_match();
 									}
 									return undefined;
 								},
@@ -119,13 +119,13 @@ export function ResetPasswordForm({
 						>
 							{(field) => (
 								<TextField
-									label="Confirm Password"
+									label={m.reset_password_confirm_label()}
 									type="password"
 									name={field.name}
 									value={field.state.value}
 									onBlur={field.handleBlur}
 									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Confirm new password"
+									placeholder={m.reset_password_confirm_placeholder()}
 									error={
 										field.state.meta.errors[0]?.toString() ||
 										mergedValidationErrors.confirmPassword
@@ -145,9 +145,9 @@ export function ResetPasswordForm({
 								disabled={!canSubmit || isPending || isSubmitting}
 								isLoading={isPending || isSubmitting}
 								className="mt-6"
-								loadingLabel="Resetting Password..."
+								loadingLabel={m.reset_password_loading()}
 							>
-								Reset Password
+								{m.reset_password_button()}
 							</Button>
 						)}
 					</form.Subscribe>

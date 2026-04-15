@@ -38,6 +38,7 @@ import { Button } from "~/components/ui/form/button";
 import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 import { useUmami } from "@danielgtmn/umami-react";
 import { getRatingEmoji } from "~/utils/ratings";
+import { m } from "~/paraglide/messages";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
 	if (!md) return "";
@@ -259,7 +260,7 @@ const RatingHeader = ({
 					) : (
 						<span className="font-medium text-neutral-400">{displayText}</span>
 					)}
-					<span className="text-neutral-500"> rated </span>
+					<span className="text-neutral-500">{m.rating_card_rated()}</span>
 					<Link
 						to="/stuff/$stuffSlug"
 						params={{ stuffSlug: rating.stuff.slug }}
@@ -273,7 +274,7 @@ const RatingHeader = ({
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
-							<span className="text-neutral-500"> (edited)</span>
+							<span className="text-neutral-500">{m.rating_card_edited()}</span>
 						)}
 				</div>
 			</div>
@@ -324,9 +325,9 @@ const RatingHeader = ({
 			>
 				<ModalContent width="sm">
 					<ModalHeader>
-						<ModalTitle>Delete this rating?</ModalTitle>
+						<ModalTitle>{m.rating_delete_modal_title()}</ModalTitle>
 						<ModalDescription>
-							Are you sure you want to remove this rating?
+							{m.rating_delete_modal_description()}
 						</ModalDescription>
 					</ModalHeader>
 					<ModalFooter>
@@ -471,7 +472,7 @@ function RouteComponent() {
 						>
 							<ArrowLeft className="h-5 w-5 shrink-0" />
 						</button>
-						<h2 className="text-lg font-semibold text-white">Rating</h2>
+						<h2 className="text-lg font-semibold text-white">{m.rating_page_header()}</h2>
 					</div>
 				</div>
 				<div className="px-4 pt-4">
