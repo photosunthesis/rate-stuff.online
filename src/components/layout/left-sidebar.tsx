@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import AppLogo from "~/components/ui/misc/app-logo";
 import { Home, Bell, Menu, LogOut, Plus } from "lucide-react";
@@ -40,6 +40,19 @@ export function LeftSidebar() {
 	const [header] = useState(() => getHeader());
 
 	const [signOut] = useSignOut();
+
+	const [navVisible, setNavVisible] = useState(true);
+	const lastScrollY = useRef(0);
+
+	useEffect(() => {
+		const onScroll = () => {
+			const y = window.scrollY;
+			setNavVisible(y < lastScrollY.current || y < 50);
+			lastScrollY.current = y;
+		};
+		window.addEventListener("scroll", onScroll, { passive: true });
+		return () => window.removeEventListener("scroll", onScroll);
+	}, []);
 
 	const { data: unreadCount } = useSuspenseQuery(
 		unreadActivityCountQueryOptions(user?.id),
@@ -104,7 +117,7 @@ export function LeftSidebar() {
 									if (umami) umami.track("click_nav", { destination: "home" });
 								}}
 							>
-								<Home className="w-5 h-5" />
+								<Home className="w-6 h-6" />
 								<span className="font-medium">Home</span>
 							</Link>
 
@@ -118,7 +131,7 @@ export function LeftSidebar() {
 								}}
 							>
 								<div className="relative">
-									<Bell className="w-5 h-5" />
+									<Bell className="w-6 h-6" />
 									{unreadCount > 0 && (
 										<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
 											<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -136,7 +149,7 @@ export function LeftSidebar() {
 									if (umami) umami.track("click_nav", { destination: "menu" });
 								}}
 							>
-								<Menu className="w-5 h-5" />
+								<Menu className="w-6 h-6" />
 								<span className="font-medium">Menu</span>
 							</Link>
 						</nav>
@@ -161,7 +174,7 @@ export function LeftSidebar() {
 								onClick={() => setIsSignOutOpen(true)}
 								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-xl transition-all group cursor-pointer outline-none"
 							>
-								<LogOut className="w-5 h-5" />
+								<LogOut className="w-6 h-6" />
 								<span className="font-medium">Sign Out</span>
 							</button>
 						</div>
@@ -231,7 +244,7 @@ export function LeftSidebar() {
 							title="New Rating"
 							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
 						>
-							<Plus className="w-5 h-5" />
+							<Plus className="w-6 h-6" />
 						</button>
 					</div>
 
@@ -240,85 +253,23 @@ export function LeftSidebar() {
 						onClick={() => setIsSignOutOpen(true)}
 						className="mb-6 p-2 text-neutral-500 hover:text-red-400 rounded-lg transition-colors"
 					>
-						<LogOut className="w-5 h-5" />
+						<LogOut className="w-6 h-6" />
 					</button>
 				</aside>
 			)}
 
+			{/* FAB + bottom bar — FAB stays visible, bar slides away on scroll */}
 			{isAuthenticated && (
 				<div
-					className="md:hidden fixed left-0 right-0 flex items-center justify-center gap-3 z-50 pointer-events-none"
-					style={{ bottom: "max(0.375rem, env(safe-area-inset-bottom, 0.375rem))" }}
+					className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex flex-col pointer-events-none transition-transform duration-300 ease-in-out"
+					style={{
+						transform: navVisible
+							? "translateY(0)"
+							: "translateY(calc(4rem + env(safe-area-inset-bottom, 0px)))",
+					}}
 				>
-					<div className="flex items-center gap-2.5 pointer-events-auto">
-						{/* Liquid glass pill */}
-						<nav
-							className="relative flex items-center gap-0.5 px-1.5 py-1 h-14 rounded-full"
-							style={{
-								background: "rgba(22, 22, 26, 0.72)",
-								backdropFilter: "blur(28px) saturate(200%)",
-								WebkitBackdropFilter: "blur(28px) saturate(200%)",
-								border: "1px solid rgba(255,255,255,0.05)",
-								boxShadow:
-									"inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
-							}}
-						>
-							<Link
-								to="/"
-								activeOptions={{ exact: true }}
-								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
-								activeProps={{
-									className: "text-white",
-									style: { background: "rgba(255,255,255,0.10)" },
-								}}
-								onClick={() => {
-									if (umami) umami.track("click_nav", { destination: "home" });
-								}}
-							>
-								<Home className="w-[22px] h-[22px] mt-0.5" />
-								<span className="text-[10px] font-medium tracking-wide">Home</span>
-							</Link>
-
-							<Link
-								to="/activity"
-								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
-								activeProps={{
-									className: "text-white",
-									style: { background: "rgba(255,255,255,0.10)" },
-								}}
-								onClick={() => {
-									if (umami) umami.track("click_nav", { destination: "activity" });
-								}}
-							>
-								<div className="relative mt-0.5">
-									<Bell className="w-[22px] h-[22px]" />
-									{unreadCount > 0 && (
-										<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-											<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-											<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-										</span>
-									)}
-								</div>
-								<span className="text-[10px] font-medium tracking-wide">Activity</span>
-							</Link>
-
-							<Link
-								to="/menu"
-								className="flex flex-col items-center justify-center gap-0.5 w-[4.5rem] h-12 px-2 rounded-full text-neutral-400 hover:text-white transition-all duration-200 outline-none"
-								activeProps={{
-									className: "text-white",
-									style: { background: "rgba(255,255,255,0.10)" },
-								}}
-								onClick={() => {
-									if (umami) umami.track("click_nav", { destination: "menu" });
-								}}
-							>
-								<Menu className="w-[22px] h-[22px] mt-0.5" />
-								<span className="text-[10px] font-medium tracking-wide">Menu</span>
-							</Link>
-						</nav>
-
-						{/* Green FAB — right side for thumb reach */}
+					{/* FAB */}
+					<div className="flex justify-end pr-4 pb-2 pointer-events-none">
 						<button
 							type="button"
 							onClick={() => {
@@ -326,15 +277,79 @@ export function LeftSidebar() {
 								setIsCreateOpen(true);
 							}}
 							aria-label="New Rating"
-							className="w-14 h-14 rounded-full text-white flex items-center justify-center transition-all duration-200 active:scale-90 cursor-pointer shrink-0"
+							className="w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-90 cursor-pointer pointer-events-auto"
 							style={{
 								background: "linear-gradient(145deg, #34d399 0%, #059669 100%)",
-								boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28)",
+								boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 16px rgba(5, 150, 105, 0.35)",
 							}}
 						>
-							<Plus className="w-5 h-5" />
+							<Plus className="w-6 h-6" />
 						</button>
 					</div>
+
+					<nav
+						className="relative flex items-center justify-center gap-6 border-t border-white/8 overflow-hidden pointer-events-auto"
+						style={{
+							backgroundColor: "rgba(10, 10, 13, 0.78)",
+							backdropFilter: "blur(24px) saturate(180%)",
+							WebkitBackdropFilter: "blur(24px) saturate(180%)",
+							paddingBottom: "env(safe-area-inset-bottom, 0)",
+						}}
+					>
+						{/* Grain overlay */}
+						<div
+							className="absolute inset-0 pointer-events-none"
+							style={{
+								backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`,
+								opacity: 0.07,
+								mixBlendMode: "overlay",
+							}}
+						/>
+						<Link
+							to="/"
+							activeOptions={{ exact: true }}
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami) umami.track("click_nav", { destination: "home" });
+							}}
+						>
+							<Home className="w-6 h-6" />
+							<span className="text-xs font-medium">Home</span>
+						</Link>
+
+						<Link
+							to="/activity"
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami) umami.track("click_nav", { destination: "activity" });
+							}}
+						>
+							<div className="relative">
+								<Bell className="w-6 h-6" />
+								{unreadCount > 0 && (
+									<span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+										<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+										<span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+									</span>
+								)}
+							</div>
+							<span className="text-xs font-medium">Activity</span>
+						</Link>
+
+						<Link
+							to="/menu"
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							activeProps={{ className: "text-white" }}
+							onClick={() => {
+								if (umami) umami.track("click_nav", { destination: "menu" });
+							}}
+						>
+							<Menu className="w-6 h-6" />
+							<span className="text-xs font-medium">Menu</span>
+						</Link>
+					</nav>
 				</div>
 			)}
 		</>
