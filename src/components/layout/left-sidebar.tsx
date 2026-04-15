@@ -276,14 +276,10 @@ export function LeftSidebar() {
 								if (umami) umami.track("click_create_rating");
 								setIsCreateOpen(true);
 							}}
-							aria-label="New Rating"
-							className="w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-90 cursor-pointer pointer-events-auto"
-							style={{
-								background: "linear-gradient(145deg, #34d399 0%, #059669 100%)",
-								boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 16px rgba(5, 150, 105, 0.35)",
-							}}
+							className="flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm active:scale-95 cursor-pointer pointer-events-auto transition-all"
 						>
-							<Plus className="w-6 h-6" />
+							<Plus className="w-4 h-4 shrink-0" />
+							New Rating
 						</button>
 					</div>
 
