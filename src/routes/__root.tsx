@@ -5,6 +5,10 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
+import serifFont400 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-400-normal.woff2?url";
+import serifFont700 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-700-normal.woff2?url";
+import sansFont from "@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2?url";
+import monoFont400 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url";
 import { NotFound } from "~/components/ui/feedback/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
 import {
@@ -93,6 +97,34 @@ export const Route = createRootRouteWithContext<{
 			},
 		],
 		links: [
+			{
+				rel: "preload",
+				href: sansFont,
+				as: "font",
+				type: "font/woff2",
+				crossOrigin: "anonymous",
+			},
+			{
+				rel: "preload",
+				href: serifFont400,
+				as: "font",
+				type: "font/woff2",
+				crossOrigin: "anonymous",
+			},
+			{
+				rel: "preload",
+				href: serifFont700,
+				as: "font",
+				type: "font/woff2",
+				crossOrigin: "anonymous",
+			},
+			{
+				rel: "preload",
+				href: monoFont400,
+				as: "font",
+				type: "font/woff2",
+				crossOrigin: "anonymous",
+			},
 			{
 				rel: "stylesheet",
 				href: appCss,
