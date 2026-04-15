@@ -48,3 +48,8 @@ export const getQuillTextPreview = (
 	if (cleanText.length <= maxLength) return cleanText;
 	return `${cleanText.substring(0, maxLength)}...`;
 };
+
+export const getPreviewText = (content: string): string => {
+	const text = getPlainTextFromContent(content);
+	return text.replace(/\n/g, " ").trim().replace(/\s+/g, " ");
+};

@@ -5,7 +5,6 @@ import { Avatar } from "~/components/ui/misc/avatar";
 import { VoteSection } from "~/components/ui/content/vote-section";
 import { ImageGrid } from "~/components/ui/content/image-grid";
 import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
-import { getPlainTextFromContent } from "~/utils/rich-text";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
@@ -31,9 +30,6 @@ export const RatingCard = memo(function RatingCard({
 	const navigate = useNavigate();
 	const isAuthModalOpenState = useState(false);
 	const [isAuthModalOpen, setIsAuthModalOpen] = isAuthModalOpenState;
-	const plainText = getPlainTextFromContent(rating.content);
-	const shouldTruncate =
-		plainText.length > 300 || plainText.split("\n").length > 4;
 	const image = rating.user?.image ?? null;
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
@@ -167,19 +163,12 @@ export const RatingCard = memo(function RatingCard({
 			)}
 
 			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-				<div className={`text-slate-200 text-base leading-normal ${shouldTruncate ? "line-clamp-4 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]" : "line-clamp-4"}`}>
+				<div className="text-slate-200 text-base leading-normal line-clamp-4">
 					<RichTextRenderer
 						content={rating.content}
-						className="[&_p]:mt-3 [&_p]:last:inline [&_p]:first:mt-0"
+						className="[&_p]:inline [&_p]:!m-0 [&_p]:after:content-['_'] [&_br]:hidden"
 					/>
 				</div>
-				{shouldTruncate && (
-					<div className="mt-1">
-						<span className="text-neutral-500/80 text-base font-semibold hover:text-neutral-400 transition-colors cursor-pointer">
-							See more
-						</span>
-					</div>
-				)}
 			</div>
 
 			{parsedTags && parsedTags.length > 0 && (

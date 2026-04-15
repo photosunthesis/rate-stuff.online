@@ -1,7 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
-import { getPlainTextFromContent } from "~/utils/rich-text";
 import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { CommentVoteSection } from "./comment-vote-section";
 import type { comments, users } from "~/db/schema";
@@ -30,7 +29,6 @@ interface CommentItemProps {
 }
 
 export function CommentItem({ comment, currentUserId }: CommentItemProps) {
-	const [isExpanded, setIsExpanded] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -75,9 +73,6 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 		};
 	}, [isMenuOpen]);
 
-	const plainText = getPlainTextFromContent(comment.content);
-	const shouldTruncate =
-		plainText.length > 300 || plainText.split("\n").length > 4;
 
 	const handleUpdate = (content: string) => {
 		updateComment(
@@ -155,45 +150,12 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 						</div>
 
 						<div className="mb-1">
-							{shouldTruncate && !isExpanded ? (
-								<div className="relative">
-									<div className="text-slate-200 text-base leading-normal line-clamp-4 [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]">
-										<RichTextRenderer
-											content={comment.content}
-											className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
-										/>
-									</div>
-									<button
-										type="button"
-										onClick={(e) => {
-											e.stopPropagation();
-											setIsExpanded(true);
-										}}
-										className="mt-1 text-neutral-500/80 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer block"
-									>
-										See more
-									</button>
-								</div>
-							) : (
-								<div className="text-slate-200 text-base leading-normal">
-									<RichTextRenderer
-										content={comment.content}
-										className="[&_p]:mb-3 [&_p]:last-of-type:mb-1 [&_p]:last-of-type:inline"
-									/>
-									{shouldTruncate && (
-										<button
-											type="button"
-											onClick={(e) => {
-												e.stopPropagation();
-												setIsExpanded(false);
-											}}
-											className="text-neutral-500 hover:text-neutral-400 text-base font-semibold transition-colors cursor-pointer ml-1 block mt-1"
-										>
-											See less
-										</button>
-									)}
-								</div>
-							)}
+							<div className="text-slate-200 text-base leading-normal line-clamp-4">
+								<RichTextRenderer
+									content={comment.content}
+									className="[&_p]:inline [&_p]:!m-0 [&_p]:after:content-['_'] [&_br]:hidden"
+								/>
+							</div>
 						</div>
 
 						<div className="flex items-center gap-1">

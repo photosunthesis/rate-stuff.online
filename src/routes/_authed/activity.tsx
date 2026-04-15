@@ -25,7 +25,7 @@ import { Button } from "~/components/ui/form/button";
 import { CheckCheck } from "lucide-react";
 import type { activities } from "~/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
-import { getPlainTextFromContent } from "~/utils/rich-text";
+import { getPreviewText } from "~/utils/rich-text";
 
 type Activity = InferSelectModel<typeof activities> & {
 	metadata: Record<string, unknown>;
@@ -228,7 +228,7 @@ function RouteComponent() {
 														{activity.commentContent && (
 															<div className="text-sm text-neutral-400 italic line-clamp-2">
 																"
-																{getPlainTextFromContent(
+																{getPreviewText(
 																	activity.commentContent,
 																)}
 																"
