@@ -13,8 +13,12 @@ import { getDatabase } from "~/db";
 import { cached } from "~/infrastructure/kv/cache";
 import { buildSignedImages, buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
+type RatingRow = Omit<typeof ratings.$inferSelect, "content"> & {
+	content?: string;
+};
+
 async function transformToGroupedRating(row: {
-	rating: typeof ratings.$inferSelect;
+	rating: RatingRow;
 	stuff: typeof stuff.$inferSelect | null;
 	user: {
 		id: string;
@@ -39,7 +43,41 @@ async function transformToGroupedRating(row: {
 	};
 }
 
-function getRatingsSelection(viewerId?: string) {
+function getRatingsListSelection(viewerId?: string) {
+	return {
+		rating: {
+			id: ratings.id,
+			userId: ratings.userId,
+			stuffId: ratings.stuffId,
+			score: ratings.score,
+			contentPreview: ratings.contentPreview,
+			images: ratings.images,
+			createdAt: ratings.createdAt,
+			updatedAt: ratings.updatedAt,
+			deletedAt: ratings.deletedAt,
+			upvotesCount: ratings.upvotesCount,
+			downvotesCount: ratings.downvotesCount,
+			commentsCount: ratings.commentsCount,
+		},
+		stuff: stuff,
+		user: {
+			id: users.id,
+			name: users.name,
+			username: users.username,
+			image: users.image,
+		},
+		tags: sql<
+			string[]
+		>`coalesce(json_agg(${tags.name} order by ${tags.name}) filter (where ${tags.name} is not null), '[]')`,
+		userVote: viewerId
+			? sql<
+					"up" | "down" | null
+				>`(select ${ratingVotes.type} from ${ratingVotes} where ${ratingVotes.ratingId} = ${ratings.id} and ${ratingVotes.userId} = ${viewerId})`
+			: sql<null>`null`,
+	};
+}
+
+function getRatingsDetailSelection(viewerId?: string) {
 	return {
 		rating: ratings,
 		stuff: stuff,
@@ -80,7 +118,7 @@ export const getUserRatings = createServerOnlyFn(
 		const db = getDatabase();
 
 		const results = await db
-			.select(getRatingsSelection(viewerId))
+			.select(getRatingsListSelection(viewerId))
 			.from(ratings)
 			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
 			.leftJoin(users, eq(ratings.userId, users.id))
@@ -136,7 +174,7 @@ export const getFeedRatings = createServerOnlyFn(
 			: undefined;
 
 		const results = await db
-			.select(getRatingsSelection(viewerId))
+			.select(getRatingsListSelection(viewerId))
 			.from(ratings)
 			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
 			.leftJoin(users, eq(ratings.userId, users.id))
@@ -156,7 +194,7 @@ export const getRatingById = createServerOnlyFn(
 		const db = getDatabase();
 
 		const results = await db
-			.select(getRatingsSelection(viewerId))
+			.select(getRatingsDetailSelection(viewerId))
 			.from(ratings)
 			.leftJoin(stuff, eq(ratings.stuffId, stuff.id))
 			.leftJoin(users, eq(ratings.userId, users.id))

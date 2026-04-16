@@ -11,6 +11,7 @@ import type { CreateRatingInput } from "../types/create";
 import { getDatabase } from "~/db";
 import { v7 as uuidv7 } from "uuid";
 import { invalidate } from "~/infrastructure/kv/cache";
+import { generateContentPreview } from "~/utils/rich-text";
 
 interface UpdateRatingInput {
 	score: number;
@@ -183,6 +184,7 @@ export const createRating = createServerOnlyFn(
 					stuffId: resolvedStuffId,
 					score: input.score,
 					content: input.content,
+					contentPreview: generateContentPreview(input.content),
 					images: imagesJson,
 					upvotesCount: 1,
 				})
@@ -351,6 +353,7 @@ export const updateRating = createServerOnlyFn(
 				.set({
 					score: input.score,
 					content: input.content,
+					contentPreview: generateContentPreview(input.content),
 					images: imagesJson,
 					updatedAt: new Date(),
 				})

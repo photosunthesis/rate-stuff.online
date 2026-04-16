@@ -10,7 +10,10 @@ export type Tag = {
 	createdAt: Date;
 };
 
-export type RatingWithRelations = typeof ratings.$inferSelect & {
+/** Returned by list queries — full content is excluded to save bandwidth. */
+export type RatingWithRelations = Omit<typeof ratings.$inferSelect, "content"> & {
+	/** Only present when fetched via getRatingById (detail view). */
+	content?: string;
 	tags: string[];
 	user: {
 		id: string;

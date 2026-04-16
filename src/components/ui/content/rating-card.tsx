@@ -161,14 +161,16 @@ export const RatingCard = memo(function RatingCard({
 				/>
 			)}
 
-			<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
-				<div className="text-slate-200 text-base leading-normal line-clamp-4">
-					<RichTextRenderer
-						content={rating.content}
-						className="[&_p]:inline [&_p]:!m-0 [&_p]:after:content-['_'] [&_br]:hidden"
-					/>
+			{rating.contentPreview && (
+				<div className={`${noIndent ? "" : "ml-11"} mb-3`}>
+					<div className="text-slate-200 text-base leading-normal line-clamp-4">
+						<RichTextRenderer
+							content={rating.contentPreview}
+							className="[&_p]:inline [&_p]:!m-0 [&_p]:after:content-['_'] [&_br]:hidden"
+						/>
+					</div>
 				</div>
-			</div>
+			)}
 
 			{parsedTags && parsedTags.length > 0 && (
 				<div className={`flex flex-wrap gap-2 mb-3 ${noIndent ? "" : "ml-11"}`}>

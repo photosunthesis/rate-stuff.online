@@ -27,6 +27,7 @@ export const ratings = pgTable(
 			.references(() => stuff.id, { onDelete: "cascade" }),
 		score: real("score").notNull(),
 		content: text("content").notNull(),
+		contentPreview: text("content_preview"),
 		images: text("images"),
 		createdAt: timestamp("created_at", {
 			mode: "date",
