@@ -1,0 +1,1 @@
+CREATE INDEX "activities_user_unread_idx" ON "activities" USING btree ("user_id","is_read","deleted_at");

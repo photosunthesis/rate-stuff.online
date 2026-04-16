@@ -52,6 +52,11 @@ export const activities = pgTable(
 	(table) => [
 		index("activities_user_created_idx").on(table.userId, table.createdAt),
 		index("activities_user_is_read_idx").on(table.userId, table.isRead),
+		index("activities_user_unread_idx").on(
+			table.userId,
+			table.isRead,
+			table.deletedAt,
+		),
 	],
 );
 

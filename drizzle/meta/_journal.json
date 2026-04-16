@@ -55,6 +55,13 @@
       "when": 1776308141831,
       "tag": "0007_sudden_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1776323144032,
+      "tag": "0008_previous_santa_claus",
+      "breakpoints": true
     }
   ]
 }
