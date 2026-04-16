@@ -17,7 +17,7 @@ import type { RatingWithRelations } from "~/features/ratings/types/display";
 import { TimeAgo } from "~/shared/components/ui/time-ago";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "~/shared/components/layout/main-layout";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 
 import { VoteSection } from "~/features/ratings/components/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -390,43 +390,37 @@ const TagsList = ({
 	isAuthenticated?: boolean;
 	onTagClick?: (tag: string) => void;
 }) => {
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 
 	if (!tags || tags.length === 0) return null;
 	return (
-		<>
-			<div className="flex flex-wrap gap-2 mb-3 ml-11">
-				{tags.map((tag: string) =>
-					isAuthenticated ? (
-						<Link
-							key={tag}
-							to="/"
-							search={{ tag }}
-							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
-							onClick={() => onTagClick?.(tag)}
-						>
-							#{tag}
-						</Link>
-					) : (
-						<button
-							key={tag}
-							type="button"
-							onClick={() => {
-								setIsAuthModalOpen(true);
-								onTagClick?.(tag);
-							}}
-							className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
-						>
-							#{tag}
-						</button>
-					),
-				)}
-			</div>
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
-		</>
+		<div className="flex flex-wrap gap-2 mb-3 ml-11">
+			{tags.map((tag: string) =>
+				isAuthenticated ? (
+					<Link
+						key={tag}
+						to="/"
+						search={{ tag }}
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+						onClick={() => onTagClick?.(tag)}
+					>
+						#{tag}
+					</Link>
+				) : (
+					<button
+						key={tag}
+						type="button"
+						onClick={() => {
+							openAuthModal();
+							onTagClick?.(tag);
+						}}
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+					>
+						#{tag}
+					</button>
+				),
+			)}
+		</div>
 	);
 };
 

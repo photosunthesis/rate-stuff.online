@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowBigUp, ArrowBigDown } from "lucide-react";
 import { useVoteComment } from "../hooks";
 import { formatCompactNumber } from "~/shared/lib/format";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { useUmami } from "@danielgtmn/umami-react";
 
 interface CommentVoteSectionProps {
@@ -67,7 +67,7 @@ export function CommentVoteSection({
 	isAuthenticated = false,
 	className = "",
 }: CommentVoteSectionProps) {
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 	const { mutate: vote } = useVoteComment();
 	const umami = useUmami();
 
@@ -79,7 +79,7 @@ export function CommentVoteSection({
 		if (isOwner) return;
 
 		if (!isAuthenticated) {
-			setIsAuthModalOpen(true);
+			openAuthModal();
 			return;
 		}
 
@@ -113,33 +113,27 @@ export function CommentVoteSection({
 	};
 
 	return (
-		<>
-			<fieldset
-				className={`relative group flex items-center gap-2.5 rounded-full w-fit border-none m-0 p-0 -ml-1.5 ${className}`}
-				onClick={(e) => e.stopPropagation()}
-				onKeyDown={(e) => e.stopPropagation()}
-				tabIndex={-1}
-			>
-				<VoteButton
-					type="up"
-					isActive={userVote === "up"}
-					onClick={() => handleVote("up")}
-					disabled={isOwner}
-				/>
-				<span className="text-base font-semibold min-w-[1.5ch] text-center text-neutral-500">
-					{formatCompactNumber(voteScore)}
-				</span>
-				<VoteButton
-					type="down"
-					isActive={userVote === "down"}
-					onClick={() => handleVote("down")}
-					disabled={isOwner}
-				/>
-			</fieldset>
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
+		<fieldset
+			className={`relative group flex items-center gap-2.5 rounded-full w-fit border-none m-0 p-0 -ml-1.5 ${className}`}
+			onClick={(e) => e.stopPropagation()}
+			onKeyDown={(e) => e.stopPropagation()}
+			tabIndex={-1}
+		>
+			<VoteButton
+				type="up"
+				isActive={userVote === "up"}
+				onClick={() => handleVote("up")}
+				disabled={isOwner}
 			/>
-		</>
+			<span className="text-base font-semibold min-w-[1.5ch] text-center text-neutral-500">
+				{formatCompactNumber(voteScore)}
+			</span>
+			<VoteButton
+				type="down"
+				isActive={userVote === "down"}
+				onClick={() => handleVote("down")}
+				disabled={isOwner}
+			/>
+		</fieldset>
 	);
 }

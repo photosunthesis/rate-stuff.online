@@ -1,11 +1,11 @@
-import { useState, memo } from "react";
+import { memo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { RatingListItem } from "~/features/ratings/types/display";
 import { Avatar } from "~/shared/components/ui/avatar";
 import { VoteSection } from "~/features/ratings/components/vote-section";
 import { ImageGrid } from "~/shared/components/ui/image-grid";
 import { RichTextRenderer } from "~/shared/components/ui/rich-text-renderer";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { formatCompactNumber } from "~/shared/lib/format";
 import { MessageSquare } from "lucide-react";
 import { TimeAgo } from "~/shared/components/ui/time-ago";
@@ -29,8 +29,7 @@ export const RatingCard = memo(function RatingCard({
 	variant = "default",
 }: RatingCardProps) {
 	const navigate = useNavigate();
-	const isAuthModalOpenState = useState(false);
-	const [isAuthModalOpen, setIsAuthModalOpen] = isAuthModalOpenState;
+	const { openAuthModal } = useAuthModal();
 	const image = rating.user?.image ?? null;
 	const usernameHandle = rating.user?.username ?? "unknown";
 	const name = rating.user?.name;
@@ -198,7 +197,7 @@ export const RatingCard = memo(function RatingCard({
 								type="button"
 								onClick={(e) => {
 									e.stopPropagation();
-									setIsAuthModalOpen(true);
+									openAuthModal();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
 								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
@@ -237,11 +236,6 @@ export const RatingCard = memo(function RatingCard({
 					)}
 				</button>
 			</div>
-
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
 		</div>
 	);
 });

@@ -3,7 +3,7 @@ import { ArrowBigUp, ArrowBigDown } from "lucide-react";
 import { useVoteRating } from "~/features/ratings/hooks/vote";
 import { formatCompactNumber } from "~/shared/lib/format";
 import { useUmami } from "@danielgtmn/umami-react";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { m } from "~/paraglide/messages";
 import type { RatingListItem } from "~/features/ratings/types/display";
 
@@ -67,7 +67,7 @@ export function VoteSection({
 	onVote,
 }: VoteSectionProps) {
 	const umami = useUmami();
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 	const { mutate: vote } = useVoteRating();
 	const { data: user } = useQuery(authQueryOptions());
 
@@ -82,7 +82,7 @@ export function VoteSection({
 		if (isOwner) return;
 
 		if (!isAuthenticated) {
-			setIsAuthModalOpen(true);
+			openAuthModal();
 			return;
 		}
 
@@ -145,10 +145,6 @@ export function VoteSection({
 					{m.vote_own_rating()}
 				</div>
 			)}
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
 		</>
 	);
 }

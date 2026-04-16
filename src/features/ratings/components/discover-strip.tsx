@@ -6,7 +6,7 @@ import {
 	useRecentStuff,
 } from "~/features/ratings/hooks/display";
 import { useAuth } from "~/features/auth/hooks";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { useSkeletonFade } from "~/shared/hooks/use-skeleton-fade";
 
 export function DiscoverStrip() {
@@ -27,7 +27,7 @@ export function DiscoverStrip() {
 	}, []);
 
 	const [isRoot, setIsRoot] = useState(false);
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 	const stripFade = useSkeletonFade(loadingStuff || loadingTags);
 
 	useEffect(() => {
@@ -107,7 +107,7 @@ export function DiscoverStrip() {
 								<button
 									key={tag.name}
 									type="button"
-									onClick={() => setIsAuthModalOpen(true)}
+									onClick={() => openAuthModal()}
 									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-base font-medium transition-colors rounded-md cursor-pointer"
 								>
 									#{tag.name}
@@ -119,11 +119,6 @@ export function DiscoverStrip() {
 			</div>
 
 			<div className="border-t border-neutral-800" />
-
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
 		</div>
 	);
 }

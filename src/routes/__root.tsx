@@ -13,6 +13,7 @@ import { NotFound } from "~/shared/components/feedback/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
 import { authQueryOptions, type AuthQueryResult } from "~/features/auth/hooks";
 import { ImageKitProvider } from "@imagekit/react";
+import { AuthModalProvider } from "~/features/auth/components/auth-modal-provider";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -142,7 +143,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<ImageKitProvider
 					urlEndpoint={import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT}
 				>
-					{children}
+					<AuthModalProvider>{children}</AuthModalProvider>
 				</ImageKitProvider>
 				<UmamiAnalytics
 					url={import.meta.env.VITE_UMAMI_URL}

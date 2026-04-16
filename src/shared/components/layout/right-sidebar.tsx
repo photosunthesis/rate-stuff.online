@@ -2,13 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { m } from "~/paraglide/messages";
 import { TrendingUp } from "lucide-react";
 import { Footer } from "~/shared/components/layout/footer";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
 	useRecentTags,
 	useRecentStuff,
 } from "~/features/ratings/hooks/display";
 import { useAuth } from "~/features/auth/hooks";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { useSkeletonFade } from "~/shared/hooks/use-skeleton-fade";
 
 export function RightSidebar() {
@@ -28,7 +28,7 @@ export function RightSidebar() {
 		return Array.from({ length: 6 }, (_, i) => widths[i % widths.length]);
 	}, []);
 
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 	const stuffFade = useSkeletonFade(loadingStuff);
 	const tagsFade = useSkeletonFade(loadingTags);
 
@@ -136,7 +136,7 @@ export function RightSidebar() {
 												<button
 													key={tag.name}
 													type="button"
-													onClick={() => setIsAuthModalOpen(true)}
+													onClick={() => openAuthModal()}
 													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 												>
 													#{tag.name}
@@ -152,11 +152,6 @@ export function RightSidebar() {
 
 				<Footer />
 			</div>
-
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
 		</aside>
 	);
 }

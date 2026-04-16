@@ -32,10 +32,10 @@ export function AuthModal({
 				</ModalHeader>
 
 				<div className="p-4 flex justify-end gap-3">
-					<Link to="/sign-in">
+					<Link to="/sign-in" onClick={onClose}>
 						<Button variant="secondary">{m.nav_sign_in()}</Button>
 					</Link>
-					<Link to="/sign-up">
+					<Link to="/sign-up" onClick={onClose}>
 						<Button variant="primary">{m.nav_create_account()}</Button>
 					</Link>
 				</div>

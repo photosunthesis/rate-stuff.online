@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCreateComment } from "../hooks";
-import { AuthModal } from "~/features/auth/components/auth-modal";
+import { useAuthModal } from "~/features/auth/components/auth-modal-provider";
 import { CompactMarkdownEditor } from "~/shared/components/ui/compact-markdown-editor";
 import { useUmami } from "@danielgtmn/umami-react";
 
@@ -31,7 +31,7 @@ export function CommentForm({
 	isEditing = false,
 }: CommentFormProps) {
 	const [content, setContent] = useState(initialContent);
-	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+	const { openAuthModal } = useAuthModal();
 	const { mutate: createComment, isPending: isCreatePending } =
 		useCreateComment();
 	const isAuthenticated = !!currentUser;
@@ -41,7 +41,7 @@ export function CommentForm({
 
 	const handleSubmit = () => {
 		if (!isAuthenticated) {
-			setIsAuthModalOpen(true);
+			openAuthModal();
 			return;
 		}
 
@@ -88,7 +88,7 @@ export function CommentForm({
 						<button
 							type="button"
 							className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
-							onClick={() => setIsAuthModalOpen(true)}
+							onClick={() => openAuthModal()}
 						>
 							<span className="sr-only">{m.comment_sign_in_placeholder()}</span>
 						</button>
@@ -150,10 +150,6 @@ export function CommentForm({
 					</div>
 				</div>
 			</div>
-			<AuthModal
-				isOpen={isAuthModalOpen}
-				onClose={() => setIsAuthModalOpen(false)}
-			/>
 		</div>
 	);
 }
