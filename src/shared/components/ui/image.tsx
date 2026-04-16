@@ -33,6 +33,8 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 	width?: number | string;
 	height?: number | string;
 	noBorder?: boolean;
+	/** Set to "eager" for above-the-fold images. Defaults to "lazy". */
+	loading?: "lazy" | "eager";
 }
 
 export function Image({
@@ -42,6 +44,7 @@ export function Image({
 	className,
 	alt,
 	noBorder,
+	loading = "lazy",
 	...props
 }: ImageProps) {
 	let imagePath = path;
@@ -50,14 +53,15 @@ export function Image({
 		imagePath = src.replace(`${imagesBucketUrl}/`, "");
 	}
 
+	const borderClass = noBorder ? "" : "border border-white/5 bg-neutral-900";
+
 	// Pre-signed IK URLs (from server) are used as-is; no further transformation.
-	if (src && src.startsWith(urlEndpoint)) {
+	if (src?.startsWith(urlEndpoint)) {
 		return (
 			<img
 				src={src}
-				className={`${className} ${
-					noBorder ? "" : "border border-white/5 bg-neutral-900"
-				}`}
+				loading={loading}
+				className={`${className} ${borderClass}`}
 				alt={alt}
 				{...props}
 			/>
@@ -70,9 +74,8 @@ export function Image({
 		return (
 			<img
 				src={imageUrl}
-				className={`${className} ${
-					noBorder ? "" : "border border-white/5 bg-neutral-900"
-				}`}
+				loading={loading}
+				className={`${className} ${borderClass}`}
 				alt={alt}
 				{...props}
 			/>
@@ -84,9 +87,8 @@ export function Image({
 	return (
 		<img
 			src={src}
-			className={`${className} ${
-				noBorder ? "" : "border border-white/5 bg-neutral-900"
-			}`}
+			loading={loading}
+			className={`${className} ${borderClass}`}
 			alt={alt}
 			{...props}
 		/>
