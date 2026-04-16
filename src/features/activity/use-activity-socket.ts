@@ -1,15 +1,21 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { activityKeys } from "~/features/activity/hooks";
 
 const MAX_RECONNECT_DELAY = 30000;
 const INITIAL_RECONNECT_DELAY = 1000;
 
+/**
+ * Returns whether the WebSocket is currently connected.
+ * When connected, polling for unread count is unnecessary since
+ * the socket pushes NEW_ACTIVITY events in real-time.
+ */
 export function useActivitySocket(userId: string | undefined) {
 	const queryClient = useQueryClient();
 	const wsRef = useRef<WebSocket | null>(null);
 	const reconnectDelayRef = useRef(INITIAL_RECONNECT_DELAY);
 	const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [connected, setConnected] = useState(false);
 
 	const cleanup = useCallback(() => {
 		if (reconnectTimerRef.current) {
@@ -20,6 +26,7 @@ export function useActivitySocket(userId: string | undefined) {
 			wsRef.current.close();
 			wsRef.current = null;
 		}
+		setConnected(false);
 	}, []);
 
 	useEffect(() => {
@@ -38,6 +45,7 @@ export function useActivitySocket(userId: string | undefined) {
 
 			ws.addEventListener("open", () => {
 				reconnectDelayRef.current = INITIAL_RECONNECT_DELAY;
+				setConnected(true);
 			});
 
 			ws.addEventListener("message", (event) => {
@@ -47,6 +55,7 @@ export function useActivitySocket(userId: string | undefined) {
 			});
 
 			ws.addEventListener("close", () => {
+				setConnected(false);
 				if (stopped) return;
 				reconnectTimerRef.current = setTimeout(() => {
 					reconnectTimerRef.current = null;
@@ -70,4 +79,6 @@ export function useActivitySocket(userId: string | undefined) {
 			cleanup();
 		};
 	}, [userId, queryClient, cleanup]);
+
+	return connected;
 }

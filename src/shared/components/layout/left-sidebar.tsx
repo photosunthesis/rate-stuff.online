@@ -32,7 +32,11 @@ const getHeader = () => {
 	return headers[hourSeed % headers.length];
 };
 
-export function LeftSidebar() {
+export function LeftSidebar({
+	wsConnected = false,
+}: {
+	wsConnected?: boolean;
+}) {
 	const { data: user } = useAuth();
 	const umami = useUmami();
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -56,7 +60,7 @@ export function LeftSidebar() {
 	}, []);
 
 	const { data: unreadCount } = useSuspenseQuery(
-		unreadActivityCountQueryOptions(user?.id),
+		unreadActivityCountQueryOptions(user?.id, wsConnected),
 	);
 
 	return (

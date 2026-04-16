@@ -13,14 +13,14 @@ export function MainLayout({
 	children: React.ReactNode;
 }) {
 	const { data: user } = useAuth();
-	useActivitySocket(user?.id);
+	const wsConnected = useActivitySocket(user?.id);
 
 	return (
 		<div className="min-h-screen bg-neutral-950 flex flex-col font-sans">
 			<MobileHeader />
 
 			<div className="flex flex-1 justify-center">
-				<LeftSidebar />
+				<LeftSidebar wsConnected={wsConnected} />
 
 				<div className="w-full max-w-2xl flex flex-col">
 					{showDiscoverStrip && <DiscoverStrip />}

@@ -32,7 +32,10 @@ export const activityListQueryOptions = (userId?: string) =>
 		enabled: !!userId,
 	});
 
-export const unreadActivityCountQueryOptions = (userId?: string) =>
+export const unreadActivityCountQueryOptions = (
+	userId?: string,
+	wsConnected = false,
+) =>
 	queryOptions({
 		queryKey: userId
 			? activityKeys.unreadCount(userId)
@@ -47,5 +50,8 @@ export const unreadActivityCountQueryOptions = (userId?: string) =>
 			return res.data;
 		},
 		enabled: !!userId,
-		refetchInterval: 60 * 1000,
+		// Only poll as fallback when WebSocket is disconnected.
+		// When connected, the socket pushes NEW_ACTIVITY events which
+		// trigger query invalidation in real-time.
+		refetchInterval: wsConnected ? false : 60 * 1000,
 	});
