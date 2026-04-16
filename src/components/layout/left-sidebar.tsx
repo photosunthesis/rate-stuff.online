@@ -277,7 +277,7 @@ export function LeftSidebar() {
 								if (umami) umami.track("click_create_rating");
 								setIsCreateOpen(true);
 							}}
-							className="flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm active:scale-95 cursor-pointer pointer-events-auto transition-all"
+							className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm active:scale-95 cursor-pointer pointer-events-auto transition-all"
 						>
 							<Plus className="w-4 h-4 shrink-0" />
 							{m.nav_new_rating()}
