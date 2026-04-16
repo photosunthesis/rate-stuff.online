@@ -5,10 +5,10 @@ import { formatCompactNumber } from "~/utils/numbers";
 import { useUmami } from "@danielgtmn/umami-react";
 import { AuthModal } from "~/domains/users/components/auth-modal";
 import { m } from "~/paraglide/messages";
-import type { RatingWithRelations } from "~/domains/ratings/types/display";
+import type { RatingListItem } from "~/domains/ratings/types/display";
 
 interface VoteSectionProps {
-	rating: RatingWithRelations;
+	rating: RatingListItem;
 	isAuthenticated?: boolean;
 	className?: string;
 	onVote?: () => void;

@@ -8,24 +8,36 @@ import {
 } from "~/db/schema/";
 import { and, isNull, desc, lt, eq, gte, sql, or, exists } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import type { RatingWithRelations } from "../types/display";
+import type { RatingListItem, RatingWithRelations } from "../types/display";
 import { getDatabase } from "~/db";
 import { cached } from "~/infrastructure/kv/cache";
 import { buildSignedImages, buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
-type RatingRow = Omit<typeof ratings.$inferSelect, "content"> & {
-	content?: string;
-};
+type UserRow = { id: string; name: string | null; username: string | null; image: string | null } | null;
 
-async function transformToGroupedRating(row: {
-	rating: RatingRow;
+async function transformToRatingListItem(row: {
+	rating: Omit<typeof ratings.$inferSelect, "content">;
 	stuff: typeof stuff.$inferSelect | null;
-	user: {
-		id: string;
-		name: string | null;
-		username: string | null;
-		image: string | null;
-	} | null;
+	user: UserRow;
+	tags: string[];
+	userVote: "up" | "down" | null;
+}): Promise<RatingListItem> {
+	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
+	return {
+		...row.rating,
+		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
+		stuff: row.stuff!,
+		user: row.user ? { ...row.user, image: signedAvatarUrl } : null,
+		tags: row.tags,
+		userVote: row.userVote,
+		signedImages: await buildSignedImages(row.rating.images),
+	};
+}
+
+async function transformToRatingDetail(row: {
+	rating: typeof ratings.$inferSelect;
+	stuff: typeof stuff.$inferSelect | null;
+	user: UserRow;
 	tags: string[];
 	userVote: "up" | "down" | null;
 }): Promise<RatingWithRelations> {
@@ -34,9 +46,7 @@ async function transformToGroupedRating(row: {
 		...row.rating,
 		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
 		stuff: row.stuff!,
-		user: row.user
-			? { ...row.user, image: signedAvatarUrl }
-			: null,
+		user: row.user ? { ...row.user, image: signedAvatarUrl } : null,
 		tags: row.tags,
 		userVote: row.userVote,
 		signedImages: await buildSignedImages(row.rating.images),
@@ -135,7 +145,7 @@ export const getUserRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return Promise.all(results.map(transformToGroupedRating));
+		return Promise.all(results.map(transformToRatingListItem));
 	},
 );
 
@@ -185,7 +195,7 @@ export const getFeedRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return Promise.all(results.map(transformToGroupedRating));
+		return Promise.all(results.map(transformToRatingListItem));
 	},
 );
 
@@ -205,7 +215,7 @@ export const getRatingById = createServerOnlyFn(
 			.limit(1);
 
 		const row = results[0];
-		return row ? transformToGroupedRating(row) : null;
+		return row ? transformToRatingDetail(row) : null;
 	},
 );
 

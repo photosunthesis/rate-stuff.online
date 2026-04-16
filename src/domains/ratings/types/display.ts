@@ -11,9 +11,7 @@ export type Tag = {
 };
 
 /** Returned by list queries — full content is excluded to save bandwidth. */
-export type RatingWithRelations = Omit<typeof ratings.$inferSelect, "content"> & {
-	/** Only present when fetched via getRatingById (detail view). */
-	content?: string;
+export type RatingListItem = Omit<typeof ratings.$inferSelect, "content"> & {
 	tags: string[];
 	user: {
 		id: string;
@@ -26,6 +24,9 @@ export type RatingWithRelations = Omit<typeof ratings.$inferSelect, "content"> &
 	/** Pre-signed ImageKit URLs for display. Use these in components instead of `images`. */
 	signedImages: SignedImage[];
 };
+
+/** Returned by detail queries — always includes full content. */
+export type RatingWithRelations = RatingListItem & { content: string };
 
 export const createRatingSchema = z
 	.object({

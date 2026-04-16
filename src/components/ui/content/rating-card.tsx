@@ -1,6 +1,6 @@
 import { useState, memo } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { RatingWithRelations } from "~/domains/ratings/types/display";
+import type { RatingListItem } from "~/domains/ratings/types/display";
 import { Avatar } from "~/components/ui/misc/avatar";
 import { VoteSection } from "~/components/ui/content/vote-section";
 import { ImageGrid } from "~/components/ui/content/image-grid";
@@ -14,7 +14,7 @@ import { RatingStarIcon } from "~/components/ui/misc/rating-star";
 import { m } from "~/paraglide/messages";
 
 interface RatingCardProps {
-	rating: RatingWithRelations;
+	rating: RatingListItem;
 	hideAvatar?: boolean;
 	noIndent?: boolean;
 	isAuthenticated?: boolean;

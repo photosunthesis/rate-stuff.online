@@ -37,7 +37,6 @@ import {
 import { Button } from "~/components/ui/form/button";
 import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 import { useUmami } from "@danielgtmn/umami-react";
-import { getRatingEmoji } from "~/utils/ratings";
 import { RatingStarIcon } from "~/components/ui/misc/rating-star";
 import { m } from "~/paraglide/messages";
 
@@ -80,7 +79,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 		const rating = cached?.success ? cached.data : null;
 		const stuffName = rating?.stuff?.name ?? "Rating";
 		const title = rating
-			? `${stuffName} - ${rating.score}/10 ${getRatingEmoji(rating.score)}`
+			? `${stuffName} - ${rating.score}/10`
 			: "Rating - Rate Stuff Online";
 		const description = rating
 			? excerptFromMarkdown(rating.content, 160)
@@ -161,7 +160,7 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 				},
 				datePublished: new Date(rating.createdAt).toISOString(),
 				reviewBody: excerptFromMarkdown(rating.content, 500),
-				name: `${stuffName} - ${rating.score}/10 ${getRatingEmoji(rating.score)}`,
+				name: `${stuffName} - ${rating.score}/10`,
 				reviewRating: {
 					"@type": "Rating",
 					ratingValue: rating.score,
