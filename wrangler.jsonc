@@ -61,5 +61,8 @@
 			"binding": "KV_CACHE",
 			"id": "b118cb2e631748f88d552aabf1b5f7bf"
 		}
-	]
+	],
+	"placement": {
+		"mode": "smart"
+	}
 }
