@@ -5,7 +5,7 @@ import authClient from "~/features/auth/client";
 import { useState, useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueryOptions } from "~/features/auth/hooks";
-import { maskEmail } from "~/features/auth/lib/email";
+import { maskEmail } from "~/features/auth/lib/mask-email";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
 
