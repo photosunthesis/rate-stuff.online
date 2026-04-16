@@ -16,6 +16,7 @@ import { getUserByUsername } from "~/features/auth/data";
 import { getAuth } from "~/features/auth/server";
 import { getRequest } from "@tanstack/react-start/server";
 import { setPublicCacheHeader } from "~/infrastructure/http/cache";
+import { cached } from "~/infrastructure/kv/cache";
 
 function parseCursor(cursor?: string) {
 	if (!cursor) return undefined;
@@ -90,6 +91,32 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 		try {
 			const userId = await getUserId();
 			const cursor = parseCursor(data.cursor);
+
+			// Cache the first page of the anonymous, unfiltered feed in KV
+			const isAnonymousFirstPage = !userId && !cursor && !data.tag;
+			if (isAnonymousFirstPage) {
+				const result = await cached(
+					"feed:public:first",
+					async () => {
+						const ratings = await getFeedRatings(
+							data.limit,
+							undefined,
+							undefined,
+							undefined,
+						);
+						let nextCursor: string | undefined;
+						if (ratings.length === data.limit) {
+							const last = ratings[ratings.length - 1];
+							nextCursor = makeCursor(last.createdAt, last.id);
+						}
+						return { success: true as const, data: ratings, nextCursor };
+					},
+					60, // 1 minute TTL
+				);
+				setPublicCacheHeader();
+				return result;
+			}
+
 			const ratings = await getFeedRatings(
 				data.limit,
 				cursor,
@@ -250,7 +277,7 @@ export const getRatingByIdFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentTagsFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware, generalRateLimitMiddleware])
+	.middleware([generalRateLimitMiddleware])
 	.handler(async () => {
 		try {
 			const tags = await getRecentTags(10);
@@ -267,7 +294,7 @@ export const getRecentTagsFn = createServerFn({ method: "GET" })
 	});
 
 export const getRecentStuffFn = createServerFn({ method: "GET" })
-	.middleware([authMiddleware, generalRateLimitMiddleware])
+	.middleware([generalRateLimitMiddleware])
 	.handler(async () => {
 		try {
 			const stuff = await getRecentStuff(5);

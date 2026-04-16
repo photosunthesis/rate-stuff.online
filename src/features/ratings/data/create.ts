@@ -222,6 +222,7 @@ export const createRating = createServerOnlyFn(
 				`stuff:${stuffRow.slug}`,
 				"discover:tags",
 				"discover:stuff",
+				"feed:public:first",
 				"sitemap",
 			);
 		}
@@ -377,7 +378,7 @@ export const updateRating = createServerOnlyFn(
 			.then((r) => r[0]);
 
 		if (stuffRow) {
-			invalidate(`stuff:${stuffRow.slug}`);
+			invalidate(`stuff:${stuffRow.slug}`, "feed:public:first");
 		}
 
 		return updated;
@@ -421,6 +422,7 @@ export const deleteRating = createServerOnlyFn(
 				`stuff:${stuffRow.slug}`,
 				"discover:tags",
 				"discover:stuff",
+				"feed:public:first",
 				"sitemap",
 			);
 		}
