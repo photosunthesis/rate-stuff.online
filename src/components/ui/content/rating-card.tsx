@@ -10,7 +10,7 @@ import { formatCompactNumber } from "~/utils/numbers";
 import { MessageSquare } from "lucide-react";
 import { TimeAgo } from "~/components/ui/misc/time-ago";
 import { useUmami } from "@danielgtmn/umami-react";
-import { getRatingEmoji } from "~/utils/ratings";
+import { RatingStarIcon } from "~/components/ui/misc/rating-star";
 import { m } from "~/paraglide/messages";
 
 interface RatingCardProps {
@@ -143,13 +143,11 @@ export const RatingCard = memo(function RatingCard({
 					<Link
 						to="/rating/$ratingId"
 						params={{ ratingId: rating.id }}
-						className="hover:underline text-white"
+						className="inline-flex items-center gap-2 hover:underline text-white"
 						onClick={(e) => e.stopPropagation()}
 					>
-						{rating.score}/10{" "}
-						<span className="grayscale-[0.2] select-none">
-							{getRatingEmoji(rating.score)}
-						</span>
+						<RatingStarIcon score={rating.score} size={24} />
+						{rating.score}/10
 					</Link>
 				</h3>
 			</div>

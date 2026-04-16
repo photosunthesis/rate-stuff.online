@@ -3,7 +3,7 @@ import type { StuffWithAggregates } from "../types";
 import { Lightbox } from "~/components/ui/modal/lightbox";
 import { MessageSquareQuote } from "lucide-react";
 import { ImageGrid } from "~/components/ui/content/image-grid";
-import { getRatingEmoji } from "~/utils/ratings";
+import { RatingStarIcon } from "~/components/ui/misc/rating-star";
 
 export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 	const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -26,10 +26,8 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 					<h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
 						{stuff.name}
 					</h1>
-					<div className="shrink-0 flex items-baseline gap-2">
-						<span className="text-xl md:text-3xl grayscale-[0.2] -mt-1 select-none">
-							{getRatingEmoji(Number(stuff.averageRating))}
-						</span>
+					<div className="shrink-0 flex items-center gap-2">
+						<RatingStarIcon score={Number(stuff.averageRating)} size={28} />
 						<div className="flex items-baseline gap-1">
 							<span className="text-2xl md:text-3xl font-bold text-white tabular-nums">
 								{Number(stuff.averageRating).toFixed(1)}

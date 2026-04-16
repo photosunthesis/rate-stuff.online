@@ -38,6 +38,7 @@ import { Button } from "~/components/ui/form/button";
 import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
 import { useUmami } from "@danielgtmn/umami-react";
 import { getRatingEmoji } from "~/utils/ratings";
+import { RatingStarIcon } from "~/components/ui/misc/rating-star";
 import { m } from "~/paraglide/messages";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
@@ -361,11 +362,9 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
 		<div className="flex items-start justify-between mb-3 ml-11">
 			<div className="flex items-baseline gap-2">
-				<h3 className="text-2xl md:text-3xl font-semibold text-white">
-					{rating.score}/10{" "}
-					<span className="grayscale-[0.2] select-none">
-						{getRatingEmoji(rating.score)}
-					</span>
+				<h3 className="text-2xl md:text-3xl font-semibold text-white flex items-center gap-2">
+					<RatingStarIcon score={rating.score} size={24} />
+					{rating.score}/10
 				</h3>
 			</div>
 		</div>
