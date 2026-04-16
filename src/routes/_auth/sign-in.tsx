@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/domains/users/auth/client";
-import { withTimeout } from "~/utils/timeout";
-import { AuthLayout } from "~/domains/users/components/auth-layout";
-import { SignInForm } from "~/domains/users/components/sign-in-form";
-import { authQueryOptions } from "~/domains/users/queries";
-import { isEmail } from "~/utils/strings";
+import authClient from "~/features/auth/client";
+import { withTimeout } from "~/infrastructure/http/timeout";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { SignInForm } from "~/features/auth/components/sign-in-form";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { isEmail } from "~/shared/lib/strings";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
 import { useServerFn } from "@tanstack/react-start";
-import { getEmailForUnverifiedUserFn } from "~/domains/users/functions";
+import { getEmailForUnverifiedUserFn } from "~/features/auth/api";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,

@@ -5,17 +5,17 @@ import {
 	useCanGoBack,
 } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { ratingQueryOptions } from "~/domains/ratings/queries/display";
-import { authQueryOptions } from "~/domains/users/queries";
-import { EditRatingForm } from "~/domains/ratings/components/edit-rating-form";
-import { MainLayout } from "~/components/layout/main-layout";
+import { ratingQueryOptions } from "~/features/ratings/hooks/display";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { EditRatingForm } from "~/features/ratings/components/edit-rating-form";
+import { MainLayout } from "~/shared/components/layout/main-layout";
 import {
 	useUpdateRatingMutation,
 	useUploadImageMutation,
-} from "~/domains/ratings/queries/create";
+} from "~/features/ratings/hooks/create";
 import { useState } from "react";
-import { withTimeout } from "~/utils/timeout";
-import { NotFound } from "~/components/ui/feedback/not-found";
+import { withTimeout } from "~/infrastructure/http/timeout";
+import { NotFound } from "~/shared/components/feedback/not-found";
 
 export const Route = createFileRoute("/_authed/rating/$ratingId/edit")({
 	beforeLoad: async ({ params, context }) => {

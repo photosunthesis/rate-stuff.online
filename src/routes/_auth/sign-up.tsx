@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/domains/users/auth/client";
-import { AuthLayout } from "~/domains/users/components/auth-layout";
-import { SignUpForm } from "~/domains/users/components/sign-up-form";
-import { authQueryOptions } from "~/domains/users/queries";
-import { registerSchema } from "~/domains/users/types";
-import { withTimeout } from "~/utils/timeout";
+import authClient from "~/features/auth/client";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { SignUpForm } from "~/features/auth/components/sign-up-form";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { registerSchema } from "~/features/auth/types";
+import { withTimeout } from "~/infrastructure/http/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
 

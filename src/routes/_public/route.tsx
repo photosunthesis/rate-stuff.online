@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { authQueryOptions } from "~/domains/users/queries";
+import { authQueryOptions } from "~/features/auth/hooks";
 
 export const Route = createFileRoute("/_public")({
 	component: RouteComponent,

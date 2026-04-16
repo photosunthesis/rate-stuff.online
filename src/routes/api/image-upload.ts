@@ -7,7 +7,7 @@ import {
 	ALLOWED_CONTENT_TYPES,
 } from "~/infrastructure/file-storage/service";
 import { env } from "cloudflare:workers";
-import { authMiddleware } from "~/domains/users/middleware";
+import { authMiddleware } from "~/features/auth/middleware";
 
 export const Route = createFileRoute("/api/image-upload")({
 	server: {

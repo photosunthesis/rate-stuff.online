@@ -1,13 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { NotFound } from "~/components/ui/feedback/not-found";
-import { Avatar } from "~/components/ui/misc/avatar";
-import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
-import { usePublicUserRatings } from "~/domains/ratings/queries/display";
-import { RatingCard } from "~/components/ui/content/rating-card";
+import { NotFound } from "~/shared/components/feedback/not-found";
+import { Avatar } from "~/shared/components/ui/avatar";
+import { RatingCardSkeleton } from "~/features/ratings/components/rating-card-skeleton";
+import { usePublicUserRatings } from "~/features/ratings/hooks/display";
+import { RatingCard } from "~/features/ratings/components/rating-card";
 import { useEffect, useRef, useMemo } from "react";
-import { TimeAgo } from "~/components/ui/misc/time-ago";
-import { MainLayout } from "~/components/layout/main-layout";
-import { userQueryOptions, authQueryOptions } from "~/domains/users/queries";
+import { TimeAgo } from "~/shared/components/ui/time-ago";
+import { MainLayout } from "~/shared/components/layout/main-layout";
+import { userQueryOptions, authQueryOptions } from "~/features/auth/hooks";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { m } from "~/paraglide/messages";
 
@@ -35,7 +35,9 @@ export const Route = createFileRoute("/_public/user/$username/")({
 
 		const description = user
 			? `${user.name ?? `@${user.username}`} has ${user.ratingsCount ?? 0} ${
-					(user.ratingsCount ?? 0) === "1" ? m.rating_singular() : m.rating_plural()
+					(user.ratingsCount ?? 0) === "1"
+						? m.rating_singular()
+						: m.rating_plural()
 				} on Rate Stuff Online.`
 			: `View ratings and profile for @${params.username} on Rate Stuff Online.`;
 
@@ -218,7 +220,9 @@ function UserRatingsList({
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-base">{m.user_profile_scroll_for_more()}</p>
+					<p className="text-neutral-500 text-base">
+						{m.user_profile_scroll_for_more()}
+					</p>
 				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">

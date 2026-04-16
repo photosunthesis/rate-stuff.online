@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createMiddleware } from "@tanstack/react-start";
 import { getRequest, setResponseStatus } from "@tanstack/react-start/server";
-import { getAuth } from "~/domains/users/auth/server";
+import { getAuth } from "~/features/auth/server";
 
 export const RATE_LIMITER_BINDING = {
 	GENERAL: "GENERAL",

@@ -54,7 +54,9 @@ async function signUrl(url: string): Promise<string> {
 	return `${url}?ik-s=${sig}`;
 }
 
-async function buildSignedImagesFromArray(r2Urls: string[]): Promise<SignedImage[]> {
+async function buildSignedImagesFromArray(
+	r2Urls: string[],
+): Promise<SignedImage[]> {
 	const endpoint = (
 		import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string
 	).replace(/\/$/, "");

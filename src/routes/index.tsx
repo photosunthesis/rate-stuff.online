@@ -4,14 +4,14 @@ import {
 	useSearch,
 } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect } from "react";
-import { RouteError } from "~/components/ui/feedback/route-error";
-import { RatingCardSkeleton } from "~/components/ui/content/rating-card-skeleton";
-import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/domains/users/queries";
+import { RouteError } from "~/shared/components/feedback/route-error";
+import { RatingCardSkeleton } from "~/features/ratings/components/rating-card-skeleton";
+import { MainLayout } from "~/shared/components/layout/main-layout";
+import { authQueryOptions } from "~/features/auth/hooks";
 import { useUmami } from "@danielgtmn/umami-react";
 
 const MainFeed = lazy(() =>
-	import("~/components/layout/main-feed").then((module) => ({
+	import("~/shared/components/layout/main-feed").then((module) => ({
 		default: module.MainFeed,
 	})),
 );

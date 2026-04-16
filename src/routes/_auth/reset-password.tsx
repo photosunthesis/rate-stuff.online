@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import authClient from "~/domains/users/auth/client";
-import { NotFound } from "~/components/ui/feedback/not-found";
-import { AuthLayout } from "~/domains/users/components/auth-layout";
-import { ResetPasswordForm } from "~/domains/users/components/reset-password-form";
-import { resetPasswordSchema } from "~/domains/users/types";
-import { withTimeout } from "~/utils/timeout";
+import authClient from "~/features/auth/client";
+import { NotFound } from "~/shared/components/feedback/not-found";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { ResetPasswordForm } from "~/features/auth/components/reset-password-form";
+import { resetPasswordSchema } from "~/features/auth/types";
+import { withTimeout } from "~/infrastructure/http/timeout";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
 

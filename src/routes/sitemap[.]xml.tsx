@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { stuff, users, ratings } from "~/db/schema";
+import { stuff, users, ratings } from "~/infrastructure/db/schema";
 import { isNull, desc, sql, and, gt } from "drizzle-orm";
-import { getDatabase } from "~/db";
+import { getDatabase } from "~/infrastructure/db";
 import { cached } from "~/infrastructure/kv/cache";
 
 export const Route = createFileRoute("/sitemap.xml")({

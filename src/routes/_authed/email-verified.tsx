@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AuthLayout } from "~/domains/users/components/auth-layout";
-import { Button } from "~/components/ui/form/button";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { Button } from "~/shared/components/ui/button";
 import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_authed/email-verified")({

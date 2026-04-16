@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import AppLogo from "~/components/ui/misc/app-logo";
+import AppLogo from "~/shared/components/ui/app-logo";
 
 export const Route = createFileRoute("/_public/privacy")({
 	component: RouteComponent,

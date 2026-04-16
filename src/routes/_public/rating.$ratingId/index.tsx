@@ -6,25 +6,25 @@ import {
 	useCanGoBack,
 	notFound,
 } from "@tanstack/react-router";
-import { NotFound } from "~/components/ui/feedback/not-found";
+import { NotFound } from "~/shared/components/feedback/not-found";
 import { useState, useId, useRef, useEffect } from "react";
-import { RichTextRenderer } from "~/components/ui/content/rich-text-renderer";
-import { ratingQueryOptions } from "~/domains/ratings/queries/display";
-import { Lightbox } from "~/components/ui/modal/lightbox";
-import { Avatar } from "~/components/ui/misc/avatar";
-import { ImageGrid } from "~/components/ui/content/image-grid";
-import type { RatingWithRelations } from "~/domains/ratings/types/display";
-import { TimeAgo } from "~/components/ui/misc/time-ago";
+import { RichTextRenderer } from "~/shared/components/ui/rich-text-renderer";
+import { ratingQueryOptions } from "~/features/ratings/hooks/display";
+import { Lightbox } from "~/shared/components/ui/lightbox";
+import { Avatar } from "~/shared/components/ui/avatar";
+import { ImageGrid } from "~/shared/components/ui/image-grid";
+import type { RatingWithRelations } from "~/features/ratings/types/display";
+import { TimeAgo } from "~/shared/components/ui/time-ago";
 import { ArrowLeft, MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { MainLayout } from "~/components/layout/main-layout";
-import { AuthModal } from "~/domains/users/components/auth-modal";
+import { MainLayout } from "~/shared/components/layout/main-layout";
+import { AuthModal } from "~/features/auth/components/auth-modal";
 
-import { VoteSection } from "~/components/ui/content/vote-section";
+import { VoteSection } from "~/features/ratings/components/vote-section";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/domains/users/queries";
-import { CommentsSection } from "~/domains/comments/components/comments-section";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { CommentsSection } from "~/features/comments/components/comments-section";
 import { MessageSquare } from "lucide-react";
-import { formatCompactNumber } from "~/utils/numbers";
+import { formatCompactNumber } from "~/shared/lib/format";
 import {
 	Modal,
 	ModalContent,
@@ -33,11 +33,11 @@ import {
 	ModalDescription,
 	ModalFooter,
 	ModalClose,
-} from "~/components/ui/modal/modal";
-import { Button } from "~/components/ui/form/button";
-import { useDeleteRatingMutation } from "~/domains/ratings/queries/create";
+} from "~/shared/components/ui/modal";
+import { Button } from "~/shared/components/ui/button";
+import { useDeleteRatingMutation } from "~/features/ratings/hooks/create";
 import { useUmami } from "@danielgtmn/umami-react";
-import { RatingStarIcon } from "~/components/ui/misc/rating-star";
+import { RatingStarIcon } from "~/shared/components/ui/rating-star";
 import { m } from "~/paraglide/messages";
 
 const excerptFromMarkdown = (md: string, max = 160) => {
@@ -470,7 +470,9 @@ function RouteComponent() {
 						>
 							<ArrowLeft className="h-5 w-5 shrink-0" />
 						</button>
-						<h2 className="text-lg font-semibold text-white">{m.rating_page_header()}</h2>
+						<h2 className="text-lg font-semibold text-white">
+							{m.rating_page_header()}
+						</h2>
 					</div>
 				</div>
 				<div className="px-4 pt-4">

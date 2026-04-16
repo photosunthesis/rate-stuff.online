@@ -1,14 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Avatar } from "~/components/ui/misc/avatar";
+import { Avatar } from "~/shared/components/ui/avatar";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/domains/users/queries";
-import { useSignOut } from "~/domains/users/hooks";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { useSignOut } from "~/features/auth/hooks";
 import { LogOut, ArrowUpRight, UserPen, type LucideIcon } from "lucide-react";
 import { useState } from "react";
-import { ConfirmModal } from "~/components/ui/modal/confirm-modal";
-import { MainLayout } from "~/components/layout/main-layout";
+import { ConfirmModal } from "~/shared/components/ui/confirm-modal";
+import { MainLayout } from "~/shared/components/layout/main-layout";
 import { useUmami } from "@danielgtmn/umami-react";
-import { Button } from "~/components/ui/form/button";
+import { Button } from "~/shared/components/ui/button";
 import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_authed/menu")({

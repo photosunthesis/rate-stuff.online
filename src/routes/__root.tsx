@@ -9,12 +9,9 @@ import serifFont400 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-
 import serifFont700 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-700-normal.woff2?url";
 import sansFont from "@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2?url";
 import monoFont400 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url";
-import { NotFound } from "~/components/ui/feedback/not-found";
+import { NotFound } from "~/shared/components/feedback/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
-import {
-	authQueryOptions,
-	type AuthQueryResult,
-} from "~/domains/users/queries";
+import { authQueryOptions, type AuthQueryResult } from "~/features/auth/hooks";
 import { ImageKitProvider } from "@imagekit/react";
 
 export const Route = createRootRouteWithContext<{

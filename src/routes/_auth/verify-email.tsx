@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AuthLayout } from "~/domains/users/components/auth-layout";
-import { Button } from "~/components/ui/form/button";
-import authClient from "~/domains/users/auth/client";
+import { AuthLayout } from "~/features/auth/components/auth-layout";
+import { Button } from "~/shared/components/ui/button";
+import authClient from "~/features/auth/client";
 import { useState, useEffect } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/domains/users/queries";
-import { maskEmail } from "~/utils/strings";
+import { authQueryOptions } from "~/features/auth/hooks";
+import { maskEmail } from "~/features/auth/lib/email";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
 
@@ -102,13 +102,13 @@ function VerifyEmailPage() {
 	return (
 		<AuthLayout
 			title={m.verify_email_page_title()}
-			description={m.verify_email_description({ recipient: email ? maskEmail(email) : "you" })}
+			description={m.verify_email_description({
+				recipient: email ? maskEmail(email) : "you",
+			})}
 		>
 			<div className="space-y-6">
 				<div className="bg-neutral-900/50 p-4 rounded-lg border border-neutral-800 text-sm text-neutral-400">
-					<p>
-						{m.verify_email_help()}
-					</p>
+					<p>{m.verify_email_help()}</p>
 				</div>
 
 				{message && (
@@ -127,7 +127,9 @@ function VerifyEmailPage() {
 						variant="secondary"
 						className="flex-1"
 					>
-						{canResend ? m.verify_email_resend_button() : m.verify_email_resend_cooldown({ seconds: timeRemaining })}
+						{canResend
+							? m.verify_email_resend_button()
+							: m.verify_email_resend_cooldown({ seconds: timeRemaining })}
 					</Button>
 
 					<Button

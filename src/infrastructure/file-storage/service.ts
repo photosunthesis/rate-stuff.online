@@ -100,4 +100,3 @@ export async function verifyPresignedUpload(
 export const deleteFile = async (r2Bucket: R2Bucket, key: string) => {
 	await r2Bucket.delete(key);
 };
-

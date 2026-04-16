@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { MainLayout } from "~/components/layout/main-layout";
-import { authQueryOptions } from "~/domains/users/queries";
+import { MainLayout } from "~/shared/components/layout/main-layout";
+import { authQueryOptions } from "~/features/auth/hooks";
 import {
 	useSuspenseInfiniteQuery,
 	useSuspenseQuery,
@@ -12,20 +12,20 @@ import { useMemo } from "react";
 import {
 	activityListQueryOptions,
 	activityKeys,
-} from "~/domains/activity/queries";
+} from "~/features/activity/hooks";
 import {
 	markActivitiesAsReadFn,
 	markActivityAsReadFn,
-} from "~/domains/activity/functions";
+} from "~/features/activity/api";
 import { useEffect } from "react";
-import { getDateGroupLabel } from "~/utils/datetime";
-import { TimeAgo } from "~/components/ui/misc/time-ago";
-import { Avatar } from "~/components/ui/misc/avatar";
-import { Button } from "~/components/ui/form/button";
+import { getDateGroupLabel } from "~/shared/lib/format";
+import { TimeAgo } from "~/shared/components/ui/time-ago";
+import { Avatar } from "~/shared/components/ui/avatar";
+import { Button } from "~/shared/components/ui/button";
 import { CheckCheck } from "lucide-react";
-import type { activities } from "~/db/schema";
+import type { activities } from "~/infrastructure/db/schema";
 import type { InferSelectModel } from "drizzle-orm";
-import { getPreviewText } from "~/utils/rich-text";
+import { getPreviewText } from "~/shared/lib/rich-text";
 import { m } from "~/paraglide/messages";
 
 type Activity = InferSelectModel<typeof activities> & {
@@ -213,9 +213,7 @@ function RouteComponent() {
 													<Avatar
 														src={activity.actor?.image ?? null}
 														alt={activity.actor?.name ?? "User"}
-														username={
-															activity.actor?.username ?? undefined
-														}
+														username={activity.actor?.username ?? undefined}
 													/>
 													<div className="flex-1 space-y-1">
 														<p className="text-base text-neutral-200">
@@ -228,11 +226,7 @@ function RouteComponent() {
 														</p>
 														{activity.commentContent && (
 															<div className="text-sm text-neutral-400 italic line-clamp-2">
-																"
-																{getPreviewText(
-																	activity.commentContent,
-																)}
-																"
+																"{getPreviewText(activity.commentContent)}"
 															</div>
 														)}
 														<p className="text-xs text-neutral-500 mt-1">
