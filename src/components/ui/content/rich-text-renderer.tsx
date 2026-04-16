@@ -11,15 +11,7 @@ export const RichTextRenderer = ({
 	const [html, setHtml] = useState("");
 
 	useEffect(() => {
-		let mounted = true;
-		renderContent(content).then((rendered) => {
-			if (mounted) {
-				setHtml(rendered);
-			}
-		});
-		return () => {
-			mounted = false;
-		};
+		setHtml(renderContent(content));
 	}, [content]);
 
 	return (

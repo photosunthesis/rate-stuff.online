@@ -44,7 +44,6 @@
     "dompurify": "^3.3.3",
     "drizzle-orm": "^0.45.2",
     "lucide-react": "^1.8.0",
-    "marked": "^18.0.0",
     "postgres": "^3.4.9",
     "quill": "^2.0.3",
     "quill-delta-to-html": "^0.12.1",

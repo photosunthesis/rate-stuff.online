@@ -1,8 +1,7 @@
 import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 import DOMPurify from "dompurify";
-import { marked } from "marked";
 
-export const renderContent = async (content: string): Promise<string> => {
+export const renderContent = (content: string): string => {
 	try {
 		const parsed = JSON.parse(content);
 		if (parsed.ops && Array.isArray(parsed.ops)) {
@@ -14,8 +13,7 @@ export const renderContent = async (content: string): Promise<string> => {
 		}
 	} catch {}
 
-	const html = await marked.parse(content, { breaks: true, gfm: true });
-	return DOMPurify.sanitize(html);
+	return "";
 };
 
 export const isQuillDelta = (content: string): boolean => {
@@ -36,7 +34,7 @@ export const getPlainTextFromContent = (content: string): string => {
 				.join("");
 		}
 	} catch {}
-	return content;
+	return "";
 };
 
 export const getQuillTextPreview = (
