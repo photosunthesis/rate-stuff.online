@@ -16,7 +16,10 @@ import type {
 } from "./types";
 import { createActivity } from "~/features/activity/data";
 import { getQuillTextPreview } from "~/shared/lib/rich-text";
-import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
+import {
+	buildSignedAvatarUrl,
+	batchSignItems,
+} from "~/infrastructure/imagekit/sign";
 
 export const createComment = createServerOnlyFn(
 	async (userId: string, input: CreateCommentInput) => {
@@ -315,14 +318,17 @@ export const getComments = createServerOnlyFn(
 			.orderBy(desc(comments.createdAt), desc(comments.id))
 			.limit(limit);
 
-		return Promise.all(
-			results.map(async (r) => ({
-				...r.comment,
-				user: r.user
-					? { ...r.user, image: await buildSignedAvatarUrl(r.user.image) }
-					: null,
-				userVote: r.userVote,
+		const signed = await batchSignItems(
+			results.map((r) => ({
+				avatarUrl: r.user?.image,
+				imagesJson: null,
 			})),
 		);
+
+		return results.map((r, i) => ({
+			...r.comment,
+			user: r.user ? { ...r.user, image: signed[i].signedAvatarUrl } : null,
+			userVote: r.userVote,
+		}));
 	},
 );

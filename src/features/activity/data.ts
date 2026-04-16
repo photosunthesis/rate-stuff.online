@@ -4,7 +4,7 @@ import { eq, desc, and, count, or, lt, isNull } from "drizzle-orm";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import * as Sentry from "@sentry/tanstackstart-react";
-import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
+import { batchSignItems } from "~/infrastructure/imagekit/sign";
 
 type Transaction = Parameters<
 	Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]
@@ -99,21 +99,26 @@ export const getActivities = createServerOnlyFn(
 		const hasNextPage = rows.length > limit;
 		const items = hasNextPage ? rows.slice(0, limit) : rows;
 
-		const result = await Promise.all(
-			items.map(async (row) => ({
-				...row.activity,
-				actor: row.actor
-					? { ...row.actor, image: await buildSignedAvatarUrl(row.actor.image) }
-					: null,
-				targetRatingId:
-					row.activity.entityType === "rating"
-						? row.activity.entityId
-						: row.commentRatingId,
-				commentContent:
-					(row.activity.metadata as { preview?: string })?.preview ??
-					row.commentContent,
+		const signed = await batchSignItems(
+			items.map((row) => ({
+				avatarUrl: row.actor?.image,
+				imagesJson: null,
 			})),
 		);
+
+		const result = items.map((row, i) => ({
+			...row.activity,
+			actor: row.actor
+				? { ...row.actor, image: signed[i].signedAvatarUrl }
+				: null,
+			targetRatingId:
+				row.activity.entityType === "rating"
+					? row.activity.entityId
+					: row.commentRatingId,
+			commentContent:
+				(row.activity.metadata as { preview?: string })?.preview ??
+				row.commentContent,
+		}));
 
 		const nextCursor =
 			hasNextPage && result.length > 0

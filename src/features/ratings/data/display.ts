@@ -12,6 +12,7 @@ import type { RatingListItem, RatingWithRelations } from "../types/display";
 import { getDatabase } from "~/infrastructure/db";
 import { cached } from "~/infrastructure/kv/cache";
 import {
+	batchSignItems,
 	buildSignedImages,
 	buildSignedAvatarUrl,
 } from "~/infrastructure/imagekit/sign";
@@ -23,32 +24,63 @@ type UserRow = {
 	image: string | null;
 } | null;
 
-async function transformToRatingListItem(row: {
-	rating: Omit<typeof ratings.$inferSelect, "content">;
+type RatingListRow = {
+	rating: {
+		id: string;
+		userId: string;
+		stuffId: string;
+		score: number;
+		contentPreview: string | null;
+		images: string | null;
+		createdAt: Date;
+		updatedAt: Date;
+		deletedAt: Date | null;
+		upvotesCount: number;
+		downvotesCount: number;
+		commentsCount: number;
+	};
 	stuff: typeof stuff.$inferSelect | null;
 	user: UserRow;
 	tags: string[];
 	userVote: "up" | "down" | null;
-}): Promise<RatingListItem> {
-	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
-	return {
-		...row.rating,
-		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
-		stuff: row.stuff!,
-		user: row.user ? { ...row.user, image: signedAvatarUrl } : null,
-		tags: row.tags,
-		userVote: row.userVote,
-		signedImages: await buildSignedImages(row.rating.images),
-	};
-}
+};
 
-async function transformToRatingDetail(row: {
+type RatingDetailRow = {
 	rating: typeof ratings.$inferSelect;
 	stuff: typeof stuff.$inferSelect | null;
 	user: UserRow;
 	tags: string[];
 	userVote: "up" | "down" | null;
-}): Promise<RatingWithRelations> {
+};
+
+/**
+ * Signs all avatar + rating images for a list of rating rows in a single
+ * parallel batch, then maps them to the output type.
+ */
+async function batchTransformRatingList(
+	rows: RatingListRow[],
+): Promise<RatingListItem[]> {
+	const signed = await batchSignItems(
+		rows.map((row) => ({
+			avatarUrl: row.user?.image,
+			imagesJson: row.rating.images,
+		})),
+	);
+
+	return rows.map((row, i) => ({
+		...row.rating,
+		// biome-ignore lint/style/noNonNullAssertion: Stuff will likely never be null
+		stuff: row.stuff!,
+		user: row.user ? { ...row.user, image: signed[i].signedAvatarUrl } : null,
+		tags: row.tags,
+		userVote: row.userVote,
+		signedImages: signed[i].signedImages,
+	}));
+}
+
+async function transformToRatingDetail(
+	row: RatingDetailRow,
+): Promise<RatingWithRelations> {
 	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
 	return {
 		...row.rating,
@@ -153,7 +185,7 @@ export const getUserRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return Promise.all(results.map(transformToRatingListItem));
+		return batchTransformRatingList(results);
 	},
 );
 
@@ -203,7 +235,7 @@ export const getFeedRatings = createServerOnlyFn(
 			.orderBy(desc(ratings.createdAt), desc(ratings.id))
 			.limit(limit);
 
-		return Promise.all(results.map(transformToRatingListItem));
+		return batchTransformRatingList(results);
 	},
 );
 

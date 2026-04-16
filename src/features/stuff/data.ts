@@ -12,12 +12,11 @@ import { createServerOnlyFn } from "@tanstack/react-start";
 import type { StuffRating } from "./types";
 import { cached } from "~/infrastructure/kv/cache";
 import {
-	buildSignedImages,
+	batchSignItems,
 	buildSignedImagesFromUrls,
-	buildSignedAvatarUrl,
 } from "~/infrastructure/imagekit/sign";
 
-async function transformToGroupedRating(row: {
+type StuffRatingRow = {
 	rating: typeof ratings.$inferSelect;
 	stuff: typeof stuffTable.$inferSelect | null;
 	user: {
@@ -28,16 +27,26 @@ async function transformToGroupedRating(row: {
 	} | null;
 	tags: string[];
 	userVote: "up" | "down" | null;
-}): Promise<StuffRating> {
-	const signedAvatarUrl = await buildSignedAvatarUrl(row.user?.image);
-	return {
+};
+
+async function batchTransformStuffRatings(
+	rows: StuffRatingRow[],
+): Promise<StuffRating[]> {
+	const signed = await batchSignItems(
+		rows.map((row) => ({
+			avatarUrl: row.user?.image,
+			imagesJson: row.rating.images,
+		})),
+	);
+
+	return rows.map((row, i) => ({
 		...row.rating,
 		stuff: row.stuff,
-		user: row.user ? { ...row.user, image: signedAvatarUrl } : null,
+		user: row.user ? { ...row.user, image: signed[i].signedAvatarUrl } : null,
 		tags: row.tags,
 		userVote: row.userVote,
-		signedImages: await buildSignedImages(row.rating.images),
-	};
+		signedImages: signed[i].signedImages,
+	}));
 }
 
 function getRatingsSelection(viewerId?: string) {
@@ -203,7 +212,7 @@ export const getStuffRatingsBySlug = createServerOnlyFn(
 			return { ratings: [], nextCursor: undefined };
 		}
 
-		const mapped = await Promise.all(results.map(transformToGroupedRating));
+		const mapped = await batchTransformStuffRatings(results);
 
 		let nextCursor: string | undefined;
 		if (mapped.length === limit) {

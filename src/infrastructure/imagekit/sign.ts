@@ -12,67 +12,117 @@ export type SignedImage = {
 	lightbox: string;
 };
 
-/**
- * Signs an ImageKit URL using HMAC-SHA1 with the private key.
- * Signs: path_relative_to_endpoint + "9999999999" (ImageKit's DEFAULT_TIMESTAMP).
- * No ik-t is added to the URL — ImageKit uses 9999999999 as the implicit default,
- * so the signed URL is deterministic and CDN cache hits are preserved across all users.
- *
- * If IMAGEKIT_PRIVATE_KEY is absent (local dev without the key) the URL is
- * returned unsigned as a fallback.
- */
-async function signUrl(url: string): Promise<string> {
-	const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
-	if (!privateKey) return url;
+// --- Cached key + constants ---
+const encoder = new TextEncoder();
+const endpoint = (import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string).replace(
+	/\/$/,
+	"",
+);
+const endpointWithSlash = `${endpoint}/`;
 
-	const encoder = new TextEncoder();
-	const keyMaterial = await crypto.subtle.importKey(
+let cachedKey: CryptoKey | null = null;
+
+async function getSigningKey(): Promise<CryptoKey | null> {
+	if (cachedKey) return cachedKey;
+	const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+	if (!privateKey) return null;
+	cachedKey = await crypto.subtle.importKey(
 		"raw",
 		encoder.encode(privateKey),
 		{ name: "HMAC", hash: "SHA-1" },
 		false,
 		["sign"],
 	);
+	return cachedKey;
+}
+
+// Per-request deduplication cache — same URL always produces the same signature
+const signatureCache = new Map<string, string>();
+
+/**
+ * Signs an ImageKit URL using HMAC-SHA1 with the private key.
+ * The CryptoKey is imported once and reused across calls.
+ * Identical URLs within the same request are deduplicated via an in-memory Map.
+ */
+async function signUrl(url: string): Promise<string> {
+	const cached = signatureCache.get(url);
+	if (cached) return cached;
+
+	const key = await getSigningKey();
+	if (!key) return url;
+
 	// ImageKit signing algorithm (from SDK source):
 	// 1. Remove the URL endpoint (with trailing slash) from the full URL
 	// 2. Append the DEFAULT_TIMESTAMP "9999999999" (always, even for "no expiry" URLs)
 	// 3. ik-t is NOT added to the URL when using the default timestamp
-	const endpointWithSlash = (
-		import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string
-	).replace(/\/?$/, "/");
-	const stringToSign = url.replace(endpointWithSlash, "") + "9999999999";
+	const stringToSign = `${url.replace(endpointWithSlash, "")}9999999999`;
 
 	const signatureBuffer = await crypto.subtle.sign(
 		"HMAC",
-		keyMaterial,
+		key,
 		encoder.encode(stringToSign),
 	);
 	const sig = Array.from(new Uint8Array(signatureBuffer))
 		.map((b) => b.toString(16).padStart(2, "0"))
 		.join("");
 
-	return `${url}?ik-s=${sig}`;
+	const signed = `${url}?ik-s=${sig}`;
+	signatureCache.set(url, signed);
+	return signed;
 }
+
+/**
+ * Signs multiple ImageKit URLs in a single parallel batch.
+ * This is the core optimization — instead of signing URLs one at a time,
+ * collect all URLs upfront and sign them in one Promise.all.
+ */
+async function batchSignUrls(urls: string[]): Promise<Map<string, string>> {
+	const results = new Map<string, string>();
+	if (urls.length === 0) return results;
+
+	const signed = await Promise.all(urls.map((url) => signUrl(url)));
+	for (let i = 0; i < urls.length; i++) {
+		results.set(urls[i], signed[i]);
+	}
+	return results;
+}
+
+function buildImageKitUrl(r2Url: string, transformation: string): string {
+	const path = r2Url.replace(`${imagesBucketUrl}/`, "");
+	return `${endpoint}/${transformation}/${path}`;
+}
+
+function parseImagesJson(imagesJson: string | null | undefined): string[] {
+	if (!imagesJson) return [];
+	try {
+		const parsed = JSON.parse(imagesJson);
+		return Array.isArray(parsed) ? (parsed as string[]) : [];
+	} catch {
+		return [];
+	}
+}
+
+// ---- Public API: single-item helpers (unchanged signatures) ----
 
 async function buildSignedImagesFromArray(
 	r2Urls: string[],
 ): Promise<SignedImage[]> {
-	const endpoint = (
-		import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string
-	).replace(/\/$/, "");
+	// Build all URLs that need signing
+	const urlPairs = r2Urls.map((r2Url) => ({
+		card: buildImageKitUrl(r2Url, TRANSFORMATIONS.card),
+		lightbox: buildImageKitUrl(r2Url, TRANSFORMATIONS.lightbox),
+	}));
 
-	return Promise.all(
-		r2Urls.map(async (r2Url) => {
-			const path = r2Url.replace(`${imagesBucketUrl}/`, "");
-			const cardUrl = `${endpoint}/${TRANSFORMATIONS.card}/${path}`;
-			const lightboxUrl = `${endpoint}/${TRANSFORMATIONS.lightbox}/${path}`;
+	// Sign everything in one flat batch
+	const allUrls = urlPairs.flatMap((p) => [p.card, p.lightbox]);
+	const signed = await batchSignUrls(allUrls);
 
-			return {
-				card: await signUrl(cardUrl),
-				lightbox: await signUrl(lightboxUrl),
-			};
-		}),
-	);
+	return urlPairs.map((p) => ({
+		// biome-ignore lint/style/noNonNullAssertion: batchSignUrls guarantees all input URLs have entries
+		card: signed.get(p.card)!,
+		// biome-ignore lint/style/noNonNullAssertion: batchSignUrls guarantees all input URLs have entries
+		lightbox: signed.get(p.lightbox)!,
+	}));
 }
 
 /**
@@ -83,18 +133,9 @@ async function buildSignedImagesFromArray(
 export async function buildSignedImages(
 	imagesJson: string | null | undefined,
 ): Promise<SignedImage[]> {
-	if (!imagesJson) return [];
-
-	let r2Urls: unknown;
-	try {
-		r2Urls = JSON.parse(imagesJson);
-	} catch {
-		return [];
-	}
-
-	if (!Array.isArray(r2Urls)) return [];
-
-	return buildSignedImagesFromArray(r2Urls as string[]);
+	const r2Urls = parseImagesJson(imagesJson);
+	if (r2Urls.length === 0) return [];
+	return buildSignedImagesFromArray(r2Urls);
 }
 
 /**
@@ -109,9 +150,9 @@ export async function buildSignedImagesFromUrls(
 
 /**
  * Signs an avatar image URL for use in the Image component.
- * - R2 URLs (images.rate-stuff.online) → signed ImageKit avatar URL
- * - OAuth URLs (Google, GitHub, etc.) → returned unchanged
- * - null/undefined → null
+ * - R2 URLs (images.rate-stuff.online) -> signed ImageKit avatar URL
+ * - OAuth URLs (Google, GitHub, etc.) -> returned unchanged
+ * - null/undefined -> null
  *
  * Called server-side only so the private key never reaches the client.
  */
@@ -119,16 +160,86 @@ export async function buildSignedAvatarUrl(
 	imageUrl: string | null | undefined,
 ): Promise<string | null> {
 	if (!imageUrl) return null;
-
-	// Non-R2 URLs (OAuth avatars from Google, GitHub, etc.) need no signing
 	if (!imageUrl.startsWith(imagesBucketUrl)) return imageUrl;
-
-	const endpoint = (
-		import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT as string
-	).replace(/\/$/, "");
-
-	const path = imageUrl.replace(`${imagesBucketUrl}/`, "");
-	const avatarUrl = `${endpoint}/${TRANSFORMATIONS.avatar}/${path}`;
-
+	const avatarUrl = buildImageKitUrl(imageUrl, TRANSFORMATIONS.avatar);
 	return signUrl(avatarUrl);
+}
+
+// ---- Batch API: sign all images + avatars for a list of items in one shot ----
+
+type BatchSignInput = {
+	avatarUrl: string | null | undefined;
+	imagesJson: string | null | undefined;
+};
+
+type BatchSignResult = {
+	signedAvatarUrl: string | null;
+	signedImages: SignedImage[];
+};
+
+/**
+ * Signs all avatar + rating images for an entire list of items in a single
+ * parallel batch. Use this instead of calling buildSignedAvatarUrl +
+ * buildSignedImages per item sequentially.
+ *
+ * For a feed page with 10 ratings averaging 2 images each:
+ *   Before: ~30 sequential crypto.subtle.sign calls
+ *   After:  ~30 parallel calls with deduplication + cached key
+ */
+export async function batchSignItems(
+	items: BatchSignInput[],
+): Promise<BatchSignResult[]> {
+	// 1. Collect every URL that needs signing
+	const allUrls: string[] = [];
+	const itemMeta: {
+		avatarIkUrl: string | null;
+		imagePairs: { card: string; lightbox: string }[];
+	}[] = [];
+
+	for (const item of items) {
+		// Avatar
+		let avatarIkUrl: string | null = null;
+		if (item.avatarUrl?.startsWith(imagesBucketUrl)) {
+			avatarIkUrl = buildImageKitUrl(item.avatarUrl, TRANSFORMATIONS.avatar);
+			allUrls.push(avatarIkUrl);
+		}
+
+		// Rating images
+		const r2Urls = parseImagesJson(item.imagesJson);
+		const pairs = r2Urls.map((r2Url) => ({
+			card: buildImageKitUrl(r2Url, TRANSFORMATIONS.card),
+			lightbox: buildImageKitUrl(r2Url, TRANSFORMATIONS.lightbox),
+		}));
+		for (const p of pairs) {
+			allUrls.push(p.card, p.lightbox);
+		}
+
+		itemMeta.push({ avatarIkUrl, imagePairs: pairs });
+	}
+
+	// 2. Sign everything in one parallel batch
+	const signed = await batchSignUrls(allUrls);
+
+	// 3. Distribute results back
+	return items.map((item, i) => {
+		const meta = itemMeta[i];
+
+		let signedAvatarUrl: string | null = null;
+		if (meta.avatarIkUrl) {
+			// biome-ignore lint/style/noNonNullAssertion: batchSignUrls guarantees all input URLs have entries
+			signedAvatarUrl = signed.get(meta.avatarIkUrl)!;
+		} else if (item.avatarUrl) {
+			// Non-R2 avatar (OAuth) — return as-is
+			signedAvatarUrl = item.avatarUrl;
+		}
+
+		const signedImages: SignedImage[] = meta.imagePairs.map((p) => ({
+			// biome-ignore lint/style/noNonNullAssertion: batchSignUrls guarantees all input URLs have entries
+			card: signed.get(p.card)!,
+			// biome-ignore lint/style/noNonNullAssertion: batchSignUrls guarantees all input URLs have entries
+			lightbox: signed.get(p.lightbox)!,
+		}));
+
+		return { signedAvatarUrl, signedImages };
+	});
 }
