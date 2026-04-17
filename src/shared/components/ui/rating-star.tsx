@@ -39,6 +39,10 @@ export function RatingStarIcon({
 	const clipY = 24 * (1 - fillPercent);
 	const clipHeight = 24 * fillPercent;
 
+	// Fatter star: outer radius 10, inner radius 5.5 (ratio 0.55), center (12, 12)
+	const points =
+		"12 2 15.23 7.55 21.51 8.91 17.23 13.70 17.88 20.09 12 17.5 6.12 20.09 6.77 13.70 2.49 8.91 8.77 7.55";
+
 	return (
 		<svg
 			width={size}
@@ -53,18 +57,21 @@ export function RatingStarIcon({
 					<rect x="0" y={clipY} width="24" height={clipHeight} />
 				</clipPath>
 			</defs>
-			{/* Outline — always yellow */}
+			{/* Outline — neutral gray */}
 			<polygon
-				points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+				points={points}
 				fill="none"
-				stroke="#10b981"
-				strokeWidth="0.75"
+				stroke="#a3a3a3"
+				strokeWidth="1"
 				strokeLinejoin="round"
 			/>
-			{/* Fill — revealed from bottom to top */}
+			{/* Fill — green with matching stroke so it fully covers the gray outline below the waterline */}
 			<polygon
-				points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+				points={points}
 				fill="#10b981"
+				stroke="#10b981"
+				strokeWidth="1"
+				strokeLinejoin="round"
 				clipPath={`url(#${id})`}
 			/>
 		</svg>
