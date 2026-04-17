@@ -44,7 +44,7 @@ export function RightSidebar() {
 								</p>
 							</div>
 
-							<div className="bg-neutral-800/30 rounded-xl border border-neutral-800/50 overflow-hidden">
+							<div className="bg-neutral-800/30 rounded-2xl border border-neutral-800/50 overflow-hidden">
 								{stuffFade.showSkeleton ? (
 									<div className={stuffFade.skeletonClass}>
 										{skeletonStuffKeys.map((sKey, i) => (
@@ -113,7 +113,7 @@ export function RightSidebar() {
 													// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
 													i
 												}`}
-												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-md`}
+												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-full`}
 											/>
 										))}
 									</div>
@@ -128,7 +128,7 @@ export function RightSidebar() {
 													key={tag.name}
 													to="/"
 													search={{ tag: tag.name }}
-													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 												>
 													#{tag.name}
 												</Link>

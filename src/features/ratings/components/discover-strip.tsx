@@ -57,7 +57,7 @@ export function DiscoverStrip() {
 						{skeletonStuffKeys.map((sKey) => (
 							<div
 								key={sKey}
-								className="inline-flex items-center bg-neutral-800/40 rounded-md animate-skeleton-pulse"
+								className="inline-flex items-center bg-neutral-800/40 rounded-full animate-skeleton-pulse"
 							>
 								<div className="h-6 w-24" />
 							</div>
@@ -68,7 +68,7 @@ export function DiscoverStrip() {
 									// biome-ignore lint/suspicious/noArrayIndexKey: safe
 									i
 								}`}
-								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-md animate-skeleton-pulse`}
+								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-full animate-skeleton-pulse`}
 							/>
 						))}
 					</>
@@ -79,7 +79,7 @@ export function DiscoverStrip() {
 								key={stuff.id}
 								to="/stuff/$stuffSlug"
 								params={{ stuffSlug: stuff.slug }}
-								className="inline-flex items-center py-0.5 pl-0.5 pr-2 bg-neutral-800 text-white text-base font-medium rounded-md"
+								className="inline-flex items-center py-0.5 pl-0.5 pr-3 bg-neutral-800 text-white text-base font-medium rounded-full"
 							>
 								<div className="flex items-center mr-0.5">
 									<div className="w-5 h-5 bg-neutral-800 rounded-sm shrink-0 flex items-center justify-center">
@@ -99,7 +99,7 @@ export function DiscoverStrip() {
 									key={tag.name}
 									to="/"
 									search={{ tag: tag.name }}
-									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-base font-medium transition-colors rounded-md"
+									className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-base font-medium transition-colors rounded-full"
 								>
 									#{tag.name}
 								</Link>

@@ -52,7 +52,7 @@ export function ImageGrid({
 	if (displayImages.length === 1) {
 		return (
 			<div
-				className={`overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800 aspect-video ${className}`}
+				className={`overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800 aspect-video ${className}`}
 			>
 				{renderImage(displayImages[0])}
 			</div>
@@ -67,8 +67,8 @@ export function ImageGrid({
 						key={image.card}
 						className={`flex-1 overflow-hidden border border-neutral-700/50 bg-neutral-800 ${
 							idx === 0
-								? "rounded-xl rounded-tr-sm rounded-br-sm"
-								: "rounded-xl rounded-tl-sm rounded-bl-sm"
+								? "rounded-2xl rounded-tr-md rounded-br-md"
+								: "rounded-2xl rounded-tl-md rounded-bl-md"
 						}`}
 						style={{ aspectRatio: "1 / 1" }}
 					>
@@ -85,31 +85,31 @@ export function ImageGrid({
 				className={`aspect-video grid grid-cols-2 grid-rows-2 gap-1.5 overflow-hidden ${className}`}
 			>
 				<div
-					className="row-span-2 overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800"
+					className="row-span-2 overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800"
 					style={{
-						borderTopRightRadius: "6px",
-						borderBottomRightRadius: "6px",
+						borderTopRightRadius: "8px",
+						borderBottomRightRadius: "8px",
 					}}
 				>
 					{renderImage(displayImages[0])}
 				</div>
 
 				<div
-					className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800"
+					className="overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800"
 					style={{
-						borderTopLeftRadius: "6px",
-						borderBottomLeftRadius: "6px",
-						borderBottomRightRadius: "6px",
+						borderTopLeftRadius: "8px",
+						borderBottomLeftRadius: "8px",
+						borderBottomRightRadius: "8px",
 					}}
 				>
 					{renderImage(displayImages[1])}
 				</div>
 				<div
-					className="overflow-hidden rounded-xl border border-neutral-700/50 bg-neutral-800"
+					className="overflow-hidden rounded-2xl border border-neutral-700/50 bg-neutral-800"
 					style={{
-						borderTopLeftRadius: "6px",
-						borderBottomLeftRadius: "6px",
-						borderTopRightRadius: "6px",
+						borderTopLeftRadius: "8px",
+						borderBottomLeftRadius: "8px",
+						borderTopRightRadius: "8px",
 					}}
 				>
 					{renderImage(displayImages[2])}
@@ -121,28 +121,28 @@ export function ImageGrid({
 	// 4 images: 2x2 grid
 	const cornerStyles: React.CSSProperties[] = [
 		{
-			borderTopLeftRadius: "0.75rem",
-			borderTopRightRadius: "6px",
-			borderBottomLeftRadius: "6px",
-			borderBottomRightRadius: "6px",
+			borderTopLeftRadius: "1rem",
+			borderTopRightRadius: "8px",
+			borderBottomLeftRadius: "8px",
+			borderBottomRightRadius: "8px",
 		},
 		{
-			borderTopRightRadius: "0.75rem",
-			borderTopLeftRadius: "6px",
-			borderBottomLeftRadius: "6px",
-			borderBottomRightRadius: "6px",
+			borderTopRightRadius: "1rem",
+			borderTopLeftRadius: "8px",
+			borderBottomLeftRadius: "8px",
+			borderBottomRightRadius: "8px",
 		},
 		{
-			borderBottomLeftRadius: "0.75rem",
-			borderTopLeftRadius: "6px",
-			borderTopRightRadius: "6px",
-			borderBottomRightRadius: "6px",
+			borderBottomLeftRadius: "1rem",
+			borderTopLeftRadius: "8px",
+			borderTopRightRadius: "8px",
+			borderBottomRightRadius: "8px",
 		},
 		{
-			borderBottomRightRadius: "0.75rem",
-			borderTopLeftRadius: "6px",
-			borderTopRightRadius: "6px",
-			borderBottomLeftRadius: "6px",
+			borderBottomRightRadius: "1rem",
+			borderTopLeftRadius: "8px",
+			borderTopRightRadius: "8px",
+			borderBottomLeftRadius: "8px",
 		},
 	];
 

@@ -100,14 +100,14 @@ export function LeftSidebar({
 					<div className="space-y-2 px-3">
 						<Link
 							to="/sign-up"
-							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center"
+							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full transition-colors text-base flex items-center justify-center"
 						>
 							{m.nav_create_account()}
 						</Link>
 						<Link
 							to="/sign-in"
 							search={{ redirect: undefined }}
-							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
+							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-full border border-neutral-700 transition-colors text-base flex items-center justify-center"
 						>
 							{m.nav_sign_in()}
 						</Link>
@@ -118,7 +118,7 @@ export function LeftSidebar({
 							<Link
 								to="/"
 								activeOptions={{ exact: true }}
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "home" });
@@ -130,7 +130,7 @@ export function LeftSidebar({
 
 							<Link
 								to="/activity"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami)
@@ -150,7 +150,7 @@ export function LeftSidebar({
 							</Link>
 							<Link
 								to="/menu"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-xl transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "menu" });
@@ -168,7 +168,7 @@ export function LeftSidebar({
 									if (umami) umami.track("click_create_rating");
 									setIsCreateOpen(true);
 								}}
-								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
 								<PenLine className="w-5 h-5 shrink-0" />
 								<span className="truncate">{m.nav_create_rating()}</span>
@@ -179,7 +179,7 @@ export function LeftSidebar({
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-xl transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-full transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-6 h-6" />
 								<span className="font-medium">{m.nav_sign_out()}</span>
@@ -199,7 +199,7 @@ export function LeftSidebar({
 							to="/"
 							activeOptions={{ exact: true }}
 							title={m.nav_home()}
-							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "home" });
@@ -211,7 +211,7 @@ export function LeftSidebar({
 						<Link
 							to="/activity"
 							title={m.nav_activity()}
-							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami)
@@ -231,7 +231,7 @@ export function LeftSidebar({
 						<Link
 							to="/menu"
 							title={m.nav_menu()}
-							className="p-2 text-neutral-500 hover:text-white rounded-lg transition-colors"
+							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "menu" });
 							}}
@@ -249,7 +249,7 @@ export function LeftSidebar({
 							}}
 							aria-label={m.nav_create_rating()}
 							title={m.nav_create_rating()}
-							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow"
+							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
 						>
 							<PenLine className="w-5 h-5" />
 						</button>
@@ -258,7 +258,7 @@ export function LeftSidebar({
 					<button
 						type="button"
 						onClick={() => setIsSignOutOpen(true)}
-						className="mb-6 p-2 text-neutral-500 hover:text-red-400 rounded-lg transition-colors"
+						className="mb-6 p-2 text-neutral-500 hover:text-red-400 rounded-full transition-colors"
 					>
 						<LogOut className="w-6 h-6" />
 					</button>
@@ -281,7 +281,7 @@ export function LeftSidebar({
 							type="button"
 							onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 							aria-label="Back to top"
-							className={`w-10 h-10 rounded-xl border border-neutral-700 bg-neutral-950 text-neutral-400 active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center ${scrolledDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+							className={`w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-400 active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center ${scrolledDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
 						>
 							<ArrowUp className="w-4 h-4" />
 						</button>
@@ -292,7 +292,7 @@ export function LeftSidebar({
 								setIsCreateOpen(true);
 							}}
 							aria-label={m.nav_create_rating()}
-							className="w-14 h-14 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center shadow-lg"
+							className="w-14 h-14 rounded-full backdrop-blur-xl bg-emerald-500/85 hover:bg-emerald-500 text-white active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center shadow-lg"
 						>
 							<PenLine className="w-5 h-5" />
 						</button>
@@ -370,7 +370,7 @@ export function LeftSidebar({
 					type="button"
 					onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 					aria-label="Back to top"
-					className={`md:hidden fixed bottom-20 left-4 w-10 h-10 rounded-xl border border-neutral-700 bg-neutral-950 text-neutral-400 active:scale-95 cursor-pointer z-40 transition-all flex items-center justify-center ${scrolledDown ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+					className={`md:hidden fixed bottom-20 left-4 w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-400 active:scale-95 cursor-pointer z-40 transition-all flex items-center justify-center ${scrolledDown ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
 				>
 					<ArrowUp className="w-4 h-4" />
 				</button>

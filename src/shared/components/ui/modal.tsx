@@ -160,8 +160,8 @@ export function ModalContent({
 				${widthClasses[width]} 
 				${
 					mobileVariant === "bottom-sheet"
-						? "h-dvh md:h-auto md:max-h-[85vh] rounded-t-xl md:rounded-xl md:border md:border-neutral-800"
-						: "h-auto max-h-[90vh] rounded-xl m-4 border border-neutral-800"
+						? "h-dvh md:h-auto md:max-h-[85vh] rounded-t-2xl md:rounded-2xl md:border md:border-neutral-800"
+						: "h-auto max-h-[90vh] rounded-2xl m-4 border border-neutral-800"
 				} 
 				bg-neutral-950 shadow-2xl 
 				${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"} 
@@ -252,7 +252,7 @@ export function ModalClose({ className = "", ...props }: ModalCloseProps) {
 			type="button"
 			onClick={onClose}
 			disabled={preventClose}
-			className={`absolute right-4 top-4 z-50 rounded-sm opacity-70 ring-offset-neutral-950 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer ${className}`}
+			className={`absolute right-4 top-4 z-50 rounded-full opacity-70 ring-offset-neutral-950 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer ${className}`}
 			{...props}
 		>
 			<X className="h-4 w-4" />

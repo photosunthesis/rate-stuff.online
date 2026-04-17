@@ -21,8 +21,8 @@ export function Button({
 		"w-full font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-950";
 
 	const sizeStyles = {
-		sm: "px-2.5 py-1.5 text-base rounded-xl",
-		md: "px-4 py-2 text-base rounded-xl",
+		sm: "px-2.5 py-1.5 text-base rounded-full",
+		md: "px-4 py-2 text-base rounded-full",
 	};
 
 	const variantStyles = {

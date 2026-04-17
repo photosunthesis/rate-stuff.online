@@ -187,7 +187,7 @@ export const RatingCard = memo(function RatingCard({
 									e.stopPropagation();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
-								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+								className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 							>
 								#{tag}
 							</Link>

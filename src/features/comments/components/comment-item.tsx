@@ -178,13 +178,13 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 											e.stopPropagation();
 											setIsMenuOpen(!isMenuOpen);
 										}}
-										className="p-1 text-neutral-500 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
+										className="p-1 text-neutral-500 hover:text-white transition-colors hover:bg-neutral-800 rounded-full"
 									>
 										<MoreVertical className="w-4 h-4" />
 									</button>
 
 									{isMenuOpen && (
-										<div className="absolute left-0 bottom-full mb-1 w-32 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl overflow-hidden z-10">
+										<div className="absolute left-0 bottom-full mb-1 w-32 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden z-10">
 											<button
 												type="button"
 												onClick={() => {

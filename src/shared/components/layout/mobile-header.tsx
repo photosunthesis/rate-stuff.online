@@ -33,14 +33,14 @@ export function MobileHeader() {
 				<div className="flex items-center gap-2">
 					<Link
 						to="/sign-up"
-						className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center"
+						className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full transition-colors text-base flex items-center justify-center"
 					>
 						{m.nav_create_account()}
 					</Link>
 					<Link
 						to="/sign-in"
 						search={{ redirect: undefined }}
-						className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
+						className="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-full border border-neutral-700 transition-colors text-base flex items-center justify-center"
 					>
 						{m.nav_sign_in()}
 					</Link>
