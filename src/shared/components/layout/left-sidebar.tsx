@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { m } from "~/paraglide/messages";
 import AppLogo from "~/shared/components/ui/app-logo";
-import { Home, Bell, Menu, LogOut, PenLine, ArrowUp } from "lucide-react";
+import { Home, Bell, Menu, LogOut, PenLine, ArrowUp, User } from "lucide-react";
 import { CreateRatingModal } from "~/features/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/shared/components/ui/confirm-modal";
 import { useSignOut } from "~/features/auth/hooks";
@@ -148,6 +148,21 @@ export function LeftSidebar({
 								</div>
 								<span className="font-medium">{m.nav_activity()}</span>
 							</Link>
+							{user?.username && (
+								<Link
+									to="/user/$username"
+									params={{ username: user.username }}
+									className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+									activeProps={{ className: "text-white font-bold" }}
+									onClick={() => {
+										if (umami)
+											umami.track("click_nav", { destination: "profile" });
+									}}
+								>
+									<User className="w-6 h-6" />
+									<span className="font-medium">{m.nav_profile()}</span>
+								</Link>
+							)}
 							<Link
 								to="/menu"
 								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
@@ -228,6 +243,21 @@ export function LeftSidebar({
 								)}
 							</div>
 						</Link>
+						{user?.username && (
+							<Link
+								to="/user/$username"
+								params={{ username: user.username }}
+								title={m.nav_profile()}
+								className="p-2 text-neutral-400 hover:text-white rounded-full transition-colors"
+								activeProps={{ className: "text-white" }}
+								onClick={() => {
+									if (umami)
+										umami.track("click_nav", { destination: "profile" });
+								}}
+							>
+								<User className="w-6 h-6" />
+							</Link>
+						)}
 						<Link
 							to="/menu"
 							title={m.nav_menu()}
@@ -299,7 +329,7 @@ export function LeftSidebar({
 					</div>
 
 					<nav
-						className="relative flex items-center justify-center gap-6 border-t border-white/8 overflow-hidden pointer-events-auto"
+						className="relative flex items-center border-t border-white/8 overflow-hidden pointer-events-auto"
 						style={{
 							backgroundColor: "rgba(10, 10, 13, 0.78)",
 							backdropFilter: "blur(24px) saturate(180%)",
@@ -319,7 +349,7 @@ export function LeftSidebar({
 						<Link
 							to="/"
 							activeOptions={{ exact: true }}
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
+							className="flex-1 flex flex-col items-center justify-center gap-0.5 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "home" });
@@ -331,7 +361,7 @@ export function LeftSidebar({
 
 						<Link
 							to="/activity"
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
+							className="flex-1 flex flex-col items-center justify-center gap-0.5 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami)
@@ -350,9 +380,25 @@ export function LeftSidebar({
 							<span className="text-xs font-medium">{m.nav_activity()}</span>
 						</Link>
 
+						{user?.username && (
+							<Link
+								to="/user/$username"
+								params={{ username: user.username }}
+								className="flex-1 flex flex-col items-center justify-center gap-0.5 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
+								activeProps={{ className: "text-white" }}
+								onClick={() => {
+									if (umami)
+										umami.track("click_nav", { destination: "profile" });
+								}}
+							>
+								<User className="w-6 h-6" />
+								<span className="text-xs font-medium">{m.nav_profile()}</span>
+							</Link>
+						)}
+
 						<Link
 							to="/menu"
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
+							className="flex-1 flex flex-col items-center justify-center gap-0.5 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "menu" });

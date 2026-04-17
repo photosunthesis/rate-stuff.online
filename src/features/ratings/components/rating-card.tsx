@@ -15,18 +15,14 @@ import { m } from "~/paraglide/messages";
 
 interface RatingCardProps {
 	rating: RatingListItem;
-	hideAvatar?: boolean;
 	noIndent?: boolean;
 	isAuthenticated?: boolean;
-	variant?: "default" | "userProfile";
 }
 
 export const RatingCard = memo(function RatingCard({
 	rating,
-	hideAvatar,
 	noIndent,
 	isAuthenticated = false,
-	variant = "default",
 }: RatingCardProps) {
 	const navigate = useNavigate();
 	const { openAuthModal } = useAuthModal();
@@ -44,11 +40,7 @@ export const RatingCard = memo(function RatingCard({
 	return (
 		// biome-ignore lint/a11y/useSemanticElements: <div> with role="link" for card clickable area
 		<div
-			className={`block cursor-pointer ${
-				variant === "userProfile"
-					? "hover:bg-neutral-800/50 transition-colors px-5 pt-3 pb-2"
-					: "p-4"
-			}`}
+			className="block cursor-pointer p-4"
 			role="link"
 			tabIndex={0}
 			onClick={() =>
@@ -66,76 +58,51 @@ export const RatingCard = memo(function RatingCard({
 				}
 			}}
 		>
-			{variant === "default" ? (
-				<div className="flex items-start gap-3">
-					{!hideAvatar && (
-						<Avatar
-							src={image ?? null}
-							alt={displayText}
-							size="sm"
-							className="shrink-0"
-							username={rating.user?.username ?? undefined}
-						/>
-					)}
-					<div className="flex-1 min-w-0">
-						<div className="text-base leading-normal py-1.5">
-							{rating.user ? (
-								<Link
-									to="/user/$username"
-									params={{ username: usernameHandle }}
-									className="font-medium text-white hover:underline"
-									onClick={(e) => e.stopPropagation()}
-								>
-									{displayText}
-								</Link>
-							) : (
-								<span className="font-medium text-neutral-300">
-									{displayText}
-								</span>
-							)}
-							<span className="text-neutral-400">{m.rating_card_rated()}</span>
+			<div className="flex items-start gap-3">
+				<Avatar
+					src={image ?? null}
+					alt={displayText}
+					size="sm"
+					className="shrink-0"
+					username={rating.user?.username ?? undefined}
+				/>
+				<div className="flex-1 min-w-0">
+					<div className="text-base leading-normal py-1.5">
+						{rating.user ? (
 							<Link
-								to="/stuff/$stuffSlug"
-								params={{ stuffSlug: rating.stuff.slug }}
-								className="text-white hover:underline font-medium"
+								to="/user/$username"
+								params={{ username: usernameHandle }}
+								className="font-medium text-white hover:underline"
 								onClick={(e) => e.stopPropagation()}
 							>
-								{rating.stuff.name}
+								{displayText}
 							</Link>
-							<span className="text-neutral-400"> • </span>
-							<TimeAgo date={rating.createdAt} className="text-neutral-400" />
-							{rating.updatedAt &&
-								new Date(rating.updatedAt).getTime() >
-									new Date(rating.createdAt).getTime() + 1000 && (
-									<span className="text-neutral-400">
-										{m.rating_card_edited()}
-									</span>
-								)}
-						</div>
+						) : (
+							<span className="font-medium text-neutral-300">
+								{displayText}
+							</span>
+						)}
+						<span className="text-neutral-400">{m.rating_card_rated()}</span>
+						<Link
+							to="/stuff/$stuffSlug"
+							params={{ stuffSlug: rating.stuff.slug }}
+							className="text-white hover:underline font-medium"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{rating.stuff.name}
+						</Link>
+						<span className="text-neutral-400"> • </span>
+						<TimeAgo date={rating.createdAt} className="text-neutral-400" />
+						{rating.updatedAt &&
+							new Date(rating.updatedAt).getTime() >
+								new Date(rating.createdAt).getTime() + 1000 && (
+								<span className="text-neutral-400">
+									{m.rating_card_edited()}
+								</span>
+							)}
 					</div>
 				</div>
-			) : (
-				<div className="text-base text-neutral-400 mb-2 leading-relaxed">
-					<span className="text-neutral-300">
-						{m.rating_card_a_rating_of()}
-					</span>{" "}
-					<Link
-						to="/stuff/$stuffSlug"
-						params={{ stuffSlug: rating.stuff.slug }}
-						className="text-white hover:underline font-medium"
-						onClick={(e) => e.stopPropagation()}
-					>
-						{rating.stuff.name}
-					</Link>{" "}
-					<span>•</span>{" "}
-					<TimeAgo date={rating.createdAt} className="text-neutral-400" />
-					{rating.updatedAt &&
-						new Date(rating.updatedAt).getTime() >
-							new Date(rating.createdAt).getTime() + 1000 && (
-							<span>{m.rating_card_edited()}</span>
-						)}
-				</div>
-			)}
+			</div>
 
 			<div className="flex items-baseline gap-2 mb-3">
 				<h3

@@ -1,10 +1,11 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { NotFound } from "~/shared/components/feedback/not-found";
 import { Avatar } from "~/shared/components/ui/avatar";
 import { RatingCardSkeleton } from "~/features/ratings/components/rating-card-skeleton";
 import { usePublicUserRatings } from "~/features/ratings/hooks/display";
 import { RatingCard } from "~/features/ratings/components/rating-card";
 import { useEffect, useRef, useMemo } from "react";
+import { Pencil } from "lucide-react";
 import { TimeAgo } from "~/shared/components/ui/time-ago";
 import { MainLayout } from "~/shared/components/layout/main-layout";
 import { userQueryOptions, authQueryOptions } from "~/features/auth/hooks";
@@ -165,17 +166,16 @@ function UserRatingsList({
 
 	if (isLoading) {
 		return (
-			<div className="-mx-2">
-				<div className="divide-y divide-neutral-800">
-					{[1, 2, 3, 4, 5].map((i) => (
-						<RatingCardSkeleton
-							key={`skeleton-${i}`}
-							noIndent
-							hideAvatar
-							showImage={i % 2 === 0}
-						/>
-					))}
-				</div>
+			<div>
+				{[0, 1, 2, 3, 4].map((i) => (
+					<div
+						key={i}
+						className={i === 0 ? "-mx-4" : "-mx-4 border-t border-neutral-800"}
+						style={{ opacity: Math.max(0.05, 1 - i * 0.15) }}
+					>
+						<RatingCardSkeleton variant="rating" showImage={i % 2 === 0} />
+					</div>
+				))}
 			</div>
 		);
 	}
@@ -198,16 +198,19 @@ function UserRatingsList({
 
 	return (
 		<>
-			<div className="-mx-4 divide-y divide-neutral-800">
-				{allRatings.map((rating) => (
-					<div key={rating.id} className="px-4">
-						<RatingCard
-							key={rating.id}
-							rating={rating}
-							noIndent
-							isAuthenticated={isAuthenticated}
-							variant="userProfile"
-						/>
+			<div>
+				{allRatings.map((rating, idx) => (
+					<div
+						key={rating.id}
+						className={
+							idx === 0
+								? "-mx-4 hover:bg-neutral-800/50 transition-colors"
+								: "-mx-4 border-t border-neutral-800 hover:bg-neutral-800/50 transition-colors"
+						}
+					>
+						<div className="px-4">
+							<RatingCard rating={rating} isAuthenticated={isAuthenticated} />
+						</div>
 					</div>
 				))}
 			</div>
@@ -243,17 +246,31 @@ function RouteComponent() {
 	if (!publicUser) return <NotFound />;
 
 	const ratingsCount = publicUser.ratingsCount ?? 0;
+	const isOwnProfile = user?.id === publicUser.id;
 
 	return (
 		<MainLayout>
 			<div className="flex items-center gap-4 m-4">
 				<div>
-					<Avatar
-						src={publicUser.image ?? null}
-						alt={publicUser.name ?? `@${publicUser.username}`}
-						size="lg"
-						className="md:w-24 md:h-24"
-					/>
+					<div className="relative inline-block">
+						<Avatar
+							src={publicUser.image ?? null}
+							alt={publicUser.name ?? `@${publicUser.username}`}
+							size="lg"
+							className="md:w-24 md:h-24"
+						/>
+						{isOwnProfile && (
+							<Link
+								to="/set-up-profile"
+								search={{ redirect: `/user/${publicUser.username}` }}
+								aria-label={m.menu_edit_profile()}
+								title={m.menu_edit_profile()}
+								className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-200 hover:bg-neutral-700 hover:text-white transition-colors flex items-center justify-center shadow-md"
+							>
+								<Pencil className="w-3.5 h-3.5" />
+							</Link>
+						)}
+					</div>
 					{publicUser.name ? (
 						<div className="baseline flex flex-row mt-2 items-baseline gap-1.5">
 							<span className="text-white font-semibold text-lg">

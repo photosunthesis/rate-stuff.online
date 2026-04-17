@@ -1,14 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Avatar } from "~/shared/components/ui/avatar";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { authQueryOptions } from "~/features/auth/hooks";
 import { useSignOut } from "~/features/auth/hooks";
-import { LogOut, ArrowUpRight, UserPen, type LucideIcon } from "lucide-react";
+import { LogOut, ArrowUpRight, type LucideIcon } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "~/shared/components/ui/confirm-modal";
 import { MainLayout } from "~/shared/components/layout/main-layout";
 import { useUmami } from "@danielgtmn/umami-react";
-import { Button } from "~/shared/components/ui/button";
 import { m } from "~/paraglide/messages";
 
 export const Route = createFileRoute("/_authed/menu")({
@@ -22,12 +18,9 @@ export const Route = createFileRoute("/_authed/menu")({
 });
 
 function RouteComponent() {
-	const { data: user } = useSuspenseQuery(authQueryOptions());
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const [signOut] = useSignOut();
 	const umami = useUmami();
-
-	if (!user) return null;
 
 	return (
 		<MainLayout>
@@ -46,42 +39,6 @@ function RouteComponent() {
 
 			<div className="w-full flex flex-col min-h-full">
 				<div className="px-4 py-8 flex flex-col flex-1 max-w-3xl mx-auto w-full gap-8">
-					{/* User Profile Section */}
-					<div className="flex items-center justify-between gap-4 px-2">
-						<Link
-							to="/user/$username"
-							params={{
-								username: user.username as string,
-							}}
-							className="flex items-center gap-4 min-w-0 group"
-						>
-							<Avatar
-								src={user.image ?? null}
-								alt={user.name || "User"}
-								size="lg"
-								className="group-hover:opacity-80 transition-opacity"
-							/>
-							<div className="flex flex-col min-w-0">
-								<h3 className="text-lg font-semibold text-white truncate">
-									{user.name || "User"}
-								</h3>
-								<p className="text-base text-neutral-300 truncate">
-									@{user.username}
-								</p>
-							</div>
-						</Link>
-						<Link to="/set-up-profile" search={{ redirect: "/menu" }}>
-							<Button
-								variant="secondary"
-								size="sm"
-								className="w-auto! shrink-0 shadow-lg flex items-center gap-1.5"
-							>
-								<UserPen className="w-4 h-4" />
-								{m.menu_edit_profile()}
-							</Button>
-						</Link>
-					</div>
-
 					{/* Main Settings Card */}
 					<div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden shadow-2xl">
 						<SettingsRow

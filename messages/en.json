@@ -3,6 +3,7 @@
 
   "nav_home": "Home",
   "nav_activity": "Activity",
+  "nav_profile": "Profile",
   "nav_menu": "Menu",
   "nav_create_rating": "Create Rating",
   "nav_sign_in": "Sign In",
@@ -166,7 +167,6 @@
 
   "rating_page_header": "Rating",
   "rating_card_rated": " rated ",
-  "rating_card_a_rating_of": "A rating of",
   "rating_card_edited": " (edited)",
   "rating_singular": "rating",
   "rating_plural": "ratings",
