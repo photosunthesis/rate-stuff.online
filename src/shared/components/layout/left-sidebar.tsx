@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { m } from "~/paraglide/messages";
 import AppLogo from "~/shared/components/ui/app-logo";
-import { Home, Bell, Menu, LogOut, Plus } from "lucide-react";
+import { Home, Bell, Menu, LogOut, PenLine } from "lucide-react";
 import { CreateRatingModal } from "~/features/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/shared/components/ui/confirm-modal";
 import { useSignOut } from "~/features/auth/hooks";
@@ -168,8 +168,8 @@ export function LeftSidebar({
 								}}
 								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
-								<Plus className="w-5 h-5 shrink-0" />
-								<span className="truncate">{m.nav_new_rating()}</span>
+								<PenLine className="w-5 h-5 shrink-0" />
+								<span className="truncate">{m.nav_create_rating()}</span>
 							</button>
 						</div>
 
@@ -245,11 +245,11 @@ export function LeftSidebar({
 								if (umami) umami.track("click_create_rating");
 								setIsCreateOpen(true);
 							}}
-							aria-label={m.nav_new_rating()}
-							title={m.nav_new_rating()}
-							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow"
+							aria-label={m.nav_create_rating()}
+							title={m.nav_create_rating()}
+							className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow"
 						>
-							<Plus className="w-6 h-6" />
+							<PenLine className="w-5 h-5" />
 						</button>
 					</div>
 
@@ -274,17 +274,17 @@ export function LeftSidebar({
 					}}
 				>
 					{/* FAB */}
-					<div className="flex justify-end pr-4 pb-2 pointer-events-none">
+					<div className="flex justify-end pr-6 pb-4 pointer-events-none">
 						<button
 							type="button"
 							onClick={() => {
 								if (umami) umami.track("click_create_rating");
 								setIsCreateOpen(true);
 							}}
-							className="flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm active:scale-95 cursor-pointer pointer-events-auto transition-all"
+							aria-label={m.nav_create_rating()}
+							className="w-14 h-14 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center shadow-lg"
 						>
-							<Plus className="w-4 h-4 shrink-0" />
-							{m.nav_new_rating()}
+							<PenLine className="w-5 h-5" />
 						</button>
 					</div>
 
