@@ -1,6 +1,7 @@
 import { MobileHeader } from "./mobile-header";
 import { LeftSidebar } from "./left-sidebar";
 import { RightSidebar } from "./right-sidebar";
+import { BackToTopButton } from "./back-to-top-button";
 import { DiscoverStrip } from "~/features/ratings/components/discover-strip";
 import { useActivitySocket } from "~/features/activity/use-activity-socket";
 import { useAuth } from "~/features/auth/hooks";
@@ -34,6 +35,7 @@ export function MainLayout({
 
 				<RightSidebar />
 			</div>
+			<BackToTopButton />
 		</div>
 	);
 }

@@ -8,8 +8,23 @@ export function MobileHeader() {
 	if (user != null) return null;
 
 	return (
-		<div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-lg border-t border-white/5">
-			<div className="absolute inset-0 bg-linear-to-t from-neutral-950/95 via-neutral-950/60 to-neutral-950/10 -z-10" />
+		<div
+			className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-white/8 overflow-hidden"
+			style={{
+				backgroundColor: "rgba(10, 10, 13, 0.78)",
+				backdropFilter: "blur(24px) saturate(180%)",
+				WebkitBackdropFilter: "blur(24px) saturate(180%)",
+				paddingBottom: "env(safe-area-inset-bottom, 0)",
+			}}
+		>
+			<div
+				className="absolute inset-0 pointer-events-none"
+				style={{
+					backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`,
+					opacity: 0.07,
+					mixBlendMode: "overlay",
+				}}
+			/>
 			<div className="w-full max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<AppLogo size={30} />

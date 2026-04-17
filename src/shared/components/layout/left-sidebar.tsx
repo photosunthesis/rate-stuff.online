@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { m } from "~/paraglide/messages";
 import AppLogo from "~/shared/components/ui/app-logo";
-import { Home, Bell, Menu, LogOut, PenLine } from "lucide-react";
+import { Home, Bell, Menu, LogOut, PenLine, ArrowUp } from "lucide-react";
 import { CreateRatingModal } from "~/features/ratings/components/create-rating-modal";
 import { ConfirmModal } from "~/shared/components/ui/confirm-modal";
 import { useSignOut } from "~/features/auth/hooks";
@@ -47,12 +47,14 @@ export function LeftSidebar({
 	const [signOut] = useSignOut();
 
 	const [navVisible, setNavVisible] = useState(true);
+	const [scrolledDown, setScrolledDown] = useState(false);
 	const lastScrollY = useRef(0);
 
 	useEffect(() => {
 		const onScroll = () => {
 			const y = window.scrollY;
 			setNavVisible(y < lastScrollY.current || y < 50);
+			setScrolledDown(y > 150);
 			lastScrollY.current = y;
 		};
 		window.addEventListener("scroll", onScroll, { passive: true });
@@ -273,8 +275,16 @@ export function LeftSidebar({
 							: "translateY(calc(4rem + env(safe-area-inset-bottom, 0px)))",
 					}}
 				>
-					{/* FAB */}
-					<div className="flex justify-end pr-6 pb-4 pointer-events-none">
+					{/* FAB row */}
+					<div className="flex items-end justify-between px-6 pb-4 pointer-events-none">
+						<button
+							type="button"
+							onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+							aria-label="Back to top"
+							className={`w-10 h-10 rounded-xl border border-neutral-700 bg-neutral-950 text-neutral-400 active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center ${scrolledDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+						>
+							<ArrowUp className="w-4 h-4" />
+						</button>
 						<button
 							type="button"
 							onClick={() => {
@@ -353,6 +363,17 @@ export function LeftSidebar({
 						</Link>
 					</nav>
 				</div>
+			)}
+
+			{!isAuthenticated && (
+				<button
+					type="button"
+					onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+					aria-label="Back to top"
+					className={`md:hidden fixed bottom-20 left-4 w-10 h-10 rounded-xl border border-neutral-700 bg-neutral-950 text-neutral-400 active:scale-95 cursor-pointer z-40 transition-all flex items-center justify-center ${scrolledDown ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+				>
+					<ArrowUp className="w-4 h-4" />
+				</button>
 			)}
 		</>
 	);
