@@ -182,7 +182,7 @@ function UserRatingsList({
 
 	if (error) {
 		return (
-			<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+			<div className="px-4 pt-8 pb-12 text-center text-neutral-400">
 				Failed to load ratings. Please try again.
 			</div>
 		);
@@ -191,7 +191,7 @@ function UserRatingsList({
 	if (allRatings.length === 0) {
 		return (
 			<div className="text-center py-12">
-				<p className="text-neutral-500">{m.user_profile_no_ratings()}</p>
+				<p className="text-neutral-400">{m.user_profile_no_ratings()}</p>
 			</div>
 		);
 	}
@@ -214,19 +214,19 @@ function UserRatingsList({
 
 			{isFetchingNextPage ? (
 				<div className="-mx-4 border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-400">
 						Loading more...
 					</div>
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-base">
+					<p className="text-neutral-400 text-base">
 						{m.user_profile_scroll_for_more()}
 					</p>
 				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-400">
 						All caught up \(￣▽￣)/
 					</div>
 				</div>
@@ -259,7 +259,7 @@ function RouteComponent() {
 							<span className="text-white font-semibold text-lg">
 								{publicUser.name}
 							</span>
-							<span className="text-neutral-500 text-md font-normal">
+							<span className="text-neutral-400 text-md font-normal">
 								(@{publicUser.username})
 							</span>
 						</div>
@@ -268,7 +268,7 @@ function RouteComponent() {
 							@{publicUser.username}
 						</div>
 					)}
-					<div className="text-neutral-500 text-base">
+					<div className="text-neutral-400 text-base">
 						{publicUser.createdAt ? (
 							<>
 								Joined <TimeAgo date={publicUser.createdAt} /> · {ratingsCount}{" "}

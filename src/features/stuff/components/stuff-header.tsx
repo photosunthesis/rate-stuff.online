@@ -32,13 +32,13 @@ export function StuffHeader({ stuff }: { stuff: StuffWithAggregates }) {
 							<span className="text-2xl md:text-3xl font-bold text-white tabular-nums">
 								{Number(stuff.averageRating).toFixed(1)}
 							</span>
-							<span className="text-base text-neutral-500 font-medium">
+							<span className="text-base text-neutral-400 font-medium">
 								/ 10
 							</span>
 						</div>
 					</div>
 				</div>
-				<div className="flex items-center gap-1.5 text-base md:text-base font-medium text-neutral-400">
+				<div className="flex items-center gap-1.5 text-base md:text-base font-medium text-neutral-300">
 					<MessageSquareQuote className="w-4 h-4" />
 					<span>
 						{stuff.ratingCount} {stuff.ratingCount === 1 ? "rating" : "ratings"}

@@ -74,7 +74,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 					<h1 className="text-5xl text-white font-semibold">500</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-base mx-auto leading-[1.6] mb-4">
+				<p className="text-neutral-400 text-base mx-auto leading-[1.6] mb-4">
 					{error?.message || m.error_message()}
 				</p>
 

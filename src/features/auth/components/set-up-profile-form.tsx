@@ -169,7 +169,7 @@ export function SetUpProfileForm({
 									/>
 								) : (
 									<UserIcon
-										className="w-12 h-12 text-neutral-400"
+										className="w-12 h-12 text-neutral-300"
 										aria-hidden="true"
 									/>
 								)}
@@ -219,7 +219,7 @@ export function SetUpProfileForm({
 										validationErrors?.name
 									}
 								/>
-								<p className="text-neutral-500 text-xs mt-1.5">
+								<p className="text-neutral-400 text-xs mt-1.5">
 									{m.setup_profile_char_count({
 										count: field.state.value?.length || 0,
 									})}

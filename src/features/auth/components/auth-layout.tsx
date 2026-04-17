@@ -25,14 +25,14 @@ export function AuthLayout({
 						<AppLogo size={30} />
 					</div>
 					<h1 className="text-2xl font-semibold text-white mb-2">{title}</h1>
-					<p className="text-neutral-400">{description}</p>
+					<p className="text-neutral-300">{description}</p>
 				</div>
 
 				{children}
 
 				{footerText && footerLinkText && footerLinkTo && (
 					<div className="mt-6 mb-8 md:mb-4 text-left">
-						<p className="text-neutral-400 text-base">
+						<p className="text-neutral-300 text-base">
 							{footerText}{" "}
 							<Link
 								to={footerLinkTo}

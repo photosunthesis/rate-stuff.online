@@ -85,9 +85,9 @@ export function RightSidebar() {
 													</p>
 												</div>
 
-												<div className="text-neutral-500">
+												<div className="text-neutral-400">
 													<TrendingUp
-														className="w-4 h-4 text-neutral-400"
+														className="w-4 h-4 text-neutral-300"
 														aria-hidden
 													/>
 												</div>
@@ -128,7 +128,7 @@ export function RightSidebar() {
 													key={tag.name}
 													to="/"
 													search={{ tag: tag.name }}
-													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 												>
 													#{tag.name}
 												</Link>
@@ -137,7 +137,7 @@ export function RightSidebar() {
 													key={tag.name}
 													type="button"
 													onClick={() => openAuthModal()}
-													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 												>
 													#{tag.name}
 												</button>

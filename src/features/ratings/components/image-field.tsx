@@ -145,9 +145,9 @@ export function ImageField({
 					>
 						<Upload
 							size={20}
-							className={dragActive ? "text-emerald-500" : "text-neutral-500"}
+							className={dragActive ? "text-emerald-500" : "text-neutral-400"}
 						/>
-						<span className="text-xs text-neutral-500 mt-2">
+						<span className="text-xs text-neutral-400 mt-2">
 							{m.image_field_add()}
 						</span>
 						<input

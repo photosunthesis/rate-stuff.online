@@ -61,7 +61,7 @@ export function NotFound() {
 					<h1 className="text-5xl text-white font-semibold">404</h1>
 					<AppLogo size={40} />
 				</div>
-				<p className="text-neutral-500 text-base mx-auto leading-[1.6]">
+				<p className="text-neutral-400 text-base mx-auto leading-[1.6]">
 					{m.not_found_description()}
 				</p>
 				<div className="mt-4">

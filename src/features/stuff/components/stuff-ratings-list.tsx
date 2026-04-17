@@ -121,7 +121,7 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 
 	if (error) {
 		return (
-			<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+			<div className="px-4 pt-8 pb-12 text-center text-neutral-400">
 				Failed to load ratings. Please try again.
 			</div>
 		);
@@ -130,7 +130,7 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 	if (allRatings.length === 0 && !isFetchingNextPage) {
 		return (
 			<div className="text-center py-12">
-				<p className="text-neutral-500">No ratings yet.</p>
+				<p className="text-neutral-400">No ratings yet.</p>
 			</div>
 		);
 	}
@@ -157,17 +157,17 @@ export function StuffRatingsList({ slug }: { slug: string }) {
 
 			{isFetchingNextPage ? (
 				<div className="border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-400">
 						Loading more...
 					</div>
 				</div>
 			) : hasNextPage ? (
 				<div ref={observerTarget} className="py-4 text-center">
-					<p className="text-neutral-500 text-base">Scroll for more...</p>
+					<p className="text-neutral-400 text-base">Scroll for more...</p>
 				</div>
 			) : (
 				<div className="border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-neutral-400">
 						All caught up \(￣▽￣)/
 					</div>
 				</div>

@@ -183,7 +183,7 @@ export function CompactMarkdownEditor({
 			{label && (
 				<label
 					htmlFor={id}
-					className="block text-xs font-medium text-neutral-400 mb-1.5"
+					className="block text-xs font-medium text-neutral-300 mb-1.5"
 				>
 					{label}
 				</label>
@@ -199,7 +199,7 @@ export function CompactMarkdownEditor({
 					<div className="flex-1 w-full relative overflow-y-auto">
 						<div
 							ref={editorRef}
-							className="h-full bg-neutral-950 text-neutral-200 [&_.ql-editor]:px-3 [&_.ql-editor]:py-3 [&_.ql-editor]:prose [&_.ql-editor]:prose-invert [&_.ql-editor]:prose-sm [&_.ql-editor]:max-w-none [&_.ql-editor]:focus:outline-none [&_.ql-blank::before]:text-neutral-500 [&_.ql-blank::before]:not-italic"
+							className="h-full bg-neutral-950 text-neutral-200 [&_.ql-editor]:px-3 [&_.ql-editor]:py-3 [&_.ql-editor]:prose [&_.ql-editor]:prose-invert [&_.ql-editor]:prose-sm [&_.ql-editor]:max-w-none [&_.ql-editor]:focus:outline-none [&_.ql-blank::before]:text-neutral-400 [&_.ql-blank::before]:not-italic"
 						/>
 					</div>
 
@@ -236,7 +236,7 @@ export function CompactMarkdownEditor({
 								title={m.editor_bullet_list()}
 							/>
 						</div>
-						<div className="text-xs text-neutral-500 font-mono">
+						<div className="text-xs text-neutral-400 font-mono">
 							{charCount}/{charLimit}
 						</div>
 					</div>
@@ -330,7 +330,7 @@ const ToolbarButton = ({
 			className={`p-2 sm:p-1.5 rounded transition-all duration-200 ${
 				isActive
 					? "text-emerald-500"
-					: "text-neutral-400 hover:text-neutral-300"
+					: "text-neutral-300 hover:text-neutral-300"
 			}`}
 			title={title}
 		>

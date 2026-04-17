@@ -230,7 +230,7 @@ export function SignUpForm({
 									mergedValidationErrors.terms
 								}
 								label={
-									<span className="text-neutral-400">
+									<span className="text-neutral-300">
 										{m.sign_up_agree_prefix()}{" "}
 										<a
 											href="/terms"

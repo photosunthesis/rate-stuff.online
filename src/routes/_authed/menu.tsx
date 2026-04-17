@@ -65,7 +65,7 @@ function RouteComponent() {
 								<h3 className="text-lg font-semibold text-white truncate">
 									{user.name || "User"}
 								</h3>
-								<p className="text-base text-neutral-400 truncate">
+								<p className="text-base text-neutral-300 truncate">
 									@{user.username}
 								</p>
 							</div>
@@ -129,7 +129,7 @@ function RouteComponent() {
 					<div className="flex-1" />
 
 					<div className="flex flex-col items-center justify-center pt-4 pb-2 space-y-2">
-						<span className="text-xs font-medium text-neutral-500">
+						<span className="text-xs font-medium text-neutral-400">
 							{m.copyright({ year: new Date().getFullYear() })}
 						</span>
 					</div>
@@ -163,10 +163,10 @@ const SettingsRow = ({
 			<div className="flex items-center gap-3">
 				<div className="flex flex-col">
 					<span className="text-md font-medium text-white">{label}</span>
-					<span className="text-sm text-neutral-400">{description}</span>
+					<span className="text-sm text-neutral-300">{description}</span>
 				</div>
 			</div>
-			<Icon className="w-5 h-5 text-neutral-500" />
+			<Icon className="w-5 h-5 text-neutral-400" />
 		</>
 	);
 

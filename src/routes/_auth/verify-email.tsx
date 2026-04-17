@@ -107,7 +107,7 @@ function VerifyEmailPage() {
 			})}
 		>
 			<div className="space-y-6">
-				<div className="bg-neutral-900/50 p-4 rounded-lg border border-neutral-800 text-sm text-neutral-400">
+				<div className="bg-neutral-900/50 p-4 rounded-lg border border-neutral-800 text-sm text-neutral-300">
 					<p>{m.verify_email_help()}</p>
 				</div>
 

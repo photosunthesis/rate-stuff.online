@@ -61,7 +61,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 
 	if (error) {
 		return (
-			<div className="p-4 text-center text-neutral-500">
+			<div className="p-4 text-center text-neutral-400">
 				{m.feed_error_loading({ message: error.message })}
 			</div>
 		);
@@ -75,7 +75,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 						<div className="flex items-center gap-3">
 							<button
 								type="button"
-								className="flex items-center justify-center p-2 rounded-full text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+								className="flex items-center justify-center p-2 rounded-full text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
 								onClick={(e) => {
 									e.stopPropagation();
 									if (canGoBack) {
@@ -121,7 +121,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 
 			{isFetchingNextPage ? (
 				<div className="-mx-4 border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-400">
 						Loading more...
 					</div>
 				</div>
@@ -131,7 +131,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 				</div>
 			) : (
 				<div className="-mx-4 border-t border-neutral-800">
-					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-500">
+					<div className="px-4 pt-8 pb-12 text-center text-sm text-neutral-400">
 						{m.feed_all_caught_up()}
 					</div>
 				</div>

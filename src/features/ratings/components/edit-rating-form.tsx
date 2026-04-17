@@ -164,7 +164,7 @@ export function EditRatingForm({
 						<h3 className="text-lg font-medium text-white">
 							{initialData.stuffName}
 						</h3>
-						<div className="text-xs text-neutral-500">
+						<div className="text-xs text-neutral-400">
 							{m.rating_edit_stuff_readonly()}
 						</div>
 					</div>

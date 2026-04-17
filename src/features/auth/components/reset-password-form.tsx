@@ -49,7 +49,7 @@ export function ResetPasswordForm({
 						<h3 className="text-lg font-medium text-white mb-2">
 							{m.reset_password_success_title()}
 						</h3>
-						<p className="text-neutral-400 text-base">
+						<p className="text-neutral-300 text-base">
 							{m.reset_password_success_description()}
 						</p>
 					</div>

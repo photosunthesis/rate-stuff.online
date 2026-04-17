@@ -89,11 +89,11 @@ export const RatingCard = memo(function RatingCard({
 									{displayText}
 								</Link>
 							) : (
-								<span className="font-medium text-neutral-400">
+								<span className="font-medium text-neutral-300">
 									{displayText}
 								</span>
 							)}
-							<span className="text-neutral-500">{m.rating_card_rated()}</span>
+							<span className="text-neutral-400">{m.rating_card_rated()}</span>
 							<Link
 								to="/stuff/$stuffSlug"
 								params={{ stuffSlug: rating.stuff.slug }}
@@ -102,12 +102,12 @@ export const RatingCard = memo(function RatingCard({
 							>
 								{rating.stuff.name}
 							</Link>
-							<span className="text-neutral-500"> • </span>
-							<TimeAgo date={rating.createdAt} className="text-neutral-500" />
+							<span className="text-neutral-400"> • </span>
+							<TimeAgo date={rating.createdAt} className="text-neutral-400" />
 							{rating.updatedAt &&
 								new Date(rating.updatedAt).getTime() >
 									new Date(rating.createdAt).getTime() + 1000 && (
-									<span className="text-neutral-500">
+									<span className="text-neutral-400">
 										{m.rating_card_edited()}
 									</span>
 								)}
@@ -115,8 +115,8 @@ export const RatingCard = memo(function RatingCard({
 					</div>
 				</div>
 			) : (
-				<div className="text-base text-neutral-500 mb-2 leading-relaxed">
-					<span className="text-neutral-400">
+				<div className="text-base text-neutral-400 mb-2 leading-relaxed">
+					<span className="text-neutral-300">
 						{m.rating_card_a_rating_of()}
 					</span>{" "}
 					<Link
@@ -128,7 +128,7 @@ export const RatingCard = memo(function RatingCard({
 						{rating.stuff.name}
 					</Link>{" "}
 					<span>•</span>{" "}
-					<TimeAgo date={rating.createdAt} className="text-neutral-500" />
+					<TimeAgo date={rating.createdAt} className="text-neutral-400" />
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
@@ -187,7 +187,7 @@ export const RatingCard = memo(function RatingCard({
 									e.stopPropagation();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
-								className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+								className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 							>
 								#{tag}
 							</Link>
@@ -200,7 +200,7 @@ export const RatingCard = memo(function RatingCard({
 									openAuthModal();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
-								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+								className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 							>
 								#{tag}
 							</button>
@@ -214,7 +214,7 @@ export const RatingCard = memo(function RatingCard({
 
 				<button
 					type="button"
-					className="flex items-center gap-2 text-neutral-400 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+					className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
 					onClick={(e) => {
 						e.stopPropagation();
 						navigate({
@@ -224,13 +224,13 @@ export const RatingCard = memo(function RatingCard({
 					}}
 				>
 					<div className="relative">
-						<MessageSquare className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
+						<MessageSquare className="w-5 h-5 text-neutral-400 group-hover:text-neutral-300 transition-colors" />
 						{rating.commentsCount === 0 && (
 							<div className="absolute top-0 right-0 w-1.5 h-1.5 bg-neutral-500 rounded-full border-2 border-neutral-900 translate-x-[2px] -translate-y-[2px] opacity-0" />
 						)}
 					</div>
 					{rating.commentsCount > 0 && (
-						<span className="text-base font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+						<span className="text-base font-semibold text-neutral-400 group-hover:text-neutral-300 transition-colors">
 							{formatCompactNumber(rating.commentsCount)}
 						</span>
 					)}

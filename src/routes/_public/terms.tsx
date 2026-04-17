@@ -221,7 +221,7 @@ function RouteComponent() {
 				.
 			</p>
 
-			<div className="mt-6 text-base text-neutral-500">
+			<div className="mt-6 text-base text-neutral-400">
 				Last updated: April 13, 2026
 			</div>
 		</main>

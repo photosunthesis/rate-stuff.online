@@ -72,7 +72,7 @@ export function CommentList({ ratingId, currentUser }: CommentListProps) {
 
 	if (error) {
 		return (
-			<div className="text-center py-8 text-neutral-500 text-base">
+			<div className="text-center py-8 text-neutral-400 text-base">
 				{m.comment_error_loading()}
 			</div>
 		);

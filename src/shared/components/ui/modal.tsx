@@ -220,7 +220,7 @@ export function ModalDescription({
 	...props
 }: ModalDescriptionProps) {
 	return (
-		<p className={`text-base text-neutral-400 ${className}`} {...props}>
+		<p className={`text-base text-neutral-300 ${className}`} {...props}>
 			{children}
 		</p>
 	);
@@ -252,7 +252,7 @@ export function ModalClose({ className = "", ...props }: ModalCloseProps) {
 			type="button"
 			onClick={onClose}
 			disabled={preventClose}
-			className={`absolute right-4 top-4 z-50 rounded-full opacity-70 ring-offset-neutral-950 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 text-neutral-400 hover:text-neutral-200 cursor-pointer ${className}`}
+			className={`absolute right-4 top-4 z-50 rounded-full opacity-70 ring-offset-neutral-950 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-neutral-800 text-neutral-300 hover:text-neutral-200 cursor-pointer ${className}`}
 			{...props}
 		>
 			<X className="h-4 w-4" />

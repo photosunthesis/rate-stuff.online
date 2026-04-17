@@ -121,7 +121,7 @@ export function CommentForm({
 									<button
 										type="button"
 										onClick={onCancel}
-										className="px-3 py-1.5 text-base font-semibold text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
 									>
 										{m.comment_cancel()}
 									</button>

@@ -202,7 +202,7 @@ export function CreateRatingForm({
 
 					<div>
 						{showCacheNotification && (
-							<div className="text-xs text-neutral-500 animate-in fade-in slide-in-from-bottom-1 duration-300 mb-3">
+							<div className="text-xs text-neutral-400 animate-in fade-in slide-in-from-bottom-1 duration-300 mb-3">
 								{m.rating_create_cache_notice()}
 							</div>
 						)}

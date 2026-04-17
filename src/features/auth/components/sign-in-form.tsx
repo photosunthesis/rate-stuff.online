@@ -139,7 +139,7 @@ export function SignInForm({
 								<div className="flex mt-2">
 									<a
 										href="/forget-password"
-										className="text-xs text-neutral-400 hover:text-white transition-colors"
+										className="text-xs text-neutral-300 hover:text-white transition-colors"
 									>
 										{m.sign_in_forgot_password()}
 									</a>

@@ -105,7 +105,7 @@ export function TagSelector({
 				>
 					Tags
 				</label>
-				<span className="text-xs text-neutral-500">
+				<span className="text-xs text-neutral-400">
 					{m.tag_selector_count({ count: selectedTags.length, max: maxTags })}
 				</span>
 			</div>
@@ -152,7 +152,7 @@ export function TagSelector({
 						className="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
 						autoComplete="off"
 					/>
-					<Search size={16} className="text-neutral-500" />
+					<Search size={16} className="text-neutral-400" />
 				</div>
 				{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
 
@@ -160,7 +160,7 @@ export function TagSelector({
 					{selectedTags.map((tag) => (
 						<span
 							key={tag}
-							className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+							className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 						>
 							#{tag}
 							<button
@@ -178,7 +178,7 @@ export function TagSelector({
 				{isOpen && searchInput && selectedTags.length < maxTags && (
 					<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
 						{isLoading ? (
-							<div className="p-4 text-center text-neutral-500 text-base">
+							<div className="p-4 text-center text-neutral-400 text-base">
 								{m.stuff_selector_searching()}
 							</div>
 						) : (
@@ -190,7 +190,7 @@ export function TagSelector({
 										onClick={() => handleAddTag(tag.name)}
 										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center justify-between"
 									>
-										<span className="text-neutral-400">#{tag.name}</span>
+										<span className="text-neutral-300">#{tag.name}</span>
 										{m.tag_selector_add()}
 									</button>
 								))}
@@ -199,7 +199,7 @@ export function TagSelector({
 									<button
 										type="button"
 										onClick={() => handleAddTag(searchInput)}
-										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-neutral-400 hover:text-neutral-300 border-t border-neutral-800"
+										className="w-full text-left px-4 py-2 hover:bg-neutral-800 transition-colors flex items-center gap-2 text-neutral-300 hover:text-neutral-300 border-t border-neutral-800"
 									>
 										<Plus size={14} />
 										<span>{m.tag_selector_create({ tag: searchInput })}</span>

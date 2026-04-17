@@ -258,9 +258,9 @@ const RatingHeader = ({
 							{displayText}
 						</Link>
 					) : (
-						<span className="font-medium text-neutral-400">{displayText}</span>
+						<span className="font-medium text-neutral-300">{displayText}</span>
 					)}
-					<span className="text-neutral-500">{m.rating_card_rated()}</span>
+					<span className="text-neutral-400">{m.rating_card_rated()}</span>
 					<Link
 						to="/stuff/$stuffSlug"
 						params={{ stuffSlug: rating.stuff.slug }}
@@ -269,12 +269,12 @@ const RatingHeader = ({
 					>
 						{rating.stuff.name}
 					</Link>
-					<span className="text-neutral-500"> • </span>
-					<TimeAgo date={rating.createdAt} className="text-neutral-500" />
+					<span className="text-neutral-400"> • </span>
+					<TimeAgo date={rating.createdAt} className="text-neutral-400" />
 					{rating.updatedAt &&
 						new Date(rating.updatedAt).getTime() >
 							new Date(rating.createdAt).getTime() + 1000 && (
-							<span className="text-neutral-500">{m.rating_card_edited()}</span>
+							<span className="text-neutral-400">{m.rating_card_edited()}</span>
 						)}
 				</div>
 			</div>
@@ -287,7 +287,7 @@ const RatingHeader = ({
 							e.stopPropagation();
 							setIsMenuOpen(!isMenuOpen);
 						}}
-						className="p-1.5 text-neutral-400 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
+						className="p-1.5 text-neutral-300 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
 					>
 						<MoreVertical className="w-5 h-5" />
 					</button>
@@ -401,7 +401,7 @@ const TagsList = ({
 						key={tag}
 						to="/"
 						search={{ tag }}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
 						onClick={() => onTagClick?.(tag)}
 					>
 						#{tag}
@@ -414,7 +414,7 @@ const TagsList = ({
 							openAuthModal();
 							onTagClick?.(tag);
 						}}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-400 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
 					>
 						#{tag}
 					</button>
@@ -452,7 +452,7 @@ function RouteComponent() {
 					<div className="flex items-center gap-3">
 						<button
 							type="button"
-							className="flex items-center justify-center p-2 rounded-xl text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+							className="flex items-center justify-center p-2 rounded-xl text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
 							onClick={(e) => {
 								e.stopPropagation();
 								if (canGoBack) {
@@ -493,16 +493,16 @@ function RouteComponent() {
 						<VoteSection rating={ratingTyped} isAuthenticated={!!user} />
 						<button
 							type="button"
-							className="flex items-center gap-2 text-neutral-400 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+							className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
 							onClick={() => {
 								document
 									.getElementById(commentsSectionId)
 									?.scrollIntoView({ behavior: "smooth" });
 							}}
 						>
-							<MessageSquare className="w-5 h-5 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
+							<MessageSquare className="w-5 h-5 text-neutral-400 group-hover:text-neutral-300 transition-colors" />
 							{rating.commentsCount > 0 && (
-								<span className="text-base font-semibold text-neutral-500 group-hover:text-neutral-300 transition-colors">
+								<span className="text-base font-semibold text-neutral-400 group-hover:text-neutral-300 transition-colors">
 									{formatCompactNumber(rating.commentsCount)}
 								</span>
 							)}

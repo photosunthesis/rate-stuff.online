@@ -132,19 +132,19 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 										{displayText}
 									</Link>
 								) : (
-									<span className="text-neutral-400 text-base font-medium">
+									<span className="text-neutral-300 text-base font-medium">
 										{displayText}
 									</span>
 								)}
-								<span className="text-neutral-500 text-base">•</span>
+								<span className="text-neutral-400 text-base">•</span>
 								<TimeAgo
 									date={comment.createdAt}
-									className="text-neutral-500 text-base text-nowrap"
+									className="text-neutral-400 text-base text-nowrap"
 								/>
 								{comment.updatedAt &&
 									comment.updatedAt.getTime() >
 										comment.createdAt.getTime() + 1000 && (
-										<span className="text-neutral-500 text-base">
+										<span className="text-neutral-400 text-base">
 											{m.comment_edited()}
 										</span>
 									)}
@@ -178,7 +178,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 											e.stopPropagation();
 											setIsMenuOpen(!isMenuOpen);
 										}}
-										className="p-1 text-neutral-500 hover:text-white transition-colors hover:bg-neutral-800 rounded-full"
+										className="p-1 text-neutral-400 hover:text-white transition-colors hover:bg-neutral-800 rounded-full"
 									>
 										<MoreVertical className="w-4 h-4" />
 									</button>

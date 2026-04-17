@@ -50,7 +50,7 @@ function VoteButton({
 				className={`w-5 h-5 transition-all ${
 					isActive
 						? `${activeColor} fill-current`
-						: `text-neutral-500 ${!disabled && hoverStyles}`
+						: `text-neutral-400 ${!disabled && hoverStyles}`
 				}`}
 			/>
 		</button>
@@ -130,7 +130,7 @@ export function VoteSection({
 					onClick={() => handleVote("up")}
 					disabled={isOwner}
 				/>
-				<span className="text-base font-semibold min-w-[1.5ch] text-center text-neutral-500">
+				<span className="text-base font-semibold min-w-[1.5ch] text-center text-neutral-400">
 					{formatCompactNumber(voteScore)}
 				</span>
 				<VoteButton

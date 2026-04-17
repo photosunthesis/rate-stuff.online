@@ -153,14 +153,14 @@ function RouteComponent() {
 				)}
 				<div className="flex flex-col flex-1 mt-4">
 					{allActivities.length === 0 ? (
-						<div className="flex-1 flex items-center justify-center p-8 text-center text-neutral-500">
+						<div className="flex-1 flex items-center justify-center p-8 text-center text-neutral-400">
 							{m.activity_no_activity()}
 						</div>
 					) : (
 						<>
 							{Object.entries(groupedActivities).map(([dateLabel, items]) => (
 								<div key={dateLabel}>
-									<div className="px-4 pt-6 pb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
+									<div className="px-4 pt-6 pb-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider">
 										{dateLabel}
 									</div>
 									<div>
@@ -225,14 +225,14 @@ function RouteComponent() {
 															{getActivityText(activity as Activity)}
 														</p>
 														{activity.commentContent && (
-															<div className="text-sm text-neutral-400 italic line-clamp-2">
+															<div className="text-sm text-neutral-300 italic line-clamp-2">
 																"{getPreviewText(activity.commentContent)}"
 															</div>
 														)}
-														<p className="text-xs text-neutral-500 mt-1">
+														<p className="text-xs text-neutral-400 mt-1">
 															<TimeAgo
 																date={new Date(activity.createdAt)}
-																className="text-xs text-neutral-500 mt-1"
+																className="text-xs text-neutral-400 mt-1"
 															/>
 														</p>
 													</div>
@@ -250,7 +250,7 @@ function RouteComponent() {
 									{isFetchingNextPage ? (
 										<div className="h-6 w-6 rounded-full border-2 border-neutral-600 border-t-white animate-spin" />
 									) : (
-										<span className="text-base text-neutral-500">
+										<span className="text-base text-neutral-400">
 											{m.activity_load_more()}
 										</span>
 									)}

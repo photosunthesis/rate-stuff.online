@@ -198,7 +198,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 						className="flex-1 bg-transparent text-white placeholder-neutral-500 focus:outline-none"
 						autoComplete="off"
 					/>
-					<Search size={18} className="text-neutral-500" />
+					<Search size={18} className="text-neutral-400" />
 				</div>
 			</div>
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
@@ -234,7 +234,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					)}
 
 					{isLoading && (
-						<div className="p-3 text-center text-neutral-500 text-base border-t border-neutral-800">
+						<div className="p-3 text-center text-neutral-400 text-base border-t border-neutral-800">
 							{m.stuff_selector_searching()}
 						</div>
 					)}

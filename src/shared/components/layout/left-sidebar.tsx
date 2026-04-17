@@ -118,7 +118,7 @@ export function LeftSidebar({
 							<Link
 								to="/"
 								activeOptions={{ exact: true }}
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "home" });
@@ -130,7 +130,7 @@ export function LeftSidebar({
 
 							<Link
 								to="/activity"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami)
@@ -150,7 +150,7 @@ export function LeftSidebar({
 							</Link>
 							<Link
 								to="/menu"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "menu" });
@@ -179,7 +179,7 @@ export function LeftSidebar({
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-500 hover:text-red-400 hover:bg-neutral-800/50 rounded-full transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-red-400 hover:bg-neutral-800/50 rounded-full transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-6 h-6" />
 								<span className="font-medium">{m.nav_sign_out()}</span>
@@ -199,7 +199,7 @@ export function LeftSidebar({
 							to="/"
 							activeOptions={{ exact: true }}
 							title={m.nav_home()}
-							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
+							className="p-2 text-neutral-400 hover:text-white rounded-full transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "home" });
@@ -211,7 +211,7 @@ export function LeftSidebar({
 						<Link
 							to="/activity"
 							title={m.nav_activity()}
-							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
+							className="p-2 text-neutral-400 hover:text-white rounded-full transition-colors"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami)
@@ -231,7 +231,7 @@ export function LeftSidebar({
 						<Link
 							to="/menu"
 							title={m.nav_menu()}
-							className="p-2 text-neutral-500 hover:text-white rounded-full transition-colors"
+							className="p-2 text-neutral-400 hover:text-white rounded-full transition-colors"
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "menu" });
 							}}
@@ -258,7 +258,7 @@ export function LeftSidebar({
 					<button
 						type="button"
 						onClick={() => setIsSignOutOpen(true)}
-						className="mb-6 p-2 text-neutral-500 hover:text-red-400 rounded-full transition-colors"
+						className="mb-6 p-2 text-neutral-400 hover:text-red-400 rounded-full transition-colors"
 					>
 						<LogOut className="w-6 h-6" />
 					</button>
@@ -281,7 +281,7 @@ export function LeftSidebar({
 							type="button"
 							onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 							aria-label="Back to top"
-							className={`w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-400 active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center ${scrolledDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+							className={`w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-300 active:scale-95 cursor-pointer pointer-events-auto transition-all flex items-center justify-center ${scrolledDown ? "opacity-100" : "opacity-0 pointer-events-none"}`}
 						>
 							<ArrowUp className="w-4 h-4" />
 						</button>
@@ -319,7 +319,7 @@ export function LeftSidebar({
 						<Link
 							to="/"
 							activeOptions={{ exact: true }}
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "home" });
@@ -331,7 +331,7 @@ export function LeftSidebar({
 
 						<Link
 							to="/activity"
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami)
@@ -352,7 +352,7 @@ export function LeftSidebar({
 
 						<Link
 							to="/menu"
-							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-500 hover:text-white transition-colors outline-none"
+							className="flex flex-col items-center justify-center gap-0.5 w-24 h-16 text-neutral-400 hover:text-white transition-colors outline-none"
 							activeProps={{ className: "text-white" }}
 							onClick={() => {
 								if (umami) umami.track("click_nav", { destination: "menu" });
@@ -370,7 +370,7 @@ export function LeftSidebar({
 					type="button"
 					onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 					aria-label="Back to top"
-					className={`md:hidden fixed bottom-20 left-4 w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-400 active:scale-95 cursor-pointer z-40 transition-all flex items-center justify-center ${scrolledDown ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+					className={`md:hidden fixed bottom-20 left-4 w-10 h-10 rounded-full border border-white/10 backdrop-blur-xl bg-neutral-950/80 text-neutral-300 active:scale-95 cursor-pointer z-40 transition-all flex items-center justify-center ${scrolledDown ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
 				>
 					<ArrowUp className="w-4 h-4" />
 				</button>

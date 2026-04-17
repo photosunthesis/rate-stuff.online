@@ -48,7 +48,7 @@ export function ForgotPasswordForm({
 						<h3 className="text-lg font-medium text-white mb-2">
 							{m.forgot_password_success_title()}
 						</h3>
-						<p className="text-neutral-400 text-base">
+						<p className="text-neutral-300 text-base">
 							{m.forgot_password_success_description()}
 						</p>
 					</div>
