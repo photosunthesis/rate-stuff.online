@@ -8,7 +8,6 @@ import {
 	searchStuff,
 	searchTags,
 	updateRatingImages,
-	uploadRatingImage,
 	updateRating,
 	deleteRating,
 } from "../data/create";
@@ -90,7 +89,7 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 			contentType: z.string().min(1),
 		}),
 	)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
 			const { ratingId, filename, contentType } = data;
 
@@ -100,7 +99,12 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 				);
 			}
 
-			const result = await getUploadUrl(ratingId, filename, contentType);
+			const result = await getUploadUrl(
+				context.user.id,
+				ratingId,
+				filename,
+				contentType,
+			);
 			return { success: true, data: result };
 		} catch (error) {
 			return {
@@ -119,10 +123,21 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 			images: z.array(z.string()).max(3, "You can upload at most 3 images"),
 		}),
 	)
-	.handler(async ({ data }) => {
+	.handler(async ({ data, context }) => {
 		try {
-			const result = await updateRatingImages(data.ratingId, data.images);
-			return result;
+			const result = await updateRatingImages(
+				context.user.id,
+				data.ratingId,
+				data.images,
+			);
+			if (!result) {
+				return {
+					success: false,
+					errorMessage:
+						"Rating not found or you don't have permission to update it",
+				};
+			}
+			return { success: true, data: result };
 		} catch (error) {
 			return {
 				success: false,
@@ -130,42 +145,6 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 					error instanceof Error
 						? error.message
 						: "Failed to update rating images",
-			};
-		}
-	});
-
-export const uploadRatingImageFn = createServerFn({ method: "POST" })
-	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(
-		z.preprocess(
-			(val) => {
-				if (!(val instanceof FormData)) return val;
-				return { file: val.get("file"), ratingId: val.get("ratingId") };
-			},
-			z.object({
-				file: z
-					.instanceof(File)
-					.refine(
-						(f) => f.size <= 10 * 1024 * 1024,
-						"File size must be less than 10MB",
-					)
-					.refine((f) => f.type.startsWith("image/"), "File must be an image"),
-				ratingId: z.string().min(1),
-			}),
-		),
-	)
-	.handler(async ({ data }) => {
-		try {
-			const { file, ratingId } = data;
-			const buffer = new Uint8Array(await file.arrayBuffer());
-			const result = await uploadRatingImage(ratingId, buffer, file.type);
-
-			return { success: true, url: result.url, key: result.key };
-		} catch (error) {
-			return {
-				success: false,
-				errorMessage:
-					error instanceof Error ? error.message : "Failed to upload image",
 			};
 		}
 	});

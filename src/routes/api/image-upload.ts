@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-	imagesBucketUrl,
 	verifyPresignedUpload,
 	uploadFile,
 	MAX_FILE_SIZE,
@@ -8,6 +7,13 @@ import {
 } from "~/infrastructure/file-storage/service";
 import { env } from "cloudflare:workers";
 import { authMiddleware } from "~/features/auth/middleware";
+import { actionRateLimitMiddleware } from "~/infrastructure/rate-limit/middleware";
+
+const jsonResponse = (status: number, body: Record<string, unknown>) =>
+	new Response(JSON.stringify(body), {
+		status,
+		headers: { "Content-Type": "application/json" },
+	});
 
 export const Route = createFileRoute("/api/image-upload")({
 	server: {
@@ -24,8 +30,8 @@ export const Route = createFileRoute("/api/image-upload")({
 				 *    enforces constraints (size/type), and streams the file to R2.
 				 */
 				PUT: {
-					middleware: [authMiddleware],
-					handler: async ({ request }) => {
+					middleware: [authMiddleware, actionRateLimitMiddleware],
+					handler: async ({ request, context }) => {
 						try {
 							const url = new URL(request.url);
 							const key = url.searchParams.get("key");
@@ -33,47 +39,10 @@ export const Route = createFileRoute("/api/image-upload")({
 							const sig = url.searchParams.get("sig");
 
 							if (!key || !expires || !sig) {
-								return new Response(
-									JSON.stringify({
-										success: false,
-										error: "Missing required query parameters",
-									}),
-									{
-										status: 400,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
-							}
-
-							const verification = await verifyPresignedUpload(
-								key,
-								expires,
-								sig,
-							);
-							if (!verification.ok) {
-								if (verification.reason === "expired") {
-									return new Response(
-										JSON.stringify({
-											success: false,
-											error: "Signature expired or invalid",
-										}),
-										{
-											status: 403,
-											headers: { "Content-Type": "application/json" },
-										},
-									);
-								}
-
-								return new Response(
-									JSON.stringify({
-										success: false,
-										error: "Invalid signature",
-									}),
-									{
-										status: 401,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
+								return jsonResponse(400, {
+									success: false,
+									error: "Missing required query parameters",
+								});
 							}
 
 							const contentType =
@@ -82,89 +51,87 @@ export const Route = createFileRoute("/api/image-upload")({
 							const baseType = contentType.split(";")[0].toLowerCase().trim();
 
 							if (!ALLOWED_CONTENT_TYPES.includes(baseType)) {
-								return new Response(
-									JSON.stringify({
+								return jsonResponse(415, {
+									success: false,
+									error: `Unsupported content type: ${baseType}. Allowed types: ${ALLOWED_CONTENT_TYPES.join(", ")}`,
+								});
+							}
+
+							const verification = await verifyPresignedUpload(
+								key,
+								expires,
+								sig,
+								context.user.id,
+								baseType,
+							);
+							if (!verification.ok) {
+								return jsonResponse(
+									verification.reason === "expired" ? 403 : 401,
+									{
 										success: false,
-										error: `Unsupported content type: ${baseType}. Allowed types: ${ALLOWED_CONTENT_TYPES.join(", ")}`,
-									}),
-									{
-										status: 415,
-										headers: { "Content-Type": "application/json" },
+										error:
+											verification.reason === "expired"
+												? "Signature expired"
+												: "Invalid signature",
 									},
 								);
 							}
 
-							const contentLength = request.headers.get("content-length");
-							if (
-								contentLength &&
-								parseInt(contentLength, 10) > MAX_FILE_SIZE
-							) {
-								return new Response(
-									JSON.stringify({
-										success: false,
-										error: "File too large. Maximum size is 10MB",
-									}),
-									{
-										status: 413,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
+							const contentLengthHeader = request.headers.get("content-length");
+							const contentLength = contentLengthHeader
+								? parseInt(contentLengthHeader, 10)
+								: NaN;
+
+							if (!Number.isFinite(contentLength) || contentLength <= 0) {
+								return jsonResponse(411, {
+									success: false,
+									error: "Content-Length header is required",
+								});
 							}
 
-							const body = await request.arrayBuffer();
-
-							if (body.byteLength > MAX_FILE_SIZE) {
-								return new Response(
-									JSON.stringify({
-										success: false,
-										error: "File too large. Maximum size is 10MB",
-									}),
-									{
-										status: 413,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
+							if (contentLength > MAX_FILE_SIZE) {
+								return jsonResponse(413, {
+									success: false,
+									error: "File too large. Maximum size is 10MB",
+								});
 							}
 
-							if (body.byteLength === 0) {
-								return new Response(
-									JSON.stringify({ success: false, error: "File is empty" }),
-									{
-										status: 400,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
+							if (!request.body) {
+								return jsonResponse(400, {
+									success: false,
+									error: "File is empty",
+								});
 							}
 
+							let uploaded: { url: string; size: number };
 							try {
-								await uploadFile(env.R2_BUCKET, key, body, {
-									type: contentType,
+								uploaded = await uploadFile(env.R2_BUCKET, key, request.body, {
+									type: baseType,
 								});
 							} catch (err) {
 								const msg = err instanceof Error ? err.message : String(err);
-								return new Response(
-									JSON.stringify({ success: false, error: msg }),
-									{
-										status: 502,
-										headers: { "Content-Type": "application/json" },
-									},
-								);
+								return jsonResponse(502, { success: false, error: msg });
 							}
 
-							const res = { success: true, url: `${imagesBucketUrl}/${key}` };
-							return new Response(JSON.stringify(res), {
-								status: 200,
-								headers: { "Content-Type": "application/json" },
+							if (uploaded.size > MAX_FILE_SIZE) {
+								try {
+									await env.R2_BUCKET.delete(key);
+								} catch {
+									// best-effort cleanup; object will be garbage under user scope
+								}
+								return jsonResponse(413, {
+									success: false,
+									error: "File too large. Maximum size is 10MB",
+								});
+							}
+
+							return jsonResponse(200, {
+								success: true,
+								url: uploaded.url,
 							});
 						} catch (e: unknown) {
 							const msg = e instanceof Error ? e.message : String(e);
-							return new Response(
-								JSON.stringify({ success: false, error: msg }),
-								{
-									status: 500,
-									headers: { "Content-Type": "application/json" },
-								},
-							);
+							return jsonResponse(500, { success: false, error: msg });
 						}
 					},
 				},

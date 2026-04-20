@@ -99,7 +99,7 @@ export const uploadProfileImage = createServerOnlyFn(
 		const buffer = new Uint8Array(await file.arrayBuffer());
 		const extension = file.type.split("/")[1] ?? "jpg";
 		const key = `avatars/${userId}/${uuidv7()}.${extension}`;
-		const url = await uploadFile(env.R2_BUCKET, key, buffer, {
+		const { url } = await uploadFile(env.R2_BUCKET, key, buffer, {
 			type: file.type,
 		});
 

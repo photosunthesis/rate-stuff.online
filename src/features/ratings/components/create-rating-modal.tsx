@@ -4,10 +4,11 @@ import { useState } from "react";
 import {
 	useCreateRatingMutation,
 	useUploadImageMutation,
+	useUpdateRatingImagesMutation,
 } from "~/features/ratings/hooks/create";
+import { deleteRatingFn } from "~/features/ratings/api/create";
 import type { createRatingSchema } from "~/features/ratings/types/create";
 import type { z } from "zod";
-import { v7 as uuidv7 } from "uuid";
 import { withTimeout } from "~/infrastructure/http/timeout";
 
 const normalizeParagraphBreaks = (md: string) => {
@@ -38,6 +39,7 @@ const parseZodError = (msg: string): Record<string, string> | null => {
 const useCreateRating = () => {
 	const createMutation = useCreateRatingMutation();
 	const uploadMutation = useUploadImageMutation();
+	const updateImagesMutation = useUpdateRatingImagesMutation();
 
 	const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(
 		null,
@@ -55,51 +57,15 @@ const useCreateRating = () => {
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 
-			const ratingId = uuidv7();
 			const ratingInput = {
 				...input,
 				content: normalizeParagraphBreaks(input.content),
 				images: [],
-				id: ratingId,
 			};
 
-			const imageUrls: string[] = [];
-
 			try {
-				if (input.images && input.images.length > 0) {
-					const uploads = input.images.map((file) =>
-						withTimeout(uploadMutation.mutateAsync({ file, ratingId }), {
-							context: "create-rating-upload-image",
-						}).then(
-							(result) => result.url,
-							(error) => {
-								const msg =
-									error instanceof Error
-										? error.message
-										: `An unexpected error occurred: ${error}`;
-
-								const zodErrors = parseZodError(msg);
-								if (zodErrors) {
-									setLocalValidationErrors((prev) => ({
-										...prev,
-										...zodErrors,
-									}));
-									setLocalErrorMessage(null);
-								} else {
-									setLocalErrorMessage(msg);
-								}
-								throw error;
-							},
-						),
-					);
-
-					const urls = await Promise.all(uploads);
-					imageUrls.push(...urls);
-				}
-
-				const finalInput = { ...ratingInput, images: imageUrls };
 				const result = (await withTimeout(
-					createMutation.mutateAsync(finalInput),
+					createMutation.mutateAsync(ratingInput),
 					{ context: "create-rating" },
 				)) as {
 					success?: boolean;
@@ -115,6 +81,43 @@ const useCreateRating = () => {
 					const msg = result.errorMessage ?? "Failed to create rating";
 					setLocalErrorMessage(msg);
 					throw new Error(msg);
+				}
+
+				const ratingId = result.data.id;
+				const files = input.images ?? [];
+
+				if (files.length === 0) return;
+
+				try {
+					const uploads = files.map((file) =>
+						withTimeout(uploadMutation.mutateAsync({ file, ratingId }), {
+							context: "create-rating-upload-image",
+							timeoutMs: 60_000,
+						}).then((r) => r.url),
+					);
+
+					const imageUrls = await Promise.all(uploads);
+
+					const attachResult = await withTimeout(
+						updateImagesMutation.mutateAsync({
+							ratingId,
+							images: imageUrls,
+						}),
+						{ context: "create-rating-attach-images" },
+					);
+
+					if (!attachResult.success) {
+						throw new Error(
+							attachResult.errorMessage ?? "Failed to attach images",
+						);
+					}
+				} catch (imageError) {
+					try {
+						await deleteRatingFn({ data: { ratingId } });
+					} catch {
+						// best-effort rollback; orphan row will be visible if delete fails
+					}
+					throw imageError;
 				}
 			} catch (error) {
 				const msg =
@@ -132,7 +135,10 @@ const useCreateRating = () => {
 				throw new Error(msg);
 			}
 		},
-		isPending: createMutation.isPending || uploadMutation.isPending,
+		isPending:
+			createMutation.isPending ||
+			uploadMutation.isPending ||
+			updateImagesMutation.isPending,
 		errorMessage:
 			localErrorMessage ??
 			(createMutation.data && !createMutation.data.success
@@ -145,6 +151,7 @@ const useCreateRating = () => {
 		reset: () => {
 			createMutation.reset();
 			uploadMutation.reset();
+			updateImagesMutation.reset();
 			setLocalErrorMessage(null);
 			setLocalValidationErrors({});
 		},

@@ -12,7 +12,7 @@ import {
 	updateRatingImagesFn,
 	searchStuffFn,
 	searchTagsFn,
-	uploadRatingImageFn,
+	getUploadUrlFn,
 	updateRatingFn,
 	deleteRatingFn,
 } from "../api/create";
@@ -42,7 +42,7 @@ export function useCreateRatingMutation() {
 }
 
 export function useUploadImageMutation() {
-	const uploadImageFn = useServerFn(uploadRatingImageFn);
+	const getUploadUrl = useServerFn(getUploadUrlFn);
 	return useMutation({
 		mutationFn: async ({
 			file,
@@ -63,17 +63,38 @@ export function useUploadImageMutation() {
 				);
 			}
 
-			const formData = new FormData();
-			formData.append("file", file);
-			formData.append("ratingId", ratingId);
+			const signed = await getUploadUrl({
+				data: {
+					ratingId,
+					filename: file.name,
+					contentType: file.type,
+				},
+			});
 
-			const result = await uploadImageFn({ data: formData });
-
-			if (!result.success || !result.url) {
-				throw new Error(result.errorMessage || "Upload failed");
+			if (!signed.success || !signed.data) {
+				throw new Error(signed.errorMessage || "Failed to get upload url");
 			}
 
-			return { key: result.key, url: result.url };
+			const { key, putUrl, publicUrl } = signed.data;
+
+			const response = await fetch(putUrl, {
+				method: "PUT",
+				headers: { "Content-Type": file.type },
+				body: file,
+			});
+
+			if (!response.ok) {
+				let message = `Upload failed (${response.status})`;
+				try {
+					const body = (await response.json()) as { error?: string };
+					if (body.error) message = body.error;
+				} catch {
+					// response wasn't JSON — keep default message
+				}
+				throw new Error(message);
+			}
+
+			return { key, url: publicUrl };
 		},
 	});
 }

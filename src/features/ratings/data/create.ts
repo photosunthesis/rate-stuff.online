@@ -5,13 +5,9 @@ import {
 	ratingsToTags,
 } from "~/infrastructure/db/schema/";
 import { eq, and, isNull, like, inArray, desc, sql } from "drizzle-orm";
-import {
-	createPresignedUploadUrl,
-	uploadFile,
-} from "~/infrastructure/file-storage/service";
+import { createPresignedUploadUrl } from "~/infrastructure/file-storage/service";
 import { generateSlug } from "~/shared/lib/strings";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import { env } from "cloudflare:workers";
 import type { CreateRatingInput } from "../types/create";
 import { getDatabase } from "~/infrastructure/db";
 import { v7 as uuidv7 } from "uuid";
@@ -232,7 +228,26 @@ export const createRating = createServerOnlyFn(
 );
 
 export const getUploadUrl = createServerOnlyFn(
-	async (ratingId: string, filename: string, contentType: string) => {
+	async (
+		userId: string,
+		ratingId: string,
+		filename: string,
+		contentType: string,
+	) => {
+		const db = getDatabase();
+		const existing = await db
+			.select({ userId: ratings.userId })
+			.from(ratings)
+			.where(and(eq(ratings.id, ratingId), isNull(ratings.deletedAt)))
+			.limit(1)
+			.then((rows) => rows[0]);
+
+		if (existing && existing.userId !== userId) {
+			throw new Error(
+				"You don't have permission to upload images to this rating",
+			);
+		}
+
 		const origExt = filename?.split(".").pop() ?? "webp";
 		const extension =
 			contentType === "image/webp" || origExt.toLowerCase() === "webp"
@@ -240,19 +255,25 @@ export const getUploadUrl = createServerOnlyFn(
 				: origExt;
 		const key = `ratings/${ratingId}/${uuidv7()}.${extension}`;
 
-		const presign = await createPresignedUploadUrl(key);
+		const presign = await createPresignedUploadUrl(key, userId, contentType);
 		return presign;
 	},
 );
 
 export const updateRatingImages = createServerOnlyFn(
-	async (ratingId: string, images: string[]) => {
+	async (userId: string, ratingId: string, images: string[]) => {
 		const db = getDatabase();
 
 		const updated = await db
 			.update(ratings)
 			.set({ images: JSON.stringify(images), updatedAt: new Date() })
-			.where(and(eq(ratings.id, ratingId), isNull(ratings.deletedAt)))
+			.where(
+				and(
+					eq(ratings.id, ratingId),
+					eq(ratings.userId, userId),
+					isNull(ratings.deletedAt),
+				),
+			)
 			.returning();
 
 		if (!updated || updated.length === 0) return null;
@@ -263,20 +284,6 @@ export const updateRatingImages = createServerOnlyFn(
 			images:
 				typeof row.images === "string" ? JSON.parse(row.images) : row.images,
 		};
-	},
-);
-
-export const uploadRatingImage = createServerOnlyFn(
-	async (ratingId: string, buffer: Uint8Array, contentType: string) => {
-		const extension = contentType.split("/")[1] ?? "webp";
-		const key = `ratings/${ratingId}/${uuidv7()}.${extension}`;
-
-		// Pass buffer directly as uploadFile handles ArrayBuffer/Uint8Array
-		const url = await uploadFile(env.R2_BUCKET, key, buffer, {
-			type: contentType,
-		});
-
-		return { key, url };
 	},
 );
 

@@ -92,7 +92,7 @@ function RouteComponent() {
 							file,
 							ratingId: rating.id,
 						}),
-						{ context: "upload-image" },
+						{ context: "upload-image", timeoutMs: 60_000 },
 					).then((res) => {
 						return res.url;
 					}),
