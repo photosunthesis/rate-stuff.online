@@ -149,6 +149,11 @@ function RouteComponent() {
 		parsedImages = rating.images as string[];
 	}
 
+	const initialImages = parsedImages.map((url, i) => ({
+		url,
+		previewUrl: rating.signedImages[i]?.card ?? url,
+	}));
+
 	return (
 		<MainLayout>
 			<div className="h-full flex flex-col">
@@ -177,7 +182,7 @@ function RouteComponent() {
 							score: rating.score,
 							content: rating.content,
 							tags: rating.tags ?? [],
-							images: parsedImages,
+							images: initialImages,
 							stuffName: rating.stuff?.name ?? "Unknown Item",
 						}}
 						onSubmit={handleUpdate}

@@ -5,7 +5,11 @@ import { Button } from "~/shared/components/ui/button";
 import { FormError } from "~/shared/components/ui/form-error";
 import { createRatingSchema } from "~/features/ratings/types/create";
 import { TagSelector } from "~/features/ratings/components/tag-selector";
-import { ImageField } from "~/features/ratings/components/image-field";
+import {
+	ImageField,
+	type ExistingImage,
+	type ImageFieldItem,
+} from "~/features/ratings/components/image-field";
 import type { z } from "zod";
 import { useUmami } from "@danielgtmn/umami-react";
 import { m } from "~/paraglide/messages";
@@ -16,7 +20,7 @@ interface EditRatingFormProps {
 		score: number;
 		content: string;
 		tags: string[];
-		images: string[];
+		images: ExistingImage[];
 		stuffName: string;
 	};
 	onSubmit: (
@@ -45,7 +49,7 @@ export function EditRatingForm({
 	onCancel,
 }: EditRatingFormProps) {
 	const [selectedTags, setSelectedTags] = useState<string[]>(initialData.tags);
-	const [selectedImages, setSelectedImages] = useState<(File | string)[]>(
+	const [selectedImages, setSelectedImages] = useState<ImageFieldItem[]>(
 		initialData.images,
 	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,11 +71,11 @@ export function EditRatingForm({
 
 			try {
 				const newFiles = selectedImages.filter(
-					(img) => img instanceof File,
-				) as File[];
-				const existingImages = selectedImages.filter(
-					(img) => typeof img === "string",
-				) as string[];
+					(img): img is File => img instanceof File,
+				);
+				const existingImages = selectedImages
+					.filter((img): img is ExistingImage => !(img instanceof File))
+					.map((img) => img.url);
 
 				const inputData = {
 					score: Number(value.score),

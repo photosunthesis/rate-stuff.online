@@ -3,9 +3,12 @@ import { m } from "~/paraglide/messages";
 import { X, Upload } from "lucide-react";
 import { Image as UiImage } from "~/shared/components/ui/image";
 
+export type ExistingImage = { url: string; previewUrl: string };
+export type ImageFieldItem = File | ExistingImage;
+
 interface ImageFieldProps {
-	images: (File | string)[];
-	onChange: (images: (File | string)[]) => void;
+	images: ImageFieldItem[];
+	onChange: (images: ImageFieldItem[]) => void;
 	error?: string;
 	maxFiles?: number;
 	maxSizeInMB?: number;
@@ -35,7 +38,7 @@ export function ImageField({
 			"image/heif",
 		];
 
-		const newFiles: (File | string)[] = [];
+		const newFiles: ImageFieldItem[] = [];
 
 		for (const file of Array.from(files)) {
 			if (!validTypes.includes(file.type)) {
@@ -102,14 +105,18 @@ export function ImageField({
 				{images.map((file) => (
 					<div
 						key={
-							typeof file === "string"
-								? file
-								: `${file.name}-${file.size}-${file.lastModified}`
+							file instanceof File
+								? `${file.name}-${file.size}-${file.lastModified}`
+								: file.url
 						}
 						className="relative aspect-square rounded-lg overflow-hidden group border border-white/5 bg-neutral-900"
 					>
 						<UiImage
-							src={typeof file === "string" ? file : URL.createObjectURL(file)}
+							src={
+								file instanceof File
+									? URL.createObjectURL(file)
+									: file.previewUrl
+							}
 							alt="Preview"
 							className="w-full h-full object-cover"
 							noBorder
