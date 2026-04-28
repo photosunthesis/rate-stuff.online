@@ -122,3 +122,19 @@ export const generateContentPreview = (
 		return "";
 	}
 };
+
+/**
+ * Detects whether a content preview was truncated by `generateContentPreview`.
+ * Truncation appends "..." to the final text op, so we check the last insert.
+ */
+export const isContentPreviewTruncated = (preview: string | null): boolean => {
+	if (!preview) return false;
+	try {
+		const parsed = JSON.parse(preview);
+		if (!parsed.ops || !Array.isArray(parsed.ops)) return false;
+		const last = parsed.ops[parsed.ops.length - 1];
+		return typeof last?.insert === "string" && last.insert.endsWith("...");
+	} catch {
+		return false;
+	}
+};

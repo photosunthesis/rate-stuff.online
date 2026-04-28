@@ -11,6 +11,7 @@ import { MessageSquare } from "lucide-react";
 import { TimeAgo } from "~/shared/components/ui/time-ago";
 import { useUmami } from "@danielgtmn/umami-react";
 import { RatingEmoji } from "~/shared/components/ui/rating-emoji";
+import { isContentPreviewTruncated } from "~/shared/lib/rich-text";
 import { m } from "~/paraglide/messages";
 
 interface RatingCardProps {
@@ -135,8 +136,18 @@ export const RatingCard = memo(function RatingCard({
 					<div className="text-slate-200 text-base leading-normal line-clamp-4">
 						<RichTextRenderer
 							content={rating.contentPreview}
-							className="[&_p]:inline [&_p]:!m-0 [&_p]:after:content-['_'] [&_br]:hidden"
+							className="inline [&_p]:inline [&_p]:m-0! [&_p]:after:content-['_'] [&_br]:hidden"
 						/>
+						{isContentPreviewTruncated(rating.contentPreview) && (
+							<Link
+								to="/rating/$ratingId"
+								params={{ ratingId: rating.id }}
+								className="text-neutral-400 hover:underline"
+								onClick={(e) => e.stopPropagation()}
+							>
+								{m.rating_card_see_more()}
+							</Link>
+						)}
 					</div>
 				</div>
 			)}
@@ -192,7 +203,7 @@ export const RatingCard = memo(function RatingCard({
 					<div className="relative">
 						<MessageSquare className="w-5 h-5 text-neutral-400 group-hover:text-neutral-300 transition-colors" />
 						{rating.commentsCount === 0 && (
-							<div className="absolute top-0 right-0 w-1.5 h-1.5 bg-neutral-500 rounded-full border-2 border-neutral-900 translate-x-[2px] -translate-y-[2px] opacity-0" />
+							<div className="absolute top-0 right-0 w-1.5 h-1.5 bg-neutral-500 rounded-full border-2 border-neutral-900 translate-x-0.5 -translate-y-0.5 opacity-0" />
 						)}
 					</div>
 					{rating.commentsCount > 0 && (
