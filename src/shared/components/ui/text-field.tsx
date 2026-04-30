@@ -22,7 +22,7 @@ export function TextField({ label, error, id, ...props }: TextFieldProps) {
 				id={inputId}
 				className={`w-full px-4 py-2 bg-neutral-950 border ${
 					error ? "border-red-400" : "border-neutral-800"
-				} rounded-xl text-white placeholder-neutral-500 focus:outline-none ${
+				} rounded-full text-white placeholder-neutral-500 focus:outline-none ${
 					error
 						? "focus:border-red-400 focus:ring-1 focus:ring-red-400/40"
 						: "focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"

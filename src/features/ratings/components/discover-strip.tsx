@@ -82,7 +82,7 @@ export function DiscoverStrip() {
 								className="inline-flex items-center py-0.5 pl-0.5 pr-3 bg-neutral-800 text-white text-base font-medium rounded-full"
 							>
 								<div className="flex items-center mr-0.5">
-									<div className="w-5 h-5 bg-neutral-800 rounded-sm shrink-0 flex items-center justify-center">
+									<div className="w-5 h-5 bg-neutral-800 rounded-full shrink-0 flex items-center justify-center">
 										<TrendingUp
 											className="w-4 h-4 text-neutral-300"
 											aria-hidden
@@ -108,7 +108,7 @@ export function DiscoverStrip() {
 									key={tag.name}
 									type="button"
 									onClick={() => openAuthModal()}
-									className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-md cursor-pointer"
+									className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-full cursor-pointer"
 								>
 									#{tag.name}
 								</button>

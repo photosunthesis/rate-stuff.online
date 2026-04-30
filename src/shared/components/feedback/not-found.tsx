@@ -67,7 +67,7 @@ export function NotFound() {
 				<div className="mt-4">
 					<Button
 						variant="secondary"
-						className="w-auto! inline-flex px-3 py-1 text-base rounded-md justify-center whitespace-nowrap"
+						className="w-auto! inline-flex px-3 py-1 text-base rounded-full justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
 						{m.not_found_go_home()}

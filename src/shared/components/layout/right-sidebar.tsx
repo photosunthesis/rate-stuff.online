@@ -137,7 +137,7 @@ export function RightSidebar() {
 													key={tag.name}
 													type="button"
 													onClick={() => openAuthModal()}
-													className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full cursor-pointer"
 												>
 													#{tag.name}
 												</button>

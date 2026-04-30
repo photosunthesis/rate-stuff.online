@@ -90,7 +90,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 					{reset && (
 						<Button
 							variant="primary"
-							className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
+							className="w-auto! inline-flex px-4 py-1 text-base rounded-full justify-center whitespace-nowrap"
 							onClick={reset}
 						>
 							{m.error_try_again()}
@@ -98,7 +98,7 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 					)}
 					<Button
 						variant="secondary"
-						className="w-auto! inline-flex px-4 py-1 text-base rounded-md justify-center whitespace-nowrap"
+						className="w-auto! inline-flex px-4 py-1 text-base rounded-full justify-center whitespace-nowrap"
 						onClick={() => navigate({ to: "/" })}
 					>
 						{m.error_go_home()}

@@ -161,7 +161,7 @@ function RouteComponent() {
 					<div className="flex items-center gap-3">
 						<button
 							type="button"
-							className="flex items-center justify-center p-2 rounded-xl text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+							className="flex items-center justify-center p-2 rounded-full text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
 							onClick={(e) => {
 								e.stopPropagation();
 								if (canGoBack) {

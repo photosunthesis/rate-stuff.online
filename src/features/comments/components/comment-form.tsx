@@ -121,7 +121,7 @@ export function CommentForm({
 									<button
 										type="button"
 										onClick={onCancel}
-										className="px-3 py-1.5 text-base font-semibold text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-full transition-colors"
 									>
 										{m.comment_cancel()}
 									</button>
@@ -129,7 +129,7 @@ export function CommentForm({
 										type="button"
 										onClick={handleSubmit}
 										disabled={!content.trim() || isPending}
-										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-full transition-colors"
 									>
 										{m.comment_update()}
 									</button>
@@ -140,7 +140,7 @@ export function CommentForm({
 										type="button"
 										onClick={handleSubmit}
 										disabled={!content.trim() || isPending}
-										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-md transition-colors"
+										className="px-3 py-1.5 text-base font-semibold text-white bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-500/50 disabled:cursor-not-allowed rounded-full transition-colors"
 									>
 										{m.comment_add()}
 									</button>

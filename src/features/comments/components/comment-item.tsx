@@ -184,7 +184,7 @@ export function CommentItem({ comment, currentUserId }: CommentItemProps) {
 									</button>
 
 									{isMenuOpen && (
-										<div className="absolute left-0 bottom-full mb-1 w-32 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl overflow-hidden z-10">
+										<div className="absolute left-0 bottom-full mb-1 w-32 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl overflow-hidden z-10">
 											<button
 												type="button"
 												onClick={() => {

@@ -287,13 +287,13 @@ const RatingHeader = ({
 							e.stopPropagation();
 							setIsMenuOpen(!isMenuOpen);
 						}}
-						className="p-1.5 text-neutral-300 hover:text-white transition-colors hover:bg-neutral-800 rounded-lg"
+						className="p-1.5 text-neutral-300 hover:text-white transition-colors hover:bg-neutral-800 rounded-full"
 					>
 						<MoreVertical className="w-5 h-5" />
 					</button>
 
 					{isMenuOpen && (
-						<div className="absolute right-0 top-full mt-1 w-36 bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl overflow-hidden z-10">
+						<div className="absolute right-0 top-full mt-1 w-36 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl overflow-hidden z-10">
 							<Link
 								to="/rating/$ratingId/edit"
 								params={{ ratingId: rating.id }}
@@ -400,7 +400,7 @@ const TagsList = ({
 						key={tag}
 						to="/"
 						search={{ tag }}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md"
+						className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
 						onClick={() => onTagClick?.(tag)}
 					>
 						#{tag}
@@ -413,7 +413,7 @@ const TagsList = ({
 							openAuthModal();
 							onTagClick?.(tag);
 						}}
-						className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-md cursor-pointer"
+						className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full cursor-pointer"
 					>
 						#{tag}
 					</button>
@@ -451,7 +451,7 @@ function RouteComponent() {
 					<div className="flex items-center gap-3">
 						<button
 							type="button"
-							className="flex items-center justify-center p-2 rounded-xl text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
+							className="flex items-center justify-center p-2 rounded-full text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer"
 							onClick={(e) => {
 								e.stopPropagation();
 								if (canGoBack) {

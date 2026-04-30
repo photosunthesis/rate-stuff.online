@@ -114,7 +114,7 @@ export function TagSelector({
 				<div
 					className={`flex items-center gap-2 px-3 py-2 bg-neutral-950 border ${
 						error ? "border-red-400" : "border-neutral-800"
-					} rounded-xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
+					} rounded-full focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 				>
 					<input
 						id={inputId}
@@ -176,7 +176,7 @@ export function TagSelector({
 				</div>
 
 				{isOpen && searchInput && selectedTags.length < maxTags && (
-					<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+					<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-2xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
 						{isLoading ? (
 							<div className="p-4 text-center text-neutral-400 text-base">
 								{m.stuff_selector_searching()}

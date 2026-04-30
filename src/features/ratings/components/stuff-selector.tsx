@@ -136,7 +136,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					{m.stuff_selector_label()}
 				</label>
 				<div
-					className={`p-4 bg-emerald-500/10 border ${error ? "border-red-400" : "border-emerald-500/50"} rounded-xl flex items-center justify-between`}
+					className={`p-4 bg-emerald-500/10 border ${error ? "border-red-400" : "border-emerald-500/50"} rounded-2xl flex items-center justify-between`}
 				>
 					<div>
 						<div className="font-medium text-emerald-600">{value.name}</div>
@@ -147,7 +147,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					<button
 						type="button"
 						onClick={handleClear}
-						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-lg transition-colors"
+						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-full transition-colors"
 					>
 						{m.stuff_selector_change()}
 					</button>
@@ -169,7 +169,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			<div
 				className={`relative px-4 py-3 bg-neutral-950 border ${
 					error ? "border-red-400" : "border-neutral-800"
-				} rounded-xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
+				} rounded-full focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 			>
 				<div className="flex items-center gap-2">
 					<input
@@ -204,7 +204,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
 
 			{isOpen && searchInput.trim().length > 0 && (
-				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-xl shadow-xl overflow-hidden max-h-60">
+				<div className="absolute z-50 left-0 right-0 mt-2 bg-neutral-950 border border-neutral-800 rounded-2xl shadow-xl overflow-hidden max-h-60">
 					<div className="overflow-y-auto max-h-52">
 						{results.length > 0 &&
 							results.map((stuff: { id: string; name: string }) => (

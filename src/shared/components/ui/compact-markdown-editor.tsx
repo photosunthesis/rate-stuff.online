@@ -191,10 +191,10 @@ export function CompactMarkdownEditor({
 
 			<div
 				ref={containerRef}
-				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-950 group`}
+				className={`border ${error ? "border-red-400" : "border-neutral-800"} rounded-2xl focus-within:ring-1 ${error ? "focus-within:ring-red-400/40 focus-within:border-red-400" : "focus-within:ring-emerald-600/50 focus-within:border-emerald-600/50"} transition-colors bg-neutral-950 group`}
 			>
 				<div
-					className={`flex flex-col rounded-xl overflow-hidden ${minHeightClass} ${maxHeightClass} bg-neutral-950`}
+					className={`flex flex-col rounded-2xl overflow-hidden ${minHeightClass} ${maxHeightClass} bg-neutral-950`}
 				>
 					<div className="flex-1 w-full relative overflow-y-auto">
 						<div

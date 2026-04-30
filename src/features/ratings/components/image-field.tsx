@@ -109,7 +109,7 @@ export function ImageField({
 								? `${file.name}-${file.size}-${file.lastModified}`
 								: file.url
 						}
-						className="relative aspect-square rounded-lg overflow-hidden group border border-white/5 bg-neutral-900"
+						className="relative aspect-square rounded-2xl overflow-hidden group border border-white/5 bg-neutral-900"
 					>
 						<UiImage
 							src={
@@ -135,7 +135,7 @@ export function ImageField({
 				{images.length < maxFiles && (
 					<button
 						type="button"
-						className={`aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors ${
+						className={`aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors ${
 							dragActive
 								? "border-emerald-500 bg-emerald-500/10"
 								: "border-neutral-800 hover:border-emerald-500/50 hover:bg-neutral-800"
