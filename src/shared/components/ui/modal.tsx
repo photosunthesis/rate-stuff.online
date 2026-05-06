@@ -160,8 +160,8 @@ export function ModalContent({
 				${widthClasses[width]} 
 				${
 					mobileVariant === "bottom-sheet"
-						? "h-dvh md:h-auto md:max-h-[85vh] rounded-t-2xl md:rounded-2xl md:border md:border-neutral-800"
-						: "h-auto max-h-[90vh] rounded-2xl m-4 border border-neutral-800"
+						? "h-dvh md:h-auto md:max-h-[85vh] rounded-t-3xl md:rounded-3xl md:border md:border-neutral-800"
+						: "h-auto max-h-[90vh] rounded-3xl m-4 border border-neutral-800"
 				} 
 				bg-neutral-950 shadow-2xl 
 				${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"} 
