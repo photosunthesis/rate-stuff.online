@@ -266,7 +266,7 @@ export const updateRatingImages = createServerOnlyFn(
 
 		const updated = await db
 			.update(ratings)
-			.set({ images: JSON.stringify(images), updatedAt: new Date() })
+			.set({ images: JSON.stringify(images) })
 			.where(
 				and(
 					eq(ratings.id, ratingId),
