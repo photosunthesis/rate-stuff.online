@@ -118,7 +118,7 @@ export function LeftSidebar({
 							<Link
 								to="/"
 								activeOptions={{ exact: true }}
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "home" });
@@ -130,7 +130,7 @@ export function LeftSidebar({
 
 							<Link
 								to="/activity"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami)
@@ -152,7 +152,7 @@ export function LeftSidebar({
 								<Link
 									to="/user/$username"
 									params={{ username: user.username }}
-									className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+									className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
 									activeProps={{ className: "text-white font-bold" }}
 									onClick={() => {
 										if (umami)
@@ -165,7 +165,7 @@ export function LeftSidebar({
 							)}
 							<Link
 								to="/menu"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white hover:bg-neutral-800/50 rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "menu" });
@@ -194,7 +194,7 @@ export function LeftSidebar({
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-red-400 hover:bg-neutral-800/50 rounded-full transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-red-400 rounded-full transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-6 h-6" />
 								<span className="font-medium">{m.nav_sign_out()}</span>
