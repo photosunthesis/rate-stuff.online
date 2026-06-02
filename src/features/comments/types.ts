@@ -11,7 +11,7 @@ export const createCommentSchema = z.object({
 	content: z
 		.string()
 		.min(1, "Comment cannot be empty")
-		.max(2000, "Comment is too long"),
+		.max(5000, "Comment is too long"),
 });
 
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
@@ -36,7 +36,7 @@ export const updateCommentSchema = z.object({
 	content: z
 		.string()
 		.min(1, "Comment cannot be empty")
-		.max(2000, "Comment is too long"),
+		.max(5000, "Comment is too long"),
 });
 
 export type UpdateCommentInput = z.infer<typeof updateCommentSchema>;

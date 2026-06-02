@@ -102,7 +102,7 @@ export function CommentForm({
 									? m.comment_placeholder()
 									: m.comment_sign_in_placeholder()
 							}
-							charLimit={2000}
+							charLimit={5000}
 							minHeightClass="min-h-[80px]"
 							onSubmit={handleSubmit}
 						/>

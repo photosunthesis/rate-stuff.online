@@ -37,7 +37,7 @@ export const createRatingSchema = z
 		content: z
 			.string()
 			.min(1, "Content is required")
-			.max(5000, "Content must be at most 5000 characters"),
+			.max(12000, "Content must be at most 12000 characters"),
 		tags: z
 			.array(z.string())
 			.max(5, "You can select at most 5 tags")

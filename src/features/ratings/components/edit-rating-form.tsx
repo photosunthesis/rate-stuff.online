@@ -237,7 +237,7 @@ export function EditRatingForm({
 											field.state.meta.errors[0] ||
 											mergedValidationErrors.content
 										}
-										charLimit={5000}
+										charLimit={12000}
 										placeholder={m.rating_edit_thoughts_placeholder()}
 										minHeightClass="min-h-[160px]"
 									/>

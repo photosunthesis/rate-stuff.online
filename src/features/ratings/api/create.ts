@@ -155,7 +155,7 @@ export const updateRatingFn = createServerFn({ method: "POST" })
 		z.object({
 			ratingId: z.string().min(1),
 			score: z.number().min(1).max(10),
-			content: z.string().max(5000).optional().default(""),
+			content: z.string().max(12000).optional().default(""),
 			tags: z.array(z.string()).max(5).default([]),
 			images: z.array(z.string()).max(3).default([]),
 		}),
