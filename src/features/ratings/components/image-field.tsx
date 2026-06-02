@@ -18,12 +18,13 @@ export function ImageField({
 	images,
 	onChange,
 	error,
-	maxFiles = 3,
+	maxFiles = 4,
 	maxSizeInMB = 10,
 }: ImageFieldProps) {
 	const inputId = useId();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [dragActive, setDragActive] = useState(false);
+	const [maxReached, setMaxReached] = useState(false);
 
 	const handleFiles = async (files: FileList | null) => {
 		if (!files) return;
@@ -56,8 +57,10 @@ export function ImageField({
 			if (spacesLeft > 0) {
 				onChange([...images, ...newFiles.slice(0, spacesLeft)]);
 			}
+			setMaxReached(true);
 		} else {
 			onChange([...images, ...newFiles]);
+			setMaxReached(false);
 		}
 	};
 
@@ -71,6 +74,7 @@ export function ImageField({
 		const newImages = [...images];
 		newImages.splice(index, 1);
 		onChange(newImages);
+		setMaxReached(false);
 	};
 
 	const handleDrag = (e: React.DragEvent) => {
@@ -171,6 +175,11 @@ export function ImageField({
 				)}
 			</div>
 			{error && <div className="mt-1 text-xs text-red-400">{error}</div>}
+			{!error && maxReached && (
+				<div className="mt-1 text-xs text-neutral-400">
+					{m.image_field_max_reached({ max: maxFiles })}
+				</div>
+			)}
 		</div>
 	);
 }

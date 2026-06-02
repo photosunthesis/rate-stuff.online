@@ -126,7 +126,7 @@ export const RatingCard = memo(function RatingCard({
 				<ImageGrid
 					images={parsedImages}
 					alt="Rating"
-					maxImages={3}
+					maxImages={4}
 					className={`${noIndent ? "" : "ml-11"} mb-3`}
 				/>
 			)}

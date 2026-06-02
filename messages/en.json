@@ -191,6 +191,7 @@
 
   "image_field_label": "Images",
   "image_field_add": "Add Image",
+  "image_field_max_reached": "Only {max} images allowed — extras were skipped.",
 
   "editor_placeholder": "Share your thoughts...",
   "editor_bold": "Bold",

@@ -120,7 +120,7 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 	.inputValidator(
 		z.object({
 			ratingId: z.string().min(1),
-			images: z.array(z.string()).max(3, "You can upload at most 3 images"),
+			images: z.array(z.string()).max(4, "You can upload at most 4 images"),
 		}),
 	)
 	.handler(async ({ data, context }) => {
@@ -157,7 +157,7 @@ export const updateRatingFn = createServerFn({ method: "POST" })
 			score: z.number().min(1).max(10),
 			content: z.string().max(12000).optional().default(""),
 			tags: z.array(z.string()).max(5).default([]),
-			images: z.array(z.string()).max(3).default([]),
+			images: z.array(z.string()).max(4).default([]),
 		}),
 	)
 	.handler(async ({ data, context }) => {

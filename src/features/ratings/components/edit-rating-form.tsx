@@ -260,7 +260,7 @@ export function EditRatingForm({
 							images={selectedImages}
 							onChange={setSelectedImages}
 							error={mergedValidationErrors.images}
-							maxFiles={3}
+							maxFiles={4}
 						/>
 					</div>
 				</fieldset>

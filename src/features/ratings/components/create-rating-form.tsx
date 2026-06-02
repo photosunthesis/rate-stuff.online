@@ -300,7 +300,7 @@ export function CreateRatingForm({
 							images={selectedImages}
 							onChange={(images) => setSelectedImages(images as File[])}
 							error={mergedValidationErrors.images}
-							maxFiles={3}
+							maxFiles={4}
 						/>
 					</div>
 				</fieldset>
