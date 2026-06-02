@@ -400,7 +400,7 @@ const TagsList = ({
 						key={tag}
 						to="/"
 						search={{ tag }}
-						className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+						className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg"
 						onClick={() => onTagClick?.(tag)}
 					>
 						#{tag}
@@ -413,7 +413,7 @@ const TagsList = ({
 							openAuthModal();
 							onTagClick?.(tag);
 						}}
-						className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full cursor-pointer"
+						className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg cursor-pointer"
 					>
 						#{tag}
 					</button>
@@ -492,7 +492,7 @@ function RouteComponent() {
 						<VoteSection rating={ratingTyped} isAuthenticated={!!user} />
 						<button
 							type="button"
-							className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+							className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-2xl hover:bg-neutral-800/50"
 							onClick={() => {
 								document
 									.getElementById(commentsSectionId)

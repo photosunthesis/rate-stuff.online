@@ -100,14 +100,14 @@ export function LeftSidebar({
 					<div className="space-y-2 px-3">
 						<Link
 							to="/sign-up"
-							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full transition-colors text-base flex items-center justify-center"
+							className="w-full px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-2xl transition-colors text-base flex items-center justify-center"
 						>
 							{m.nav_create_account()}
 						</Link>
 						<Link
 							to="/sign-in"
 							search={{ redirect: undefined }}
-							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-full border border-neutral-700 transition-colors text-base flex items-center justify-center"
+							className="w-full px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold rounded-2xl border border-neutral-700 transition-colors text-base flex items-center justify-center"
 						>
 							{m.nav_sign_in()}
 						</Link>
@@ -118,7 +118,7 @@ export function LeftSidebar({
 							<Link
 								to="/"
 								activeOptions={{ exact: true }}
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-2xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "home" });
@@ -130,7 +130,7 @@ export function LeftSidebar({
 
 							<Link
 								to="/activity"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-2xl transition-all group outline-none"
 								activeProps={{ className: "text-white font-bold" }}
 								onClick={() => {
 									if (umami)
@@ -152,7 +152,7 @@ export function LeftSidebar({
 								<Link
 									to="/user/$username"
 									params={{ username: user.username }}
-									className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
+									className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-2xl transition-all group outline-none"
 									activeProps={{ className: "text-white font-bold" }}
 									onClick={() => {
 										if (umami)
@@ -165,7 +165,7 @@ export function LeftSidebar({
 							)}
 							<Link
 								to="/menu"
-								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-full transition-all group outline-none"
+								className="flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-white rounded-2xl transition-all group outline-none"
 								activeProps={{ className: "bg-neutral-800/50 text-white" }}
 								onClick={() => {
 									if (umami) umami.track("click_nav", { destination: "menu" });
@@ -183,7 +183,7 @@ export function LeftSidebar({
 									if (umami) umami.track("click_create_rating");
 									setIsCreateOpen(true);
 								}}
-								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-full transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
+								className="w-full p-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-2xl transition-colors text-base flex items-center justify-center gap-2 cursor-pointer"
 							>
 								<PenLine className="w-5 h-5 shrink-0" />
 								<span className="truncate">{m.nav_create_rating()}</span>
@@ -194,7 +194,7 @@ export function LeftSidebar({
 							<button
 								type="button"
 								onClick={() => setIsSignOutOpen(true)}
-								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-red-400 rounded-full transition-all group cursor-pointer outline-none"
+								className="w-full flex items-center gap-4 px-3 py-2 text-neutral-400 hover:text-red-400 rounded-2xl transition-all group cursor-pointer outline-none"
 							>
 								<LogOut className="w-6 h-6" />
 								<span className="font-medium">{m.nav_sign_out()}</span>

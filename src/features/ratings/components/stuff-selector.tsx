@@ -147,7 +147,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 					<button
 						type="button"
 						onClick={handleClear}
-						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-full transition-colors"
+						className="px-3 py-1.5 text-base font-medium text-emerald-600 hover:bg-emerald-600/10 rounded-2xl transition-colors"
 					>
 						{m.stuff_selector_change()}
 					</button>
@@ -169,7 +169,7 @@ export function StuffSelector({ value, onChange, error }: StuffSelectorProps) {
 			<div
 				className={`relative px-4 py-3 bg-neutral-950 border ${
 					error ? "border-red-400" : "border-neutral-800"
-				} rounded-full focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
+				} rounded-2xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 			>
 				<div className="flex items-center gap-2">
 					<input

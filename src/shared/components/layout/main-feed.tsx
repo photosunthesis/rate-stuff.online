@@ -89,7 +89,7 @@ export function MainFeed({ tag }: { tag?: string }) {
 							</button>
 							<h2 className="text-lg font-semibold text-white">
 								{m.feed_tag_header_prefix()}
-								<span className="inline-flex items-center px-1.5 py-0.5 bg-neutral-800/70 text-neutral-300 text-base font-medium transition-colors rounded-full ml-1 font-sans">
+								<span className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 text-base font-medium transition-colors rounded-lg ml-1 font-sans">
 									#{tag}
 								</span>{" "}
 								tag

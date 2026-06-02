@@ -114,7 +114,7 @@ export function TagSelector({
 				<div
 					className={`flex items-center gap-2 px-3 py-2 bg-neutral-950 border ${
 						error ? "border-red-400" : "border-neutral-800"
-					} rounded-full focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
+					} rounded-2xl focus-within:border-emerald-600 focus-within:ring-1 focus-within:ring-emerald-600 transition-colors`}
 				>
 					<input
 						id={inputId}
@@ -160,7 +160,7 @@ export function TagSelector({
 					{selectedTags.map((tag) => (
 						<span
 							key={tag}
-							className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+							className="inline-flex items-center pl-2 pr-1 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg"
 						>
 							#{tag}
 							<button

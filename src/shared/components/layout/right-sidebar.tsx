@@ -113,7 +113,7 @@ export function RightSidebar() {
 													// biome-ignore lint/suspicious/noArrayIndexKey: safe to use index here
 													i
 												}`}
-												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-full`}
+												className={`inline-flex items-center px-1.5 py-0.5 h-6 ${w} bg-neutral-800/70 rounded-lg`}
 											/>
 										))}
 									</div>
@@ -128,7 +128,7 @@ export function RightSidebar() {
 													key={tag.name}
 													to="/"
 													search={{ tag: tag.name }}
-													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+													className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg"
 												>
 													#{tag.name}
 												</Link>
@@ -137,7 +137,7 @@ export function RightSidebar() {
 													key={tag.name}
 													type="button"
 													onClick={() => openAuthModal()}
-													className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full cursor-pointer"
+													className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg cursor-pointer"
 												>
 													#{tag.name}
 												</button>

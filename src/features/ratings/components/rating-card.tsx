@@ -164,7 +164,7 @@ export const RatingCard = memo(function RatingCard({
 									e.stopPropagation();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
-								className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full"
+								className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg"
 							>
 								#{tag}
 							</Link>
@@ -177,7 +177,7 @@ export const RatingCard = memo(function RatingCard({
 									openAuthModal();
 									if (umami) umami.track("click_tag", { tag, context: "feed" });
 								}}
-								className="inline-flex items-center pl-1.5 pr-2 py-0.5 bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-full cursor-pointer"
+								className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-sm font-medium transition-colors rounded-lg cursor-pointer"
 							>
 								#{tag}
 							</button>
@@ -191,7 +191,7 @@ export const RatingCard = memo(function RatingCard({
 
 				<button
 					type="button"
-					className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-full hover:bg-neutral-800/50"
+					className="flex items-center gap-2 text-neutral-300 hover:text-neutral-300 transition-colors group px-3 py-1.5 rounded-2xl hover:bg-neutral-800/50"
 					onClick={(e) => {
 						e.stopPropagation();
 						navigate({
