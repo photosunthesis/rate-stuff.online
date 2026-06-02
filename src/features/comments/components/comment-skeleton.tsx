@@ -4,17 +4,17 @@ export function CommentSkeleton() {
 			<div className="w-8 h-8 rounded-full bg-neutral-800/40 shrink-0" />
 			<div className="flex-1 min-w-0">
 				<div className="flex items-center gap-2 h-8 mb-2">
-					<div className="h-3 bg-neutral-800/40 rounded w-24" />
-					<div className="h-3 bg-neutral-800/40 rounded w-12" />
+					<div className="h-3 bg-neutral-800/40 rounded-full w-24" />
+					<div className="h-3 bg-neutral-800/40 rounded-full w-12" />
 				</div>
 
 				<div className="space-y-2 mb-2">
-					<div className="h-3 bg-neutral-800/40 rounded w-full" />
-					<div className="h-3 bg-neutral-800/40 rounded w-5/6" />
+					<div className="h-3 bg-neutral-800/40 rounded-full w-full" />
+					<div className="h-3 bg-neutral-800/40 rounded-full w-5/6" />
 				</div>
 
 				<div className="flex items-center gap-1 mt-1">
-					<div className="h-6 w-16 bg-neutral-800/40 rounded-md" />
+					<div className="h-6 w-16 bg-neutral-800/40 rounded-full" />
 				</div>
 			</div>
 		</div>
