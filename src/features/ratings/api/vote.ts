@@ -6,7 +6,7 @@ import { actionRateLimitMiddleware } from "~/infrastructure/rate-limit/middlewar
 
 export const voteRatingFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(voteRatingSchema)
+	.validator(voteRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			await voteRating(context.user.id, data);

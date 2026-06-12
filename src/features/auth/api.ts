@@ -14,7 +14,7 @@ import { buildSignedAvatarUrl } from "~/infrastructure/imagekit/sign";
 
 export const uploadAvatarFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, generalRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.preprocess(
 			(val) => {
 				if (!(val instanceof FormData)) return val;
@@ -50,7 +50,7 @@ export const uploadAvatarFn = createServerFn({ method: "POST" })
 
 export const getUserByUsernameFn = createServerFn({ method: "GET" })
 	.middleware([generalRateLimitMiddleware])
-	.inputValidator(z.object({ username: z.string() }))
+	.validator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
 			const user = await getUserByUsernameService(data.username);
@@ -75,7 +75,7 @@ export const getUserByUsernameFn = createServerFn({ method: "GET" })
 
 export const getEmailForUnverifiedUserFn = createServerFn({ method: "GET" })
 	.middleware([generalRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({ username: z.string().optional(), email: z.string().optional() }),
 	)
 	.handler(async ({ data }) => {

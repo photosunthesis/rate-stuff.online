@@ -22,7 +22,7 @@ async function getUserId() {
 
 export const getStuffBySlugFn = createServerFn({ method: "GET" })
 	.middleware([generalRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			slug: z.string(),
 		}),
@@ -45,7 +45,7 @@ export const getStuffBySlugFn = createServerFn({ method: "GET" })
 
 export const getPaginatedStuffRatingsFn = createServerFn({ method: "GET" })
 	.middleware([paginationRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			slug: z.string(),
 			limit: z.number().default(10),

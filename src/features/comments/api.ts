@@ -39,7 +39,7 @@ function makeCursor(createdAt: Date | string | number, id: string) {
 
 export const createCommentFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(createCommentSchema)
+	.validator(createCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			const comment = await createComment(context.user.id, data);
@@ -58,7 +58,7 @@ export const createCommentFn = createServerFn({ method: "POST" })
 
 export const updateCommentFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(updateCommentSchema)
+	.validator(updateCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			const updatedComment = await updateComment(context.user.id, data);
@@ -74,7 +74,7 @@ export const updateCommentFn = createServerFn({ method: "POST" })
 
 export const deleteCommentFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(deleteCommentSchema)
+	.validator(deleteCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			await deleteComment(context.user.id, data);
@@ -90,7 +90,7 @@ export const deleteCommentFn = createServerFn({ method: "POST" })
 
 export const voteCommentFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(voteCommentSchema)
+	.validator(voteCommentSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			const updatedComment = await voteOnComment(context.user.id, data);
@@ -106,7 +106,7 @@ export const voteCommentFn = createServerFn({ method: "POST" })
 
 export const getCommentsFn = createServerFn({ method: "GET" })
 	.middleware([optionalAuthMiddleware, paginationRateLimitMiddleware])
-	.inputValidator(getCommentsSchema)
+	.validator(getCommentsSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			const userId = context.user?.id;

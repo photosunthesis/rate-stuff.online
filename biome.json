@@ -12,6 +12,7 @@
 			"**/index.html",
 			"**/vite.config.js",
 			"!**/src/routeTree.gen.ts",
+			"!**/src/paraglide/**",
 			"!**/src/styles.css"
 		]
 	},

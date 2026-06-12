@@ -15,7 +15,8 @@ const config = defineConfig({
       project: './project.inlang',
       outdir: './src/paraglide',
     }),
-    cloudflare({ viteEnvironment: { name: 'ssr' } }),
+    // The Cloudflare plugin rejects vitest's `resolve.external` injection
+    ...(process.env.VITEST ? [] : [cloudflare({ viteEnvironment: { name: 'ssr' } })]),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

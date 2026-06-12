@@ -44,7 +44,7 @@ async function getUserId() {
 
 export const getUserRatingsFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware, paginationRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			limit: z.number().default(10),
 			cursor: z.string().optional(),
@@ -80,7 +80,7 @@ export const getUserRatingsFn = createServerFn({ method: "GET" })
 
 export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 	.middleware([paginationRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			limit: z.number().default(10),
 			cursor: z.string().optional(),
@@ -146,7 +146,7 @@ export const getPublicFeedRatingsFn = createServerFn({ method: "GET" })
 
 export const getFeedRatingsFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware, paginationRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			limit: z.number().default(10),
 			cursor: z.string().optional(),
@@ -180,7 +180,7 @@ export const getFeedRatingsFn = createServerFn({ method: "GET" })
 
 export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 	.middleware([paginationRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			username: z.string(),
 			limit: z.number().optional(),
@@ -225,7 +225,7 @@ export const getRatingsByUsernameFn = createServerFn({ method: "GET" })
 
 export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 	.middleware([generalRateLimitMiddleware])
-	.inputValidator(z.object({ username: z.string() }))
+	.validator(z.object({ username: z.string() }))
 	.handler(async ({ data }) => {
 		try {
 			const user = await getUserByUsername(data.username);
@@ -250,7 +250,7 @@ export const getUserRatingsCountFn = createServerFn({ method: "GET" })
 
 export const getRatingByIdFn = createServerFn({ method: "GET" })
 	.middleware([generalRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			id: z.string(),
 		}),

@@ -26,7 +26,7 @@ function formatZodError(error: ZodError): Record<string, string> {
 
 export const searchStuffFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(z.object({ query: z.string() }))
+	.validator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
 			const results = await searchStuff(data.query);
@@ -42,7 +42,7 @@ export const searchStuffFn = createServerFn({ method: "GET" })
 
 export const searchTagsFn = createServerFn({ method: "GET" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(z.object({ query: z.string() }))
+	.validator(z.object({ query: z.string() }))
 	.handler(async ({ data }) => {
 		try {
 			const results = await searchTags(data.query);
@@ -58,7 +58,7 @@ export const searchTagsFn = createServerFn({ method: "GET" })
 
 export const createRatingFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(createRatingSchema)
+	.validator(createRatingSchema)
 	.handler(async ({ data, context }) => {
 		try {
 			const rating = await createRating(context.user.id, data);
@@ -82,7 +82,7 @@ export const createRatingFn = createServerFn({ method: "POST" })
 
 export const getUploadUrlFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			ratingId: z.string().min(1),
 			filename: z.string().min(1),
@@ -117,7 +117,7 @@ export const getUploadUrlFn = createServerFn({ method: "POST" })
 
 export const updateRatingImagesFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			ratingId: z.string().min(1),
 			images: z.array(z.string()).max(4, "You can upload at most 4 images"),
@@ -151,7 +151,7 @@ export const updateRatingImagesFn = createServerFn({ method: "POST" })
 
 export const updateRatingFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(
+	.validator(
 		z.object({
 			ratingId: z.string().min(1),
 			score: z.number().min(1).max(10),
@@ -182,7 +182,7 @@ export const updateRatingFn = createServerFn({ method: "POST" })
 
 export const deleteRatingFn = createServerFn({ method: "POST" })
 	.middleware([authMiddleware, actionRateLimitMiddleware])
-	.inputValidator(z.object({ ratingId: z.string().min(1) }))
+	.validator(z.object({ ratingId: z.string().min(1) }))
 	.handler(async ({ data, context }) => {
 		try {
 			await deleteRating(data.ratingId, context.user.id);
