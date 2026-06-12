@@ -176,10 +176,13 @@ export const Route = createFileRoute("/_public/rating/$ratingId/")({
 			};
 
 			if (rating.stuff) {
+				// Google only shows review-star rich results for supported
+				// itemReviewed types (Product et al.) — "Thing" is ignored.
 				ldJson.itemReviewed = {
-					"@type": "Thing",
+					"@type": "Product",
 					name: rating.stuff.name,
 					url: `https://rate-stuff.online/stuff/${rating.stuff.slug}`,
+					image: finalImage,
 				};
 			}
 

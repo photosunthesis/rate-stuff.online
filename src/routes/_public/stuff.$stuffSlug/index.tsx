@@ -120,14 +120,30 @@ export const Route = createFileRoute("/_public/stuff/$stuffSlug/")({
 			{ name: "robots", content: "index, follow" },
 		];
 
+		// Product + aggregateRating is what makes Google show stars in search
+		// results. Unrated stuff stays a plain Thing — a Product without
+		// offers/review/aggregateRating is flagged as invalid by Google.
+		const hasAggregateRating =
+			averageRating != null && ratingCount != null && ratingCount > 0;
+
 		const ld: Record<string, unknown> = {
 			"@context": "https://schema.org",
-			"@type": "Thing",
+			"@type": hasAggregateRating ? "Product" : "Thing",
 			name: stuff?.name ?? undefined,
-			image: hasImages ? images : [finalImage],
+			image: hasImages ? images.map((img) => img.card) : [finalImage],
 			url: pageUrl,
 			description: description,
 		};
+
+		if (hasAggregateRating) {
+			ld.aggregateRating = {
+				"@type": "AggregateRating",
+				ratingValue: Number(averageRating.toFixed(1)),
+				ratingCount,
+				bestRating: 10,
+				worstRating: 1,
+			};
+		}
 
 		return {
 			meta: metas,
