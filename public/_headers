@@ -1,0 +1,7 @@
+# Cloudflare Workers Assets reads this file from the assets root (dist/client).
+# Everything under /assets/* is content-hash fingerprinted by Vite (e.g.
+# ibm-plex-sans-latin-wght-normal-IvpUvPa2.woff2), so the URL changes whenever
+# the bytes change — it is always safe to cache immutably and forever. This is
+# what makes repeat visits paint the real font instantly (no re-fetch, no flash).
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

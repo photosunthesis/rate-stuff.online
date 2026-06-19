@@ -5,10 +5,14 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import appCss from "~/styles.css?url";
-import serifFont400 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-400-normal.woff2?url";
-import serifFont700 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-700-normal.woff2?url";
+// Preload only the woff2 used above the fold. With font-display:optional these
+// must win the browser's ~100ms race to render in the brand font on first paint.
+// sans (body), serif 600 (RatingCard <h3> titles / feed / auth / legal H1s),
+// serif 700 (stuff-detail <h1>). Vite content-hashing makes each ?url resolve to
+// the exact same asset the @font-face url() in fonts.css uses, so no double load.
 import sansFont from "@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2?url";
-import monoFont400 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url";
+import serifFont600 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-600-normal.woff2?url";
+import serifFont700 from "@fontsource/ibm-plex-serif/files/ibm-plex-serif-latin-700-normal.woff2?url";
 import { NotFound } from "~/shared/components/feedback/not-found";
 import UmamiAnalytics from "@danielgtmn/umami-react";
 import { authQueryOptions, type AuthQueryResult } from "~/features/auth/hooks";
@@ -95,6 +99,10 @@ export const Route = createRootRouteWithContext<{
 			},
 		],
 		links: [
+			// Font preloads come before the stylesheet so the browser can start
+			// fetching them as early as possible. crossOrigin:"anonymous" is
+			// required — fonts always fetch in anonymous CORS mode, and omitting it
+			// would make the preload and the real fetch two separate downloads.
 			{
 				rel: "preload",
 				href: sansFont,
@@ -104,7 +112,7 @@ export const Route = createRootRouteWithContext<{
 			},
 			{
 				rel: "preload",
-				href: serifFont400,
+				href: serifFont600,
 				as: "font",
 				type: "font/woff2",
 				crossOrigin: "anonymous",
@@ -112,13 +120,6 @@ export const Route = createRootRouteWithContext<{
 			{
 				rel: "preload",
 				href: serifFont700,
-				as: "font",
-				type: "font/woff2",
-				crossOrigin: "anonymous",
-			},
-			{
-				rel: "preload",
-				href: monoFont400,
 				as: "font",
 				type: "font/woff2",
 				crossOrigin: "anonymous",
