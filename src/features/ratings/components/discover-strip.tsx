@@ -39,83 +39,90 @@ export function DiscoverStrip() {
 
 	return (
 		<div className="w-full block lg:hidden border-neutral-800 md:border-l md:border-r">
+			{/* The fade lives on this non-scrolling wrapper, NOT on the scroller
+			    below: a CSS mask on an overflow-x-auto element breaks touch
+			    panning on mobile Safari/Chrome. */}
 			<div
-				key={stripFade.contentKey}
-				className={`overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3 ${
-					stripFade.showSkeleton
-						? stripFade.skeletonClass
-						: "animate-skeleton-reveal"
-				}`}
 				style={{
 					maskImage: "linear-gradient(to right, black 80%, transparent 100%)",
 					WebkitMaskImage:
 						"linear-gradient(to right, black 80%, transparent 100%)",
 				}}
 			>
-				{stripFade.showSkeleton ? (
-					<>
-						{skeletonStuffKeys.map((sKey) => (
-							<div
-								key={sKey}
-								className="inline-flex items-center bg-neutral-800/40 rounded-lg animate-skeleton-pulse"
-							>
-								<div className="h-6 w-24" />
-							</div>
-						))}
-						{skeletonTagWidths.map((w, i) => (
-							<div
-								key={`t_${
-									// biome-ignore lint/suspicious/noArrayIndexKey: safe
-									i
-								}`}
-								className={`inline-flex items-center h-6 ${w} bg-neutral-800/40 rounded-lg animate-skeleton-pulse`}
-							/>
-						))}
-					</>
-				) : (
-					<>
-						{(recentStuff ?? []).map((stuff) => (
-							<Link
-								key={stuff.id}
-								to="/stuff/$stuffSlug"
-								params={{ stuffSlug: stuff.slug }}
-								className="inline-flex items-center py-0.5 pl-0.5 pr-3 leading-none bg-neutral-800 text-white text-base font-medium rounded-lg"
-							>
-								<div className="flex items-center mr-0.5">
-									<div className="w-5 h-5 bg-neutral-800 rounded-full shrink-0 flex items-center justify-center">
-										<TrendingUp
-											className="w-4 h-4 text-neutral-300"
-											aria-hidden
-										/>
-									</div>
+				<div
+					key={stripFade.contentKey}
+					className={`overflow-x-auto hide-scrollbar whitespace-nowrap flex items-center gap-2 px-4 py-3 ${
+						stripFade.showSkeleton
+							? stripFade.skeletonClass
+							: "animate-skeleton-reveal"
+					}`}
+					style={{ WebkitOverflowScrolling: "touch" }}
+				>
+					{stripFade.showSkeleton ? (
+						<>
+							{skeletonStuffKeys.map((sKey) => (
+								<div
+									key={sKey}
+									className="inline-flex shrink-0 items-center bg-neutral-800/40 rounded-lg animate-skeleton-pulse"
+								>
+									<div className="h-6 w-24" />
 								</div>
-								{stuff.name}
-							</Link>
-						))}
-
-						{(recentTags ?? []).map((tag) =>
-							isAuthenticated ? (
+							))}
+							{skeletonTagWidths.map((w, i) => (
+								<div
+									key={`t_${
+										// biome-ignore lint/suspicious/noArrayIndexKey: safe
+										i
+									}`}
+									className={`inline-flex shrink-0 items-center h-6 ${w} bg-neutral-800/40 rounded-lg animate-skeleton-pulse`}
+								/>
+							))}
+						</>
+					) : (
+						<>
+							{(recentStuff ?? []).map((stuff) => (
 								<Link
-									key={tag.name}
-									to="/"
-									search={{ tag: tag.name }}
-									className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-lg"
+									key={stuff.id}
+									to="/stuff/$stuffSlug"
+									params={{ stuffSlug: stuff.slug }}
+									className="inline-flex shrink-0 items-center py-0.5 pl-0.5 pr-3 leading-none bg-neutral-800 text-white text-base font-medium rounded-lg"
 								>
-									#{tag.name}
+									<div className="flex items-center mr-0.5">
+										<div className="w-5 h-5 bg-neutral-800 rounded-full shrink-0 flex items-center justify-center">
+											<TrendingUp
+												className="w-4 h-4 text-neutral-300"
+												aria-hidden
+											/>
+										</div>
+									</div>
+									{stuff.name}
 								</Link>
-							) : (
-								<button
-									key={tag.name}
-									type="button"
-									onClick={() => openAuthModal()}
-									className="inline-flex items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-lg cursor-pointer"
-								>
-									#{tag.name}
-								</button>
-							),
-						)}
-					</>
-				)}
+							))}
+
+							{(recentTags ?? []).map((tag) =>
+								isAuthenticated ? (
+									<Link
+										key={tag.name}
+										to="/"
+										search={{ tag: tag.name }}
+										className="inline-flex shrink-0 items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-lg"
+									>
+										#{tag.name}
+									</Link>
+								) : (
+									<button
+										key={tag.name}
+										type="button"
+										onClick={() => openAuthModal()}
+										className="inline-flex shrink-0 items-center px-2 py-1 leading-none bg-neutral-800/70 text-neutral-300 hover:text-neutral-300 text-base font-medium transition-colors rounded-lg cursor-pointer"
+									>
+										#{tag.name}
+									</button>
+								),
+							)}
+						</>
+					)}
+				</div>
 			</div>
 
 			<div className="border-t border-neutral-800" />
