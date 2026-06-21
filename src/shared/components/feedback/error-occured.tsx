@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import * as Sentry from "@sentry/tanstackstart-react";
 import { AppLogo } from "~/shared/components/ui/app-logo";
 import { useEffect } from "react";
 import { Button } from "~/shared/components/ui/button";
@@ -7,10 +8,11 @@ import { m } from "~/paraglide/messages";
 
 interface ErrorOccurredProps {
 	error?: Error;
+	info?: { componentStack?: string };
 	reset?: () => void;
 }
 
-export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
+export function ErrorOccurred({ error, info, reset }: ErrorOccurredProps) {
 	const umami = useUmami();
 
 	useEffect(() => {
@@ -18,6 +20,46 @@ export function ErrorOccurred({ error, reset }: ErrorOccurredProps) {
 			umami.track("app_error", { message: error.message });
 		}
 	}, [umami, error]);
+
+	useEffect(() => {
+		// This effect runs client-side only, so window/document are available.
+		const { pathname, search, hash, href } = window.location;
+
+		const tags = {
+			type: "error_page_500",
+			route: pathname,
+			...(error?.name ? { error_name: error.name } : {}),
+		};
+
+		const contexts = {
+			// Rendered under a "React" panel in the Sentry UI. The router catches
+			// the error before Sentry's React integration, so we attach it manually.
+			react: { componentStack: info?.componentStack },
+			page: {
+				href,
+				pathname,
+				search,
+				hash,
+				referrer: document.referrer || undefined,
+				userAgent: navigator.userAgent,
+			},
+		};
+
+		const extra = {
+			errorCause: error?.cause,
+			errorStack: error?.stack,
+		};
+
+		if (error) {
+			Sentry.captureException(error, { tags, contexts, extra });
+		} else {
+			Sentry.captureMessage("500 error page rendered without an error", {
+				level: "error",
+				tags,
+				contexts,
+			});
+		}
+	}, [error, info]);
 
 	useEffect(() => {
 		document.title = "(°□°;)";
