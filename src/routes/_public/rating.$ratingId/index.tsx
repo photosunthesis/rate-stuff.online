@@ -362,9 +362,9 @@ const RatingHeader = ({
 
 const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
-		<div className="flex items-start justify-between mb-3 ml-11">
+		<div className="flex items-start justify-between mb-3 mt-1">
 			<div className="flex items-baseline gap-2">
-				<h3 className="text-2xl md:text-3xl font-semibold text-white">
+				<h3 className="text-3xl md:text-4xl font-semibold text-white">
 					{rating.score}/10 <RatingEmoji score={rating.score} />
 				</h3>
 			</div>
@@ -374,7 +374,7 @@ const TitleBlock = ({ rating }: { rating: RatingWithRelations }) => {
 
 const ContentSection = ({ rating }: { rating: RatingWithRelations }) => {
 	return (
-		<div className="ml-11 mb-3 text-slate-200 text-base leading-normal">
+		<div className="mb-3 text-slate-200 text-base leading-normal">
 			<RichTextRenderer
 				content={rating.content}
 				className="[&_p]:mt-3 [&_p]:last:inline [&_p]:first:mt-0"
@@ -396,7 +396,7 @@ const TagsList = ({
 
 	if (!tags || tags.length === 0) return null;
 	return (
-		<div className="flex flex-wrap gap-2 mb-3 ml-11">
+		<div className="flex flex-wrap gap-2 mb-3">
 			{tags.map((tag: string) =>
 				isAuthenticated ? (
 					<Link
@@ -481,7 +481,7 @@ function RouteComponent() {
 						images={parsedImages}
 						alt="Rating"
 						onImageClick={handleImageClick}
-						className="ml-11 mb-3"
+						className="mb-3"
 					/>
 					<ContentSection rating={ratingTyped} />
 					<TagsList
@@ -491,7 +491,7 @@ function RouteComponent() {
 							if (umami) umami.track("click_tag", { tag });
 						}}
 					/>
-					<div className="ml-11 mb-3 flex items-center gap-3">
+					<div className="mb-3 flex items-center gap-3">
 						<VoteSection rating={ratingTyped} isAuthenticated={!!user} />
 						<button
 							type="button"
