@@ -13,7 +13,9 @@ export async function cached<T>(
 	const fresh = await fetcher();
 
 	try {
-		env.KV_CACHE.put(key, JSON.stringify(fresh), { expirationTtl: ttl });
+		// Awaited: on Cloudflare Workers an unawaited promise can be dropped once
+		// the response is sent, so a fire-and-forget put may never reach KV.
+		await env.KV_CACHE.put(key, JSON.stringify(fresh), { expirationTtl: ttl });
 	} catch {}
 
 	return fresh;

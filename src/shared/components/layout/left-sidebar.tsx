@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Link, useRouter } from "@tanstack/react-router";
 import { m } from "~/paraglide/messages";
 import AppLogo from "~/shared/components/ui/app-logo";
 import { Home, Bell, Menu, LogOut, PenLine, ArrowUp, User } from "lucide-react";
@@ -45,6 +45,34 @@ export function LeftSidebar({
 	const [header] = useState(() => getHeader());
 
 	const [signOut] = useSignOut();
+	const router = useRouter();
+
+	// After a rating is created, scroll to the top ONLY when the new rating is
+	// actually in the currently-visible feed: the home route ("/") with either no
+	// tag filter or a tag the new rating carries. Anywhere else (a stuff page,
+	// a profile, /activity, a non-matching tag filter) we leave the user where
+	// they are. We read live router state at call time (not a render-time
+	// closure) and scroll the window directly — navigating to "/" would restore
+	// the previous scroll position under scrollRestoration, not go to the top.
+	const handleRatingCreated = useCallback(
+		(info: { tags: string[] }) => {
+			if (typeof window === "undefined") return;
+			const loc = router.state.location;
+			const activeTag = (loc.search as { tag?: string } | undefined)?.tag;
+			const inVisibleFeed =
+				loc.pathname === "/" && (!activeTag || info.tags.includes(activeTag));
+			if (!inVisibleFeed) return;
+			// Defer past the modal-close commit so the new top card is laid out;
+			// instant ("auto") avoids racing the close animation and thrashing the
+			// scroll-driven nav visibility on mobile.
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					window.scrollTo({ top: 0, behavior: "auto" });
+				});
+			});
+		},
+		[router],
+	);
 
 	const [navVisible, setNavVisible] = useState(true);
 	const [scrolledDown, setScrolledDown] = useState(false);
@@ -72,6 +100,7 @@ export function LeftSidebar({
 					<CreateRatingModal
 						isOpen={isCreateOpen}
 						onClose={() => setIsCreateOpen(false)}
+						onCreated={handleRatingCreated}
 					/>
 					<ConfirmModal
 						destructive

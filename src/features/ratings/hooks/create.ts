@@ -30,13 +30,45 @@ export function useCreateRatingMutation() {
 	return useMutation({
 		mutationFn: (data: CreateRatingInput) => createRatingMutationFn({ data }),
 		onSuccess: async (data) => {
-			if (data && (data as { success?: boolean }).success) {
-				await Promise.all([
-					queryClient.invalidateQueries({ queryKey: ratingKeys.all }),
-					queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] }),
-					queryClient.invalidateQueries({ queryKey: ["recent", "tags"] }),
-				]);
+			const result = data as {
+				success?: boolean;
+				data?: {
+					stuff?: { id: string; name: string; slug: string } | null;
+				} | null;
+			};
+			if (!result?.success) return;
+
+			const createdStuff = result.data?.stuff ?? null;
+
+			// Optimistically surface the just-rated stuff at the front of the
+			// recency slot so it shows instantly. The awaited DB-direct refetch
+			// below reconciles to the same recency ordering, so there's no flicker.
+			if (createdStuff) {
+				queryClient.setQueryData<{ id: string; name: string; slug: string }[]>(
+					["recent", "stuff", "latest"],
+					(old) => {
+						const rest = (old ?? []).filter((s) => s.id !== createdStuff.id);
+						return [createdStuff, ...rest].slice(0, 5);
+					},
+				);
 			}
+
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: ratingKeys.all }),
+				// Prefix-matches both ["recent","stuff"] (trending, KV-cached) and
+				// ["recent","stuff","latest"] (recency, DB-direct & fresh).
+				queryClient.invalidateQueries({ queryKey: ["recent", "stuff"] }),
+				queryClient.invalidateQueries({ queryKey: ["recent", "tags"] }),
+				// The stuff detail page's rating list isn't under ratingKeys.all and
+				// has refetchOnMount:false, so force-refetch it (active or not) to keep
+				// a stuff page correct when a rating is created from it.
+				createdStuff
+					? queryClient.invalidateQueries({
+							queryKey: ["stuff", createdStuff.slug, "ratings"],
+							refetchType: "all",
+						})
+					: Promise.resolve(),
+			]);
 		},
 	});
 }

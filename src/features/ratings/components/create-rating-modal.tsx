@@ -161,14 +161,20 @@ const useCreateRating = () => {
 interface CreateRatingModalProps {
 	isOpen: boolean;
 	onClose: () => void;
+	onCreated?: (info: { tags: string[] }) => void;
 }
 
-export function CreateRatingModal({ isOpen, onClose }: CreateRatingModalProps) {
+export function CreateRatingModal({
+	isOpen,
+	onClose,
+	onCreated,
+}: CreateRatingModalProps) {
 	const { createRating, isPending, errorMessage, validationErrors } =
 		useCreateRating();
 
-	const handleFormSuccess = () => {
+	const handleFormSuccess = (info: { tags: string[] }) => {
 		onClose();
+		onCreated?.(info);
 	};
 
 	return (

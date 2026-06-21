@@ -343,6 +343,31 @@ export const getRecentStuff = createServerOnlyFn(async (limit = 5) => {
 	);
 });
 
+/**
+ * The stuff most recently rated, newest first. Read straight from Postgres
+ * (NOT KV-cached) so a just-created rating's stuff surfaces immediately — KV is
+ * eventually consistent and would race the create-then-refetch. This is the
+ * "recency" half of the discover strip; getRecentStuff is the "trending" half.
+ */
+export const getLatestStuff = createServerOnlyFn(async (limit = 5) => {
+	const db = getDatabase();
+
+	const rows = await db
+		.select({
+			id: stuff.id,
+			name: stuff.name,
+			slug: stuff.slug,
+		})
+		.from(ratings)
+		.innerJoin(stuff, eq(stuff.id, ratings.stuffId))
+		.where(isNull(ratings.deletedAt))
+		.groupBy(stuff.id, stuff.name, stuff.slug)
+		.orderBy(desc(sql`max(${ratings.createdAt})`))
+		.limit(limit);
+
+	return rows.map((r) => ({ id: r.id, name: r.name, slug: r.slug }));
+});
+
 export const getUserRatingsCount = createServerOnlyFn(
 	async (userId: string) => {
 		const db = getDatabase();

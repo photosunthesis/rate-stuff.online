@@ -22,7 +22,7 @@ interface CreateRatingFormProps {
 	isPending: boolean;
 	errorMessage?: string | null;
 	validationErrors: Record<string, string>;
-	onSuccess?: () => void;
+	onSuccess?: (info: { tags: string[] }) => void;
 	onCancel?: () => void;
 }
 
@@ -90,13 +90,18 @@ export function CreateRatingForm({
 
 				setIsSuccess(true);
 
+				// Capture tags before the reset below clears them; the success
+				// handler uses them to decide whether the new rating is visible in a
+				// tag-filtered feed.
+				const createdTags = selectedTags;
+
 				form.reset();
 				setStoredScore("");
 				setStoredContent("");
 				setSelectedStuff(null);
 				setSelectedTags([]);
 				setSelectedImages([]);
-				onSuccess?.();
+				onSuccess?.({ tags: createdTags });
 			} catch {
 				// Error is handled by parent, we just need to reset submitting state
 			} finally {

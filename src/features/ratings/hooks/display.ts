@@ -13,7 +13,11 @@ import {
 	getRatingByIdFn,
 } from "../api/display";
 import type { RatingWithRelations } from "../types/display";
-import { getRecentTagsFn, getRecentStuffFn } from "../api/display";
+import {
+	getRecentTagsFn,
+	getRecentStuffFn,
+	getLatestStuffFn,
+} from "../api/display";
 
 type PageResult = {
 	success: boolean;
@@ -209,6 +213,33 @@ export function useRecentStuff(enabled: boolean = true) {
 			return res.data ?? [];
 		},
 		staleTime: 1000 * 60 * 5,
+		enabled,
+	});
+}
+
+export type LatestStuff = { id: string; name: string; slug: string };
+
+/**
+ * Recency half of the discover strip — the stuff most recently rated, served
+ * fresh from Postgres (the create flow invalidates / optimistically primes this
+ * key). Distinct from useRecentStuff, which is KV-cached "trending" by count.
+ */
+export function useLatestStuff(enabled: boolean = true) {
+	const fn = useServerFn(getLatestStuffFn);
+
+	return useQuery({
+		queryKey: ["recent", "stuff", "latest"],
+		queryFn: async () => {
+			const res = (await fn()) as {
+				success: boolean;
+				data?: LatestStuff[];
+				error?: string;
+			};
+			if (!res || res.success === false)
+				throw new Error(res.error ?? "Failed to load stuff");
+			return res.data ?? [];
+		},
+		staleTime: 1000 * 60,
 		enabled,
 	});
 }

@@ -5,7 +5,7 @@ import {
 	getUserRatingsCount,
 	getRatingById,
 } from "../data/display";
-import { getRecentTags, getRecentStuff } from "../data/display";
+import { getRecentTags, getRecentStuff, getLatestStuff } from "../data/display";
 import { z } from "zod";
 import { authMiddleware } from "~/features/auth/middleware";
 import {
@@ -308,6 +308,30 @@ export const getRecentStuffFn = createServerFn({ method: "GET" })
 					name: string;
 					slug: string;
 					count: number;
+				}[],
+			};
+		} catch (error) {
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Failed to fetch stuff",
+			};
+		}
+	});
+
+export const getLatestStuffFn = createServerFn({ method: "GET" })
+	.middleware([generalRateLimitMiddleware])
+	.handler(async () => {
+		try {
+			const stuff = await getLatestStuff(5);
+
+			// Recency is freshness-critical (it must reflect a just-created rating),
+			// so deliberately do NOT set a public cache header here.
+			return {
+				success: true,
+				data: stuff as {
+					id: string;
+					name: string;
+					slug: string;
 				}[],
 			};
 		} catch (error) {

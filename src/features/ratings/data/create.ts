@@ -101,7 +101,7 @@ export const createRating = createServerOnlyFn(
 	async (userId: string, input: CreateRatingInput) => {
 		const db = getDatabase();
 
-		const rating = await db.transaction(async (tx) => {
+		const { rating, tagNames } = await db.transaction(async (tx) => {
 			let resolvedStuffId = input.stuffId;
 
 			if (!resolvedStuffId && input.stuffName) {
@@ -203,18 +203,20 @@ export const createRating = createServerOnlyFn(
 					.execute();
 			}
 
-			return rating;
+			return { rating, tagNames: uniqueNames };
 		});
 
 		const stuffRow = await db
-			.select({ slug: stuff.slug })
+			.select({ id: stuff.id, slug: stuff.slug, name: stuff.name })
 			.from(stuff)
 			.where(eq(stuff.id, rating.stuffId))
 			.limit(1)
 			.then((r) => r[0]);
 
 		if (stuffRow) {
-			invalidate(
+			// Awaited: a fire-and-forget invalidate can be dropped when the Worker
+			// returns its response, leaving the discover/feed caches stale.
+			await invalidate(
 				`stuff:${stuffRow.slug}`,
 				"discover:tags",
 				"discover:stuff",
@@ -223,7 +225,11 @@ export const createRating = createServerOnlyFn(
 			);
 		}
 
-		return rating;
+		return {
+			...rating,
+			stuff: stuffRow ?? null,
+			tags: tagNames,
+		};
 	},
 );
 
@@ -385,7 +391,7 @@ export const updateRating = createServerOnlyFn(
 			.then((r) => r[0]);
 
 		if (stuffRow) {
-			invalidate(`stuff:${stuffRow.slug}`, "feed:public:first");
+			await invalidate(`stuff:${stuffRow.slug}`, "feed:public:first");
 		}
 
 		return updated;
@@ -425,7 +431,7 @@ export const deleteRating = createServerOnlyFn(
 			.then((r) => r[0]);
 
 		if (stuffRow) {
-			invalidate(
+			await invalidate(
 				`stuff:${stuffRow.slug}`,
 				"discover:tags",
 				"discover:stuff",
